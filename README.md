@@ -51,4 +51,7 @@ Running:
 
 ### Starting the app
 
+    (immovenv) $ python manage.py migrate
+    (immovenv) $ python manage.py makemigrations main
+    (immovenv) $ python manage.py migrate main
     (immovenv) $ python manage.py runserver
