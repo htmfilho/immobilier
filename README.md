@@ -2,7 +2,7 @@
 
 ## Contributing to the project
 
-First, cloone the project:
+First, clone the project:
 
     $ mkdir python
     $ cd python
@@ -15,7 +15,14 @@ First, cloone the project:
 
 Check the version of Python you have installed in your machine using the command.
 
+##### Ubuntu
+
     $ python3 --version
+      Python 3.4.3
+
+##### Windows
+
+    $ python --version
       Python 3.4.3
 
 The numbers that matter are 3 and 4. We use them to create a virtual environment on:
