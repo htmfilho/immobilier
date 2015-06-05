@@ -30,14 +30,7 @@ class Banque(models.Model):
     nom = models.CharField(max_length=100)
 
 class Personne(models.Model):
-	#CIVILITES = (
-    #    ('Mr', 'Monsieur'),
-    #    ('Mme', 'Madame'),
-    #    ('Mlle', 'Mademoiselle'),
-	#	('Me', 'Maitre'),
-	#	('Dr', 'Docteur'),
-    #)
-    nom            = models.CharField(max_length=100)
+	nom            = models.CharField(max_length=100)
 	prenom         = models.CharField(max_length=100)
 	email          = models.CharField(max_length=100)
 	profession     = models.CharField(max_length=100)
@@ -48,6 +41,13 @@ class Personne(models.Model):
 	telephome      = models.CharField(max_length=30)
 	gsm            = models.CharField(max_length=30)
     #civilite = models.CharField(max_length=4,blank=true,choices=CIVILITES)
+    #CIVILITES = (
+    #    ('Mr', 'Monsieur'),
+    #    ('Mme', 'Madame'),
+    #    ('Mlle', 'Mademoiselle'),
+	#	('Me', 'Maitre'),
+	#	('Dr', 'Docteur'),
+    #)
 
     def enregistrer(self):
         self.save()
