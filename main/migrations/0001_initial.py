@@ -11,14 +11,35 @@ class Migration(migrations.Migration):
 
     operations = [
         migrations.CreateModel(
-            name='Client',
+            name='Assurance',
             fields=[
-                ('id', models.AutoField(primary_key=True, serialize=False, verbose_name='ID', auto_created=True)),
-                ('nom', models.CharField(max_length=50)),
-                ('prenom', models.CharField(max_length=50)),
-                ('email', models.CharField(max_length=100)),
-                ('gsm', models.CharField(max_length=20, null=True)),
-                ('fixe', models.CharField(max_length=20, null=True)),
+                ('id', models.AutoField(primary_key=True, verbose_name='ID', serialize=False, auto_created=True)),
+                ('nom', models.CharField(max_length=100)),
+                ('description', models.TextField(blank=True, null=True)),
+            ],
+        ),
+        migrations.CreateModel(
+            name='Banque',
+            fields=[
+                ('id', models.AutoField(primary_key=True, verbose_name='ID', serialize=False, auto_created=True)),
+                ('nom', models.CharField(max_length=100)),
+                ('description', models.TextField(blank=True, null=True)),
+            ],
+        ),
+        migrations.CreateModel(
+            name='Personne',
+            fields=[
+                ('id', models.AutoField(primary_key=True, verbose_name='ID', serialize=False, auto_created=True)),
+                ('nom', models.CharField(max_length=100)),
+                ('prenom', models.CharField(max_length=100)),
+                ('email', models.CharField(max_length=100, blank=True, null=True)),
+                ('profession', models.CharField(max_length=100, blank=True, null=True)),
+                ('date_naissance', models.DateField(blank=True, null=True)),
+                ('lieu_naissance', models.CharField(max_length=100, blank=True, null=True)),
+                ('pays_naissance', models.CharField(max_length=100, blank=True, null=True)),
+                ('num_identite', models.CharField(max_length=100, blank=True, null=True)),
+                ('telephome', models.CharField(max_length=30, blank=True, null=True)),
+                ('gsm', models.CharField(max_length=30, blank=True, null=True)),
             ],
         ),
     ]
