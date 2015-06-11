@@ -33,11 +33,11 @@ class Banque(models.Model):
 
 class Batiment(models.Model):
     description = models.TextField()
-	nom         = models.CharField(max_length = 100, blank = True, null = True)
-	localite    = models.CharField(max_length = 150, blank = True, null = True)
+    nom         = models.CharField(max_length = 100, blank = True, null = True)
+    localite    = models.CharField(max_length = 150, blank = True, null = True)
     numero      = models.IntegerField(blank = True, null = True)
     boite       = models.IntegerField(blank = True, null = True)
-	code_postal = models.CharField(max_length = 10, blank = True, null = True)
+    code_postal = models.CharField(max_length = 10, blank = True, null = True)
     ville       = models.CharField(max_length = 100, blank = True, null = True)
     province    = models.CharField(max_length = 100, blank = True, null = True)
     surface     = models.DecimalField(max_digits = 5, decimal_places = 3, blank = True, null = True)
@@ -84,8 +84,8 @@ class Location(models.Model):
 class Locataire(models.Model):
     personne    = models.ForeignKey('Personne')
     location    = models.ForeignKey('Location')
-    infos_compl = models.TextField()
-    principal   = models.BooleanField(default=true)
+    infos_compl = models.TextField(blank = True, null = True)
+    principal   = models.BooleanField(default = True)
 
     def __str__(self):
         return self.personne + " (" + self.location + ")"
