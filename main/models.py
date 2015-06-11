@@ -31,15 +31,21 @@ class Banque(models.Model):
     def __str__(self):
         return self.nom
 
-    # class Batiment(models.Model):
-    #	nom                    = models.CharField(max_length=100)
-    #	rue                    = models.CharField(max_length=150)
-    #	code_postal            = models.CharField(max_length=10)
-    #	localite               = models.CharField(max_length=100)
-    #	peformance_energetique = models.DecimalField(max_digits=6, decimal_places=2)
-    #	surface                = models.DecimalField(max_digits=5, decimal_places=3)
-    #	description            = models.TextField()
+class Batiment(models.Model):
+    description = models.TextField()
+	nom         = models.CharField(max_length = 100, blank = True, null = True)
+	localite    = models.CharField(max_length = 150, blank = True, null = True)
+    numero      = models.IntegerField(blank = True, null = True)
+    boite       = models.IntegerField(blank = True, null = True)
+	code_postal = models.CharField(max_length = 10, blank = True, null = True)
+    ville       = models.CharField(max_length = 100, blank = True, null = True)
+    province    = models.CharField(max_length = 100, blank = True, null = True)
+    surface     = models.DecimalField(max_digits = 5, decimal_places = 3, blank = True, null = True)
 
+    def __str__(self):
+        return self.description
+
+    #	peformance_energetique = models.DecimalField(max_digits=6, decimal_places=2)
     # date_modif    = models.DateTimeField(auto_now=true,auto_now_add=true)
     # proprietaire  = models.ForeignKey('Personne')
     # loyer = models.DecimalField(max_digits=6, decimal_places=2)
@@ -54,10 +60,14 @@ class Banque(models.Model):
     # credit_date_fin = models.DateField(auto_now=false,auto_now_add=false)
     # assurance_proprietaire = models.ForeignKey('Assurance')
 
-    # class Location(models.Model):
-    # batiment            = models.ForeignKey('Batiment')
-    # date_debut          = models.DateField(auto_now=true,auto_now_add=false)
-    # date_fin            = models.DateField(auto_now=false,auto_now_add=false)
+class Location(models.Model):
+    batiment   = models.ForeignKey('Batiment')
+    date_debut = models.DateField(auto_now = True,  auto_now_add = False)
+    date_fin   = models.DateField(auto_now = False, auto_now_add = False)
+
+    def __str__(self):
+        return self.batiment + " (" + self.date_debut + " - " + self.date_fin + ")"
+
     # charges             = models.DecimalField(max_digits=5, decimal_places=2)
     # assurance           = models.ForeignKey('Assurance')
     # bail_type           = models.CharField(max_length=100)
@@ -71,15 +81,19 @@ class Banque(models.Model):
     # index_ref           = models.DecimalField(max_digits=5, decimal_places=2)
     # index_actuel        = models.DecimalField(max_digits=5, decimal_places=2)
 
-    # class Locataire(models.Model):
-    #  personne             = models.ForeignKey('Personne')
-    #  contrat              = models.ForeignKey('Location')
+class Locataire(models.Model):
+    personne    = models.ForeignKey('Personne')
+    location    = models.ForeignKey('Location')
+    infos_compl = models.TextField()
+    principal   = models.BooleanField(default=true)
+
+    def __str__(self):
+        return self.personne + " (" + self.location + ")"
+
     #  societe              = models.CharField(max_length=100)
     #  num_tva              = models.CharField(max_length=30)
     #  profession_dans_bien = models.CharField(max_length=50)
-    #  infos_complementaire = models.TextField(max_length=500)
     #  personne_garante     = models.ForeignKey('Personne')
-    #  principal            = models.BooleanField(default=true)
     #  # nomReference       = models.CharField(max_length=100)
 
     # class Depense(models.Model):
