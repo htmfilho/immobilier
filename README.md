@@ -57,6 +57,7 @@ Running:
     (immovenv) $ pip install django==1.8
 
 ### Starting the app
-
+    
+    (immovenv) $ python manage.py makemigrations
     (immovenv) $ python manage.py migrate
     (immovenv) $ python manage.py runserver
