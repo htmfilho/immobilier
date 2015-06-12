@@ -4,6 +4,7 @@ from django.db import models
 class Personne(models.Model):
     nom            = models.CharField(max_length = 100)
     prenom         = models.CharField(max_length = 100)
+    societe        = models.CharField(max_length = 100, blank = True, null = True)
     email          = models.CharField(max_length = 100, blank = True, null = True)
     profession     = models.CharField(max_length = 100, blank = True, null = True)
     date_naissance = models.DateField(auto_now = False, blank = True, null = True, auto_now_add = False)
@@ -38,7 +39,7 @@ class Batiment(models.Model):
     nom                    = models.CharField(max_length = 100, blank = True, null = True)
     localite               = models.CharField(max_length = 150, blank = True, null = True)
     numero                 = models.IntegerField(blank = True, null = True)
-    boite                  = models.IntegerField(blank = True, null = True)
+    boite                  = models.CharField(max_length = 10, blank = True, null = True)
     code_postal            = models.CharField(max_length = 10, blank = True, null = True)
     ville                  = models.CharField(max_length = 100, blank = True, null = True)
     province               = models.CharField(max_length = 100, blank = True, null = True)
@@ -66,20 +67,20 @@ class Proprietaire(models.Model):
     # credit_date_fin = models.DateField(auto_now=false,auto_now_add=false)
     # assurance_proprietaire = models.ForeignKey('Assurance')
     def __str__(self):
-        return self.personne + ' (' + self.batiment + ')'
+        return self.proprietaire.nom +", " + self.proprietaire.prenom + ' (' + self.batiment.nom + ')'
     
     
 class Location(models.Model):
     batiment   = models.ForeignKey('Batiment')
-    date_debut = models.DateField(auto_now = True,  auto_now_add = False)
+    date_debut = models.DateField(auto_now = False, auto_now_add = False)# je n'arrive pas à mettre la date du jour par défaut
     date_fin   = models.DateField(auto_now = False, auto_now_add = False)
-    loyer      = models.DecimalField(max_digits=5, decimal_places=2, default = 0)
-    charges    = models.DecimalField(max_digits=5, decimal_places=2, default = 0)
+    loyer      = models.DecimalField(max_digits=6, decimal_places=2, default = 0)
+    charges    = models.DecimalField(max_digits=6, decimal_places=2, default = 0)
     index      = models.DecimalField(max_digits=5, decimal_places=2, default = 0)
     assurance  = models.ForeignKey('Assurance', blank = True, null = True)
 
     def __str__(self):
-        return self.batiment + " (" + self.date_debut + " - " + self.date_fin + ")"
+        return self.batiment.nom + " (" + self.date_debut.strftime('%d-%m-%Y') + " au " + self.date_fin.strftime('%d-%m-%Y') + ")"
         
         
 class Contrat(models.Model):
@@ -87,8 +88,8 @@ class Contrat(models.Model):
     date_debut   = models.DateField(auto_now = True,  auto_now_add = False)
     date_fin     = models.DateField(auto_now = False, auto_now_add = False, blank = True, null = True)
     renonciation = models.DateField(auto_now = False, auto_now_add = False)
-    loyer_base   = models.DecimalField(max_digits=5, decimal_places=2, default = 0)
-    charges_base = models.DecimalField(max_digits=5, decimal_places=2, default = 0)
+    loyer_base   = models.DecimalField(max_digits=6, decimal_places=2, default = 0)
+    charges_base = models.DecimalField(max_digits=6, decimal_places=2, default = 0)
     index_base   = models.DecimalField(max_digits=5, decimal_places=2, default = 0)  
     # bail_jour_quittance = models.CharField(max_length=15) ?????
     
@@ -107,18 +108,18 @@ class Locataire(models.Model):
     #personne_garante = models.ForeignKey('Personne')#??? rattaché à la location ou au locataire???
     
     def __str__(self):
-        return self.personne + " (" + self.location + ")"
+        return self.personne.nom + ", " + self.personne.prenom + " (" + self.location.date_debut.strftime('%d-%m-%Y') + " au " + self.location.date_fin.strftime('%d-%m-%Y') + ")" + ")"
 
         
 class FraisMaintenance(models.Model):
     proprietaire     = models.ForeignKey('Proprietaire')
-    entrepreneur     = models.ForeignKey('Personne')
+    entrepreneur     = models.ForeignKey('Personne', blank = True, null = True)
     description      = models.TextField()
-    montant          = models.DecimalField(max_digits=5, decimal_places=2)
-    date_realisation = models.DateField(auto_now = False, auto_now_add = False)
+    montant          = models.DecimalField(max_digits=8, decimal_places=2, default = 0)
+    date_realisation = models.DateField(auto_now = False, auto_now_add = False, blank = True, null = True)
 
     def __str__(self):
-        return self.proprietaire + ", " + self.description 
+        return self.proprietaire.proprietaire.nom + ", " + self.proprietaire.proprietaire.prenom  + " " + self.proprietaire.batiment.nom +" "+ self.description 
         
         
     # class Revision(models.Model):
@@ -149,7 +150,7 @@ class SuiviLoyer(models.Model):
     charges_percu = models.DecimalField(max_digits=5, decimal_places=2 , blank = True, null = True)
     
     def __str__(self):
-        return self.location + " (" + self.etat_suivi + ")"
+        return self.location.batiment.nom + " (" + self.location.date_debut.strftime('%d-%m-%Y') + " au " + self.location.date_fin.strftime('%d-%m-%Y') + ")" + " (" + self.etat_suivi + ")"
         
     # class Alerte(models.Model)    : ???
     #	location = models.ForeignKey('Location')
@@ -169,4 +170,4 @@ class ContratGestion(models.Model):
     date_fin     = models.DateField(auto_now = False, auto_now_add = False, blank = True, null = True)
 
     def __str__(self):
-        return self.gestionnaire + " - " + self.proprietaire   
+        return self.gestionnaire.nom + ", " + self.gestionnaire.prenom  + " - " + self.proprietaire.proprietaire.nom + ", " + self.proprietaire.proprietaire.prenom  
