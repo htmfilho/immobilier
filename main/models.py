@@ -24,6 +24,7 @@ class Assurance(models.Model):
     def __str__(self):
         return self.nom
 
+        
 class Banque(models.Model):
     nom         = models.CharField(max_length = 100)
     description = models.TextField(blank = True, null = True)
@@ -31,23 +32,28 @@ class Banque(models.Model):
     def __str__(self):
         return self.nom
 
+        
 class Batiment(models.Model):
-    description = models.TextField()
-    nom         = models.CharField(max_length = 100, blank = True, null = True)
-    localite    = models.CharField(max_length = 150, blank = True, null = True)
-    numero      = models.IntegerField(blank = True, null = True)
-    boite       = models.IntegerField(blank = True, null = True)
-    code_postal = models.CharField(max_length = 10, blank = True, null = True)
-    ville       = models.CharField(max_length = 100, blank = True, null = True)
-    province    = models.CharField(max_length = 100, blank = True, null = True)
-    surface     = models.DecimalField(max_digits = 5, decimal_places = 3, blank = True, null = True)
+    description            = models.TextField()
+    nom                    = models.CharField(max_length = 100, blank = True, null = True)
+    localite               = models.CharField(max_length = 150, blank = True, null = True)
+    numero                 = models.IntegerField(blank = True, null = True)
+    boite                  = models.IntegerField(blank = True, null = True)
+    code_postal            = models.CharField(max_length = 10, blank = True, null = True)
+    ville                  = models.CharField(max_length = 100, blank = True, null = True)
+    province               = models.CharField(max_length = 100, blank = True, null = True)
+    surface                = models.DecimalField(max_digits = 5, decimal_places = 3, blank = True, null = True)
+    peformance_energetique = models.CharField(max_length = 10,blank = True, null = True)
 
     def __str__(self):
-        return self.description
+        return self.description + ' (' + self.nom + ')'
 
-    #	peformance_energetique = models.DecimalField(max_digits=6, decimal_places=2)
-    # date_modif    = models.DateTimeField(auto_now=true,auto_now_add=true)
-    # proprietaire  = models.ForeignKey('Personne')
+        
+class Proprietaire(models.Model):
+    proprietaire  = models.ForeignKey('Personne')
+    batiment      = models.ForeignKey('Batiment')
+    date_debut    = models.DateField(auto_now = False, blank = True, null = True, auto_now_add = False)
+    date_fin      = models.DateField(auto_now = False, blank = True, null = True, auto_now_add = False)
     # loyer = models.DecimalField(max_digits=6, decimal_places=2)
     # charges = models.DecimalField(max_digits=5, decimal_places=2)
     # precompte_immobilier = DecimalField(max_digits=5, decimal_places=2)
@@ -59,49 +65,62 @@ class Batiment(models.Model):
     # credit_date_debut = models.DateField(auto_now=false,auto_now_add=false)
     # credit_date_fin = models.DateField(auto_now=false,auto_now_add=false)
     # assurance_proprietaire = models.ForeignKey('Assurance')
-
+    def __str__(self):
+        return self.personne + ' (' + self.batiment + ')'
+    
+    
 class Location(models.Model):
     batiment   = models.ForeignKey('Batiment')
     date_debut = models.DateField(auto_now = True,  auto_now_add = False)
     date_fin   = models.DateField(auto_now = False, auto_now_add = False)
+    loyer      = models.DecimalField(max_digits=5, decimal_places=2, default = 0)
+    charges    = models.DecimalField(max_digits=5, decimal_places=2, default = 0)
+    index      = models.DecimalField(max_digits=5, decimal_places=2, default = 0)
+    assurance  = models.ForeignKey('Assurance', blank = True, null = True)
 
     def __str__(self):
         return self.batiment + " (" + self.date_debut + " - " + self.date_fin + ")"
+        
+        
+class Contrat(models.Model):
+    location     = models.ForeignKey('Location')
+    date_debut   = models.DateField(auto_now = True,  auto_now_add = False)
+    date_fin     = models.DateField(auto_now = False, auto_now_add = False, blank = True, null = True)
+    renonciation = models.DateField(auto_now = False, auto_now_add = False)
+    loyer_base   = models.DecimalField(max_digits=5, decimal_places=2, default = 0)
+    charges_base = models.DecimalField(max_digits=5, decimal_places=2, default = 0)
+    index_base   = models.DecimalField(max_digits=5, decimal_places=2, default = 0)  
+    # bail_jour_quittance = models.CharField(max_length=15) ?????
+    
+    def __str__(self):
+        return self.location + " (" + self.date_debut + " - " + self.date_fin + ")"
 
-    # charges             = models.DecimalField(max_digits=5, decimal_places=2)
-    # assurance           = models.ForeignKey('Assurance')
-    # bail_type           = models.CharField(max_length=100)
-    # bail_duree          = models.CharField(max_length=100)
-    # bail_unite          = models.CharField(max_length=100)
-    # bail_jour_quittance = models.CharField(max_length=15)
-    # bail_renom          = models.CharField(max_length=30)
-    # bail_loyer          = models.DecimalField(max_digits=5, decimal_places=2)
-    # locataire_actif     = models.BooleanField(default=true)
-    # date_de_modif       = models.DateTimeField(auto_now=true,auto_now_add=true)
-    # index_ref           = models.DecimalField(max_digits=5, decimal_places=2)
-    # index_actuel        = models.DecimalField(max_digits=5, decimal_places=2)
-
+        
 class Locataire(models.Model):
-    personne    = models.ForeignKey('Personne')
-    location    = models.ForeignKey('Location')
-    infos_compl = models.TextField(blank = True, null = True)
-    principal   = models.BooleanField(default = True)
-
+    personne         = models.ForeignKey('Personne')
+    location         = models.ForeignKey('Location')
+    infos_complement = models.TextField(blank = True, null = True)
+    principal        = models.BooleanField(default = True)
+    societe          = models.CharField(max_length=100, blank = True, null = True)
+    tva              = models.CharField(max_length=30, blank = True, null = True)
+    profession       = models.CharField(max_length=50, blank = True, null = True)
+    #personne_garante = models.ForeignKey('Personne')#??? rattaché à la location ou au locataire???
+    
     def __str__(self):
         return self.personne + " (" + self.location + ")"
 
-    #  societe              = models.CharField(max_length=100)
-    #  num_tva              = models.CharField(max_length=30)
-    #  profession_dans_bien = models.CharField(max_length=50)
-    #  personne_garante     = models.ForeignKey('Personne')
-    #  # nomReference       = models.CharField(max_length=100)
+        
+class FraisMaintenance(models.Model):
+    proprietaire     = models.ForeignKey('Proprietaire')
+    entrepreneur     = models.ForeignKey('Personne')
+    description      = models.TextField()
+    montant          = models.DecimalField(max_digits=5, decimal_places=2)
+    date_realisation = models.DateField(auto_now = False, auto_now_add = False)
 
-    # class Depense(models.Model):
-    #	batiment    = models.ForeignKey('Batiment')
-    #	contrat     = models.ForeignKey('Location')
-    #	description = models.TextField(max_length=500)
-    #	montant     = models.DecimalField(max_digits=5, decimal_places=2)
-
+    def __str__(self):
+        return self.proprietaire + ", " + self.description 
+        
+        
     # class Revision(models.Model):
     #	location      = models.ForeignKey('Location')
     #	loyer         = models.DecimalField(max_digits=5, decimal_places=2)
@@ -115,24 +134,24 @@ class Locataire(models.Model):
     #   # public enum EtatRevision{
     #	# VERIFIE("Vérifié"),
     #	# A_VERIFIER("A vérifier"
-
-    # class SuiviLoyer(models.Model)    :
-    #	location           = models.ForeignKey('Location')
-    #	revision           = models.ForeignKey('Revision')
-    #	date_loyer_attendu = models.DateField(auto_now=false,auto_now_add=false)
-    #	date_loyer_percu   = models.DateField(auto_now=false,auto_now_add=false)
-    #	etat_suivi         = models.TextField(max_length=30)
-    #	remarque           = models.TextField(max_length=500)
-    #	date_de_modif      = models.DateTimeField(auto_now=true,auto_now_add=true)
-    #	loyer_percu        = models.DecimalField(max_digits=5, decimal_places=2)
-    #	charges_percu      = models.DecimalField(max_digits=5, decimal_places=2)
-    # public enum EtatSuivi {
-    # A_VERIFIER(0,"A vérifier"),
-    # IMPAYE(1,"Impaye"),
-    # EN_RETARD(2,"En retard"),
-    # PAYE(3,"PAYE");
-
-    # class Alerte(models.Model)    :
+class SuiviLoyer(models.Model):
+    ETAT = (
+        ('A_VERIFIER','A vérifier'),
+        ('IMPAYE','Impayé'),
+        ('EN_RETARD','En retard'),
+        ('PAYE','Payé')
+    )
+    location      = models.ForeignKey('Location')    
+    date_paiement = models.DateField(auto_now = False,auto_now_add = False)
+    etat_suivi    = models.CharField(max_length = 10, choices = ETAT, default = 'A_VERIFIER')
+    remarque      = models.TextField(blank = True, null = True)
+    loyer_percu   = models.DecimalField(max_digits=5, decimal_places=2, blank = True, null = True)
+    charges_percu = models.DecimalField(max_digits=5, decimal_places=2 , blank = True, null = True)
+    
+    def __str__(self):
+        return self.location + " (" + self.etat_suivi + ")"
+        
+    # class Alerte(models.Model)    : ???
     #	location = models.ForeignKey('Location')
     #	message  = models.TextField(max_length=500)
     #	etat     = models.TextField(max_length=30)
@@ -142,3 +161,12 @@ class Locataire(models.Model):
     # public enum EtatAlerte{
     # VERIFIE("vérifié"),
     # A_VERIFIER("A vérifier");
+
+class ContratGestion(models.Model):
+    proprietaire = models.ForeignKey('Proprietaire')#??? 
+    gestionnaire = models.ForeignKey('Personne')
+    date_debut   = models.DateField(auto_now = True,  auto_now_add = False)
+    date_fin     = models.DateField(auto_now = False, auto_now_add = False, blank = True, null = True)
+
+    def __str__(self):
+        return self.gestionnaire + " - " + self.proprietaire   
