@@ -58,6 +58,11 @@ Running:
 
 ### Starting the app
     
-    (immovenv) $ python manage.py makemigrations
     (immovenv) $ python manage.py migrate
     (immovenv) $ python manage.py runserver
+    
+### Developing
+
+Everytime you change the model in any of the modules you have to generate a new migration file with the following command:
+
+    (immovenv) $ python manage.py makemigrations
