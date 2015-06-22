@@ -61,8 +61,18 @@ Running:
     (immovenv) $ python manage.py migrate
     (immovenv) $ python manage.py runserver
     
+After the restart, the application is available at http://localhost:8000.
+    
 ### Developing
 
 Everytime you change the model in any of the modules you have to generate a new migration file with the following command:
 
     (immovenv) $ python manage.py makemigrations
+
+### Admin module
+
+To access the admin module, you first have to create a user. Stop the server and run the following command:
+
+    (immovenv) $ python manage.py createsuperuser
+    
+Follow the instructions and restart the server. To test your access, go to http://localhost:8000/admin and test your access.
