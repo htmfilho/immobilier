@@ -31,7 +31,15 @@ class Banque(models.Model):
 
     def __str__(self):
         return self.nom
-
+        
+        
+class Photo(models.Model):
+    photo     = models.FileField( upload_to="photos")
+    texte     = models.TextField(default="") 
+    
+    def __str__(self):
+        return self.texte  
+        
         
 class Batiment(models.Model):
     nom                    = models.CharField(max_length = 100)    
@@ -45,10 +53,31 @@ class Batiment(models.Model):
     # province               = models.CharField(max_length = 100, blank = True, null = True)
     superficie             = models.DecimalField(max_digits = 5, decimal_places = 3, blank = True, null = True)
     peformance_energetique = models.CharField(max_length = 10,blank = True, null = True)
-
+    photo                 = models.ManyToManyField(Photo, blank = True, null = True)
     def __str__(self):
         return self.nom + ', ' + self.rue +  ', ' + self.localite
-
+        
+    def adresse_rue(self):
+        adresse_complete=""
+        if self.rue is not None :
+            adresse_complete += self.rue
+        if self.numero is not None :
+            adresse_complete += " " +str(self.numero)                
+        return adresse_complete
+        
+    def adresse_localite(self):
+        adresse_complete=""
+        if self.code_postal is not None :
+            adresse_complete+= self.code_postal
+        if self.localite is not None :
+            adresse_complete+= " " + self.localite
+        return adresse_complete     
+   
+    def proprietaires(self):        
+        return Proprietaire.objects.filter(batiment=self) 
+        
+    def contrats_location(self):        
+        return ContratLocation.objects.filter(batiment=self)            
         
 class Proprietaire(models.Model):
     proprietaire  = models.ForeignKey('Personne')
@@ -58,22 +87,29 @@ class Proprietaire(models.Model):
     
     def __str__(self):
         return self.proprietaire.nom +", " + self.proprietaire.prenom + "-" + self.batiment.nom + ", " + self.batiment.rue +", " + self.batiment.localite  
-    
+
     
 class FinancementLocation(models.Model):    
+    contrat_location     = models.ForeignKey('ContratLocation',default=None)      
     date_debut = models.DateField(auto_now = False, auto_now_add = False)# je n'arrive pas à mettre la date du jour par défaut    
     date_fin   = models.DateField(auto_now = False, auto_now_add = False, blank = True, null = True)
     loyer      = models.DecimalField(max_digits=6, decimal_places=2, default = 0)
     charges    = models.DecimalField(max_digits=6, decimal_places=2, default = 0)
     index      = models.DecimalField(max_digits=5, decimal_places=2, default = 0)
-   
     def __str__(self):
-        return str(self.loyer) + "/" + str(self.charges) + " (" + self.date_debut.strftime('%d-%m-%Y') + " au " + self.date_fin.strftime('%d-%m-%Y') + ")"
+        chaine = str(self.loyer) + "/" + str(self.charges) 
+        if self.date_debut is not None :
+            chaine = chaine + " (" + self.date_debut.strftime('%d-%m-%Y') 
+        if self.date_fin is not None :
+            chaine = chaine + " au " + self.date_fin.strftime('%d-%m-%Y') +")"
+            
+        return chaine
+        
         
         
 class ContratLocation(models.Model):
     batiment             = models.ForeignKey('Batiment')
-    financement_location = models.ForeignKey('FinancementLocation')    
+       
     date_debut           = models.DateField(auto_now = False,  auto_now_add = False)
     date_fin             = models.DateField(auto_now = False, auto_now_add = False, blank = True, null = True)
     renonciation         = models.DateField(auto_now = False, auto_now_add = False, blank = True, null = True)
@@ -82,14 +118,19 @@ class ContratLocation(models.Model):
     #loyer_base   = models.DecimalField(max_digits=6, decimal_places=2, default = 0)
     #charges_base = models.DecimalField(max_digits=6, decimal_places=2, default = 0)
     #index_base   = models.DecimalField(max_digits=5, decimal_places=2, default = 0)  
-    
+   
     def __str__(self):
         return self.batiment.description + "," + self.batiment.localite + " (" + self.date_debut.strftime('%d-%m-%Y') + " - " + self.date_fin.strftime('%d-%m-%Y') + ")"
-
         
+    def locataires(self):        
+        return Locataire.objects.filter(contrat_location=self)    
+        
+    def financements(self):        
+        return FinancementLocation.objects.filter(contrat_location=self)         
+      
 class Locataire(models.Model):
     personne             = models.ForeignKey('Personne')
-    financement_location = models.ForeignKey('FinancementLocation')
+    contrat_location     = models.ForeignKey('ContratLocation',default=None)
     infos_complement     = models.TextField(blank = True, null = True)
     principal            = models.BooleanField(default = True)
     societe              = models.CharField(max_length=100, blank = True, null = True)
@@ -150,4 +191,6 @@ class ModeleDocument(models.Model):
 
     def __str__(self):
         return self.type_document   
-       
+
+        
+      

@@ -11,6 +11,7 @@ from .models import FraisMaintenance
 from .models import SuiviLoyer
 from .models import Proprietaire
 from .models import ModeleDocument
+from .models import Photo
 
 admin.site.register(Personne)
 admin.site.register(Assurance)
@@ -24,3 +25,5 @@ admin.site.register(FraisMaintenance)
 admin.site.register(SuiviLoyer)
 admin.site.register(Proprietaire)
 admin.site.register(ModeleDocument)
+admin.site.register(Photo)
+

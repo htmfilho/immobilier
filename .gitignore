@@ -5,3 +5,4 @@ immovenv/
 main/__pycache__/
 main/migrations/__pycache__/
 
+__pycache__/test.cpython-34.pyc
