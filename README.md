@@ -73,8 +73,8 @@ The migration files will make sure the database is consistent with the code, so 
 
 In case you didn't put the application in production yet and you face a major problem on the migration, you can, as a last resource, start from scratch by deleting the database file and recreating it. For that, you just have to delete the file `db.sqlite3` located at the root of the project and perform the following commands:
 
-    $ python manage.py migrate
-    $ python manage.py createsuperuser
+    (immovenv) $ python manage.py migrate
+    (immovenv) $ python manage.py createsuperuser
 
 ### Admin module
 
