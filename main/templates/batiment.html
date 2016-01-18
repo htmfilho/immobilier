@@ -1,0 +1,39 @@
+{% extends "layout.html" %}
+{% block breadcrumb %}
+  <li><a href="{% url 'listeBatiments' %}">Les batiments</a></li>
+  <li class="active">Batiment</li>
+{% endblock %}
+{% block content %}
+
+        <p>
+            <table class="table table-striped table-hover">
+                <thead>
+                    <th>Nom</th>
+                    <th>Adresse</th>                       
+                    <th>Proprio(s)</th>
+                </thead>
+            
+                <tr>
+                    <td>
+                        {{ batiment.nom }}
+                    </td>
+                    <td>
+                        {{ batiment.adresse_rue }}
+                        <br/>
+                        {{ batiment.adresse_localite }}                        
+                    </td>
+                    <td>
+                    <table>
+                    {% for proprietaire in batiment.proprietaires %}  
+                    <tr>
+                    <td>{{ proprietaire.proprietaire }} </td>                   
+                    </tr>
+                      {% endfor%}
+                      </table>
+                    </td>
+                </tr>
+            
+            </table>    
+                        
+        </p>
+{% endblock %}

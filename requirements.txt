@@ -1,0 +1,7 @@
+pip install django-filter 
+pip install XlsxWriter
+pip install xlrd
+pip install xlwt
+pip install reportlab
+dans 
+(immovenv) C:\python\projects\immobilier>pip install django-filter

@@ -1,0 +1,18 @@
+<html>
+    <head>
+        <title>Immobilier</title>
+    </head>
+    <body>
+        <h1>Immobilier name</h1>
+        
+        <form action="/name/" method="post">
+            {% csrf_token %}
+            {{ form.as_p }}
+            <label for="your_name">Your name: </label>
+            <input id="your_name" type="text" name="your_name" maxlength="100">
+            <input id="your_name2" type="text" name="your_name2" maxlength="100">
+            <input type="submit" value="Submit" />
+        </form>
+
+    </body>
+</html>

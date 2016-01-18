@@ -1,0 +1,22 @@
+{% extends "layout.html" %}
+{% load staticfiles %}
+{% block content %}
+<ul class="media-list">
+  <li class="media">
+    <div class="media-left">
+      <a href="{% url 'listeBatiments' %}">
+        <img class="media-object glyphicon glyphicon-home">
+      </a>
+      <a href="{% url 'listeProprietaires' %}">
+        <img class="media-object" src="{% static 'images/icon_studies.png' %}">
+      </a>
+      <a href="{% url 'listeProprietaires' %}">
+        <img class="media-object" src="{% static 'images/icon_studies.png' %}">
+      </a>
+    </div>
+    <div class="media-body">
+      <h4 class="media-heading"><a href="{% url 'listeBatiments' %}">Les batiments</a></h4>
+      <h4 class="media-heading"><a href="{% url 'listeProprietaires' %}">Les proprietaires</a></h4>
+    </div>
+</ul>
+{% endblock %}

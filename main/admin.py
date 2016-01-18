@@ -12,11 +12,23 @@ from .models import SuiviLoyer
 from .models import Proprietaire
 from .models import ModeleDocument
 from .models import Photo
+from .exportUtils import export_xls_batiment
+from .pdfUtils import pdf_batiment
 
-admin.site.register(Personne)
+class PersonneAdmin(admin.ModelAdmin):
+    search_fields = ['nom']
+    list_filter = ('nom','prenom',)
+
+admin.site.register(Personne,PersonneAdmin)
 admin.site.register(Assurance)
 admin.site.register(Banque)
-admin.site.register(Batiment)
+
+class BatimentAdmin(admin.ModelAdmin):
+    search_fields = ['localite']
+    actions = [export_xls_batiment, pdf_batiment]
+
+admin.site.register(Batiment,BatimentAdmin)
+
 admin.site.register(FinancementLocation)
 admin.site.register(Locataire)
 admin.site.register(ContratLocation)

@@ -1,0 +1,18 @@
+<html>
+    <head>
+        <title>Immobilier</title>
+        <link rel="stylesheet" type="text/css" href="/static/admin/css/base.css" />
+<link rel="stylesheet" type="text/css" href="/static/admin/css/dashboard.css" />
+    </head>
+    <body class=" dashboard">
+        
+        {% block content %}
+    <h2>Batiments</h2>
+    <ul>
+        {% for batiment in object_list %}
+            <li>{{ batiment.nom }}</li>
+        {% endfor %}
+    </ul>
+{% endblock %}
+</body>
+</html>

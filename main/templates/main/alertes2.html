@@ -1,0 +1,30 @@
+<html>
+    <head>
+        <title>Immobilier</title>
+    </head>
+    <body>
+        <h1>Immobilier alertes 2</h1>
+        
+        <p>        
+        
+            Le batiment :            
+            {{ batiments2.nom }}
+                  <table border="1">
+                            <tr><th colspan="3">Contrat location</th></tr>
+                            <tr><td>
+                             {% for contratLocation in contrats_location2 %}        
+                                <tr>
+                                    <td>
+                                        {{ contratLocation.date_debut }}
+                                    </td>
+                                   <td>{{ contratLocation.financement_location.date_debut }}</td>
+                                   <td>{{ contratLocation.financement_location.loyer }}</td>
+                                </tr>
+                            {% endfor%}
+                            
+                            
+                            <td></tr>
+                        </table>
+        </p>
+    </body>
+</html>
