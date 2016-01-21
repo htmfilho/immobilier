@@ -1,0 +1,38 @@
+{% extends "layout.html" %}
+{% load staticfiles %}
+{% load order %}
+{% block breadcrumb %}
+  <li class="active">Liste des contrats de gestion</li>
+{% endblock %}
+{% block content %}
+
+  <table class="table table-striped table-hover">
+      <thead>
+          <th>Propriétaire<proprietaire/th>
+          <th>Entrepreneur</th>
+          <th>Description</th>
+          <th>Montant</td>
+          <th>Date réalisation</th>
+          <th></th>
+        </thead>
+  {% for frais in object_list %}
+      <tr>
+          <td>{{ frais.proprietaire }}</td>
+          <td>{{ frais.entrepreneur }}</td>
+          <td>{{ frais.description }}</td>
+          <td>{{ frais.montant }}</td>
+          <td>{{ frais.date_realisation }}</td>
+          <td>
+            <a href="{% url 'fraismaintenance-update' frais.pk%}" title="Pour modifier des frais"><span class="glyphicon glyphicon-pencil" aria-hidden="true"></span></a>
+            <a href="{% url 'fraismaintenance-delete' frais.pk%}" title="Pour supprimer des frais"><span class="glyphicon glyphicon-remove" aria-hidden="true"></span></a>
+          </td>
+      </tr>
+  {% endfor%}
+  </table>
+  <p align="right">
+    <a href="{% url 'fraismaintenance-create' %}" title="Pour ajouter un nouveau frais"><span class="glyphicon glyphicon-plus" aria-hidden="true"></span></a>
+  </p>
+
+
+
+{% endblock %}

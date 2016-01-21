@@ -1,0 +1,65 @@
+{% extends "layout.html" %}
+{% block breadcrumb %}
+  <li><a href="{% url 'listeBatiments' %}">Les batiments</a></li>
+  <li class="active">Batiment</li>
+{% endblock %}
+{% block content %}
+<form  id="batiment_form" method="post" action="{% url 'update_batiment' %}">
+  {% csrf_token %}
+  <input type="hidden" value="modify" name="action"/>
+  <input type="hidden" value="{{ batiment.id }}" name="id"/>
+  <div class="form-group">
+    <label for="rue">Rue</label>
+    <input class="form-control" id="rue" placeholder="Rue" value="{{batiment.rue}}" name="rue">
+  </div>
+  <div class="row">
+    <div class="form-group">
+      <label for="numero" class="control-label">Numéro</label>
+      <input class="form-control" id="numero" placeholder="Numéro" value="{{batiment.numero}}" name="numero">
+      <label for="boite"  class="control-label">Boite</label>
+      <input class="form-control" id="boite" placeholder="Boite" value="{{batiment.boite}}" name="boite">
+    </div>
+  </div>
+  <div class="form-group">
+    <label for="code_postal" class="control-label">Code postal</label>
+    <input class="form-control" id="code_postal" placeholder="Code postal" value="{{batiment.code_postal}}" name="code_postal">
+    <label for="localite" class="control-label">Localité</label>
+    <input class="form-control" id="localite" placeholder="Localité" value="{{batiment.localite}}" name="localite">
+  </div>
+  <div class="form-group">
+    <label class="control-label">Propriétaire <a href="{% url 'add_proprietaire' batiment.id %}">add</a></label>
+    <table>
+      {% for proprietaire in batiment.proprietaires %}
+      <tr>
+        <td><a href="{% url 'proprietaire' proprietaire.id %}">{{ proprietaire.proprietaire }}</a></td>
+        <td><a href="{% url 'update_proprietaire' proprietaire.id %}">modifier</a></td>
+        <td><a href="{% url 'delete_proprietaire' proprietaire.id %}">supprimer</a></td>
+      </tr>
+      {% endfor%}
+      </table>
+  </div>
+  <div class="form-group">
+    <label class="control-label">Location actuelle</label>
+    <br/>
+    {% if batiment.location_actuelle%}
+    du {{ batiment.location_actuelle.date_debut}} au {{ batiment.location_actuelle.date_fin}}
+    {%endif%}
+  </div>
+  <div class="form-group">
+    <label class="control-label">Locataire(s) Actuels</label>
+    <br/>
+    <table>
+      {% for p in batiment.locataires_actuels %}
+      <tr>
+        <td>{{  p.nom }} {{  p.prenom }} </td>
+      </tr>
+    {% endfor%}
+      </table
+
+  </div>
+
+    <input type="submit" value="OK">
+
+</form>
+
+{% endblock %}

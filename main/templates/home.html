@@ -1,22 +1,36 @@
 {% extends "layout.html" %}
 {% load staticfiles %}
 {% block content %}
+<br/>
 <ul class="media-list">
   <li class="media">
     <div class="media-left">
-      <a href="{% url 'listeBatiments' %}">
-        <img class="media-object glyphicon glyphicon-home">
+      <a href="{% url 'batiment_list' %}">
+        <img class="media-object" src="{% static 'images/glyphicons-21-home.png'%}">
       </a>
-      <a href="{% url 'listeProprietaires' %}">
-        <img class="media-object" src="{% static 'images/icon_studies.png' %}">
+      <a href="{% url 'proprietaire_list' %}">
+        <img class="media-object" src="{% static 'images/glyphicons-45-keys.png' %}">
       </a>
-      <a href="{% url 'listeProprietaires' %}">
-        <img class="media-object" src="{% static 'images/icon_studies.png' %}">
+      <a href="{% url 'suivis' %}">
+        <img class="media-object" src="{% static 'images/glyphicons-25-parents.png' %}">
+      </a>
+      <a href="{% url 'contrat_gestion_list' %}">
+        <img class="media-object" src="{% static 'images/glyphicons-37-file.png' %}">
+      </a>
+      <a href="{% url 'fraismaintenance_list' %}">
+        <img class="media-object" src="{% static 'images/glyphicons-788-vr-maintenance.png' %}">
+      </a>
+      <a href="{% url 'personne_list' %}">
+        <img class="media-object" src="{% static 'images/glyphicons-25-parents.png' %}">
       </a>
     </div>
     <div class="media-body">
-      <h4 class="media-heading"><a href="{% url 'listeBatiments' %}">Les batiments</a></h4>
-      <h4 class="media-heading"><a href="{% url 'listeProprietaires' %}">Les proprietaires</a></h4>
+      <h4 class="media-heading"><a href="{% url 'batiment_list' %}">Les batiments</a></h4>
+      <h4 class="media-heading"><a href="{% url 'proprietaire_list' %}">Les proprietaires</a></h4>
+      <h4 class="media-heading"><a href="{% url 'suivis' %}">Suivis</a></h4>
+      <h4 class="media-heading"><a href="{% url 'contrat_gestion_list' %}">Les contrats de gestion</a></h4>
+      <h4 class="media-heading"><a href="{% url 'fraismaintenance_list' %}">Frais de maintenance</a></h4>
+      <h4 class="media-heading"><a href="{% url 'personne_list' %}">Personnes</a></h4>
     </div>
 </ul>
 {% endblock %}

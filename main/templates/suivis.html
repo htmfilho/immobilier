@@ -1,0 +1,50 @@
+{% extends "layout.html" %}
+{% block breadcrumb %}
+  <li class="active">Suivi</li>
+{% endblock %}
+{% block content %}
+<form method="get" action="{% url 'suivis_search'%}" class="navbar-form pull-right">
+  <div class="form-group">
+    <label for="date_debut">Date début</label>
+    <input class="form-control" id="date_debut" placeholder="Date début" value="{{ date_debut }}" name="date_debut">
+    <label for="date_fin">Date fin</label>
+    <input class="form-control" id="date_fin" placeholder="Date fin" value="{{ date_fin }}" name="date_fin">
+    <label for="date_fin">Etat</label>
+    <select name="etat">
+      <option value="A_VERIFIER" checked>A vérifier</option>
+      <option value="IMPAYE">Impayé</option>
+      <option value="EN_RETARD">En retard</option>
+      <option value="PAYE">Payé</option>
+      <option value="TOUS">Tous</option>
+    </select>
+  </div>
+  <input type="submit" class="btn" value="Ok" >
+</form>
+
+{% if suivis|length > 0%}
+  <table class="table table-striped table-hover">
+    <thead>
+      <th>Batiment</th>
+      <th>Date paiement</th>
+      <th>Etat</th>
+      <th>Loyer attendu</th>
+      <th>Loyer percu</th>
+      <th>Charges attendues</th>
+      <th>Charges percues</th>
+      <th>Remarque</th>
+    </thead>
+    {% for s in suivis %}
+      <tr>
+        <td>{{s.financement_location.contrat_location.batiment}}</td>
+        <td>{{s.date_paiement}}</td>
+        <td>{{s.etat_suivi}}</td>
+        <td>{{s.financement_location.loyer}}</td>
+        <td>{{s.loyer_percu}}</td>
+        <td>{{s.financement_location.charges}}</td>
+        <td>{{s.charges_percu}}</td>
+        <td>{{s.remarque}}</td>
+      </tr>
+    {% endfor %}
+  </table>
+{%endif%}
+{% endblock %}

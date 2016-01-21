@@ -1,0 +1,14 @@
+{% extends "layout.html" %}
+
+{% block breadcrumb %}
+
+<form action="" method="post">
+  {% csrf_token %}
+    <p>Sûr de vouloir supprimer "{{ object }}"?</p>
+    <input type="submit" value="Confirmer" />
+    <a href="{% url 'fraismaintenance_list' %}">Annuler</a>
+</form>
+
+
+
+{% endblock %}

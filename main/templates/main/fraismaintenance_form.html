@@ -1,0 +1,15 @@
+{% extends "layout.html" %}
+{% load staticfiles %}
+{% load order %}
+{% block breadcrumb %}
+  <li class="active">Frais de maintenance</li>
+{% endblock %}
+{% block content %}
+
+<form action="" method="post">
+  {% csrf_token %}
+    {{ form.as_p }}
+  <input type="submit" value="ok"/>
+</form>
+
+{% endblock %}

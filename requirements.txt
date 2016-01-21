@@ -1,7 +1,7 @@
-pip install django-filter 
-pip install XlsxWriter
-pip install xlrd
-pip install xlwt
-pip install reportlab
-dans 
-(immovenv) C:\python\projects\immobilier>pip install django-filter
+Django==1.8
+django-crispy-forms==1.6.0
+Pillow==3.1.0
+python-dateutil==2.4.2
+reportlab==3.2.0
+six==1.10.0
+wheel==0.24.0
