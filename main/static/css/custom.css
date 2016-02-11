@@ -1,3 +1,15 @@
 body {
   padding-top: 70px;
 }
+.A_VERIFIER {
+  background-color: #FF9966;
+}
+.IMPAYE {
+  background-color: #CC3366;
+}
+.EN_RETARD {
+  background-color: #66CCFF;
+}
+.PAYE {
+  background-color: transparent;
+}

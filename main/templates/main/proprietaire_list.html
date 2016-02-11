@@ -26,10 +26,14 @@
                 {{ proprietaire.proprietaire }}
             </td>
             <td>
+              %if proprietaire.date_debut%}
               {{ proprietaire.date_debut }}
+              {%endif%}
             </td>
             <td>
+              {%if proprietaire.date_fin%}
               {{ proprietaire.date_fin }}
+              {%endif%}
             </td>
             <td>
                 {{ proprietaire.proprietaire.adresse_complete }}
@@ -37,7 +41,7 @@
             <td>
             <table>
             {% for batiment in proprietaire.batiments %}
-               <tr><td><a href="{% url 'batiment' batiment.id %}">{{ batiment.rue }}</a></td></tr>
+               <tr><td><a href="{% url '../batiment' batiment.pk %}">{{ batiment.rue }}</a></td></tr>
             {% endfor%}
             </table>
             </td>

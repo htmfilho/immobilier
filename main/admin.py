@@ -12,6 +12,11 @@ from .models import SuiviLoyer
 from .models import Proprietaire
 from .models import ModeleDocument
 from .models import Photo
+from .models import Societe
+from .models import Alerte
+from .models import Pays
+from .models import Localite
+
 from .exportUtils import export_xls_batiment
 from .pdfUtils import pdf_batiment
 
@@ -38,4 +43,7 @@ admin.site.register(SuiviLoyer)
 admin.site.register(Proprietaire)
 admin.site.register(ModeleDocument)
 admin.site.register(Photo)
-
+admin.site.register(Societe)
+admin.site.register(Alerte)
+admin.site.register(Pays)
+admin.site.register(Localite)

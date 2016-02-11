@@ -1,36 +1,60 @@
 {% extends "layout.html" %}
 {% load staticfiles %}
 {% block content %}
+
+  <!--  <div class="row">
+        <div class="col-md-1"><i class="fa fa-home" style="font-size: 400%; color: #6699FF;"></i></div>
+        <div class="col-md-5">
+    
+          <h4 class="media-heading"><a href="{% url 'listeBatiments' %}">Batiments</a></h4>
+        </div>
+        <div class="col-md-1"><i class="fa fa-users" style="font-size: 400%; color: #6699FF;"></i></div>
+        <div class="col-md-5">
+          <h4 class="media-heading"><a href="{% url 'listeProprietaires' %}">Propriétaires</a></h4>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-1"><i class="fa fa-home" style="font-size: 400%; color: #6699FF;"></i></div>
+        <div class="col-md-5">
+          <h4 class="media-heading"><a href="{% url 'personne_list' %}">Personnes</a></h4>
+        </div>
+        <div class="col-md-1"><i class="fa fa-users" style="font-size: 400%; color: #6699FF;"></i></div>
+        <div class="col-md-5">
+          <h4 class="media-heading"><a href="{% url 'societe_list' %}">Sociétés</a></h4>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-1"><i class="fa fa-home" style="font-size: 400%; color: #6699FF;"></i></div>
+        <div class="col-md-5">
+          <h4 class="media-heading"><a href="{% url 'contratgestion_list' %}">Les contrats de gestion</a></h4>
+        </div>
+        <div class="col-md-1"><i class="fa fa-users" style="font-size: 400%; color: #6699FF;"></i></div>
+        <div class="col-md-5">
+          <h4 class="media-heading"><a href="{% url 'fraismaintenance_list' %}">Frais de maintenance</a></h4>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-1"><i class="fa fa-home" style="font-size: 400%; color: #6699FF;"></i></div>
+        <div class="col-md-5">
+          <h4 class="media-heading"><a href="{% url 'contratlocation_list' %}">Contrats location</a></h4>
+        </div>
+        <div class="col-md-1"><i class="fa fa-users" style="font-size: 400%; color: #6699FF;"></i></div>
+        <div class="col-md-5">
+
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-1"><i class="fa fa-home" style="font-size: 400%; color: #6699FF;"></i></div>
+        <div class="col-md-5">
+          <h4 class="media-heading"><a href="{% url 'suivis' %}">Suivis</a></h4>
+        </div>
+        <div class="col-md-1"><i class="fa fa-users" style="font-size: 400%; color: #6699FF;"></i></div>
+        <div class="col-md-5">
+          <h4 class="media-heading"><a href="{% url 'alerte_list' %}">Alertes</a></h4>
+        </div>
+    </div>-->
+
 <br/>
-<ul class="media-list">
-  <li class="media">
-    <div class="media-left">
-      <a href="{% url 'batiment_list' %}">
-        <img class="media-object" src="{% static 'images/glyphicons-21-home.png'%}">
-      </a>
-      <a href="{% url 'proprietaire_list' %}">
-        <img class="media-object" src="{% static 'images/glyphicons-45-keys.png' %}">
-      </a>
-      <a href="{% url 'suivis' %}">
-        <img class="media-object" src="{% static 'images/glyphicons-25-parents.png' %}">
-      </a>
-      <a href="{% url 'contrat_gestion_list' %}">
-        <img class="media-object" src="{% static 'images/glyphicons-37-file.png' %}">
-      </a>
-      <a href="{% url 'fraismaintenance_list' %}">
-        <img class="media-object" src="{% static 'images/glyphicons-788-vr-maintenance.png' %}">
-      </a>
-      <a href="{% url 'personne_list' %}">
-        <img class="media-object" src="{% static 'images/glyphicons-25-parents.png' %}">
-      </a>
-    </div>
-    <div class="media-body">
-      <h4 class="media-heading"><a href="{% url 'batiment_list' %}">Les batiments</a></h4>
-      <h4 class="media-heading"><a href="{% url 'proprietaire_list' %}">Les proprietaires</a></h4>
-      <h4 class="media-heading"><a href="{% url 'suivis' %}">Suivis</a></h4>
-      <h4 class="media-heading"><a href="{% url 'contrat_gestion_list' %}">Les contrats de gestion</a></h4>
-      <h4 class="media-heading"><a href="{% url 'fraismaintenance_list' %}">Frais de maintenance</a></h4>
-      <h4 class="media-heading"><a href="{% url 'personne_list' %}">Personnes</a></h4>
-    </div>
-</ul>
+<br/>
+
 {% endblock %}

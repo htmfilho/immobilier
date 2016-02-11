@@ -1,0 +1,52 @@
+{% extends "layout.html" %}
+
+{% block breadcrumb %}
+
+  <li class="active">Contrat gestion</li>
+{% endblock %}
+{% block content %}
+
+    <form  method="post" action="{% url 'update-gestion-all' %}">
+      {% csrf_token %}
+      <input type="hidden" value="{{ action }}" name="action"/>
+      <input type="hidden" value="{{ contrat.id }}" name="id"/>
+      <input type="text" id="prev" name="prev" value="{{prev}}"/>
+      <div class="form-group">
+        <label for="batiment">Batiment</label>
+        <input class="form-control" value="{{contrat.batiment}}" name="batiment" readonly="readonly" >
+        <input type="hidden" value="{{ contrat.batiment.id }}" name="batiment_id"/>
+      </div>
+      <div class="form-group">
+        <label for="gestionnaire">Gestionnaire</label>
+        <select name="gestionnaire"  class="form-control">
+          {%for p in personnes%}
+          {%if contrat.gestionnaire and p = contrat.gestionnaire %}
+          <option value="{{p.id}}" selected="">{{p}}</option>
+          {%else%}
+            <option value="{{p.id}}" >{{p}}</option>
+          {%endif%}
+          {%endfor%}
+        </select>
+      </div>
+      <div class="row">
+        <div class="col-md-5">
+        <label for="date_debut">Date début</label>
+        <input class="form-control" id="date_debut" value="{%if contrat.date_debut%}{{contrat.date_debut|date:"j/m/Y" }}{%endif%}" name="date_debut">
+      </div>
+
+      <div class="col-md-5">
+        <label for="date_fin">Date fin</label>
+        <input class="form-control" id="date_fin" value="{%if contrat.date_fin%}{{contrat.date_fin|date:"j/m/Y"}}{%endif%}" name="date_fin">
+      </div>
+      </div>
+      <input type="submit" value="OK">
+
+    </form>
+    {%if message%}
+    <br>
+      <div class="alert alert-danger" role="alert">{{message}}</div>
+
+    {%endif%}
+
+
+{% endblock %}

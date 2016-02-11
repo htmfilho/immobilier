@@ -1,0 +1,54 @@
+{% extends "layout.html" %}
+{% load staticfiles %}
+{% load order %}
+{% block breadcrumb %}
+  <li class="active">Frais de maintenance</li>
+{% endblock %}
+{% block content %}
+
+<form action="" method="post">
+  <div class="row">
+    <div class="col-md-6">
+    <label for="proprietaire">Propriétaire</label>
+    <input class="form-control" value="{%if frais.proprietaire%}{{frais.proprietaire }}{%endif%}" name="proprietaire">
+  </div>
+  <div class="col-md-6">
+  </div>
+</div>
+<div class="row">
+  <div class="col-md-6">
+  <label for="entrepreneur">Entrepreneur</label>
+  <input class="form-control"  value="{%if frais.entrepreneur %}{{ frais.entrepreneur }}{%endif%}" name="entrepreneur">
+</div>
+<div class="col-md-6">
+</div>
+</div>
+<div class="row">
+  <div class="col-md-6">
+  <label for="description">Description</label>
+  <input class="form-control"  value="{%if frais.description %}{{ frais.description }}{%endif%}" name="description">
+</div>
+<div class="col-md-6">
+</div>
+</div>
+<div class="row">
+  <div class="col-md-6">
+  <label for="montant">Montant</label>
+  <input class="form-control"  value="{%if frais.montant %}{{ frais.montant }}{%endif%}" name="montant">
+</div>
+<div class="col-md-6">
+</div>
+</div>
+<div class="row">
+  <div class="col-md-6">
+  <label for="date_realisation">Date réalisation</label>
+  <input class="form-control"  value="{%if frais.date_realisation %}{{ frais.date_realisation|date:"j/m/Y" }}{%endif%}" name="date_realisation">
+</div>
+<div class="col-md-6">
+</div>
+</div>
+
+  <input type="submit" value="ok"/>
+</form>
+
+{% endblock %}

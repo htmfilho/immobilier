@@ -13,6 +13,9 @@
         <link rel="stylesheet" href="{% static "css/bootstrap.min.css" %}">
         <link rel="stylesheet" href="{% static "css/bootstrap-theme.min.css" %}">
         <link rel="stylesheet" href="{% static "css/custom.css" %}">
+        <link rel="stylesheet" href="{% static "css/font-awesome.min.css" %}">
+
+
         {% block style %}
         {% endblock %}
         <style>
@@ -37,16 +40,40 @@
           <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
             <ul class="nav navbar-nav">
               <li class="dropdown">
+                <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Batiments <span class="caret"></span></a>
+                <ul class="dropdown-menu">
+                  <li><a href="{% url 'listeBatiments' %}">Batiments</a></li>
+                </ul>
+              </li>
+              <li class="dropdown">
+                <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Locataires <span class="caret"></span></a>
+                <ul class="dropdown-menu">
+                  <li><a href="{% url 'locataire-list' %}">Locataires</a></li>
+                </ul>
+              </li>
+              <!--<li class="dropdown">
+                <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Locations <span class="caret"></span></a>
+                <ul class="dropdown-menu">
+                  <li><a href="{% url 'contratlocation_list'%}">Locations</a></li>
+                </ul>
+              </li>-->
+              <li class="dropdown">
+                <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Propriétaires <span class="caret"></span></a>
+                <ul class="dropdown-menu">
+                  <li><a href="{% url 'listeProprietaires' %}">Proprietaires</a></li>
+                </ul>
+              </li>
+              <li class="dropdown">
+                <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Personnes <span class="caret"></span></a>
+                <ul class="dropdown-menu">
+                  <li><a href="{% url 'personne_list' %}">Personnes</a></li>
+                </ul>
+              </li>
+              <li class="dropdown">
                 <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Gestion <span class="caret"></span></a>
                 <ul class="dropdown-menu">
-                  <li><a href="{% url 'batiment_list' %}">Batiments</a></li>
-                  <li><a href="{% url 'proprietaire_list' %}">Proprietaires</a></li>
-                <!--  <li><a href="{% url 'xlsRead' %}">Test xls read</a></li>-->
                   <li><a href="{% url 'suivis' %}">Suivis</a></li>
-                  <li><a href="{% url 'contrat_gestion_list' %}">Les contrats de gestion</a></li>
-                  <li><a href="{% url 'fraismaintenance_list' %}">Frais de maintenance</a></li>
-                  <li><a href="{% url 'personne_list' %}"Personnes</a></li>
-
+                  <li><a href="{% url 'alerte_list' %}">Alertes</a></li>
                 </ul>
               </li>
             </ul>
@@ -54,10 +81,9 @@
                 <li><a href="/admin" target="_blank"><span class="glyphicon glyphicon-education" aria-hidden="true"></span> Admin</a></li>
                 <li class="dropdown">
                   <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"><span class="glyphicon glyphicon-user" aria-hidden="true"></span> {{ request.user.first_name }} <span class="caret"></span></a>
-
                 </li>
-
             </ul>
+
           </div>
         </div>
       </nav>
@@ -68,7 +94,7 @@
             <li><a href="{% url 'home' %}"><span class="glyphicon glyphicon-home" aria-hidden="true"></span></a></li>
             {% block breadcrumb %}
             {% endblock %}
-
+<br/>
         {% block content %}
         {% endblock %}
       </div>

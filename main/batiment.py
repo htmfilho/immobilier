@@ -13,23 +13,25 @@ from dateutil.relativedelta import relativedelta
 import datetime
 from django.db import models
 
+def create(request):
+    batiment = Batiment()
+    return render(request, "batiment_form.html",
+                  {'batiment':         batiment})
 
-@login_required
-def batiment(request, batiment_id):
-    print('batiment')
-    print (batiment_id)
+def batiment_form(request, batiment_id):
     batiment = Batiment.find_batiment(batiment_id)
     return render(request, "batiment_form.html",
                   {'batiment':         batiment})
 
 def update(request):
-    print('update batiment')
 
     batiment = Batiment()
 
     if ('add' == request.POST['action'] or 'modify' == request.POST['action']):
-        print('if')
-        batiment = get_object_or_404(Batiment, pk=request.POST['id'])
+        if request.POST['id'] and not request.POST['id'] == 'None':
+            batiment = get_object_or_404(Batiment, pk=request.POST['id'])
+        else:
+            batiment = Batiment()
         batiment.rue = request.POST['rue']
         print(request.POST['numero'])
         batiment.numero = request.POST['numero']

@@ -7,60 +7,57 @@
     <body class=" dashboard">
         <h1>Liste complète</h1>
         <div id="container">
-        
+
         <p>
             <table border="1">
-                <tr><th>Nom</th><th>Adresse</th><th>Location</th><th>Proprio</th></tr>
-            {% for batiment in batiments %}        
+                <tr><th>Adresse</th><th>Location</th><th>Proprio</th></tr>
+            {% for batiment in batiments %}
                 <tr>
-                    <td>
-                        {{ batiment.nom }}
-                    </td>
                     <td>
                         {{ batiment.adresse_rue }}
                         <br/>
-                        {{ batiment.adresse_localite }}                        
+                        {{ batiment.adresse_localite }}
                     </td>
                     <td>
-                    
-                        
-                             {% for contratLocation in batiment.contrats_location %}        
+
+
+                             {% for contratLocation in batiment.contrats_location %}
                              <table>
                             <tr><th colspan="2">Contrat location</th></tr>
                             <tr><td>
-                                
+
                                         du {{ contratLocation.date_debut }} au {{ contratLocation.date_fin }}
                                     </td>
                                     </tr><tr>
                                    <td>
-                                   
+
                                    <b>Financements :</b>
-                              
+
                                    <table>
                                    <tr><th>Locataires</th></tr>
-                                   {% for locataire in contratLocation.financement_location.locataires %}        
-                                   
+                                   {% for locataire in contratLocation.financement_location.locataires %}
+
                                    <tr><td>{{ locataire}}</td></tr>
                                    {% endfor%}
                                    </table>
                                    </td>
-                                
-                                                    
+
+
                             </tr>
                         </table>
                             {% endfor%}
-                                    
+
                     </td>
                     <td>
-                    {% for proprietaire in batiment.proprietaires %}  
-                    
+                    {% for proprietaire in batiment.proprietaires %}
+
                     {{ proprietaire }}
                       {% endfor%}
                     </td>
                 </tr>
             {% endfor%}
-            </table>    
-                        
+            </table>
+
         </p>
         </div>
     </body>

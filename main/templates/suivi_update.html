@@ -1,0 +1,62 @@
+{% extends "layout.html" %}
+{% block breadcrumb %}
+  <li class="active">Sélection de suivi de loyer</li>
+{% endblock %}
+{% block content %}
+<form method="get" action="{% url 'suivis_search'%}" >
+  <div class="row">
+    <div class="col-md-3">
+    <label for="date_debut">Date début</label>
+    <input class="form-control" id="date_debut" placeholder="Date début" value="{{ date_debut|date:"j/m/Y" }}" name="date_debut">
+  </div>
+  <div class="col-md-3">
+    <label for="date_fin">Date fin</label>
+    <input class="form-control" id="date_fin" placeholder="Date fin" value="{{ date_fin|date:"j/m/Y" }}" name="date_fin">
+  </div>
+  <div class="col-md-3">
+    <label for="etat">Etat</label>
+    <select class="form-control"  name="etat">
+      <option value="A_VERIFIER" checked>A vérifier</option>
+      <option value="IMPAYE">Impayé</option>
+      <option value="EN_RETARD">En retard</option>
+      <option value="PAYE">Payé</option>
+      <option value="TOUS">Tous</option>
+    </select>
+  </div>
+  <div class="col-md-3">
+    <label class="invisible">&nbsp;</label>
+  <input type="submit" class="btn" value="Ok" >
+</div>
+  </div>
+</form>
+
+{% if suivis|length > 0%}
+<form class="form-inline" method="POST" action="{% url 'suivis-update' %}">
+  <table class="table table-condensed">
+    <thead>
+      <th>Batiment</th>
+      <th>Date paiement</th>
+      <th>Etat</th>
+      <th>Loyer</th>
+      <th>Charges</th>
+      <th>Remarque</th>
+    </thead>
+    <tbody>
+    {% for s in suivis %}
+      <tr>
+        <td>{{s.financement_location.contrat_location.batiment}}</td>
+        <td><input type="" value="{{s.date_paiement|date:"j/m/Y"}}" id="suivi_date_paiement_{{ s.id }}" /></td>
+        <td><input type="text" value="{{s.etat_suivi}}" id="suivi_etat_{{ s.id }}"/></td>
+        <td><input type="number" value="{{s.loyer_percu}}" id="suivi_loyer_percu_{{ s.id }}"/>({{s.financement_location.loyer}})</td>
+
+        <td><input type="number" value="{{s.charges_percu}}" id="suivi_charges_percu_{{ s.id }}"/>({{s.financement_location.charges}})</td>
+        <td><input type="text" value="{{s.remarque| default_if_none:"-" }}" id="suivi_remarque_{{ s.id }}"/></td>
+      </tr>
+    {% endfor %}
+  </tbody>
+  </table>
+  <submit class="btn btn-primary"><span class="glyphicon glyphicon-floppy-save" aria-hidden="true"></span> Enregistrer</submit>
+  <a class="btn btn-default" role="button"><span class="glyphicon glyphicon-remove" aria-hidden="true"></span> Annuler</a>
+</form>
+{%endif%}
+{% endblock %}

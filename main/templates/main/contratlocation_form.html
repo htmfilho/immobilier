@@ -2,13 +2,15 @@
 {% load crispy_forms_tags %}
 {% block breadcrumb %}
 
-  <li class="active">Batiment</li>
+  <li class="active">Contrat location</li>
 {% endblock %}
 {% block content %}
 
   <form method="post">
     {% csrf_token %}
     {% crispy form %}
+    <input type="text" id="action" name="action" value="{{action}}"/>
+    
   </form>
 
 {% endblock %}

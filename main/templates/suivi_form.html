@@ -1,0 +1,78 @@
+
+{% extends "layout.html" %}
+{% block breadcrumb %}
+  <li><a href="{% url 'suivis' %}">Les suivis</a></li>
+  <li class="active">Suivi</li>
+{% endblock %}
+{% block content %}
+<form  method="post" action="{% url 'update_suivi' %}">
+  {% csrf_token %}
+  <input type="hidden" value="{{date_debut|date:"j/m/Y"}}" name="date_debut"/>
+  <input type="hidden" value="{{date_fin|date:"j/m/Y"}}" name="date_fin"/>
+  <input type="hidden" value="{{etat}}" name="etat"/>
+  <input type="hidden" value="{{suivi.id}}" name="id"/>
+
+  <div class="row">
+    <div class="col-md-4">
+      <label for="date_paiement">Date paiement</label>
+      <input class="form-control" value="{{ suivi.date_paiement|date:"j/m/Y" }}" name="date_paiement" title="Date théorique du paiement">
+    </div>
+    <div class="col-md-6">
+      <label for="etat_suivi">Etat suivi</label>
+      <select class="form-control"  name="etat_suivi" id ="etat_suivi" >
+        {% if suivi.etat_suivi == 'A_VERIFIER' %}
+        <option value="A_VERIFIER" selected>A vérifier</option>
+        {% else %}
+        <option value="A_VERIFIER">A vérifier</option>
+        {% endif %}
+        {% if suivi.etat_suivi == 'IMPAYE' %}
+        <option value="IMPAYE" selected>Impayé</option>
+        {% else %}
+        <option value="IMPAYE">Impayé</option>
+        {% endif %}
+        {% if suivi.etat_suivi == 'EN_RETARD' %}
+        <option value="EN_RETARD" selected>En retard</option>
+        {% else %}
+        <option value="EN_RETARD">En retard</option>
+        {% endif %}
+        {% if suivi.etat_suivi == 'PAYE' %}
+        <option value="PAYE" selected>Payé</option>
+        {% else %}
+        <option value="PAYE">Payé</option>
+        {% endif %}
+        {% if etsuivi.etat_suiviat == 'TOUS' %}
+        <option value="TOUS" selected>Tous</option>
+        {% else %}
+        <option value="TOUS">Tous</option>
+        {% endif %}
+      </select>
+    </div>
+    <div class="col-md-2">
+    </div>
+
+  </div>
+  <div class="row">
+    <div class="col-md-6">
+      <label for="loyer_percu">Loyer percu</label>
+      <input type="number" class="form-control" value="{{suivi.loyer_percu}}" name="loyer_percu"> ({{suivi.financement_location.loyer}})
+    </div>
+    <div class="col-md-6">
+      {% if suivi.financement_location.charges > 0 %}
+      <label for="charges_percu">Charges percues</label>
+      <input type="number"  class="form-control" value="{{suivi.charges_percu}}" name="charges_percu">({{suivi.financement_location.charges}})
+      {% endif %}
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col-md-12">
+      <label for="remarque">Remarque</label>
+      <input class="form-control" value="{{suivi.remarque| default_if_none:''}}" name="remarque">
+    </div>
+  </div>
+
+  <input type="submit" value="OK" title="Enregistrer les infos sur le suivi">
+
+</form>
+
+{% endblock %}

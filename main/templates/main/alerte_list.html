@@ -1,0 +1,32 @@
+{% extends "layout.html" %}
+{% load staticfiles %}
+{% load order %}
+{% block breadcrumb %}
+  <li class="active">Liste des alertes</li>
+{% endblock %}
+{% block content %}
+
+  <table class="table table-striped table-hover">
+      <thead>
+          <th>Description<proprietaire/th>
+          <th>Date alerte</th>
+          <th>Contrat gestion</th>
+          <th>Contrat location</td>
+          <th>Etat</th>
+          <th></th>
+        </thead>
+  {% for alerte in alertes %}
+      <tr>
+          <td>{{ alerte.description| default_if_none:'' }}</td>
+          <td>{{ alerte.date_alerte|date:"j/m/Y" | default_if_none:'' }}</td>
+          <td>{% if alerte.contratGestion%}{{ alerte.contratGestion }}{%endif%}</td>
+          <td>{% if alerte.contratLocation%}{{alerte.contratLocation.batiment}}, {{ alerte.contratLocation.date_debut|date:"j/m/Y" }}-{{ alerte.contratLocation.date_fin|date:"j/m/Y" }}{%endif%}</td>
+          <td>{{ alerte.etat| default_if_none:'' }}</td>
+          <td>
+            <a href="{% url 'alerte-update' alerte.pk %}" title="Passe à l'état vérifier"><img src="{% static 'images/glyphicons-153-check.png' %}"/></a>
+          </td>
+      </tr>
+  {% endfor%}
+  </table>
+
+        {% endblock %}

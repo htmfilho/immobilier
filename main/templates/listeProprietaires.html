@@ -11,22 +11,24 @@
                     <th>Date fin</th>
                     <th>Adresse</th>
                     <th>Batiment</th>
+                    <th></th>
                 </thead>
             {% for proprietaire in proprietaires %}
 
-                {% if proprietaire.date_fin%}
-                <tr class="alert alert-warning" role="alert">
-                {%else%}
+
                 <tr>
-                {%endif%}
                     <td>
-                        <a href="{% url 'proprietaire' proprietaire.id %}">{{ proprietaire.proprietaire }}</a>
+                        {{ proprietaire.proprietaire }}
                     </td>
                     <td>
-                      {{ proprietaire.date_debut }}
+                      {% if proprietaire.date_debut %}
+                      {{ proprietaire.date_debut|date:"j/m/Y"  }}
+                      {%endif%}
                     </td>
                     <td>
-                      {{ proprietaire.date_fin }}
+                      {% if proprietaire.date_fin %}
+                      {{ proprietaire.date_fin|date:"j/m/Y"  }}
+                      {%endif%}
                     </td>
                     <td>
                         {{ proprietaire.proprietaire.adresse_complete }}
@@ -37,6 +39,10 @@
                        <tr><td><a href="{% url 'batiment' batiment.id %}">{{ batiment.rue }}</a></td></tr>
                     {% endfor%}
                     </table>
+                    </td>
+                    <td>
+                      <a href="{% url 'proprietaire' proprietaire.id %}?prev=lp" title="Pour modifier un propriétaire"><span class="glyphicon glyphicon-pencil" aria-hidden="true"></span></a>
+                      <a href="{% url 'delete_proprietaire' proprietaire.pk%}" title="Pour supprimer un propriétaire"><span class="glyphicon glyphicon-remove" aria-hidden="true"></span></a>
                     </td>
                 </tr>
             {% endfor%}

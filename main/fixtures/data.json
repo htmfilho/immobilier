@@ -1,0 +1,91 @@
+[
+  {
+    "model": "main.personne",
+    "pk": 1,
+    "fields": {
+      "prenom": "Leila",
+      "nom": "Verpoorten"
+    }
+  },
+  {
+    "model": "main.personne",
+    "pk": 2,
+    "fields": {
+      "prenom": "Michel",
+      "nom": "Marchal"
+    }
+  },
+  {
+    "model": "main.batiment",
+    "pk": 1,
+    "fields": {
+      "rue": "Rue du Monastère",
+      "numero": "58",
+      "code_postal" :"1330",
+      "localite" :"Rixensart"
+    }
+  },
+  {
+    "model": "main.batiment",
+    "pk": 2,
+    "fields": {
+      "rue": "Rue du Cimetière",
+      "numero": "28",
+      "code_postal" :"5503",
+      "localite" :"Sorinnes"
+    }
+  },
+
+  {
+    "model": "main.batiment",
+    "pk": 3,
+    "fields": {
+      "rue": "Grand Route de Ciney",
+      "numero": "31",
+      "code_postal" :"5503",
+      "localite" :"Sorinnes"
+    }
+  },
+  {
+    "model": "main.batiment",
+    "pk": 4,
+    "fields": {
+      "rue": "Taravisée",
+      "numero": "1",
+      "code_postal" :"5503",
+      "localite" :"Sorinnes"
+    }
+  },
+
+  {
+    "model": "main.batiment",
+    "pk": 5,
+    "fields": {
+      "rue": "Rue de Furfooz",
+      "numero": "15",
+      "code_postal" :"5500",
+      "localite" :"Dréhance"
+    }
+  },
+  {
+    "model": "main.batiment",
+    "pk": 6,
+    "fields": {
+      "rue": "Rue St-Jacques",
+      "numero": "288",
+      "boite":"a",
+      "code_postal" :"5500",
+      "localite" :"Dinant"
+    }
+  },
+  {
+    "model": "main.batiment",
+    "pk": 7,
+    "fields": {
+      "rue": "Rue Defoin",
+      "numero": "13",
+      "code_postal" :"5500",
+      "localite" :"Dinant"
+    }
+  }
+]

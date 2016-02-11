@@ -1,0 +1,129 @@
+{% extends "layout.html" %}
+{% block breadcrumb %}
+
+  <li class="active">Location</li>
+{% endblock %}
+{% block content %}
+<div class="panel panel-default">
+  <div class="panel-body">
+    <form  id="location_form" method="post" action="{% url 'update-location-all' %}">
+      {% csrf_token %}
+
+      <input type="hidden" value="{{ location.id }}" name="id"/>
+      <div class="form-group">
+        <label for="batiment">Batiment</label>
+        <input class="form-control" id="batiment" value="{{location.batiment}}" name="batiment" >
+      </div>
+      <div class="row">
+        <div class="col-md-5">
+        <label for="date_debut">Date début</label>
+        <input class="form-control" id="date_debut" value="{%if location.date_debut%}{{location.date_debut|date:"j/m/Y"}}{%endif%}" name="date_debut">
+      </div>
+
+      <div class="col-md-5">
+        <label for="date_fin">Date fin</label>
+        <input class="form-control" id="date_fin" value="{%if location.date_fin%}{{location.date_fin|date:"j/m/Y"}}{%endif%}" name="date_fin">
+      </div>
+      </div>
+      <div class="form-group">
+        <label for="renonciation">Date renonciation</label>
+        <input class="form-control" id="renonciation" value="{%if location.renonciation%}{{location.renonciation}}{%endif%}" name="renonciation">
+      </div>
+      <div class="form-group">
+        <label for="remarque">Remarque</label>
+        <input class="form-control" id="remarque" value="{{location.remarque}}" name="remarque">
+      </div>
+
+      <div class="row">
+        <div class="col-md-5">
+        <label for="loyer_base">Loyer de base</label>
+        <input class="form-control" id="loyer_base" value="{{location.loyer_base}}" name="loyer_base">
+      </div>
+
+      <div class="col-md-5">
+        <label for="charges_base">Charges de base</label>
+        <input class="form-control" id="charges_base" value="{{location.charges_base}}" name="charges_base">
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col-md-11">
+
+      </div>
+      <div class="col-md-1">
+        <input type="submit" value="OK" title="Enregistrer les données relatives à la location">
+      </div>
+    </div>
+    </form>
+
+    <div class="row">
+      <ul class="nav nav-tabs">
+        <li class="active"><a data-toggle="tab" href="#financement">Financements</a></li>
+        <li><a data-toggle="tab" href="#locataires">Locataires</a></li>
+
+      </ul>
+    <div class="tab-content">
+
+        <div id="financement" class="tab-pane fade in active">
+          <p>
+            <div class="form-group">
+              <label class="control-label">Historique financements de la location</label>
+              <table class="table table-striped table-hover">
+                <thead>
+                    <th>Date début</th>
+                    <th>Date fin</th>
+                    <th>Loyer</th>
+                    <th>Charges</th>
+                    <th>Index</th>
+
+                </thead>
+                {% for financement in location.financements %}
+                <tr>
+                  <td>{{ financement.date_debut|date:"j/m/Y" }}</td>
+                  <td>{{ financement.date_fin|date:"j/m/Y" }}</td>
+                  <td>{{ financement.loyer }}</td>
+                  <td>{{ financement.charges }}</td>
+                  <td>{{ financement.index }}</td>
+
+                </tr>
+                {% endfor%}
+                <tr style="text-align:right">
+                  <td colspan="5"><a href="{% url 'financement-new' location.pk %}?prev=fl" title="Pour ajouter un nouveau financement"><span class="glyphicon glyphicon-plus" aria-hidden="true"></span></a></td>
+                </tr>
+                </table>
+
+            </div>
+          </p>
+        </div>
+        <div id="locataires" class="tab-pane fade">
+          <p>
+            <div class="form-group">
+              <label class="control-label">Locataires</label>
+              <table class="table table-striped table-hover">
+                <thead>
+                    <th>Nom</th>
+                    <th>Prénom</th>
+                    <th>Informations complémentaires</th>
+                    <th></th>
+                </thead>
+                {% for locataire in location.locataires %}
+                <tr>
+                  <td>{{ locataire.personne.nom}}</td>
+                  <td>{{ locataire.personne.prenom }}</td>
+                  <td>{% if locataire.infos_complement %}{{ locataire.infos_complement }}{%endif%}</td>
+                  <td><a href="{% url 'locataire-delete' locataire.id %}" title="Pour supprimer un locataire"><span class="glyphicon glyphicon-remove" aria-hidden="true"></span></a></td>
+                </tr>
+                {% endfor%}
+                <tr style="text-align:right">
+                  <td colspan="5"><a href="{% url 'locataire-new' location.pk %}" title="Pour ajouter un nouveau locataire"><span class="glyphicon glyphicon-plus" aria-hidden="true"></span></a></td>
+                </tr>
+                </table>
+
+            </div>
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

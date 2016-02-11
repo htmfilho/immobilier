@@ -7,13 +7,13 @@ from django.db import models, migrations
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('main', '0003_auto_20160104_0849'),
+        ('main', '0001_initial'),
     ]
 
     operations = [
-        migrations.RenameField(
-            model_name='proprietaire',
-            old_name='personne_proprietaire',
-            new_name='proprietaire',
+        migrations.AlterField(
+            model_name='societe',
+            name='personnel',
+            field=models.ForeignKey(blank=True, to='main.Personne', null=True),
         ),
     ]

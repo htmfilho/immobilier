@@ -1,0 +1,110 @@
+{% extends "layout.html" %}
+{% block breadcrumb %}
+
+  <li class="active">Locataire</li>
+{% endblock %}
+{% block content %}
+<div class="panel panel-default">
+  <div class="panel-body">
+    <form  method="post" action="{% url 'locataire-add' %}">
+      {% csrf_token %}
+      <input type="hidden" value="{{action}}" name="action"/>
+      <input type="hidden" value="{{ locataire.id }}" name="locataire_id"/>
+      <input type="tehiddenxt" value="{{ locataire.contrat_location.id}}" name="location_id"/>
+      <div class="row">
+        <div class="col-md-11">
+          <label for="rue">Locataire</label>
+          <select class="form-control" name="personne_id" readonly="readonly" required="true" >
+
+            {% for p in personnes %}
+                {% if locataire.personne.id == p.id %}
+                  <option value="{{ p.id }}" selected>{{ p }}</option>
+                {%else%}
+                  <option value="{{ p.id }}">{{ p }}</option>
+                {% endif %}
+            {% endfor %}
+          </select>
+        </div>
+        <div class="col-md-1">
+          {% if not locataire.id %}
+          <label class="invisible">&nbsp;</label>
+          <button type="button" class="btn btn-warning" data-toggle="modal" data-target="#submissionScoresModal"><span class="glyphicon glyphicon-plus" aria-hidden="true"></span> </button>
+          {% endif %}
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-md-8">
+          <label for="contrat_location">Location</label>
+          <input class="form-control" value="{{ locataire.contrat_location.batiment| default_if_none:'' }}" readonly="readonly">
+          <input class="form-control" value="du {{ locataire.contrat_location.date_debut|date:"j/m/Y" }} au {{ locataire.contrat_location.date_fin|date:"j/m/Y" }}"
+                 name="contrat_location" readonly="readonly">
+        </div>
+        <div class="col-md-3">
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-md-8">
+          <label for="infos_complement">Infos complementaires</label>
+          <input class="form-control" value="{{ locataire.infos_complement| default_if_none:'' }}" name="infos_complement">
+        </div>
+        <div class="col-md-3">
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-md-4">
+          <label for="societe">Societé</label>
+          <input class="form-control" value="{{ locataire.societe| default_if_none:'' }}" name="societe">
+        </div>
+        <div class="col-md-4">
+          <label for="tva">TVA</label>
+          <input class="form-control" value="{{ locataire.tva| default_if_none:'' }}" name="tva">
+        </div>
+        <div class="col-md-4">
+          <label for="profession">Profession</label>
+          <input class="form-control" value="{{ locataire.profession| default_if_none:'' }}" name="profession">
+        </div>
+      </div>
+
+
+        <input type="submit" value="OK">
+
+    </form>
+</div>
+</div>
+<!-- Ajout personne modal -->
+<div class="modal fade" id="submissionScoresModal" tabindex="-1" role="dialog" aria-labelledby="submissionScoresLabel">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title" id="submissionScoresLabel">Ajout Personne</h4>
+            </div>
+            <div class="modal-body">
+            <form  method="post" enctype="multipart/form-data" action="{% url 'personne-create-locataire' %}">
+              {% csrf_token %}
+              <input type="hidden" value="{{ location.id}}" name="location_id_pers"/>
+              <div class="row">
+      <div class="col-md-6">
+                  <label for="nom" class="control-label">Nom</label>
+                  <input class="form-control" id="nom" placeholder="Nom" name="nom" style="text-transform:uppercase">
+                </div>
+                <div class="col-md-6">
+                </div>
+              </div>
+                <div class="row">
+                  <div class="col-md-6">
+                  <label for="prenom"  class="control-label">Prénom</label>
+                  <input class="form-control" id="prenom" placeholder="Prenom" name="prenom" style="text-transform:uppercase">
+                </div>
+                <div class="col-md-6">
+                </div>
+              </div>
+            </div>
+            <div class="modal-footer">
+                <input type="submit" value="ok"/>
+                <button type="button" class="btn btn-default" data-dismiss="modal">Annuler</button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

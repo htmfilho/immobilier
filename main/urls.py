@@ -1,20 +1,13 @@
 from django.conf.urls import url
 from django.conf import settings
-from . import views, batiment, proprietaire, suivis
-from .models import Batiment, Proprietaire, ContratGestion
+from . import views, batiment, proprietaire, suivis, alertes, contratlocation, financement, locataire, contratgestion, frais
+from .models import *
 from main.views import BatimentDetailView
 from django.conf.urls import url
 from django.contrib.auth.views import login,logout
 from django.views.generic import ListView
 from main.views import ContratGestionList
 
-
-# batiment_info = {
-#     'queryset': Batiment.objects.get(nom='batiment 5b')    ,
-#     'template_name': 'batiment_detail.html',
-#     'template_object_name': 'batiment',
-#     'extra_context': {'proprietaire_list': Proprietaire.objects.all()}
-# }
 urlpatterns = [
     url(r'^$', views.home, name='home'),
     # login / logout urls
@@ -23,20 +16,29 @@ urlpatterns = [
     # listes
     url(r'^listeComplete', views.listeComplete),
     url(r'^listeBatiments', views.listeBatiments, name='listeBatiments'),
-    # url(r'^listeProprietaires', views.listeProprietaires, name='listeProprietaires'),
+    url(r'^/listeBatiments/filtrer/personne/([0-9]+)/$', views.listeBatiments_filtrer, name='listeBatiments-filtrer-personne'),
+
+    url(r'^listeProprietaires', proprietaire.listeProprietaires, name='listeProprietaires'),
     url(r'^listeContratGestion/$', views.ContratGestionList.as_view(), name='contrat_gestion_list'),
     url(r'^contratGestion/(?P<pk>[0-9]+)/$', views.ContratGestionDetail.as_view(), name='contrat_gestion_detail'),
     # ecran de detail
-    url(r'^batiment/([0-9]+)/$', batiment.batiment, name='batiment'),
-    # url(r'^proprietaire/([0-9]+)/$', proprietaire.proprietaire, name='proprietaire'),
-    # url(r'^proprietaire/update/([0-9]+)/$', proprietaire.update_proprietaire, name='update_proprietaire'),
-    # url(r'^proprietaire/delete/([0-9]+)/$', proprietaire.delete_proprietaire, name='delete_proprietaire'),
-    # url(r'^proprietaire/dadd/([0-9]+)/$', proprietaire.add_proprietaire, name='add_proprietaire'),
+    url(r'^batiment/([0-9]+)/$', batiment.batiment_form, name='batiment'),
+    url(r'^proprietaire/([0-9]+)/$', proprietaire.proprietaire, name='proprietaire'),
+    url(r'^proprietaire/update/([0-9]+)/$', proprietaire.update_proprietaire, name='update_proprietaire'),
+    url(r'^proprietaire/delete/([0-9]+)/$', proprietaire.delete_proprietaire, name='delete_proprietaire'),
+    url(r'^proprietaire/dadd/([0-9]+)/$', proprietaire.add_proprietaire, name='add_proprietaire'),
+    url(r'^proprietaire/$', proprietaire.proprietaire_update_save, name='proprietaire-update-save'),
+    url(r'^proprietaire/createb/([0-9]+)/$', proprietaire.proprietaire_create_for_batiment, name='proprietaire-create-batiment'),
+
     #old
     # url(r'^suivis/$', suivis.suivis, name='suivis'),
     # url(r'^suivis/refresh/$', suivis.refresh_suivis, name='refresh_suivis'),
     url(r'^suivis/$', suivis.suivis, name='suivis'),
     url(r'^suivis/search$', suivis.suivis_search, name='suivis_search'),
+    url(r'^suivis/update$', suivis.suivis_update, name='suivis-update'),
+    url(r'^suivis/updatel/([0-9]+)/$', suivis.suivis_updatel, name='suivis-updatel'),
+    url(r'^suivis/update_suivi$', suivis.update_suivi, name='update_suivi'),
+
 
     # url(r'^update_personne/$', views.update_personne, name='update_personne'),
     url(r'^update_batiment/$', batiment.update, name='update_batiment'),
@@ -49,29 +51,81 @@ urlpatterns = [
         }),
     url(r'^test4', views.alertes4),
 
-    url(r'^fraismaintenances/$', views.FraisMaintenanceList.as_view(), name='fraismaintenance_list'),
-    url(r'^fraismaintenance/create/$', views.FraisMaintenanceCreate.as_view(), name='fraismaintenance-create'),
+    url(r'^fraismaintenances/$', frais.list, name='fraismaintenance_list'),
+    url(r'^fraismaintenance/create/([0-9]+)/$', frais.create, name='fraismaintenance-create'),
     url(r'^fraismaintenance/update/(?P<pk>[0-9]+)/$', views.FraisMaintenanceUpdate.as_view(), name='fraismaintenance-update'),
     url(r'^fraismaintenance/delete/(?P<pk>[0-9]+)/$', views.FraisMaintenanceDelete.as_view(), name='fraismaintenance-delete'),
     url(r'^fraismaintenance/(?P<pk>[0-9]+)/$', views.FraisMaintenanceDetail.as_view(), name='fraismaintenance_detail'),
 
-
     url(r'^personne/create/$', views.PersonneCreate.as_view(), name='personne-create'),
+    url(r'^personne/create/locataire/$', locataire.personne_create, name='personne-create-locataire'),
+
+
     url(r'^personne/update/(?P<pk>[0-9]+)/$', views.PersonneUpdate.as_view(), name='personne-update'),
     url(r'^personne/delete/(?P<pk>[0-9]+)/$', views.PersonneDelete.as_view(), name='personne-delete'),
     url(r'^personnes/$', views.PersonneList.as_view(), name='personne_list'),
     url(r'^personne/(?P<pk>[0-9]+)/$', views.PersonneDetail.as_view(), name='personne_detail'),
 
-    url(r'^batiment/create/$', views.BatimentCreate.as_view(), name='batiment-create'),
-    url(r'^batiment/update/(?P<pk>[0-9]+)/$', views.BatimentUpdate.as_view(), name='batiment-update'),
+    url(r'^batiment/create/$', batiment.create, name='batiment-create'),
+    url(r'^/batiment/([0-9]+)/$', batiment.batiment_form, name='batiment'),
+    url(r'^batiment/update/([0-9]+)/$', batiment.update, name='batiment-update'),
     url(r'^batiment/delete/(?P<pk>[0-9]+)/$', views.BatimentDelete.as_view(), name='batiment-delete'),
     url(r'^batiments/$', views.BatimentList.as_view(), name='batiment_list'),
+    url(r'^batiment/deletep/([0-9]+)/$', proprietaire.delete_proprietaire_batiment, name='delete_proprietaire_batiment'),
 
-    url(r'^proprietaire/create/$', views.ProprietaireCreate.as_view(), name='proprietaire-create'),
-    url(r'^proprietaire/update/(?P<pk>[0-9]+)/$', views.ProprietaireUpdate.as_view(), name='proprietaire-update'),
-    url(r'^proprietaire/delete/(?P<pk>[0-9]+)/$', views.ProprietaireDelete.as_view(), name='proprietaire-delete'),
-    url(r'^proprietaires/$', views.ProprietaireList.as_view(), name='proprietaire_list'),
-    url(r'^proprietaire/(?P<pk>[0-9]+)/$', views.ProprietaireDetail.as_view(), name='proprietaire_detail'),
 
+
+    # url(r'^proprietaire/create/$', views.ProprietaireCreate.as_view(), name='proprietaire-create'),
+    # url(r'^proprietaire/createb/(?P<pk>[0-9]+)/$', views.ProprietaireCreateForBatiment.as_view(), name='proprietaire-create-batiment'),
+    # url(r'^proprietaire/update/(?P<pk>[0-9]+)/$', views.ProprietaireUpdate.as_view(), name='proprietaire-update'),
+    # url(r'^proprietaire/delete/(?P<pk>[0-9]+)/$', views.ProprietaireDelete.as_view(), name='proprietaire-delete'),
+    # url(r'^proprietaires/$', views.ProprietaireList.as_view(), name='proprietaire_list'),
+    # url(r'^proprietaire/(?P<pk>[0-9]+)/$', views.ProprietaireDetail.as_view(), name='proprietaire_detail'),
+
+    url(r'^contratgestion/create/([0-9]+)/$', contratgestion.create, name='contratgestion-create'),
+    # url(r'^contratgestion/update/(?P<pk>[0-9]+)/$', views.ContratGestionUpdate.as_view(), name='contratgestion-update'),
+    url(r'^/contratgestion/delete/([0-9]+)/$', contratgestion.delete, name='contratgestion-delete'),
+    url(r'^/gestion/prepare/update/all/([0-9]+)/$', contratgestion.prepare_update, name='gestion-prepare-update-all'),
+    url(r'^/gestion/update/all/$', contratgestion.update, name='update-gestion-all'),
+
+
+
+    url(r'^contratgestions/$', contratgestion.list, name='contratgestion_list'),
+
+    # url(r'^contratgestion/(?P<pk>[0-9]+)/$', views.ContratGestionDetail.as_view(), name='contratgestion'),
+
+    url(r'^societe/create/$', views.SocieteCreate.as_view(), name='societe-create'),
+    url(r'^societe/update/(?P<pk>[0-9]+)/$', views.SocieteUpdate.as_view(), name='societe-update'),
+    url(r'^societe/delete/(?P<pk>[0-9]+)/$', views.SocieteDelete.as_view(), name='societe-delete'),
+    url(r'^societes/$', views.SocieteList.as_view(), name='societe_list'),
+    url(r'^societe/(?P<pk>[0-9]+)/$', views.SocieteDetail.as_view(), name='societe'),
     # url(r'^batiment5/(?P<pk>\d+)/$', BatimentDetailView.as_view(), batiment_info)
+    url(r'^alertes/$', alertes.list, name='alerte_list'),
+    url(r'^alertes/update/([0-9]+)/$', alertes.update, name='alerte-update'),
+
+    # url(r'^location/create/$', views.ContratLocationCreate.as_view(), name='location-create'),
+    # url(r'^location/update/(?P<pk>[0-9]+)/$', views.ContratLocationUpdate.as_view(), name='location-update'),
+
+    url(r'^/location/prepare/update/all/([0-9]+)/$', contratlocation.prepare_update, name='location-prepare-update-all'),
+    url(r'^/location/update/all/$', contratlocation.update, name='update-location-all'),
+    # url(r'^location/createb/(?P<pk>[0-9]+)/$', views.ContratLocationCreateForBatiment.as_view(), name='location-create-batiment'),
+    url(r'^location/createb/([0-9]+)/$', contratlocation.contratLocation_for_batiment, name='location-create-batiment'),
+    url(r'^location/createl/$', contratlocation.test, name='add-location-for-batiment'),
+
+    url(r'^location/delete/([0-9]+)/$', contratlocation.delete, name='location-delete'),
+    # url(r'^location/(?P<pk>[0-9]+)/$', views.ContratLocationDetail.as_view(), name='contratlocation_detail'),
+    # url(r'^contratlocations/$', views.ContratLocationList.as_view(), name='contratlocation_list'),
+    url(r'^contratlocations/$', contratlocation.list, name='contratlocation_list'),
+    url(r'^location/delete/$', contratlocation.confirm_delete, name='confirm-delete-location'),
+
+    url(r'^financement/new/([0-9]+)/$', financement.new, name='financement-new'),
+    url(r'^financement/create/$', financement.create, name='create-financement'),
+    url(r'^locataire/new/([0-9]+)/$', locataire.new, name='locataire-new'),
+    url(r'^locataire/add/$', locataire.add, name='locataire-add'),
+    url(r'^locataire/delete/([0-9]+)/$', locataire.delete, name='locataire-delete'),
+    url(r'^locataires/$', locataire.list, name='locataire-list'),
+    url(r'^/locataire/([0-9]+)/$', locataire.locataire_form, name='locataire'),
+    url(r'^locataire/update/([0-9]+)/$', locataire.update, name='locataire-update'),
+
+
 ]

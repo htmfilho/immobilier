@@ -1,7 +1,7 @@
 {% extends "layout.html" %}
 {% load crispy_forms_tags %}
 {% block breadcrumb %}
-
+  <li><a href="{% url 'personne_list' %}">Personnes</a></li>
   <li class="active">Personne</li>
 {% endblock %}
 {% block content %}
