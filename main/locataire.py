@@ -46,7 +46,7 @@ def new(request, location_id):
                    'personnes': l})
 
 def add(request):
-    if request.POST['locataire_id']:
+    if request.POST['locataire_id'] and not request.POST['locataire_id']== 'None':
         locataire = get_object_or_404(Locataire, pk=request.POST.get('locataire_id',None))
     else:
         locataire = Locataire()

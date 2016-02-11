@@ -1,7 +1,7 @@
 from django.shortcuts import render
 from django.contrib.auth.decorators import login_required
 
-from main.models import Batiment, ContratLocation,Proprietaire, Personne, SuiviLoyer, ContratLocation, Assurance, FinancementLocation
+from main.models import*
 from django.views.generic import DetailView
 from django.core.urlresolvers import reverse
 import os
@@ -24,6 +24,7 @@ def prepare_update(request,location_id):
 
 
 def update(request):
+    print('update')
     location = ContratLocation()
 
     location = get_object_or_404(ContratLocation, pk=request.POST['id'])
@@ -31,10 +32,11 @@ def update(request):
     if request.POST['renonciation'] :
         location.renonciation = request.POST['renonciation']
     location.remarque = request.POST['remarque']
-    print (request.POST['remarque'])
-    # assurance  = get_object_or_404(Assurance, pk=request.POST['assurance'])
-    # if assurance:
-    #     location.assurance = assurance
+
+    if request.POST['assurance'] and not request.POST['assurance']=='None':
+        location.assurance = get_object_or_404(Assurance, pk=request.POST['assurance'])
+    else:
+        location.assurance = None
     location.save()
     location = get_object_or_404(ContratLocation, pk=request.POST['id'])
     print (request.POST['remarque'])
@@ -108,6 +110,7 @@ def test(request):
     else:
         location.renonciation = None
     location.remarque = request.POST['remarque']
+    print('ddd',request.POST['assurance'])
     if request.POST['assurance'] and not request.POST['assurance']=='None':
         location.assurance = get_object_or_404(Assurance, pk=request.POST['assurance'])
     else:

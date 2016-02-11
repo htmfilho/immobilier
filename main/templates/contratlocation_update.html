@@ -36,14 +36,27 @@
       </div>
 
       <div class="row">
-        <div class="col-md-5">
+        <div class="col-md-3">
         <label for="loyer_base">Loyer de base</label>
         <input class="form-control" id="loyer_base" value="{{location.loyer_base}}" name="loyer_base">
       </div>
 
-      <div class="col-md-5">
+      <div class="col-md-3">
         <label for="charges_base">Charges de base</label>
         <input class="form-control" id="charges_base" value="{{location.charges_base}}" name="charges_base">
+      </div>
+      <div class="col-md-6">
+        <label for="assurance">Assurance {{location.assurance}}</label>
+        <select class="form-control" name="assurance"  class="form-control">
+          <option value="None">-</option>
+          {%for a in assurances%}
+            {%if a.id == location.assurance.id%}
+              <option value="{{a.id}}" selected >{{ a }}</option>
+            {%else%}
+              <option value="{{a.id}}" >{{ a }}</option>
+            {%endif%}
+          {%endfor%}
+      </select>
       </div>
     </div>
 

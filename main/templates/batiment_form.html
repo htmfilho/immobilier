@@ -113,7 +113,7 @@
               <br>
               <table class="table table-bordered">
                 {% for p in batiment.locataires_actuels %}
-                <tr><td>{{  p.nom }} {{  p.prenom }} </td>  </tr>
+                <tr><td><a href="{% url 'locataire' p.id%}?prev=fb" title="Pour modifier un locataire">{{  p.nom }} {{  p.prenom }}</a> </td>  </tr>
                 {% endfor%}
               </table>
               {% endif %}

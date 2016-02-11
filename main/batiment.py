@@ -1,7 +1,7 @@
 from django.shortcuts import render
 from django.contrib.auth.decorators import login_required
 
-from main.models import Batiment, ContratLocation,Proprietaire, Personne, SuiviLoyer
+from main.models import *
 from django.views.generic import DetailView
 from django.core.urlresolvers import reverse
 import os
@@ -21,7 +21,8 @@ def create(request):
 def batiment_form(request, batiment_id):
     batiment = Batiment.find_batiment(batiment_id)
     return render(request, "batiment_form.html",
-                  {'batiment':         batiment})
+                  {'batiment':         batiment,
+                   'assurances': Assurance.find_all()})
 
 def update(request):
 
