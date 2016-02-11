@@ -4,48 +4,61 @@
   <li class="active">Location</li>
 {% endblock %}
 {% block content %}
-<form method="post" action="{% url 'add-location-for-batiment' %}">
-  {% csrf_token %}
-new
-  <div class="form-group">
-    <label for="batiment">Batiment</label>
-    <input class="form-control" id="batiment" value="{{location.batiment}}" name="batiment" >
-    <input type="hidden" id="batiment_id" value="{{location.batiment.id}}" name="batiment_id" >
-  </div>
-  <div class="row">
-    <div class="col-md-5">
-    <label for="date_debut">Date début</label>
-    <input class="form-control" id="date_debut" value="{%if location.date_debut%}{{location.date_debut|date:"j/m/Y"}}{%endif%}" name="date_debut">
-  </div>
+<div class="panel panel-default">
+  <div class="panel-body">
+    <form method="post" action="{% url 'add-location-for-batiment' %}">
+      {% csrf_token %}
+      <input type="hidden" id="prev" name="prev" value="{{prev}}"/>
+      <div class="form-group">
+        <label for="batiment">Batiment</label>
+        <br>{{location.batiment}}
+        <input type="hidden" id="batiment_id" value="{{location.batiment.id}}" name="batiment_id" >
+      </div>
+      <div class="row">
+        <div class="col-md-5">
+        <label for="date_debut">Date début</label>
+        <input class="form-control" id="date_debut" value="{%if location.date_debut%}{{location.date_debut|date:"j/m/Y"}}{%endif%}" name="date_debut">
+      </div>
 
-  <div class="col-md-5">
-    <label for="date_fin">Date fin</label>
-    <input class="form-control" id="date_fin" value="{%if location.date_fin%}{{location.date_fin|date:"j/m/Y"}}{%endif%}" name="date_fin">
-  </div>
-  </div>
-  <div class="form-group">
-    <label for="renonciation">Date renonciation</label>
-    <input class="form-control" id="renonciation" value="{%if location.renonciation%}{{location.renonciation}}{%endif%}" name="renonciation">
-  </div>
-  <div class="form-group">
-    <label for="remarque">Remarque</label>
-    <input class="form-control" id="remarque" value="{{location.remarque}}" name="remarque">
-  </div>
+      <div class="col-md-5">
+        <label for="date_fin">Date fin</label>
+        <input class="form-control" id="date_fin" value="{%if location.date_fin%}{{location.date_fin|date:"j/m/Y"}}{%endif%}" name="date_fin">
+      </div>
+      </div>
+      <div class="form-group">
+        <label for="renonciation">Date renonciation</label>
+        <input class="form-control" id="renonciation" value="{{ location.renonciation|date:"j/m/Y"| default_if_none:'' }}" name="renonciation">
+      </div>
+      <div class="form-group">
+        <label for="remarque">Remarque</label>
+        <input class="form-control" id="remarque" value="{{ location.remarque| default_if_none:'' }}" name="remarque">
+      </div>
 
-  <div class="row">
-    <div class="col-md-5">
-    <label for="loyer_base">Loyer de base</label>
-    <input class="form-control" id="loyer_base" value="{{location.loyer_base}}" name="loyer_base">
-  </div>
+      <div class="row">
+        <div class="col-md-5">
+        <label for="loyer_base">Loyer de base</label>
+        <input class="form-control" type="number" step="any" value="{{ location.loyer_base }}" name="loyer_base">
+        </div>
 
-  <div class="col-md-5">
-    <label for="charges_base">Charges de base</label>
-    <input class="form-control" id="charges_base" value="{{location.charges_base}}" name="charges_base">
+        <div class="col-md-5">
+          <label for="charges_base">Charges de base</label>
+          <input class="form-control" type="number" step="any" value="{{ location.charges_base }}" name="charges_base">
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-md-8">
+          <label for="assurance">Assurance</label>
+          <select class="form-control" name="assurance"  class="form-control">
+            {%for a in assurances%}
+            <option value="{{a.id}}">{{a}}</option>
+            {%endfor%}
+          </select>
+        </div>
+        <div class="col-md-4">
+        </div>
+      </div>
+      <input type="submit" value="OK">
+    </form>
   </div>
 </div>
-
-    <input type="submit" value="OK">
-
-</form>
-
 {% endblock %}

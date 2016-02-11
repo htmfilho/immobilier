@@ -8,13 +8,20 @@
   <div class="panel-body">
     <form  method="post" action="{% url 'locataire-add' %}">
       {% csrf_token %}
-      <input type="hidden" value="{{action}}" name="action"/>
+      <input type="text" value="{{action}}" name="action"/>
       <input type="hidden" value="{{ locataire.id }}" name="locataire_id"/>
-      <input type="tehiddenxt" value="{{ locataire.contrat_location.id}}" name="location_id"/>
+      <input type="hidden" value="{{ locataire.contrat_location.id}}" name="location_id"/>
       <div class="row">
         <div class="col-md-11">
           <label for="rue">Locataire</label>
-          <select class="form-control" name="personne_id" readonly="readonly" required="true" >
+          {% if action == 'update'%}
+          <br>
+          {{locataire.personne}}
+            <input type="hidden" value="{{ locataire.personne.id }}" name="personne_id"/>
+          <br>
+          <br>
+          {%else%}
+          <select class="form-control" name="personne_id" >
 
             {% for p in personnes %}
                 {% if locataire.personne.id == p.id %}
@@ -24,6 +31,7 @@
                 {% endif %}
             {% endfor %}
           </select>
+            {% endif %}
         </div>
         <div class="col-md-1">
           {% if not locataire.id %}
@@ -35,9 +43,21 @@
       <div class="row">
         <div class="col-md-8">
           <label for="contrat_location">Location</label>
-          <input class="form-control" value="{{ locataire.contrat_location.batiment| default_if_none:'' }}" readonly="readonly">
+
+
+          {% if action == 'update'%}
+          <br>
+          {{ locataire.contrat_location.batiment| default_if_none:'' }}
+          <br>
+          du {{ locataire.contrat_location.date_debut|date:"j/m/Y" }} au {{ locataire.contrat_location.date_fin|date:"j/m/Y" }}
+          
+          <br>
+          <br>
+          {%else%}
+          <input class="form-control" value="{{ locataire.contrat_location.batiment| default_if_none:'' }}" >
           <input class="form-control" value="du {{ locataire.contrat_location.date_debut|date:"j/m/Y" }} au {{ locataire.contrat_location.date_fin|date:"j/m/Y" }}"
-                 name="contrat_location" readonly="readonly">
+                 name="contrat_location" >
+          {%endif%}
         </div>
         <div class="col-md-3">
         </div>

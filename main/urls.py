@@ -108,7 +108,6 @@ urlpatterns = [
 
     url(r'^/location/prepare/update/all/([0-9]+)/$', contratlocation.prepare_update, name='location-prepare-update-all'),
     url(r'^/location/update/all/$', contratlocation.update, name='update-location-all'),
-    # url(r'^location/createb/(?P<pk>[0-9]+)/$', views.ContratLocationCreateForBatiment.as_view(), name='location-create-batiment'),
     url(r'^location/createb/([0-9]+)/$', contratlocation.contratLocation_for_batiment, name='location-create-batiment'),
     url(r'^location/createl/$', contratlocation.test, name='add-location-for-batiment'),
 

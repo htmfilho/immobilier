@@ -10,6 +10,7 @@
       {% csrf_token %}
 
       <input type="hidden" value="{{ location.id }}" name="id"/>
+      <input type="hidden" id="prev" name="prev" value="{{prev}}"/>
       <div class="form-group">
         <label for="batiment">Batiment</label>
         <input class="form-control" id="batiment" value="{{location.batiment}}" name="batiment" >

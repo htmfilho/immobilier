@@ -13,11 +13,14 @@ from dateutil.relativedelta import relativedelta
 from datetime import date
 import datetime
 from django.db import models
+from datetime import datetime
+
 
 def prepare_update(request,location_id):
     location = ContratLocation.objects.get(pk=location_id)
     return render(request, "contratlocation_update.html",
-                  {'location': location})
+                  {'location':    location,
+                   'assurances' : Assurance.find_all(),})
 
 
 def update(request):
@@ -52,7 +55,7 @@ def contratLocation_for_batiment(request, batiment_id):
     nouvelle_location = ContratLocation()
     if batiment:
         nouvelle_location.batiment=batiment
-    if location:
+    if not location is None:
         nouvelle_location.date_debut=location.date_fin
         nouvelle_location.date_fin=location.date_fin + relativedelta(years=1)
         nouvelle_location.loyer_base=location.loyer_base
@@ -63,8 +66,9 @@ def contratLocation_for_batiment(request, batiment_id):
 
         # le financement sera crée automatiquement
     return render(request, "contratlocation_new.html",
-                           {'location': nouvelle_location,
-                            'nav' : 'list_batiment'})
+                           {'location':    nouvelle_location,
+                            'assurances' : Assurance.find_all(),
+                            'nav' :       'list_batiment'})
 def list(request):
     locations = ContratLocation.objects.all()
     return render(request, "contratlocation_list.html",
@@ -85,17 +89,36 @@ def confirm_delete(request):
 
 
 def test(request):
-
+    """
+    ok - 1
+    """
     batiment = get_object_or_404(Batiment, pk=request.POST['batiment_id'])
+    location=ContratLocation()
     location.batiment = batiment
-    location.date_debut = request.POST['date_debut']
-    location.date_fin = request.POST['date_fin']
-
-    location.renonciation = request.POST['renonciation']
+    if request.POST['date_debut']:
+        location.date_debut = datetime.strptime(request.POST['date_debut'], '%d/%m/%Y')
+    else:
+        location.date_debut = None
+    if request.POST['date_fin']:
+        location.date_fin = datetime.strptime(request.POST['date_fin'], '%d/%m/%Y')
+    else:
+        location.date_fin = None
+    if request.POST['renonciation']:
+        location.renonciation = request.POST['renonciation']
+    else:
+        location.renonciation = None
     location.remarque = request.POST['remarque']
-    location.assurance = request.POST['assurance']
+    if request.POST['assurance'] and not request.POST['assurance']=='None':
+        location.assurance = get_object_or_404(Assurance, pk=request.POST['assurance'])
+    else:
+        location.assurance = None
+
     location.loyer_base = request.POST['loyer_base']
     location.charges_base = request.POST['charges_base']
     location.save()
+
+    if request.POST.get('prev', None) == 'fb':
+        return render(request, "batiment_form.html",
+                      {'batiment': batiment})
 
     return redirect('/listeBatiments/')

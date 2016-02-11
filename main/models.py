@@ -11,8 +11,12 @@ class Assurance(models.Model):
     nom         = models.CharField(max_length = 100)
     description = models.TextField(blank = True, null = True)
 
+    def find_all():
+        return Assurance.objects.all()
+
     def __str__(self):
         return self.nom
+
     class Meta:
         ordering = ['nom']
 
@@ -139,6 +143,12 @@ class Batiment(models.Model):
     def find_batiment(id):
         return Batiment.objects.get(pk=id)
 
+    def find_my_batiments():
+        personne = Personne.find_gestionnaire_default()
+        if personne:
+            return Proprietaire.find_batiment_by_personne(personne)
+        return None
+
     def __str__(self):
         desc = ""
         cptr=0
@@ -202,7 +212,7 @@ class Batiment(models.Model):
         if list_c:
             return list_c[0]
         return None
-        
+
     def locataires_actuels(self):
         liste=[]
         contrats = ContratLocation.objects.filter(batiment=self,date_debut__lte=timezone.now(), date_fin__gte=timezone.now() )
@@ -246,6 +256,14 @@ class Proprietaire(models.Model):
 
     def find_proprietaire(id):
         return Proprietaire.objects.get(pk=id)
+
+    def find_batiment_by_personne(personne):
+        list_p =  Proprietaire.objects.filter(proprietaire=personne)
+        batiments = []
+        for p in list_p:
+            batiments.append(p.batiment)
+        return batiments
+
     @property
     def batiments(self):
         return Batiment.objects.filter(proprietaire=self)
@@ -428,6 +446,9 @@ class SuiviLoyer(models.Model):
         else:
             return SuiviLoyer.objects.filter(date_paiement__gte = date_d, date_paiement__lte = date_f, etat_suivi = etat)
 
+    def find_suivis_a_verifier(date_d, date_f):
+        return SuiviLoyer.objects.filter(date_paiement__gte = timezone.now(), date_paiement__lte = timezone.now() + relativedelta(months=1), etat_suivi = 'A_VERIFIER')
+
     def __str__(self):
         desc = ""
         if not(self.date_paiement is None):
@@ -446,6 +467,10 @@ class ContratGestion(models.Model):
     gestionnaire = models.ForeignKey(Personne)
     date_debut   = models.DateField(auto_now = False,  auto_now_add = False,blank=True, null=True)
     date_fin     = models.DateField(auto_now = False, auto_now_add = False, blank = True, null = True)
+
+    def find_my_contrats():
+        personne = Personne.find_gestionnaire_default()
+        return ContratGestion.objects.filter(gestionnaire=personne)
 
     def __str__(self):
         return self.gestionnaire.nom + ", " + self.gestionnaire.prenom  + str(self.batiment)
@@ -489,6 +514,12 @@ class Alerte(models.Model):
 
     def find_by_etat(etat_alerte):
         return Alerte.objects.filter(etat=etat_alerte)
+
+    def find_by_etat_today(etat_alerte):
+        date_d=timezone.now() - relativedelta(months=1)
+        date_f=timezone.now() + relativedelta(months=1)
+        return Alerte.objects.filter(etat=etat_alerte,date_alerte__lte=date_f,date_alerte__gte=date_d)
+
 
 
 class Pays(models.Model):

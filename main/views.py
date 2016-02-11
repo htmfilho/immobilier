@@ -39,9 +39,21 @@ def dashboard(request):
     return render(request, 'main/dashboard.html', {})
 
 def home(request):
-    print('home')
-    return alertes.list(request)
+    # return alertes.list(request)
     # return render(request, "home.html")
+    date_debut = timezone.now(),
+    date_fin = timezone.now() + relativedelta(months=1)
+    etat= None
+    for k, v in dict(SuiviLoyer.ETAT).items():
+        if k == str('A_VERIFIER'):
+            etat = str(k)
+    suivis = SuiviLoyer.find_suivis_a_verifier(date_debut,date_fin)
+    # suivis=None
+    return render(request, 'myhome.html',
+                        {'alertes':    Alerte.find_by_etat_today('A_VERIFIER'),
+                         'batiments' : Batiment.find_my_batiments(),
+                         'contrats' :  ContratGestion.find_my_contrats(),
+                         'suivis'    : suivis})
 
 
 def listeBatiments(request):

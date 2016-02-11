@@ -69,7 +69,7 @@
                   <td><a href="{% url 'delete_proprietaire_batiment' proprietaire.id %}" title="Pour supprimer le propriétaire du  batiment"><span class="glyphicon glyphicon-remove" aria-hidden="true"></span></a></td>
                 </tr>
                 {% endfor%}
-                <tr ><td colspan="3"><a href="{% url 'add_proprietaire' batiment.id %}" title="Ajouter un propriétaire"><span class="glyphicon glyphicon-plus" aria-hidden="true"></span></a></td></tr>
+                <tr ><td colspan="3"><a href="{% url 'add_proprietaire' batiment.id %}?prev=fb" title="Ajouter un propriétaire"><span class="glyphicon glyphicon-plus" aria-hidden="true"></span></a></td></tr>
                 </table>
             </div>
           </div>
@@ -78,7 +78,6 @@
               <br>
               <div class="row">
                 <div class="col-md-1">
-
                   {% if batiment.contrats_location|length > 1 and batiment.contrats_location_previous|length > 0 %}
                   <a href="{% url 'location-prepare-update-all' batiment.contrat_location_previous.id %}" title="Précédent contrat de location"><span class="glyphicon glyphicon-chevron-left" aria-hidden="true"></span>
 
@@ -93,6 +92,7 @@
                     du {{ batiment.location_actuelle.date_debut|date:"j/m/Y"}} au {{ batiment.location_actuelle.date_fin|date:"j/m/Y"}}
                     </a>
                   {%endif%}
+                  <a href="{% url 'location-create-batiment' batiment.id %}?prev=fb" title="Pour ajouter une nouvelle location"><span class="glyphicon glyphicon-plus" aria-hidden="true"></span></a>
                 </div>
 
             <div class="col-md-1">
@@ -104,8 +104,10 @@
                 </a>
 
             {% endif %}
+
           </div>
              </div>
+             {% if batiment.locataires_actuels %}
               <br><br>
               <label class="control-label">Locataires actuelles</label>
               <br>
@@ -114,6 +116,10 @@
                 <tr><td>{{  p.nom }} {{  p.prenom }} </td>  </tr>
                 {% endfor%}
               </table>
+              {% endif %}
+              {% if batiment.location_actuelle %}
+              <a href="{% url 'locataire-new' batiment.location_actuelle.id %}" title="Pour ajouter un nouveau locataire"><span class="glyphicon glyphicon-plus" aria-hidden="true"></span></a>
+              {% endif %}
             </div>
           </div>
           <div id="gestion" class="tab-pane fade">

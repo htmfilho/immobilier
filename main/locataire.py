@@ -46,11 +46,11 @@ def new(request, location_id):
                    'personnes': l})
 
 def add(request):
-    # if request.POST.['locataire_id']:
-    #     locataire = get_object_or_404(Locataire, pk=request.POST.get('locataire_id',None))
-    # else:
-    #     locataire = Locataire()
-    locataire = Locataire()
+    if request.POST['locataire_id']:
+        locataire = get_object_or_404(Locataire, pk=request.POST.get('locataire_id',None))
+    else:
+        locataire = Locataire()
+
     location = get_object_or_404(ContratLocation, pk=request.POST.get('location_id',None))
     if request.POST['personne_id']:
         personne = get_object_or_404(Personne, pk=request.POST['personne_id'])

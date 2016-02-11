@@ -4,11 +4,8 @@
 
 <form action="" method="post">
   {% csrf_token %}
-    <p>Are you sure you want to delete "{{ object }}"?</p>
-    <input type="submit" value="Confirm" />
-    <a href="{% url 'personne_list' %}">No, cancel.</a>
+    <p>Etes-vous sûr de vouloir supprimer "{{ object }}"?</p>
+    <input type="submit" value="Confirmer" />
+    <a href="{% url 'personne_list' %}">Non, annuler.</a>
 </form>
-
-
-
 {% endblock %}

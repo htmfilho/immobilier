@@ -19,7 +19,6 @@
             <tr>
                 <td>
                     {{ locataire.personne| default_if_none:'' }}
-
                 </td>
                 <td>
                   {%if locataire.contrat_location %}
@@ -33,7 +32,7 @@
                 </td>
                 <td>
                     {{ locataire.infos_complement| default_if_none:'' }}
-            
+
                 </td>
 
                 <td>
@@ -45,8 +44,6 @@
             </tr>
         {% endfor%}
         </table>
-        <p align="right">
-          <a href="{% url 'batiment-create' %}" title="Pour créer un nouveau batiment"><span class="glyphicon glyphicon-plus" aria-hidden="true"></span></a>
-        </p>
+
 
 {% endblock %}

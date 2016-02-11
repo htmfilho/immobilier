@@ -52,10 +52,15 @@ def create(request, batiment_id):
 
 def prepare_update(request,id):
     contrat = ContratGestion.objects.get(pk=id)
+    personnes = []
+    personne_gestionnaire = Personne.find_gestionnaire_default()
+    personnes.append(personne_gestionnaire)
     return render(request, "contratgestion_update.html",
                   {'contrat': contrat,
                    'action' :   'update',
-                   'prev': request.GET['prev']})
+                   'personnes': personnes,
+                #    'prev': request.GET['prev']
+                   })
 
 
 def update(request):
