@@ -463,10 +463,11 @@ class SuiviLoyer(models.Model):
 
 
 class ContratGestion(models.Model):
-    batiment     = models.ForeignKey(Batiment)
-    gestionnaire = models.ForeignKey(Personne)
-    date_debut   = models.DateField(auto_now = False,  auto_now_add = False,blank=True, null=True)
-    date_fin     = models.DateField(auto_now = False, auto_now_add = False, blank = True, null = True)
+    batiment        = models.ForeignKey(Batiment)
+    gestionnaire    = models.ForeignKey(Personne)
+    date_debut      = models.DateField(auto_now = False,  auto_now_add = False,blank=True, null=True)
+    date_fin        = models.DateField(auto_now = False, auto_now_add = False, blank = True, null = True)
+    montant_mensuel = models.DecimalField(max_digits=6, decimal_places=2, blank = True, null = True)
 
     def find_my_contrats():
         personne = Personne.find_gestionnaire_default()
@@ -483,8 +484,20 @@ class ContratGestion(models.Model):
         c=super(ContratGestion, self).save(*args, **kwargs)
 
         if self.date_fin :
-            alert = Alerte(description='Attention fin contrat location dans 1 mois',date_alerte=self.date_fin - relativedelta(months=1),etat='A_VERIFIER',contratGestion=c)
+            alert = Alerte(description='Attention fin contrat location dans 1 mois',date_alerte=self.date_fin - relativedelta(months=1),etat='A_VERIFIER',contratGestion=self)
             alert.save()
+        if self.date_debut and self.date_fin :
+
+            date_d = self.date_debut
+            date_f = self.date_debut + relativedelta(months=1)
+            i=0
+            while date_f <= self.date_fin:
+                honoraire = Honoraire(etat='A_VERIFIER', contrat_gestion=self, date_paiement=date_d)
+                honoraire.save()
+                date_d = date_d + relativedelta(months=1)
+                date_f = date_f + relativedelta(months=1)
+                i=i+1
+
         return c
 
 class ModeleDocument(models.Model):
@@ -529,3 +542,23 @@ class Pays(models.Model):
 class Localite(models.Model):
     code_postal            = models.CharField(max_length = 10, blank = True, null = True)
     localite               = models.CharField(max_length = 150, blank = True, null = True)
+
+
+class Honoraire(models.Model):
+    ETAT_HONORAIRE = (
+        ('A_VERIFIER','A vérifier'),
+        ('IMPAYE','Impayé'),
+        ('EN_RETARD','En retard'),
+        ('PAYE','Payé')
+    )
+    contrat_gestion = models.ForeignKey(ContratGestion, blank = True, null = True, verbose_name=u"Contrat de gestion")
+    date_paiement =  models.DateField(auto_now = False, auto_now_add = False, blank = True, null = True, verbose_name=u"Date paiement")
+    etat = models.CharField(max_length = 10, choices = ETAT_HONORAIRE, default = 'A_VERIFIER', verbose_name=u"Etat")
+
+    def find_honoraires_by_etat_today(etat):
+        date_d=timezone.now() - relativedelta(months=1)
+        date_f=timezone.now() + relativedelta(months=1)
+        return Honoraire.objects.filter(etat=etat,date_paiement__lte=date_f,date_paiement__gte=date_d)
+
+    def find_all():
+        return Honoraire.objects.all()

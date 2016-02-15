@@ -11,6 +11,7 @@
         <thead>
             <th>Batiment</th>
             <th>Gestionnaire</th>
+            <th>Montant</th>
             <th>Date début</th>
             <th>Date fin</th>
             <th></th>
@@ -19,6 +20,7 @@
         <tr>
             <td>{{ contrat.batiment }}</td>
             <td>{{ contrat.gestionnaire }}</td>
+            <td>{{ contrat.montant_mensuel| default_if_none:'' }}</td>
             <td>{% if contrat.date_debut %}{{ contrat.date_debut|date:"j/m/Y"  }}{% endif%}</td>
             <td>{% if contrat.date_fin %}{{ contrat.date_fin|date:"j/m/Y"  }}{% endif%}</td>
             <td>

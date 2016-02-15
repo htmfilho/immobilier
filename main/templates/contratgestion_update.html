@@ -16,17 +16,23 @@
         <input class="form-control" value="{{contrat.batiment}}" name="batiment" readonly="readonly" >
         <input type="hidden" value="{{ contrat.batiment.id }}" name="batiment_id"/>
       </div>
-      <div class="form-group">
-        <label for="gestionnaire">Gestionnaire</label>
-        <select name="gestionnaire"  class="form-control">
-          {%for p in personnes%}
-          {%if contrat.gestionnaire and p = contrat.gestionnaire %}
-          <option value="{{p.id}}" selected="">{{p}}</option>
-          {%else%}
-            <option value="{{p.id}}" >{{p}}</option>
-          {%endif%}
-          {%endfor%}
-        </select>
+      <div class="row">
+        <div class="col-md-6">
+          <label for="gestionnaire">Gestionnaire</label>
+          <select name="gestionnaire"  class="form-control">
+            {%for p in personnes%}
+            {%if contrat.gestionnaire and p = contrat.gestionnaire %}
+            <option value="{{p.id}}" selected="">{{p}}</option>
+            {%else%}
+              <option value="{{p.id}}" >{{p}}</option>
+            {%endif%}
+            {%endfor%}
+          </select>
+        </div>
+        <div class="col-md-6">
+          <label for="montant_mensuel">Montant mensuel</label>
+          <input type="number" class="form-control" value="{{ contrat.montant_mensuel }}" name="montant_mensuel">
+        </div>
       </div>
       <div class="row">
         <div class="col-md-5">
@@ -39,6 +45,7 @@
         <input class="form-control" id="date_fin" value="{%if contrat.date_fin%}{{contrat.date_fin|date:"j/m/Y"}}{%endif%}" name="date_fin">
       </div>
       </div>
+
       <input type="submit" value="OK">
 
     </form>

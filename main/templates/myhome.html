@@ -18,7 +18,7 @@
                 <th>Numéro</th>
                 <th>Boite</th>
                 <th>Localité</th>
-                <th>Location actuelle</th>
+                <th colspan ="2">Location actuelle</th>
             </thead>
         {% for batiment in batiments %}
             <tr>
@@ -39,13 +39,16 @@
                     {{ batiment.localite }}
                 </td>
 
-
                 <td>
                   {% if batiment.location_actuelle%}
-                  du {{ batiment.location_actuelle.date_debut|date:"j/m/Y" }} au {{ batiment.location_actuelle.date_fin|date:"j/m/Y" }}
+                  {{ batiment.location_actuelle.date_debut|date:"j/m/Y" }}
                   {%endif%}
-
               </td>
+              <td>
+                {% if batiment.location_actuelle%}
+                {{ batiment.location_actuelle.date_fin|date:"j/m/Y" }}
+                {%endif%}
+            </td>
             </tr>
         {% endfor%}
         </table>
@@ -84,7 +87,9 @@
                   </div>
 </div>
       <div class="row" >
-        <div class="col-md-6">
+
+            <div class="col-md-6">
+
           <div class="panel panel-default">
               <div class="panel-heading">Mes contrats de gestion</div>
               <div class="panel-body">
@@ -107,6 +112,8 @@
               </div>
           </div>
         </div>
+
+
 
         <div class="col-md-6">
           <div class="panel panel-default">
@@ -142,7 +149,18 @@
         </div>
         </div>
       </div>
-
+<div class="row">
+    <div class="col-md-6">
+      <div class="panel panel-default">
+        <div class="panel-heading">Honoraires</div>
+        <div class="panel-body">
+      {% include "sub_honoraire_list.html" %}
+    </div>
+    </div>
+    </div>
+        <div class="col-md-6">
+        </div>
+      </div>
 
 
 

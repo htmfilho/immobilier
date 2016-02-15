@@ -50,10 +50,11 @@ def home(request):
     suivis = SuiviLoyer.find_suivis_a_verifier(date_debut,date_fin)
     # suivis=None
     return render(request, 'myhome.html',
-                        {'alertes':    Alerte.find_by_etat_today('A_VERIFIER'),
-                         'batiments' : Batiment.find_my_batiments(),
-                         'contrats' :  ContratGestion.find_my_contrats(),
-                         'suivis'    : suivis})
+                        {'alertes':     Alerte.find_by_etat_today('A_VERIFIER'),
+                         'batiments':   Batiment.find_my_batiments(),
+                         'contrats':    ContratGestion.find_my_contrats(),
+                         'honoraires':  Honoraire.find_honoraires_by_etat_today('A_VERIFIER'),
+                         'suivis':      suivis})
 
 
 def listeBatiments(request):

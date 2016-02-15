@@ -1,0 +1,18 @@
+
+    <table class="table table-striped table-hover">
+        <thead>
+            <th>Batiment</th>
+            <th>Montant</th>
+            <th>Date paiement</th>
+            <th>Etat</th>
+        </thead>
+    {% for honoraire in honoraires %}
+        <tr>
+            <td>{{ honoraire.contrat_gestion.batiment }}</td>
+            <td>{{ honoraire.contrat_gestion.montant_mensuel| default_if_none:'' }}</td>
+
+            <td>{% if honoraire.date_paiement %}{{ honoraire.date_paiement|date:"j/m/Y"  }}{% endif%}</td>
+            <td>{{ honoraire.etat }}</td>
+        </tr>
+    {% endfor%}
+    </table>

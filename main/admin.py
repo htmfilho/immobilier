@@ -16,6 +16,7 @@ from .models import Societe
 from .models import Alerte
 from .models import Pays
 from .models import Localite
+from .models import Honoraire
 
 from .exportUtils import export_xls_batiment
 from .pdfUtils import pdf_batiment
@@ -47,3 +48,4 @@ admin.site.register(Societe)
 admin.site.register(Alerte)
 admin.site.register(Pays)
 admin.site.register(Localite)
+admin.site.register(Honoraire)

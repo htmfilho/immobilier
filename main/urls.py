@@ -1,6 +1,6 @@
 from django.conf.urls import url
 from django.conf import settings
-from . import views, batiment, proprietaire, suivis, alertes, contratlocation, financement, locataire, contratgestion, frais
+from . import views, batiment, proprietaire, suivis, alertes, contratlocation, financement, locataire, contratgestion, frais, honoraire
 from .models import *
 from main.views import BatimentDetailView
 from django.conf.urls import url
@@ -125,6 +125,9 @@ urlpatterns = [
     url(r'^locataires/$', locataire.list, name='locataire-list'),
     url(r'^/locataire/([0-9]+)/$', locataire.locataire_form, name='locataire'),
     url(r'^locataire/update/([0-9]+)/$', locataire.update, name='locataire-update'),
+
+    url(r'^honoraires/$', honoraire.list, name='honoraire-list'),
+
 
 
 ]

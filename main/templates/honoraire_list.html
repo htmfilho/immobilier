@@ -1,0 +1,14 @@
+{% extends "layout.html" %}
+{% load staticfiles %}
+{% load order %}
+{% block breadcrumb %}
+  <li class="active">Liste des honoraires</li>
+{% endblock %}
+{% block content %}
+<div class="panel panel-default">
+  <div class="panel-body">
+{% include "sub_honoraire_list.html" %}
+</div>
+</div>
+
+{% endblock %}
