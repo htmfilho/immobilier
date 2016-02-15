@@ -469,6 +469,9 @@ class ContratGestion(models.Model):
     date_fin        = models.DateField(auto_now = False, auto_now_add = False, blank = True, null = True)
     montant_mensuel = models.DecimalField(max_digits=6, decimal_places=2, blank = True, null = True)
 
+    def find_all():
+        return ContratGestion.objects.all()
+
     def find_my_contrats():
         personne = Personne.find_gestionnaire_default()
         return ContratGestion.objects.filter(gestionnaire=personne)
@@ -500,6 +503,7 @@ class ContratGestion(models.Model):
 
         return c
 
+
 class ModeleDocument(models.Model):
     # TYPE_DOCUMENT = (
         # ('LETTRE_INDEXATION','Lettre indexation'),
@@ -509,6 +513,7 @@ class ModeleDocument(models.Model):
 
     def __str__(self):
         return self.type_document
+
 
 class Alerte(models.Model):
     ETAT = (
@@ -562,3 +567,25 @@ class Honoraire(models.Model):
 
     def find_all():
         return Honoraire.objects.all()
+
+    def find_by_batiment_etat_date(batiment_id,etat,date_limite_inf):
+        
+        query =  Honoraire.objects.all()
+
+        if not batiment_id is None and batiment_id != "None" :
+            query = query.filter(contrat_gestion__batiment__id=int(batiment_id))
+
+        if not etat is None and len(etat) > 0  :
+            query = query.filter(etat=etat)
+
+        if not date_limite_inf is None:
+            query = query.filter(date_paiement__gte=date_limite_inf)
+
+        return query
+
+    def find_all_batiments():
+        batiments=[]
+        for c  in ContratGestion.find_all():
+            if not c.batiment in batiments:
+                batiments.append(c.batiment)
+        return batiments

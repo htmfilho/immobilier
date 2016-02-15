@@ -127,6 +127,8 @@ urlpatterns = [
     url(r'^locataire/update/([0-9]+)/$', locataire.update, name='locataire-update'),
 
     url(r'^honoraires/$', honoraire.list, name='honoraire-list'),
+    url(r'^honoraires/search/$', honoraire.search, name='honoraires-search'),
+
 
 
 
