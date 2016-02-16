@@ -52,6 +52,9 @@ class PersonneForm(ModelForm):
         self.helper.field_class = 'col-md-8'
         self.helper.add_input(Submit('submit','Ok'))
 
+
+
+
 class BatimentForm(ModelForm):
 
     class Meta:

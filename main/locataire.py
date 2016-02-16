@@ -28,7 +28,7 @@ def update(request, id):
 def new(request, location_id):
     print('new locataire', location_id)
     location = get_object_or_404(ContratLocation, pk=location_id)
-    print(location)
+
     locataire = Locataire()
     locataire.contrat_location=location
     personnes = Personne.objects.filter()

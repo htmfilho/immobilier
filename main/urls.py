@@ -1,6 +1,6 @@
 from django.conf.urls import url
 from django.conf import settings
-from . import views, batiment, proprietaire, suivis, alertes, contratlocation, financement, locataire, contratgestion, frais, honoraire
+from . import views, batiment, proprietaire, suivis, alertes, contratlocation, financement, locataire, contratgestion, frais, honoraire, personne
 from .models import *
 from main.views import BatimentDetailView
 from django.conf.urls import url
@@ -57,14 +57,13 @@ urlpatterns = [
     url(r'^fraismaintenance/delete/(?P<pk>[0-9]+)/$', views.FraisMaintenanceDelete.as_view(), name='fraismaintenance-delete'),
     url(r'^fraismaintenance/(?P<pk>[0-9]+)/$', views.FraisMaintenanceDetail.as_view(), name='fraismaintenance_detail'),
 
-    url(r'^personne/create/$', views.PersonneCreate.as_view(), name='personne-create'),
+    url(r'^personne/create/$', personne.create, name='personne-create'),
     url(r'^personne/create/locataire/$', locataire.personne_create, name='personne-create-locataire'),
 
-
-    url(r'^personne/update/(?P<pk>[0-9]+)/$', views.PersonneUpdate.as_view(), name='personne-update'),
+    url(r'^personne/edit/([0-9]+)/$', personne.edit, name='personne-edit'),
+    url(r'^personne/update/$', personne.update, name='personne-update'),
     url(r'^personne/delete/(?P<pk>[0-9]+)/$', views.PersonneDelete.as_view(), name='personne-delete'),
-    url(r'^personnes/$', views.PersonneList.as_view(), name='personne_list'),
-    url(r'^personne/(?P<pk>[0-9]+)/$', views.PersonneDetail.as_view(), name='personne_detail'),
+    url(r'^personnes/$', personne.list, name='personne_list'),
 
     url(r'^batiment/create/$', batiment.create, name='batiment-create'),
     url(r'^/batiment/([0-9]+)/$', batiment.batiment_form, name='batiment'),

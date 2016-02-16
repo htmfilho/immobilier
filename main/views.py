@@ -142,19 +142,6 @@ class FraisMaintenanceDelete(DeleteView):
     model=FraisMaintenance;
     success_url = reverse_lazy('fraismaintenance-list'),
 
-class PersonneList(ListView):
-    model = Personne
-
-class PersonneDetail(DetailView):
-    model= Personne
-
-class PersonneCreate(CreateView):
-    model=Personne;
-    form_class = PersonneForm
-
-class PersonneUpdate(UpdateView):
-    model=Personne;
-    form_class = PersonneForm
 
 class PersonneDelete(DeleteView):
     model=Personne;

@@ -13,3 +13,6 @@ body {
 .PAYE {
   background-color: transparent;
 }
+.erreur{
+  color:red;
+}

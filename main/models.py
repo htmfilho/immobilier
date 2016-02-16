@@ -51,7 +51,7 @@ class Personne(models.Model):
     date_naissance = models.DateField(auto_now = False, blank = True, null = True, auto_now_add = False)
     lieu_naissance = models.CharField(max_length = 100, blank = True, null = True)
     pays_naissance = models.CharField(max_length = 100, blank = True, null = True)
-    num_identite   = models.CharField(max_length = 100, blank = True, null = True, unique=True)
+    num_identite   = models.CharField(max_length = 100, blank = True, null = True, unique=False)
     telephone      = models.CharField(max_length = 30, blank = True, null = True)
     gsm            = models.CharField(max_length = 30, blank = True, null = True)
 
@@ -569,7 +569,7 @@ class Honoraire(models.Model):
         return Honoraire.objects.all()
 
     def find_by_batiment_etat_date(batiment_id,etat,date_limite_inf):
-        
+
         query =  Honoraire.objects.all()
 
         if not batiment_id is None and batiment_id != "None" :
