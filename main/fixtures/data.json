@@ -16,6 +16,54 @@
     }
   },
   {
+    "model": "main.personne",
+    "pk": 3,
+    "fields": {
+      "prenom": "Stéphan",
+      "nom": "Marchal"
+    }
+  },
+  {
+    "model": "main.personne",
+    "pk": 4,
+    "fields": {
+      "prenom": "Jeanne",
+      "nom": "Lebrun"
+    }
+  },
+  {
+    "model": "main.personne",
+    "pk": 5,
+    "fields": {
+      "prenom": "Hervé",
+      "nom": "Marcelle"
+    }
+  },
+  {
+    "model": "main.personne",
+    "pk": 6,
+    "fields": {
+      "prenom": "Géraldine",
+      "nom": "Garlant"
+    }
+  },
+  {
+    "model": "main.personne",
+    "pk": 7,
+    "fields": {
+      "prenom": "Roger",
+      "nom": "Verpoorten"
+    }
+  },
+  {
+    "model": "main.personne",
+    "pk": 8,
+    "fields": {
+      "prenom": "Germaine",
+      "nom": "Lesquoy"
+    }
+  },
+  {
     "model": "main.batiment",
     "pk": 1,
     "fields": {
@@ -86,6 +134,50 @@
       "numero": "13",
       "code_postal" :"5500",
       "localite" :"Dinant"
+    }
+  },
+  {
+    "model": "main.batiment",
+    "pk": 8,
+    "fields": {
+      "rue": "Rue du Centre",
+      "numero": "5",
+      "boite": "b",
+      "code_postal" :"5501",
+      "localite" :"Lisogne"
+    }
+  },
+  {
+    "model": "main.batiment",
+    "pk": 9,
+    "fields": {
+      "rue": "Rue du Centre",
+      "numero": "5",
+      "boite": "a",
+      "code_postal" :"5501",
+      "localite" :"Lisogne"
+    },
+    {
+      "model": "main.batiment",
+      "pk": 10,
+      "fields": {
+        "rue": "Rue du Centre",
+        "numero": "2",
+        "boite":"c",
+        "code_postal" :"5501",
+        "localite" :"Lisogne"
+      }
+    },
+    {
+      "model": "main.batiment",
+      "pk": 11,
+      "fields": {
+        "rue": "Rue du Centre",
+        "numero": "2",
+        "boite":"d",
+        "code_postal" :"5501",
+        "localite" :"Lisogne"
+      }
     }
   }
 ]
