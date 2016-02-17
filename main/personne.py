@@ -34,28 +34,31 @@ def list(request):
                   {'personnes': Personne.find_all()})
 
 def update(request):
-    personne = Personne()
+
     form = PersonneForm(data=request.POST)
     if request.POST['personne_id'] and not request.POST['personne_id'] == 'None':
         personne = get_object_or_404(Personne, pk=request.POST['personne_id'])
-        personne.nom =request.POST['nom']
-        personne.prenom =request.POST['prenom']
-        personne.email =request.POST['email']
-        personne.profession =request.POST['profession']
 
-        personne.lieu_naissance =request.POST['lieu_naissance']
-        personne.pays_naissance =request.POST['pays_naissance']
-        personne.num_identite =request.POST['num_identite']
-        personne.telephone =request.POST['telephone']
-        personne.gsm =request.POST['gsm']
-        if request.POST['date_naissance']:
-            try:
-                personne.date_naissance =datetime.strptime(request.POST['date_naissance'], '%d/%m/%Y')
-            except ValueError:
-                personne.date_naissance =request.POST['date_naissance']
-        else:
-            personne.date_naissance =None
+    else:
+        personne = Personne()
 
+    personne.nom =request.POST['nom']
+    personne.prenom =request.POST['prenom']
+    personne.email =request.POST['email']
+    personne.profession =request.POST['profession']
+
+    personne.lieu_naissance =request.POST['lieu_naissance']
+    personne.pays_naissance =request.POST['pays_naissance']
+    personne.num_identite =request.POST['num_identite']
+    personne.telephone =request.POST['telephone']
+    personne.gsm =request.POST['gsm']
+    if request.POST['date_naissance']:
+        try:
+            personne.date_naissance =datetime.strptime(request.POST['date_naissance'], '%d/%m/%Y')
+        except ValueError:
+            personne.date_naissance =request.POST['date_naissance']
+    else:
+        personne.date_naissance =None
     if form.is_valid():
         personne.save()
         return render(request, "personne_list.html",

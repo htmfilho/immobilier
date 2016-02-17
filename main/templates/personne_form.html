@@ -5,7 +5,7 @@
 {% endblock %}
 {% block content %}
 
-  <form method="post" method="post" action="{% url 'personne-update' %}">
+  <form method="post" action="{% url 'personne-update' %}">
     {% csrf_token %}
     <input type="hidden" value="{{ personne.id }}" name="personne_id"/>
     <div class="row">
@@ -14,7 +14,7 @@
           <input class="form-control" name="nom" value="{{ personne.nom| default_if_none:'' }}" >
       </div>
       <div class="col-md-6">
-          <label for="prenom">Prenom</label>
+          <label for="prenom">Prénom</label>
           <input class="form-control" name="prenom" value="{{ personne.prenom| default_if_none:'' }}" >
       </div>
     </div>
