@@ -13,11 +13,13 @@
   {% csrf_token %}
   <input type="hidden" value="{{ frais.id }}" name="id"/>
   <input type="hidden" value="{{ action }}" name="action"/>
+
   <div class="row">
     <div class="col-md-6">
     <label for="batiment_id">Batiment</label>
     {% if frais.batiment %}
-    <input class="form-control" value="{{ frais.batiment }}" name="batiment_id">
+    <input type="hidden" value="{{ frais.batiment.id }}" name="batiment_id"/>
+    <input class="form-control" value="{{ frais.batiment }}" name="batiment">
     {% else %}
     <select class="form-control" name="batiment_id" >
       {%if frais.batiment %}

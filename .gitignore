@@ -4,7 +4,11 @@ db.sqlite3
 immovenv/
 main/__pycache__/
 main/migrations/__pycache__/
+main/migrations/
 
 __pycache__/test.cpython-34.pyc
 photos/getphoto13.jpg
 photos/LogoRBC.png
+*.pyc
+immovenv/
+main/templatetags/__pycache__/

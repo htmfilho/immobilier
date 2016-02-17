@@ -19,10 +19,12 @@ def create(request):
                   {'batiment':         batiment})
 
 def batiment_form(request, batiment_id):
+    print('batiment_form')
     batiment = Batiment.find_batiment(batiment_id)
+
     return render(request, "batiment_form.html",
-                  {'batiment':         batiment,
-                   'assurances': Assurance.find_all()})
+                  {'batiment':     batiment,
+                   'assurances':   Assurance.find_all()})
 
 def update(request):
 

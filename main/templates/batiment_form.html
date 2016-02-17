@@ -60,7 +60,7 @@
         <li class="active"><a data-toggle="tab" href="#proprietaires">Propriétaires</a></li>
         <li><a data-toggle="tab" href="#location">Location</a></li>
         <li><a data-toggle="tab" href="#gestion">Gestion</a></li>
-        <li style="visibility:hidden"><a data-toggle="tab" href="#frais">Frais</a></li>
+        <li><a data-toggle="tab" href="#frais">Frais</a></li>
       </ul>
       <div class="tab-content">
           <div id="proprietaires" class="tab-pane fade in active">
@@ -158,12 +158,11 @@
               <a href="{% url 'contratgestion-create' batiment.id %}" title="Pour ajouter un contrat de gestion"><span class="glyphicon glyphicon-plus" aria-hidden="true"></span></a>
             </div>
         </div>
-        <div id="frais" class="tab-pane fade" style="visibility:hidden">
+        <div id="frais" class="tab-pane fade" >
           <div class="form-group">
           {% if batiment.frais_list %}
-          <table class="table table-bordered">
+          <table class="table table-striped">
             <thead>
-                <th>Propriétaire</th>
                 <th>Entrepreneur</th>
                 <th>Société</th>
                 <th>Description</th>
@@ -172,16 +171,13 @@
             </thead>
               {% for f in batiment.frais_list %}
             <tr>
-              <td>{{ f.proprietaire }}</td>
-              <td>{{ f.entrepreneur }}</td>
-              <td>{{ f.societe }}</td>
-              <td>{{ f.description }}</td>
-              <td>{{ f.montant }}</td>
-              <td>{{ f.date_realisation|date:"j/m/Y" }}</td>
+              <td>{{ f.entrepreneur | default_if_none:'' }}</td>
+              <td>{{ f.societe | default_if_none:'' }}</td>
+              <td>{{ f.description | default_if_none:''}}</td>
+              <td>{{ f.montant | default_if_none:''}}</td>
+              <td>{{ f.date_realisation | default_if_none:''|date:"j/m/Y" }}</td>
             </tr>
-
           {% endfor %}
-          <tr><td colspan="3"><a href="{% url 'add_proprietaire' batiment.id %}">add</a><</td></tr>
           </table>
           {% endif %}
           <a href="{% url 'fraismaintenance-create' batiment.id %}" title="Pour ajouter un FRAIS"><span class="glyphicon glyphicon-plus" aria-hidden="true"></span></a>

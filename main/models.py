@@ -128,7 +128,6 @@ class Batiment(models.Model):
     lieu_dit               = models.CharField(max_length = 200, blank = True, null = True)
     code_postal            = models.CharField(max_length = 10, blank = True, null = True)
     localite               = models.CharField(max_length = 150, blank = True, null = True)
-    # province               = models.CharField(max_length = 100, blank = True, null = True)
     superficie             = models.DecimalField(max_digits = 5, decimal_places = 3, blank = True, null = True)
     peformance_energetique = models.CharField(max_length = 10,blank = True, null = True)
     # photo                  = models.ManyToManyField(Photo, blank = True, null = True)
@@ -203,12 +202,12 @@ class Batiment(models.Model):
 
     def contrats_location_previous(self):
         return ContratLocation.objects.filter(batiment=self, date_fin__lte=self.location_actuelle.date_debut)
+
     def contrat_location_next(self):
         list_c =  ContratLocation.objects.filter(batiment=self, date_debut__gte=self.location_actuelle.date_fin)
         if list_c:
             return list_c[0]
         return None
-
 
     def contrat_location_previous(self):
         list_c= ContratLocation.objects.filter(batiment=self, date_fin__lte=self.location_actuelle.date_debut)
@@ -243,13 +242,7 @@ class Batiment(models.Model):
 
     @property
     def frais_list(self):
-        frais_list=[]
-        for p in self.proprietaires:
-            frais = FraisMaintenance.objects.filter(proprietaire=p)
-            if not frais in frais_list:
-                frais_list.append(frais)
-        return frais_list
-
+        return FraisMaintenance.objects.filter(batiment=self)
 
 class Proprietaire(models.Model):
     proprietaire  = models.ForeignKey(Personne, verbose_name=u"Propriétaire")
@@ -421,6 +414,12 @@ class FraisMaintenance(models.Model):
     description      = models.TextField()
     montant          = models.DecimalField(max_digits=8, decimal_places=2, blank = False, null = False)
     date_realisation = models.DateField(auto_now = False, auto_now_add = False, blank = True, null = True, verbose_name=u"Date réalisation")
+
+    def find_by_batiment(batiment_id):
+        print('find_by_batiment')
+        batiment = Batiment.find_batiment(batiment_id)
+        print (batiment)
+        return FraisMaintenance.objects.all()
 
     def __str__(self):
         return self.batiment + " " + self.description

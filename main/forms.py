@@ -101,6 +101,7 @@ class FraisMaintenanceForm(ModelForm):
         model = FraisMaintenance
         fields=['batiment','entrepreneur','description','montant','date_realisation']
 
+
 class SocieteForm(ModelForm):
 
     class Meta:
