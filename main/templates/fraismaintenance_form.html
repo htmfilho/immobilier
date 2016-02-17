@@ -2,53 +2,77 @@
 {% load staticfiles %}
 {% load order %}
 {% block breadcrumb %}
+{% if prev == 'fl' %}
+  <li><a href="{% url 'fraismaintenance_list' %}">Liste frais</a></li>
+{% endif %}
   <li class="active">Frais de maintenance</li>
 {% endblock %}
 {% block content %}
 
-<form action="" method="post">
+<form action="{% url 'fraismaintenance-update' %}" method="post">
+  {% csrf_token %}
+  <input type="hidden" value="{{ frais.id }}" name="id"/>
+  <input type="hidden" value="{{ action }}" name="action"/>
   <div class="row">
     <div class="col-md-6">
-    <label for="proprietaire">Propriétaire</label>
-    <input class="form-control" value="{%if frais.proprietaire%}{{frais.proprietaire }}{%endif%}" name="proprietaire">
+    <label for="batiment_id">Batiment</label>
+    {% if frais.batiment %}
+    <input class="form-control" value="{{ frais.batiment }}" name="batiment_id">
+    {% else %}
+    <select class="form-control" name="batiment_id" >
+      {%if frais.batiment %}
+        <option value="TOUS" >Tous</option>
+      {%else%}
+        <option value="TOUS" selected>Tous</option>
+      {%endif%}
+      {% for b in batiments %}
+          {% if frais.batiment == b.id %}
+            <option value="{{ b.id }}" selected>{{ b }}</option>
+          {%else%}
+            <option value="{{ b.id }}">{{ b }}</option>
+          {% endif %}
+      {% endfor %}
+    </select>
+    {% endif %}
   </div>
   <div class="col-md-6">
   </div>
 </div>
 <div class="row">
   <div class="col-md-6">
-  <label for="entrepreneur">Entrepreneur</label>
-  <input class="form-control"  value="{%if frais.entrepreneur %}{{ frais.entrepreneur }}{%endif%}" name="entrepreneur">
-</div>
-<div class="col-md-6">
-</div>
+    <label for="entrepreneur">Entrepreneur</label>
+    <input class="form-control"  value="{%if frais.entrepreneur %}{{ frais.entrepreneur }}{%endif%}" name="entrepreneur">
+  </div>
+  <div class="col-md-6">
+  </div>
 </div>
 <div class="row">
-  <div class="col-md-6">
-  <label for="description">Description</label>
-  <input class="form-control"  value="{%if frais.description %}{{ frais.description }}{%endif%}" name="description">
-</div>
-<div class="col-md-6">
-</div>
+  <div class="col-md-12">
+    <label for="description">Description</label>
+    <textarea class="form-control" name="description" required="true" cols="4" rows="4" >{%if frais.description %}{{ frais.description }}{%endif%}</textarea>
+  </div>
 </div>
 <div class="row">
+  <div class="col-md-3">
+    <label for="montant">Montant</label>
+    <input class="form-control" value="{{ frais.montant | default_if_none:'' }}" name="montant" >
+  </div>
+  <div class="col-md-3">
+    <label for="date_realisation">Date réalisation</label>
+    <input class="form-control"  value="{%if frais.date_realisation %}{{ frais.date_realisation|date:"j/m/Y" }}{%endif%}" name="date_realisation">
+  </div>
   <div class="col-md-6">
-  <label for="montant">Montant</label>
-  <input class="form-control"  value="{%if frais.montant %}{{ frais.montant }}{%endif%}" name="montant">
-</div>
-<div class="col-md-6">
-</div>
+  </div>
 </div>
 <div class="row">
-  <div class="col-md-6">
-  <label for="date_realisation">Date réalisation</label>
-  <input class="form-control"  value="{%if frais.date_realisation %}{{ frais.date_realisation|date:"j/m/Y" }}{%endif%}" name="date_realisation">
-</div>
-<div class="col-md-6">
-</div>
+  <div class="col-md-11">
+  </div>
+  <div class="col-md-1">
+    <input type="submit" value="ok"/>
+  </div>
 </div>
 
-  <input type="submit" value="ok"/>
+
 </form>
 
 {% endblock %}

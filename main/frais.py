@@ -31,6 +31,17 @@ import datetime
 from django.db import models
 
 from datetime import datetime
+import locale
+
+def new(request):
+    frais = FraisMaintenance()
+
+    return render(request, "fraismaintenance_form.html",
+                  {'frais':   frais,
+                   'personnes': Personne.find_all(),
+                   'action' :   'new',
+                   'batiments' : Batiment.find_all(),
+                   'prev':      'fl'})
 
 def create(request, batiment_id):
 
@@ -45,15 +56,15 @@ def create(request, batiment_id):
                    'prev':      'fb'})
 
 def prepare_update(request,id):
-    contrat = FraisMaintenance.objects.get(pk=id)
+    frais = FraisMaintenance.objects.get(pk=id)
     return render(request, "fraismaintenance_form.html",
-                  {'frais': frais,
-                   'action' :   'update',
-                   'prev': request.GET['prev']})
+                  {'frais':   frais,
+                   'action' : 'update',
+                   'prev':    'fl'})
 
 
 def update(request):
-
+    print('update',request.POST['action'])
     if request.POST['action']=='new':
         frais = FraisMaintenance()
         batiment = get_object_or_404(Batiment, pk=request.POST.get('batiment_id',None))
@@ -63,37 +74,36 @@ def update(request):
         batiment = frais.batiment
     personne= None
 
-    if request.POST.get('date_debut',None):
-        valid_datetime = datetime.strptime(request.POST['date_debut'], '%d/%m/%Y')
-        gestion.date_debut = valid_datetime
+    if request.POST.get('entrepreneur',None):
+        frais.entrepreneur = request.POST['entrepreneur']
     else:
-        gestion.date_debut = None
-
-    # gestion.date_fin = request.POST['date_fin']
-    if request.POST.get('date_fin',None):
-        valid_datetime = datetime.strptime(request.POST['date_fin'], '%d/%m/%Y')
-        gestion.date_fin = valid_datetime
+        frais.entrepreneur = None
+    if request.POST.get('societe',None):
+        frais.societe = request.POST['societe']
     else:
-        gestion.date_fin =None
-    if gestion.date_debut and gestion.date_fin :
-        if gestion.date_debut> gestion.date_fin :
-            return render(request, "contratgestion_update.html",
-                          {'contrat': gestion,
-                           'message':'La date de début doit être < à la date de fin'})
-    message
-    if not message is None:
+        frais.societe = None
+    if request.POST.get('description',None):
+        frais.description = request.POST['description']
+    else:
+        frais.description = None
 
-        return render(request, "fraismaintenance_form.html",
-                      {'frais': frais,
-                       'action' :   'update',
-                       'message' : message,
-                       'prev': request.GET['prev']})
-
+    if request.POST.get('montant',None):
+        frais.montant = request.POST['montant']
+    else:
+        frais.montant = None
+    if request.POST.get('date_realisation',None):
+        valid_datetime = datetime.strptime(request.POST['date_realisation'], '%d/%m/%Y')
+        frais.date_realisation = valid_datetime
+    else:
+        frais.date_realisation = None
 
     frais.save()
     if request.POST.get('prev', None) == 'fb':
         return render(request, "batiment_form.html",
                       {'batiment': batiment})
+    if request.POST.get('prev', None) == 'fl':
+        return render(request, "fraismaintenance_list.html",
+                               {'frais_list': FraisMaintenance.objects.all()})
 
 
 

@@ -140,6 +140,8 @@ class Batiment(models.Model):
         # return reverse('batiment_list')
         # return reverse('listeBatiments')
 
+    def find_all():
+        return Batiment.objects.all()
 
     def find_batiment(id):
         return Batiment.objects.get(pk=id)
@@ -413,15 +415,15 @@ class Societe(models.Model):
 
 
 class FraisMaintenance(models.Model):
-    proprietaire     = models.ForeignKey(Proprietaire, verbose_name=u"Propriétaire")
+    batiment         = models.ForeignKey(Batiment, verbose_name=u"Batiment", blank = False, null = False)
     entrepreneur     = models.ForeignKey(Personne, blank = True, null = True)
     societe          = models.ForeignKey(Societe, blank = True, null = True)
     description      = models.TextField()
-    montant          = models.DecimalField(max_digits=8, decimal_places=2, default = 0)
+    montant          = models.DecimalField(max_digits=8, decimal_places=2, blank = False, null = False)
     date_realisation = models.DateField(auto_now = False, auto_now_add = False, blank = True, null = True, verbose_name=u"Date réalisation")
 
     def __str__(self):
-        return self.proprietaire.proprietaire.nom + ", " + self.proprietaire.proprietaire.prenom  + " " + self.proprietaire.batiment.rue +" "+ self.description
+        return self.batiment + " " + self.description
 
 
 class SuiviLoyer(models.Model):
