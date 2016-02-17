@@ -6,6 +6,7 @@ import datetime
 from dateutil.relativedelta import relativedelta
 from django.core.urlresolvers import reverse
 from django.core.exceptions import *
+from django.db.models import Q
 
 class Assurance(models.Model):
     nom         = models.CharField(max_length = 100)
@@ -447,7 +448,7 @@ class SuiviLoyer(models.Model):
             return SuiviLoyer.objects.filter(date_paiement__gte = date_d, date_paiement__lte = date_f, etat_suivi = etat)
 
     def find_suivis_a_verifier(date_d, date_f):
-        return SuiviLoyer.objects.filter(date_paiement__gte = timezone.now(), date_paiement__lte = timezone.now() + relativedelta(months=1), etat_suivi = 'A_VERIFIER')
+        return SuiviLoyer.objects.filter(Q(date_paiement__gte = timezone.now(), date_paiement__lte = timezone.now() + relativedelta(months=1), etat_suivi = 'A_VERIFIER') | Q(date_paiement__lte = timezone.now() , etat_suivi = 'A_VERIFIER') )
 
     def __str__(self):
         desc = ""
