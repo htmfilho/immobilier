@@ -110,7 +110,6 @@ def test(request):
     else:
         location.renonciation = None
     location.remarque = request.POST['remarque']
-    print('ddd',request.POST['assurance'])
     if request.POST['assurance'] and not request.POST['assurance']=='None':
         location.assurance = get_object_or_404(Assurance, pk=request.POST['assurance'])
     else:

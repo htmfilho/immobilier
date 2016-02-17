@@ -49,6 +49,7 @@
         <div class="col-md-8">
           <label for="assurance">Assurance</label>
           <select class="form-control" name="assurance"  class="form-control">
+            <option value="">-</option>
             {%for a in assurances%}
             <option value="{{a.id}}">{{a}}</option>
             {%endfor%}
