@@ -39,7 +39,15 @@ def update(request):
         batiment.boite = request.POST['boite']
         batiment.code_postal = request.POST['code_postal']
         batiment.localite = request.POST['localite']
-
+        print(request.POST['superficie'])
+        if request.POST['superficie']:
+            batiment.superficie = request.POST['superficie']
+        else:
+            batiment.superficie = None
+        if request.POST['peformance_energetique']:
+            batiment.peformance_energetique = request.POST['peformance_energetique']
+        else:
+            batiment.peformance_energetique = None
         batiment.save()
 
 
