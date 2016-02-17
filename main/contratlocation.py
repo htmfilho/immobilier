@@ -14,7 +14,7 @@ from datetime import date
 import datetime
 from django.db import models
 from datetime import datetime
-
+from main.forms import ContratLocationForm
 
 def prepare_update(request,location_id):
     location = ContratLocation.objects.get(pk=location_id)
@@ -25,6 +25,7 @@ def prepare_update(request,location_id):
 
 def update(request):
     print('update')
+    form = ContratLocationForm(data=request.POST)
     location = ContratLocation()
 
     location = get_object_or_404(ContratLocation, pk=request.POST['id'])
@@ -37,14 +38,20 @@ def update(request):
         location.assurance = get_object_or_404(Assurance, pk=request.POST['assurance'])
     else:
         location.assurance = None
-    location.save()
-    location = get_object_or_404(ContratLocation, pk=request.POST['id'])
-    print (request.POST['remarque'])
-    # return redirect(ContratLocation.objects.all())
-    # todo ici il faut retourner au fb
-    return render(request, "batiment_form.html",
-                  {'batiment': batiment})
-    # return redirect('/contratlocations/')
+    if form.is_valid():
+        location.save()
+        # todo ici il faut retourner au fb
+        return render(request, "batiment_form.html",
+                      {'batiment': batiment})
+        # return redirect('/contratlocations/')
+    else:
+
+        return render(request, "contratlocation_new.html",
+                               {'location':    location,
+                                'assurances' : Assurance.find_all(),
+                                'nav' :       'list_batiment',
+                                'form' : form})
+
 
 
 def contratLocation_for_batiment(request, batiment_id):
@@ -94,6 +101,8 @@ def test(request):
     """
     ok - 1
     """
+    form = ContratLocationForm(data=request.POST)
+    print(form)
     batiment = get_object_or_404(Batiment, pk=request.POST['batiment_id'])
     location=ContratLocation()
     location.batiment = batiment
@@ -117,7 +126,18 @@ def test(request):
 
     location.loyer_base = request.POST['loyer_base']
     location.charges_base = request.POST['charges_base']
-    location.save()
+    print (location.batiment)
+    if form.is_valid():
+        print('form valid')
+        location.save()
+    else:
+        print('form invalid', form.errors)
+        return render(request, "contratlocation_new.html",
+                               {'location':    location,
+                                'assurances' : Assurance.find_all(),
+                                'nav' :       'list_batiment',
+                                'form' : form})
+
 
     if request.POST.get('prev', None) == 'fb':
         return render(request, "batiment_form.html",

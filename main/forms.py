@@ -132,15 +132,8 @@ class ContratLocationForm(ModelForm):
 
     class Meta:
         model = ContratLocation
-        fields=['batiment','date_debut','date_fin','renonciation','remarque','assurance','loyer_base','charges_base']
+        fields=['date_debut','date_fin','renonciation','remarque','assurance','loyer_base','charges_base']
 
-    def __init__(self, *args, **kwargs):
-        super(ContratLocationForm, self).__init__(*args, ** kwargs)
-        self.helper = FormHelper()
-        self.helper.form_class = 'form-horizontal'
-        self.helper.label_class = 'col-md-offset-1 col-md-2'
-        self.helper.field_class = 'col-md-8'
-        self.helper.add_input(Submit('submit','Ok'))
 
 # class FinancementLocationForm(forms.ModelForm):
 #

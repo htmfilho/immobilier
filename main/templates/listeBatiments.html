@@ -57,17 +57,14 @@
 
                 <td>
                   {% if batiment.location_actuelle%}
-                  du {{ batiment.location_actuelle.date_debut|date:"j/m/Y" }} au {{ batiment.location_actuelle.date_fin|date:"j/m/Y" }}
+                  {{ batiment.location_actuelle.date_debut|date:"j/m/Y" }} - {{ batiment.location_actuelle.date_fin|date:"j/m/Y" }}
                   {%endif%}
-
                   <table style="margin-top:10px;">
                     {% for p in batiment.locataires_actuels %}
-                    <tr>
-                      <td>{{  p.nom }} {{  p.prenom }} </td>
-                    </tr>
+                    <tr><td>{{  p.nom }} {{  p.prenom }} </td></tr>
                   {% endfor%}
-                    </table
-                
+                  </table>
+
               </td>
                 </td>
                 <td>

@@ -281,13 +281,13 @@ class Proprietaire(models.Model):
 
 class ContratLocation(models.Model):
     batiment             = models.ForeignKey(Batiment)
-    date_debut           = models.DateField(auto_now = False,  auto_now_add = False, verbose_name=u"Date début")
-    date_fin             = models.DateField(auto_now = False, auto_now_add = False, blank = True, null = True)
+    date_debut           = models.DateField(auto_now = False,  auto_now_add = False, blank = False, null = False, verbose_name=u"Date début")
+    date_fin             = models.DateField(auto_now = False, auto_now_add = False, blank = False, null = False)
     renonciation         = models.DateField(auto_now = False, auto_now_add = False, blank = True, null = True)
     remarque             = models.TextField(blank = True, null = True)
     assurance            = models.ForeignKey('Assurance', blank = True, null = True)
-    loyer_base   = models.DecimalField(max_digits=6, decimal_places=2, default = 0)
-    charges_base = models.DecimalField(max_digits=6, decimal_places=2, default = 0)
+    loyer_base           = models.DecimalField(max_digits=6, decimal_places=2, default = 0,blank = False, null = False)
+    charges_base         = models.DecimalField(max_digits=6, decimal_places=2, default = 0)
     #index_base   = models.DecimalField(max_digits=5, decimal_places=2, default = 0)
 
     def __str__(self):
