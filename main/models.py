@@ -342,7 +342,7 @@ class ContratLocation(models.Model):
                 date_f = date_f + relativedelta(months=1)
                 i=i+1
             if self.date_fin:
-                alert = Alerte(description='Attention fin contrat location dans 1 mois',date_alerte=self.date_fin - relativedelta(months=1),etat='A_VERIFIER',contratLocation=self)
+                alert = Alerte(description='Attention fin contrat location dans 4 mois',date_alerte=self.date_fin - relativedelta(months=4),etat='A_VERIFIER',contratLocation=self)
                 alert.save()
 
         return c
@@ -488,7 +488,7 @@ class ContratGestion(models.Model):
         c=super(ContratGestion, self).save(*args, **kwargs)
 
         if self.date_fin :
-            alert = Alerte(description='Attention fin contrat location dans 1 mois',date_alerte=self.date_fin - relativedelta(months=1),etat='A_VERIFIER',contratGestion=self)
+            alert = Alerte(description='Attention fin contrat location dans 4 mois',date_alerte=self.date_fin - relativedelta(months=4), etat='A_VERIFIER', contratGestion=self)
             alert.save()
         if self.date_debut and self.date_fin :
 
