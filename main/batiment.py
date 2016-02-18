@@ -16,7 +16,8 @@ from django.db import models
 def create(request):
     batiment = Batiment()
     return render(request, "batiment_form.html",
-                  {'batiment':         batiment})
+                  {'batiment':         batiment,
+                   'localites':    Localite.find_all()})
 
 def batiment_form(request, batiment_id):
     print('batiment_form')
@@ -24,7 +25,8 @@ def batiment_form(request, batiment_id):
 
     return render(request, "batiment_form.html",
                   {'batiment':     batiment,
-                   'assurances':   Assurance.find_all()})
+                   'assurances':   Assurance.find_all(),
+                   'localites':    Localite.find_all()})
 
 def update(request):
 
@@ -39,8 +41,11 @@ def update(request):
         print(request.POST['numero'])
         batiment.numero = request.POST['numero']
         batiment.boite = request.POST['boite']
-        batiment.code_postal = request.POST['code_postal']
-        batiment.localite = request.POST['localite']
+        localite = None
+        if request.POST['localite']:
+            localite = get_object_or_404(Localite, pk=request.POST['localite'])
+
+        batiment.localite = localite
         print(request.POST['superficie'])
         if request.POST['superficie']:
             batiment.superficie = request.POST['superficie']
@@ -54,4 +59,5 @@ def update(request):
 
 
     return render(request, "batiment_form.html",
-                  {'batiment':         batiment})
+                  {'batiment':     batiment,
+                   'localites':    Localite.find_all()})

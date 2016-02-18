@@ -53,13 +53,11 @@ class PersonneForm(ModelForm):
         self.helper.add_input(Submit('submit','Ok'))
 
 
-
-
 class BatimentForm(ModelForm):
 
     class Meta:
         model = Batiment
-        fields=['description','rue','numero','boite','lieu_dit','code_postal','localite','superficie','peformance_energetique']
+        fields=['description','rue','numero','boite','lieu_dit','localite','superficie','peformance_energetique']
 
 
     def __init__(self, *args, **kwargs):

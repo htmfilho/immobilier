@@ -69,8 +69,7 @@
     "fields": {
       "rue": "Rue du Monastère",
       "numero": "58",
-      "code_postal" :"1330",
-      "localite" :"Rixensart"
+      "localite" :"376"
     }
   },
   {
@@ -79,8 +78,7 @@
     "fields": {
       "rue": "Rue du Cimetière",
       "numero": "28",
-      "code_postal" :"5503",
-      "localite" :"Sorinnes"
+      "localite" :"171"
     }
   },
 
@@ -90,8 +88,7 @@
     "fields": {
       "rue": "Grand Route de Ciney",
       "numero": "31",
-      "code_postal" :"5503",
-      "localite" :"Sorinnes"
+      "localite" :"171"
     }
   },
   {
@@ -100,8 +97,7 @@
     "fields": {
       "rue": "Taravisée",
       "numero": "1",
-      "code_postal" :"5503",
-      "localite" :"Sorinnes"
+      "localite" :"171"
     }
   },
 
@@ -111,8 +107,7 @@
     "fields": {
       "rue": "Rue de Furfooz",
       "numero": "15",
-      "code_postal" :"5500",
-      "localite" :"Dréhance"
+      "localite" :"165"
     }
   },
   {
@@ -122,8 +117,7 @@
       "rue": "Rue St-Jacques",
       "numero": "288",
       "boite":"a",
-      "code_postal" :"5500",
-      "localite" :"Dinant"
+      "localite" :"164"
     }
   },
   {
@@ -132,8 +126,7 @@
     "fields": {
       "rue": "Rue Defoin",
       "numero": "13",
-      "code_postal" :"5500",
-      "localite" :"Dinant"
+      "localite" :"164"
     }
   },
   {
@@ -143,8 +136,7 @@
       "rue": "Rue du Centre",
       "numero": "5",
       "boite": "b",
-      "code_postal" :"5501",
-      "localite" :"Lisogne"
+      "localite" :"169"
     }
   },
   {
@@ -154,8 +146,8 @@
       "rue": "Rue du Centre",
       "numero": "5",
       "boite": "a",
-      "code_postal" :"5501",
-      "localite" :"Lisogne"
+      "localite" :"169"
+      }
     },
     {
       "model": "main.batiment",
@@ -164,8 +156,7 @@
         "rue": "Rue du Centre",
         "numero": "2",
         "boite":"c",
-        "code_postal" :"5501",
-        "localite" :"Lisogne"
+        "localite" :"169"
       }
     },
     {
@@ -175,9 +166,8 @@
         "rue": "Rue du Centre",
         "numero": "2",
         "boite":"d",
-        "code_postal" :"5501",
-        "localite" :"Lisogne"
+        "localite" :"169"
       }
     }
-  }
+
 ]

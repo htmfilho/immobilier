@@ -8,6 +8,20 @@ from django.core.urlresolvers import reverse
 from django.core.exceptions import *
 from django.db.models import Q
 
+class Localite(models.Model):
+    code_postal            = models.CharField(max_length = 10, blank = False, null = False)
+    localite               = models.CharField(max_length = 150, blank = False, null = False)
+
+    def find_all():
+        return Localite.objects.all()
+
+    def __str__(self):
+        return self.code_postal + " " + self.localite
+
+    class Meta:
+        ordering = ['localite']
+
+
 class Assurance(models.Model):
     nom         = models.CharField(max_length = 100)
     description = models.TextField(blank = True, null = True)
@@ -105,9 +119,7 @@ class Personne(models.Model):
     class Meta:
         ordering = ['nom','prenom']
         unique_together = (("nom", "prenom"),)
-    #
-    # def get_absolute_url(self):
-    #     return reverse('personne_list')
+
 
     def save(self,  *args, **kwargs):
 
@@ -120,24 +132,20 @@ class Personne(models.Model):
                 pays.save()
         return p
 
+
 class Batiment(models.Model):
     description            = models.TextField(blank = True, null = True)
     rue                    = models.CharField(max_length = 200, blank = True, null = True)
     numero                 = models.IntegerField(blank = True, null = True)
     boite                  = models.CharField(max_length = 10, blank = True, null = True)
     lieu_dit               = models.CharField(max_length = 200, blank = True, null = True)
-    code_postal            = models.CharField(max_length = 10, blank = True, null = True)
-    localite               = models.CharField(max_length = 150, blank = True, null = True)
+    localite               = models.ForeignKey(Localite)
     superficie             = models.DecimalField(max_digits = 5, decimal_places = 3, blank = True, null = True)
     peformance_energetique = models.CharField(max_length = 10,blank = True, null = True)
     # photo                  = models.ManyToManyField(Photo, blank = True, null = True)
 
     class Meta:
         ordering = ['localite','rue']
-
-    # def get_absolute_url(self):
-        # return reverse('batiment_list')
-        # return reverse('listeBatiments')
 
     def find_all():
         return Batiment.objects.all()
@@ -170,7 +178,7 @@ class Batiment(models.Model):
         if not(self.localite is None):
             if cptr>0:
                 desc += ", "
-            desc += self.localite
+            desc += str(self.localite)
         return desc
 
     def adresse_rue(self):
@@ -185,10 +193,8 @@ class Batiment(models.Model):
 
     def adresse_localite(self):
         adresse_complete=""
-        if self.code_postal is not None :
-            adresse_complete+= self.code_postal
         if self.localite is not None :
-            adresse_complete+= " " + self.localite
+            adresse_complete+= " " + str(self.localite)
         return adresse_complete
 
     def proprietaires(self):
@@ -541,14 +547,8 @@ class Alerte(models.Model):
         return Alerte.objects.filter(etat=etat_alerte,date_alerte__lte=date_f,date_alerte__gte=date_d)
 
 
-
 class Pays(models.Model):
     pays = models.CharField(max_length = 50)
-
-
-class Localite(models.Model):
-    code_postal            = models.CharField(max_length = 10, blank = True, null = True)
-    localite               = models.CharField(max_length = 150, blank = True, null = True)
 
 
 class Honoraire(models.Model):

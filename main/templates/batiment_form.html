@@ -14,27 +14,36 @@
     <div class="col-md-8">
     <label for="rue">Rue</label>
     <input class="form-control" id="rue" placeholder="Rue" value="{{ batiment.rue| default_if_none:'' }}" name="rue">
-  </div>
-  <div class="col-md-2">
-    <label for="numero" class="control-label">Numéro</label>
-    <input class="form-control" id="numero" placeholder="Numéro" value="{{ batiment.numero| default_if_none:'' }}" name="numero">
-  </div>
-  <div class="col-md-2">
-    <label for="boite"  class="control-label">Boite</label>
-    <input class="form-control" id="boite" placeholder="Boite" value="{{ batiment.boite| default_if_none:'' }}" name="boite">
-  </div>
+    </div>
+    <div class="col-md-2">
+      <label for="numero" class="control-label">Numéro</label>
+      <input class="form-control" id="numero" placeholder="Numéro" value="{{ batiment.numero| default_if_none:'' }}" name="numero">
+    </div>
+    <div class="col-md-2">
+      <label for="boite"  class="control-label">Boite</label>
+      <input class="form-control" id="boite" placeholder="Boite" value="{{ batiment.boite| default_if_none:'' }}" name="boite">
+    </div>
   </div>
   <div class="row">
-    <div class="col-md-2">
-    <label for="code_postal" class="control-label">Code postal</label>
-    <input class="form-control" id="code_postal" placeholder="Code postal" value="{{batiment.code_postal | default_if_none:''}}" name="code_postal">
-  </div>
-  <div class="col-md-4">
-    <label for="localite" class="control-label">Localité</label>
-    <input class="form-control" id="localite" placeholder="Localité" value="{{batiment.localite | default_if_none:''}}" name="localite">
-  </div>
-  <div class="col-md-6">
-  </div>
+    <div class="col-md-4">
+      <label for="localite" class="control-label">Localité</label>
+      <select class="form-control" name="localite" >
+        {%if batiment.localite%}
+          <option value="">-</option>
+        {%else%}
+          <option value="" selected>-</option>
+        {%endif%}
+        {% for l in localites %}
+            {% if batiment.localite.id == l.id %}
+              <option value="{{ l.id }}" selected>{{ l }}</option>
+            {%else%}
+              <option value="{{ l.id }}">{{ l }}</option>
+            {% endif %}
+        {% endfor %}
+      </select>
+    </div>
+    <div class="col-md-8">
+    </div>
   </div>
   <div class="row">
     <div class="col-md-6">
