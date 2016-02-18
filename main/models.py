@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 from django.db import models
 from django import forms
 from django.utils import timezone
@@ -8,10 +9,12 @@ from django.core.urlresolvers import reverse
 from django.core.exceptions import *
 from django.db.models import Q
 
+
 class Localite(models.Model):
     code_postal            = models.CharField(max_length = 10, blank = False, null = False)
     localite               = models.CharField(max_length = 150, blank = False, null = False)
 
+    @staticmethod
     def find_all():
         return Localite.objects.all()
 
@@ -26,6 +29,7 @@ class Assurance(models.Model):
     nom         = models.CharField(max_length = 100)
     description = models.TextField(blank = True, null = True)
 
+    @staticmethod
     def find_all():
         return Assurance.objects.all()
 
@@ -44,13 +48,7 @@ class Banque(models.Model):
         return self.nom
 
 
-class Photo(models.Model):
-    photo     = models.FileField( upload_to="photos")
-    texte     = models.TextField(default="")
-
-    def __str__(self):
-        return self.texte
-
+@staticmethod
 def get_pays_choix():
     choices_tuple = []
     choices_tuple.append('Belgique')
@@ -79,7 +77,7 @@ class Personne(models.Model):
 
     def choix(self):
         return []
-
+    @staticmethod
     def find_personne(id):
         return Personne.objects.get(pk=id)
 
@@ -104,9 +102,11 @@ class Personne(models.Model):
                     contrats.append(contrat_gestion)
         return contrats
 
+    @staticmethod
     def find_all():
         return Personne.objects.all()
 
+    @staticmethod
     def find_gestionnaire_default():
         nom='Marchal'
         prenom='Stéphan'
@@ -142,17 +142,19 @@ class Batiment(models.Model):
     localite               = models.ForeignKey(Localite)
     superficie             = models.DecimalField(max_digits = 5, decimal_places = 3, blank = True, null = True)
     peformance_energetique = models.CharField(max_length = 10,blank = True, null = True)
-    # photo                  = models.ManyToManyField(Photo, blank = True, null = True)
 
     class Meta:
         ordering = ['localite','rue']
 
+    @staticmethod
     def find_all():
         return Batiment.objects.all()
 
+    @staticmethod
     def find_batiment(id):
         return Batiment.objects.get(pk=id)
 
+    @staticmethod
     def find_my_batiments():
         personne = Personne.find_gestionnaire_default()
         if personne:
@@ -234,7 +236,11 @@ class Batiment(models.Model):
         return liste
     @property
     def location_actuelle(self):
-        return ContratLocation.objects.filter(batiment=self,date_debut__lte=timezone.now(), date_fin__gte=timezone.now() ).first()
+        l = ContratLocation.objects.filter(batiment=self,date_debut__lte=timezone.now(), date_fin__gte=timezone.now() ).first()
+        if l:
+            return l
+        else:
+            return ContratLocation.objects.filter(batiment=self,date_fin__lte=timezone.now() ).last()
 
     def location_actuelle_pk(self):
         contrat_location =  ContratLocation.objects.filter(batiment=self,date_debut__lte=timezone.now(), date_fin__gte=timezone.now() ).first()
@@ -256,9 +262,11 @@ class Proprietaire(models.Model):
     date_debut    = models.DateField(auto_now = False, blank = True, null = True, auto_now_add = False, verbose_name=u"Date début")
     date_fin      = models.DateField(auto_now = False, blank = True, null = True, auto_now_add = False)
 
+    @staticmethod
     def find_proprietaire(id):
         return Proprietaire.objects.get(pk=id)
 
+    @staticmethod
     def find_batiment_by_personne(personne):
         list_p =  Proprietaire.objects.filter(proprietaire=personne)
         batiments = []
@@ -302,6 +310,7 @@ class ContratLocation(models.Model):
         if not(self.date_fin is None):
             desc+= " au " + self.date_fin.strftime('%d-%m-%Y')
         return desc
+
     @property
     def locataires(self):
         return Locataire.objects.filter(contrat_location=self)
@@ -313,7 +322,6 @@ class ContratLocation(models.Model):
         for f in list:
             return f
         return None
-
 
     def financements(self):
         return FinancementLocation.objects.filter(contrat_location=self)
@@ -347,9 +355,6 @@ class ContratLocation(models.Model):
                 alert.save()
 
         return c
-
-    # def get_absolute_url(self):
-    #     return reverse('contratlocation_list')
 
     class Meta:
         ordering = ['date_debut']
@@ -421,6 +426,7 @@ class FraisMaintenance(models.Model):
     montant          = models.DecimalField(max_digits=8, decimal_places=2, blank = False, null = False)
     date_realisation = models.DateField(auto_now = False, auto_now_add = False, blank = True, null = True, verbose_name=u"Date réalisation")
 
+    @staticmethod
     def find_by_batiment(batiment_id):
         print('find_by_batiment')
         batiment = Batiment.find_batiment(batiment_id)
@@ -448,12 +454,14 @@ class SuiviLoyer(models.Model):
     class Meta:
         ordering = ['date_paiement']
 
+    @staticmethod
     def find_suivis(date_d, date_f, etat):
         if etat is None:
             return SuiviLoyer.objects.filter(date_paiement__gte = date_d, date_paiement__lte = date_f)
         else:
             return SuiviLoyer.objects.filter(date_paiement__gte = date_d, date_paiement__lte = date_f, etat_suivi = etat)
 
+    @staticmethod
     def find_suivis_a_verifier(date_d, date_f):
         return SuiviLoyer.objects.filter(Q(date_paiement__gte = timezone.now(), date_paiement__lte = timezone.now() + relativedelta(months=1), etat_suivi = 'A_VERIFIER') | Q(date_paiement__lte = timezone.now() , etat_suivi = 'A_VERIFIER') )
 
@@ -477,9 +485,11 @@ class ContratGestion(models.Model):
     date_fin        = models.DateField(auto_now = False, auto_now_add = False, blank = True, null = True)
     montant_mensuel = models.DecimalField(max_digits=6, decimal_places=2, blank = True, null = True)
 
+    @staticmethod
     def find_all():
         return ContratGestion.objects.all()
 
+    @staticmethod
     def find_my_contrats():
         personne = Personne.find_gestionnaire_default()
         return ContratGestion.objects.filter(gestionnaire=personne)
@@ -538,9 +548,11 @@ class Alerte(models.Model):
     class Meta:
         ordering = ['date_alerte']
 
+    @staticmethod
     def find_by_etat(etat_alerte):
         return Alerte.objects.filter(etat=etat_alerte)
 
+    @staticmethod
     def find_by_etat_today(etat_alerte):
         date_d=timezone.now() - relativedelta(months=1)
         date_f=timezone.now() + relativedelta(months=1)
@@ -562,14 +574,17 @@ class Honoraire(models.Model):
     date_paiement =  models.DateField(auto_now = False, auto_now_add = False, blank = True, null = True, verbose_name=u"Date paiement")
     etat = models.CharField(max_length = 10, choices = ETAT_HONORAIRE, default = 'A_VERIFIER', verbose_name=u"Etat")
 
+    @staticmethod
     def find_honoraires_by_etat_today(etat):
         date_d=timezone.now() - relativedelta(months=1)
         date_f=timezone.now() + relativedelta(months=1)
         return Honoraire.objects.filter(etat=etat,date_paiement__lte=date_f,date_paiement__gte=date_d)
 
+    @staticmethod
     def find_all():
         return Honoraire.objects.all()
 
+    @staticmethod
     def find_by_batiment_etat_date(batiment_id,etat,date_limite_inf):
 
         query =  Honoraire.objects.all()
@@ -585,9 +600,18 @@ class Honoraire(models.Model):
 
         return query
 
+    @staticmethod
     def find_all_batiments():
         batiments=[]
         for c  in ContratGestion.find_all():
             if not c.batiment in batiments:
                 batiments.append(c.batiment)
         return batiments
+
+
+class Photo(models.Model):
+    photo     = models.FileField( upload_to="photos")
+    texte     = models.TextField(default="")
+
+    def __str__(self):
+        return self.texte
