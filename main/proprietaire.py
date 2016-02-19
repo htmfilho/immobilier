@@ -125,3 +125,20 @@ def proprietaire_create_for_batiment(request, batiment_id):
                   {'proprietaire':         proprietaire,
                    'personnes':            personnes,
                    'action':               'add'})
+
+
+def personne_create(request):
+    print('personne_create')
+    proprietaire = get_object_or_404(Proprietaire, pk=request.POST['proprietaire_id_pers'])
+    print(proprietaire)
+    personne = Personne()
+    personne.nom =request.POST['nom']
+    personne.prenom =request.POST['prenom']
+    personne.save()
+    print(personne)
+    proprietaire.personne=personne
+    personnes = Personne.objects.filter()
+
+    return render(request, "proprietaire_form.html",
+                  {'proprietaire': proprietaire,
+                   'personnes': personnes})

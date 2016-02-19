@@ -6,199 +6,232 @@
 {% block content %}
 <div class="panel panel-default">
   <div class="panel-body">
-<form  id="batiment_form" method="post" action="{% url 'update_batiment' %}">
-  {% csrf_token %}
-  <input type="hidden" value="modify" name="action"/>
-  <input type="hidden" value="{{ batiment.id }}" name="id"/>
-  <div class="row">
-    <div class="col-md-8">
-    <label for="rue">Rue</label>
-    <input class="form-control" id="rue" placeholder="Rue" value="{{ batiment.rue| default_if_none:'' }}" name="rue">
-    </div>
-    <div class="col-md-2">
-      <label for="numero" class="control-label">Numéro</label>
-      <input class="form-control" id="numero" placeholder="Numéro" value="{{ batiment.numero| default_if_none:'' }}" name="numero">
-    </div>
-    <div class="col-md-2">
-      <label for="boite"  class="control-label">Boite</label>
-      <input class="form-control" id="boite" placeholder="Boite" value="{{ batiment.boite| default_if_none:'' }}" name="boite">
-    </div>
-  </div>
-  <div class="row">
-    <div class="col-md-4">
-      <label for="localite" class="control-label">Localité</label>
-      <select class="form-control" name="localite" >
-        {%if batiment.localite%}
-          <option value="">-</option>
-        {%else%}
-          <option value="" selected>-</option>
-        {%endif%}
-        {% for l in localites %}
-            {% if batiment.localite.id == l.id %}
-              <option value="{{ l.id }}" selected>{{ l }}</option>
+    <form  id="batiment_form" method="post" action="{% url 'update_batiment' %}">
+      {% csrf_token %}
+      <input type="hidden" value="modify" name="action"/>
+      <input type="hidden" value="{{ batiment.id }}" name="id"/>
+      <div class="row">
+        <div class="col-md-10">
+        <label for="rue">Rue</label>
+        <input class="form-control" id="rue" value="{{ batiment.rue| default_if_none:'' }}" name="rue">
+        </div>
+        <div class="col-md-1">
+          <label for="numero" class="control-label">Numéro</label>
+          <input class="form-control" id="numero" value="{{ batiment.numero| default_if_none:'' }}" name="numero">
+        </div>
+        <div class="col-md-1">
+          <label for="boite"  class="control-label">Boite</label>
+          <input class="form-control" id="boite" value="{{ batiment.boite| default_if_none:'' }}" name="boite">
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-md-4">
+          <label for="localite" class="control-label">Localité</label>
+          <select class="form-control" name="localite" >
+            {%if batiment.localite%}
+              <option value="">-</option>
             {%else%}
-              <option value="{{ l.id }}">{{ l }}</option>
-            {% endif %}
-        {% endfor %}
-      </select>
-    </div>
-    <div class="col-md-8">
-    </div>
-  </div>
-  <div class="row">
-    <div class="col-md-6">
-      <label for="superficie" class="control-label">Superficie</label>
-      <input class="form-control" type="number" placeholder="Superficie" value="{{ batiment.superficie | default_if_none:'' }}" name="superficie">
-    </div>
-    <div class="col-md-6">
-      <label for="peformance_energetique" class="control-label">Performance énergetique</label>
-      <input class="form-control" type="number" placeholder="Performance énergetique" value="{{ batiment.peformance_energetique | default_if_none:'' }}" name="peformance_energetique">
-    </div>
-  </div>
-
-  <div class="row">
-      <div class="col-md-11">
+              <option value="" selected>-</option>
+            {%endif%}
+            {% for l in localites %}
+                {% if batiment.localite.id == l.id %}
+                  <option value="{{ l.id }}" selected>{{ l }}</option>
+                {%else%}
+                  <option value="{{ l.id }}">{{ l }}</option>
+                {% endif %}
+            {% endfor %}
+          </select>
+        </div>
+        <div class="col-md-8">
+        </div>
       </div>
-    <div class="col-md-1">
-    <input   type="submit" title="Enregistrer les infos propres au batiment" value="Enregistrer">
-    </div>
-  </div>
-  <br/>
-  {% if batiment.id %}
-      <ul class="nav nav-tabs">
-        <li class="active"><a data-toggle="tab" href="#proprietaires">Propriétaires</a></li>
-        <li><a data-toggle="tab" href="#location">Location</a></li>
-        <li><a data-toggle="tab" href="#gestion">Gestion</a></li>
-        <li><a data-toggle="tab" href="#frais">Frais</a></li>
-      </ul>
-      <div class="tab-content">
-          <div id="proprietaires" class="tab-pane fade in active">
-            <div class="form-group">
-              <table class="table table-striped table-hover">
-                <thead>
-                  <td>Nom</td>
-                  <td>Date début</td>
-                  <td>Date fin</td>
-                  <td></td>
-                </thead>
-                {% for proprietaire in batiment.proprietaires %}
-                <tr>
-                  <td><a href="{% url 'proprietaire' proprietaire.id %}?prev=fb" title="Voir">{{ proprietaire.proprietaire }}</a></td>
-                  <td>{{ proprietaire.date_debut|date:"j/m/Y" }}</td>
-                  <td>{{ proprietaire.date_fin|date:"j/m/Y" }}</td>
-                  <td><a href="{% url 'delete_proprietaire_batiment' proprietaire.id %}" title="Pour supprimer le propriétaire du  batiment"><span class="glyphicon glyphicon-remove" aria-hidden="true"></span></a></td>
-                </tr>
-                {% endfor%}
-                <tr ><td colspan="3"><a href="{% url 'add_proprietaire' batiment.id %}?prev=fb" title="Ajouter un propriétaire"><span class="glyphicon glyphicon-plus" aria-hidden="true"></span></a></td></tr>
-                </table>
-            </div>
-          </div>
-          <div id="location" class="tab-pane fade">
-            <div class="form-group">
-              <br>
+      <div class="row">
+        <div class="col-md-6">
+          <label for="superficie" class="control-label">Superficie</label>
+          <input class="form-control" type="number" value="{{ batiment.superficie | default_if_none:'' }}" name="superficie">
+        </div>
+        <div class="col-md-6">
+          <label for="peformance_energetique" class="control-label">Performance énergetique</label>
+          <input class="form-control" type="number" value="{{ batiment.peformance_energetique | default_if_none:'' }}" name="peformance_energetique">
+        </div>
+      </div>
+      <div class="row">
+          <div class="col-md-12">
+            <br>
+            <p align="right"><input type="submit" title="Enregistrer les infos propres au batiment" value="Enregistrer"></p>
+        </div>
+      </div>
+
+      {% if batiment.id %}
+          <ul class="nav nav-tabs">
+            <li class="active"><a data-toggle="tab" href="#proprietaires">Propriétaires</a></li>
+            <li><a data-toggle="tab" href="#location">Location</a></li>
+            <li><a data-toggle="tab" href="#gestion">Gestion</a></li>
+            <li><a data-toggle="tab" href="#frais">Frais</a></li>
+          </ul>
+          <div class="tab-content">
+              <div id="proprietaires" class="tab-pane fade in active">
+                <div class="row">
+                  <div class="col-md-12">
+                    {% if batiment.proprietaires|length > 1 %}
+                      <table class="table table-striped table-hover">
+                        <thead>
+                          <td>Nom</td>
+                          <td>Date début</td>
+                          <td>Date fin</td>
+                          <td></td>
+                        </thead>
+                        {% for proprietaire in batiment.proprietaires %}
+                        <tr>
+                          <td><a href="{% url 'proprietaire' proprietaire.id %}?prev=fb" title="Voir">{{ proprietaire.proprietaire }}</a></td>
+                          <td>{{ proprietaire.date_debut|date:"j/m/Y" }}</td>
+                          <td>{{ proprietaire.date_fin|date:"j/m/Y" }}</td>
+                          <td><a href="{% url 'delete_proprietaire_batiment' proprietaire.id %}" title="Pour supprimer le propriétaire du  batiment"><span class="glyphicon glyphicon-remove" aria-hidden="true"></span></a></td>
+                        </tr>
+                        {% endfor%}
+                        </table>
+                      {% endif %}
+                    </div>
+                </div>
+
               <div class="row">
-                <div class="col-md-1">
-                  {% if batiment.contrats_location|length > 1 and batiment.contrats_location_previous|length > 0 %}
-                  <a href="{% url 'location-prepare-update-all' batiment.contrat_location_previous.id %}" title="Précédent contrat de location"><span class="glyphicon glyphicon-chevron-left" aria-hidden="true"></span>
-
-                    </a>
-                    {% endif %}
-
-                </div>
-
                 <div class="col-md-10">
-                  {% if batiment.location_actuelle%}
-                  <a href="{% url 'location-prepare-update-all' batiment.location_actuelle.id %}">
-                    du {{ batiment.location_actuelle.date_debut|date:"j/m/Y"}} au {{ batiment.location_actuelle.date_fin|date:"j/m/Y"}}
-                    </a>
-                  {%endif%}
-                  <a href="{% url 'location-create-batiment' batiment.id %}?prev=fb" title="Pour ajouter une nouvelle location"><span class="glyphicon glyphicon-plus" aria-hidden="true"></span></a>
                 </div>
-
-            <div class="col-md-1">
-
-            {% if batiment.contrats_location|length > 1 and batiment.contrats_location_next|length > 0 %}
-
-              <a href="{% url 'location-prepare-update-all' batiment.contrat_location_next.id %}" title="Prochain contrat de location"><span class="glyphicon glyphicon-chevron-right" aria-hidden="true"></span>
-
-                </a>
-
-            {% endif %}
-
-          </div>
-             </div>
-             {% if batiment.locataires_actuels %}
-              <br><br>
-              <label class="control-label">Locataires actuelles</label>
-              <br>
-              <table class="table table-bordered">
-                {% for p in batiment.locataires_actuels %}
-                <tr><td><a href="{% url 'locataire' p.id%}?prev=fb" title="Pour modifier un locataire">{{  p.nom }} {{  p.prenom }}</a> </td>  </tr>
-                {% endfor%}
-              </table>
-              {% endif %}
-              {% if batiment.location_actuelle %}
-              <a href="{% url 'locataire-new' batiment.location_actuelle.id %}" title="Pour ajouter un nouveau locataire"><span class="glyphicon glyphicon-plus" aria-hidden="true"></span></a>
-              {% endif %}
+                <div class="col-md-2">
+                  <a href="{% url 'add_proprietaire' batiment.id %}?prev=fb" title="Ajouter un propriétaire"><span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
+                </div>
+              </div>
             </div>
-          </div>
-          <div id="gestion" class="tab-pane fade">
-            <div class="form-group">
-              {%if batiment.contrats_gestion%}
-                <table class="table table-bordered">
+              <div id="location" class="tab-pane fade">
+                  <br>
+                  <div class="row">
+                    <div class="col-md-1">
+                      {% if batiment.contrats_location|length > 1 and batiment.contrats_location_previous|length > 0 %}
+                      <a href="{% url 'location-prepare-update-all' batiment.contrat_location_previous.id %}" title="Précédent contrat de location"><span class="glyphicon glyphicon-chevron-left" aria-hidden="true"></span>
+                        </a>
+                        {% endif %}
+                    </div>
+                    <div class="col-md-10">
+                      {% if batiment.location_actuelle%}
+                      <a href="{% url 'location-prepare-update-all' batiment.location_actuelle.id %}">
+                        du {{ batiment.location_actuelle.date_debut|date:"j/m/Y"}} au {{ batiment.location_actuelle.date_fin|date:"j/m/Y"}}
+                        </a>
+                      {%endif%}
+
+                    </div>
+
+                <div class="col-md-1">
+
+                {% if batiment.contrats_location|length > 1 and batiment.contrats_location_next|length > 0 %}
+
+                  <a href="{% url 'location-prepare-update-all' batiment.contrat_location_next.id %}" title="Prochain contrat de location"><span class="glyphicon glyphicon-chevron-right" aria-hidden="true"></span>
+
+                    </a>
+
+                {% endif %}
+
+              </div>
+                 </div>
+                 <div class="row">
+                   <div class="col-md-11">
+                   </div>
+                   <div class="col-md-1">
+                     {% if batiment.location_actuelle%}
+                     {%else%}
+                      <a href="{% url 'location-create-batiment' batiment.id %}?prev=fb" title="Pour ajouter une nouvelle location"><span class="glyphicon glyphicon-plus" aria-hidden="true"></span></a>
+                     {%endif%}
+                   </div>
+                 </div>
+                 {% if batiment.locataires_actuels %}
+                  <br><br>
+                  <label class="control-label">Locataires actuelles</label>
+                  <br>
+                  <table class="table table-bordered">
+                    {% for p in batiment.locataires_actuels %}
+                    <tr><td><a href="{% url 'locataire' p.id%}?prev=fb" title="Pour modifier un locataire">{{  p.nom }} {{  p.prenom }}</a> </td>  </tr>
+                    {% endfor%}
+                  </table>
+                  {% endif %}
+                  {% if batiment.location_actuelle %}
+                  <a href="{% url 'locataire-new' batiment.location_actuelle.id %}" title="Pour ajouter un nouveau locataire"><span class="glyphicon glyphicon-plus" aria-hidden="true"></span></a>
+                  {% endif %}
+
+              </div>
+
+              <div id="gestion" class="tab-pane fade">
+                <div class="row">
+                  <div class="col-md-12">
+                  {%if batiment.contrats_gestion%}
+                    <table class="table table-bordered">
+                        <thead>
+                            <th>Date début</th>
+                            <th>Date fin</th>
+                            <th>Gestionnaire</th>
+                            <th></th>
+                        </thead>
+                        {% for c in batiment.contrats_gestion %}
+                          <tr>
+                            <td>{{ c.date_debut|date:"j/m/Y" }}</td>
+                            <td>{{ c.date_fin|date:"j/m/Y" }}</td>
+                            <td>{{ c.gestionnaire }}</td>
+                            <td><a href="{% url 'gestion-prepare-update-all' c.pk %}?prev=fb" title="Pour modifier un contrat de gestion"><span class="glyphicon glyphicon-pencil" aria-hidden="true"></span></a>
+                                <a href="{% url 'contratgestion-delete' c.id %}" title="Pour supprimer un contrat de gestion"><span class="glyphicon glyphicon-remove" aria-hidden="true"></span></a></td>
+                          </tr>
+                        {% endfor %}
+                        <tr><td colspan="3"></td></tr>
+                    </table>
+                  {% endif %}
+
+                </div>
+              </div>
+              <div class="row">
+                <div class="col-md-11">
+                </div>
+                <div class="col-md-1">
+                  <a href="{% url 'contratgestion-create' batiment.id %}" title="Pour ajouter un contrat de gestion"><span class="glyphicon glyphicon-plus" aria-hidden="true"></span></a>
+                </div>
+              </div>
+            </div>
+            <div id="frais" class="tab-pane fade" >
+              <div class="row">
+                <div class="col-md-12">
+                  {% if batiment.frais_list %}
+                  <table class="table table-striped">
                     <thead>
-                        <th>Date début</th>
-                        <th>Date fin</th>
-                        <th>Gestionnaire</th>
-                        <th></th>
+                        <th>Entrepreneur</th>
+                        <th>Société</th>
+                        <th>Description</th>
+                        <th>Montant</th>
+                        <th>Date réalisation</th>
                     </thead>
-                    {% for c in batiment.contrats_gestion %}
-                      <tr>
-                        <td>{{ c.date_debut|date:"j/m/Y" }}</td>
-                        <td>{{ c.date_fin|date:"j/m/Y" }}</td>
-                        <td>{{ c.gestionnaire }}</td>
-                        <td><a href="{% url 'gestion-prepare-update-all' c.pk %}?prev=fb" title="Pour modifier un contrat de gestion"><span class="glyphicon glyphicon-pencil" aria-hidden="true"></span></a>
-                            <a href="{% url 'contratgestion-delete' c.id %}" title="Pour supprimer un contrat de gestion"><span class="glyphicon glyphicon-remove" aria-hidden="true"></span></a></td>
-                      </tr>
-                    {% endfor %}
-                    <tr><td colspan="3"></td></tr>
-                </table>
-              {% endif %}
-              <a href="{% url 'contratgestion-create' batiment.id %}" title="Pour ajouter un contrat de gestion"><span class="glyphicon glyphicon-plus" aria-hidden="true"></span></a>
-            </div>
+                      {% for f in batiment.frais_list %}
+                    <tr>
+                      <td>{{ f.entrepreneur | default_if_none:'' }}</td>
+                      <td>{{ f.societe | default_if_none:'' }}</td>
+                      <td>{{ f.description | default_if_none:''}}</td>
+                      <td>{{ f.montant | default_if_none:''}}</td>
+                      <td>{{ f.date_realisation | default_if_none:''|date:"j/m/Y" }}</td>
+                    </tr>
+                  {% endfor %}
+                  </table>
+                  {% endif %}
+
+                </div>
+              </div>
+              <div class="row">
+                <div class="col-md-11">
+                </div>
+                <div class="col-md-1">
+                    <a href="{% url 'fraismaintenance-create' batiment.id %}" title="Pour ajouter un FRAIS"><span class="glyphicon glyphicon-plus" aria-hidden="true"></span></a>
+                </div>
+              </div>
+          </div>
         </div>
-        <div id="frais" class="tab-pane fade" >
-          <div class="form-group">
-          {% if batiment.frais_list %}
-          <table class="table table-striped">
-            <thead>
-                <th>Entrepreneur</th>
-                <th>Société</th>
-                <th>Description</th>
-                <th>Montant</th>
-                <th>Date réalisation</th>
-            </thead>
-              {% for f in batiment.frais_list %}
-            <tr>
-              <td>{{ f.entrepreneur | default_if_none:'' }}</td>
-              <td>{{ f.societe | default_if_none:'' }}</td>
-              <td>{{ f.description | default_if_none:''}}</td>
-              <td>{{ f.montant | default_if_none:''}}</td>
-              <td>{{ f.date_realisation | default_if_none:''|date:"j/m/Y" }}</td>
-            </tr>
-          {% endfor %}
-          </table>
-          {% endif %}
-          <a href="{% url 'fraismaintenance-create' batiment.id %}" title="Pour ajouter un FRAIS"><span class="glyphicon glyphicon-plus" aria-hidden="true"></span></a>
-        </div>
+    {% endif%}
+
+
+    </form>
+  </div>
 </div>
-
-      </div>
-{% endif%}
-
-
-</form>
-      </div>
-            </div>
 
 {% endblock %}

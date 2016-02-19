@@ -1,4 +1,4 @@
-from django.conf.urls import url
+from django.conf.urls import url, include
 from django.conf import settings
 from . import views, batiment, proprietaire, suivis, alertes, contratlocation, financement, locataire, contratgestion, frais, honoraire, personne
 from .models import *
@@ -55,12 +55,13 @@ urlpatterns = [
     url(r'^fraismaintenance/new/$', frais.new, name='fraismaintenance-new'),
     url(r'^fraismaintenance/create/([0-9]+)/$', frais.create, name='fraismaintenance-create'),
     url(r'^fraismaintenance/prepare/update/([0-9]+)/$', frais.prepare_update, name='fraismaintenance-prepare-update'),
-        url(r'^fraismaintenance/update/$', frais.update, name='fraismaintenance-update'),
+    url(r'^fraismaintenance/update/$', frais.update, name='fraismaintenance-update'),
     url(r'^fraismaintenance/delete/(?P<pk>[0-9]+)/$', views.FraisMaintenanceDelete.as_view(), name='fraismaintenance-delete'),
     url(r'^fraismaintenance/(?P<pk>[0-9]+)/$', views.FraisMaintenanceDetail.as_view(), name='fraismaintenance_detail'),
 
     url(r'^personne/create/$', personne.create, name='personne-create'),
     url(r'^personne/create/locataire/$', locataire.personne_create, name='personne-create-locataire'),
+    url(r'^personne/create/proprietaire/$', proprietaire.personne_create, name='personne-create-proprietaire'),
 
     url(r'^personne/edit/([0-9]+)/$', personne.edit, name='personne-edit'),
     url(r'^personne/update/$', personne.update, name='personne-update'),
@@ -129,7 +130,6 @@ urlpatterns = [
 
     url(r'^honoraires/$', honoraire.list, name='honoraire-list'),
     url(r'^honoraires/search/$', honoraire.search, name='honoraires-search'),
-
 
 
 

@@ -36,7 +36,7 @@
         <div class="col-md-1">
           {% if not locataire.id %}
           <label class="invisible">&nbsp;</label>
-          <button type="button" class="btn btn-warning" data-toggle="modal" data-target="#submissionScoresModal"><span class="glyphicon glyphicon-plus" aria-hidden="true"></span> </button>
+          <button type="button" class="btn btn-warning" data-toggle="modal" data-target="#ajoutPersonneModal"><span class="glyphicon glyphicon-plus" aria-hidden="true"></span> </button>
           {% endif %}
         </div>
       </div>
@@ -50,7 +50,7 @@
           {{ locataire.contrat_location.batiment| default_if_none:'' }}
           <br>
           du {{ locataire.contrat_location.date_debut|date:"j/m/Y" }} au {{ locataire.contrat_location.date_fin|date:"j/m/Y" }}
-          
+
           <br>
           <br>
           {%else%}
@@ -84,15 +84,12 @@
           <input class="form-control" value="{{ locataire.profession| default_if_none:'' }}" name="profession">
         </div>
       </div>
-
-
         <input type="submit" value="OK">
-
     </form>
 </div>
 </div>
 <!-- Ajout personne modal -->
-<div class="modal fade" id="submissionScoresModal" tabindex="-1" role="dialog" aria-labelledby="submissionScoresLabel">
+<div class="modal fade" id="ajoutPersonneModal" tabindex="-1" role="dialog" aria-labelledby="submissionScoresLabel">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header">
