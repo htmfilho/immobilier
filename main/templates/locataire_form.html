@@ -8,11 +8,11 @@
   <div class="panel-body">
     <form  method="post" action="{% url 'locataire-add' %}">
       {% csrf_token %}
-      <input type="text" value="{{action}}" name="action"/>
+      <input type="hidden" value="{{action}}" name="action"/>
       <input type="hidden" value="{{ locataire.id }}" name="locataire_id"/>
       <input type="hidden" value="{{ locataire.contrat_location.id}}" name="location_id"/>
       <div class="row">
-        <div class="col-md-11">
+        <div class="col-md-4">
           <label for="rue">Locataire</label>
           {% if action == 'update'%}
           <br>
@@ -22,7 +22,6 @@
           <br>
           {%else%}
           <select class="form-control" name="personne_id" >
-
             {% for p in personnes %}
                 {% if locataire.personne.id == p.id %}
                   <option value="{{ p.id }}" selected>{{ p }}</option>
@@ -32,6 +31,47 @@
             {% endfor %}
           </select>
             {% endif %}
+        </div>
+        <div class="col-md-4">
+          <label for="civilite">Civilite</label>
+          <select class="form-control" name="civilite" >
+            ('NON_PRECISE','-'),
+            ('MADAME','Madame'),
+            ('MONSIEUR','Monsieur'),
+            ('MAITRE','Maitre'),
+            ('','Docteur'),
+              {%if locataire.civilite == 'NON_PRECISE' %}
+                <option value="NON_PRECISE" selected>-</option>
+              {%else%}
+                <option value="NON_PRECISE">-</option>
+              {%endif%}
+              {%if locataire.civilite == 'MADAME' %}
+                <option value="MADAME" selected>Madame</option>
+              {%else%}
+                <option value="MADAME">Madame</option>
+              {%endif%}
+              {%if locataire.civilite == 'MONSIEUR' %}
+                <option value="MONSIEUR" selected>Monsieur</option>
+              {%else%}
+                <option value="MONSIEUR">Monsieur</option>
+              {%endif%}
+              {%if locataire.civilite == 'MAITRE' %}
+                <option value="MAITRE" selected>Maitre</option>
+              {%else%}
+                <option value="MAITRE">Maitre</option>
+              {%endif%}
+              {%if locataire.civilite == 'DOCTEUR' %}
+                <option value="DOCTEUR" selected>Docteur</option>
+              {%else%}
+                <option value="DOCTEUR">Docteur</option>
+              {%endif%}
+
+
+          </select>
+        </div>
+        <div class="col-md-3">
+          <label for="principal">Principal</label><br>
+          <input type="checkbox" name="principal" {%if  locataire.principal  = True %}checked{%else%}''{%endif%}>
         </div>
         <div class="col-md-1">
           {% if not locataire.id %}
@@ -43,8 +83,6 @@
       <div class="row">
         <div class="col-md-8">
           <label for="contrat_location">Location</label>
-
-
           {% if action == 'update'%}
           <br>
           {{ locataire.contrat_location.batiment| default_if_none:'' }}
@@ -55,7 +93,7 @@
           <br>
           {%else%}
           <input class="form-control" value="{{ locataire.contrat_location.batiment| default_if_none:'' }}" >
-          <input class="form-control" value="du {{ locataire.contrat_location.date_debut|date:"j/m/Y" }} au {{ locataire.contrat_location.date_fin|date:"j/m/Y" }}"
+          <input class="form-control" value="{{ locataire.contrat_location.date_debut|date:"j/m/Y" }} au {{ locataire.contrat_location.date_fin|date:"j/m/Y" }}"
                  name="contrat_location" >
           {%endif%}
         </div>

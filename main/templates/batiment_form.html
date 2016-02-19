@@ -48,11 +48,11 @@
       <div class="row">
         <div class="col-md-6">
           <label for="superficie" class="control-label">Superficie</label>
-          <input class="form-control" type="number" value="{{ batiment.superficie | default_if_none:'' }}" name="superficie">
+          <input class="form-control" type="text"  value="{{ batiment.superficie | default_if_none:'' }}" name="superficie">
         </div>
         <div class="col-md-6">
           <label for="peformance_energetique" class="control-label">Performance énergetique</label>
-          <input class="form-control" type="number" value="{{ batiment.peformance_energetique | default_if_none:'' }}" name="peformance_energetique">
+          <input class="form-control" type="text" value="{{ batiment.peformance_energetique | default_if_none:'' }}" name="peformance_energetique">
         </div>
       </div>
       <div class="row">

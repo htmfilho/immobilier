@@ -20,7 +20,6 @@ def listeProprietaires(request):
     return render(request, 'listeProprietaires.html', {'proprietaires': proprietaires})
 
 def proprietaire(request, proprietaire_id):
-    print('proprietaire',request.GET['prev'])
     proprietaire = Proprietaire.find_proprietaire(proprietaire_id)
     return render(request, "proprietaire_form.html",
                   {'proprietaire':         proprietaire,

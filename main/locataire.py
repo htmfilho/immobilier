@@ -19,13 +19,15 @@ def locataire_form(request, id):
                   {'locataire' : locataire,
                    'action' : 'update',
                    'personnes' : Personne.find_all() })
-def update(request, id):
 
+def update(request, id):
+    print(update)
     locataire = get_object_or_404(Locataire, pk=id)
     return render(request, "locataire_form.html",
                   {'locataire':         locataire})
 
 def new(request, location_id):
+    print(new)
     print('new locataire', location_id)
     location = get_object_or_404(ContratLocation, pk=location_id)
 
@@ -46,6 +48,7 @@ def new(request, location_id):
                    'personnes': l})
 
 def add(request):
+    print('add')
     if request.POST['locataire_id'] and not request.POST['locataire_id']== 'None':
         locataire = get_object_or_404(Locataire, pk=request.POST.get('locataire_id',None))
     else:
@@ -55,6 +58,15 @@ def add(request):
     if request.POST['personne_id']:
         personne = get_object_or_404(Personne, pk=request.POST['personne_id'])
         locataire.personne = personne
+
+    locataire.principal = False
+    if request.POST.get('principal',None) and request.POST['principal'] == 'on':
+        locataire.principal = True
+    locataire.civilite = request.POST['civilite']
+    locataire.infos_complement = request.POST['infos_complement']
+    locataire.societe = request.POST['societe']
+    locataire.tva = request.POST['tva']
+    locataire.profession = request.POST['profession']
     locataire.contrat_location = location
     locataire.save()
     return render(request, "contratlocation_update.html",

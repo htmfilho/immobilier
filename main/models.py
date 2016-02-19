@@ -304,7 +304,7 @@ class ContratLocation(models.Model):
         if not(self.batiment.description is None):
             desc+= self.batiment.description
         if not(self.batiment.localite is None):
-            desc+= self.batiment.localite
+            desc+= str(self.batiment.localite)
         if not(self.date_debut is None):
             desc+= self.date_debut.strftime('%d-%m-%Y')
         if not(self.date_fin is None):
@@ -379,6 +379,14 @@ class FinancementLocation(models.Model):
 
 
 class Locataire(models.Model):
+    CIVILITE = (
+        ('NON_PRECISE','-'),
+        ('MADAME','Madame'),
+        ('MONSIEUR','Monsieur'),
+        ('MAITRE','Maitre'),
+        ('DOCTEUR','Docteur'),
+
+    )
     personne             = models.ForeignKey(Personne,error_messages={'unique': 'Please enter your name'})
     contrat_location     = models.ForeignKey(ContratLocation,default=None)
     infos_complement     = models.TextField(blank = True, null = True)
@@ -386,6 +394,7 @@ class Locataire(models.Model):
     societe              = models.CharField(max_length=100, blank = True, null = True, verbose_name=u"Société")
     tva                  = models.CharField(max_length=30, blank = True, null = True)
     profession           = models.CharField(max_length=50, blank = True, null = True)
+    civilite             = models.CharField(max_length = 10, choices = CIVILITE, default = 'NON_PRECISE')
     #personne_garante     = models.ForeignKey('Personne', blank = True, null = True)
 
     def __str__(self):
