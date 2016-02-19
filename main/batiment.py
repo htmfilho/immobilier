@@ -48,11 +48,17 @@ def update(request):
         batiment.localite = localite
         print(request.POST['superficie'])
         if request.POST['superficie']:
-            batiment.superficie = request.POST['superficie']
+            sup = request.POST['superficie']
+            sup=sup.replace(",", ".")
+            batiment.superficie = float(u"%s" % sup)
+            # batiment.superficie = u"%s" % request.POST['superficie']
         else:
             batiment.superficie = None
+
         if request.POST['peformance_energetique']:
-            batiment.peformance_energetique = request.POST['peformance_energetique']
+            sup = request.POST['peformance_energetique']
+            sup=sup.replace(",", ".")
+            batiment.peformance_energetique = float(u"%s" % sup)
         else:
             batiment.peformance_energetique = None
         batiment.save()
