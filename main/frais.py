@@ -104,9 +104,6 @@ def update(request):
     if request.POST.get('prev', None) == 'fl':
         return render(request, "fraismaintenance_list.html",
                                {'frais_list': FraisMaintenance.objects.all()})
-
-
-
     return redirect('/fraismaintenances/')
 
 def list(request):

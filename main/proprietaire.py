@@ -25,7 +25,7 @@ def proprietaire(request, proprietaire_id):
                   {'proprietaire':         proprietaire,
                    'action':               'update',
                    'personnes':            Personne.objects.all(),
-                   'prev' : request.GET['prev']})
+                   'prev' : request.GET.get('prev')})
 
 def add_proprietaire(request, batiment_id):
     """

@@ -327,3 +327,6 @@ class SocieteDelete(DeleteView):
 #
 #                 form_class.action ='kkk'
 #             return initial_data
+class HonoraireDelete(DeleteView):
+    model=Honoraire
+    success_url="../../../honoraires"

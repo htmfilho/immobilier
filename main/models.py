@@ -636,7 +636,6 @@ class Honoraire(models.Model):
 
     @staticmethod
     def find_by_batiment_etat_date(batiment_id,etat,date_limite_inf):
-
         query =  Honoraire.objects.all()
 
         if not batiment_id is None and batiment_id != "None" :
@@ -657,6 +656,12 @@ class Honoraire(models.Model):
             if not c.batiment in batiments:
                 batiments.append(c.batiment)
         return batiments
+
+    def __str__(self):
+        if not self.contrat_gestion is None:
+            return str(self.contrat_gestion)
+        else:
+            return ""
 
 
 class Photo(models.Model):

@@ -68,7 +68,7 @@ urlpatterns = [
     url(r'^personne/delete/(?P<pk>[0-9]+)/$', views.PersonneDelete.as_view(), name='personne-delete'),
     url(r'^personnes/$', personne.list, name='personne_list'),
     url(r'^personnes/search/$', personne.search, name='personne_search'),
-    
+
 
     url(r'^batiment/create/$', batiment.create, name='batiment-create'),
     url(r'^/batiment/([0-9]+)/$', batiment.batiment_form, name='batiment'),
@@ -132,6 +132,10 @@ urlpatterns = [
 
     url(r'^honoraires/$', honoraire.list, name='honoraire-list'),
     url(r'^honoraires/search/$', honoraire.search, name='honoraires-search'),
+    url(r'^honoraire/update/$', honoraire.update, name='honoraire-update'),
+    url(r'^/honoraire/([0-9]+)/$', honoraire.honoraire_form, name='honoraire'),
+    url(r'^honoraire/delete/(?P<pk>[0-9]+)/$', views.HonoraireDelete.as_view(), name='honoraire-delete'),
+
 
 
 

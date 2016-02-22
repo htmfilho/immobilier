@@ -1,6 +1,6 @@
 from django import forms
 from django.forms import ModelForm
-from main.models import Personne, Batiment, Proprietaire, FraisMaintenance, ContratGestion, Societe, Pays, ContratLocation, FinancementLocation
+from main.models import *
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Submit
 from django.shortcuts import render, get_object_or_404
@@ -65,8 +65,6 @@ class BatimentForm(ModelForm):
 
 
 class ProprietaireForm(forms.ModelForm):
-
-
     class Meta:
         model = Proprietaire
         fields=['proprietaire','batiment','date_debut','date_fin']
@@ -116,6 +114,15 @@ class ContratLocationForm(ModelForm):
         model = ContratLocation
         fields=['date_debut','date_fin','renonciation','remarque','assurance','loyer_base','charges_base']
 
+class HonoraireForm(ModelForm):
+
+    class Meta:
+        model = Honoraire
+        fields=['date_paiement','etat']
+
+
+    def __init__(self, *args, **kwargs):
+        super(HonoraireForm, self).__init__(*args, ** kwargs)
 
 # class FinancementLocationForm(forms.ModelForm):
 #

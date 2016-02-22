@@ -26,17 +26,13 @@
                   <a href="{% url 'batiment' batiment.pk%}" title="Pour modifier un batiment">{{ batiment.rue }}</a>
                 </td>
                 <td>
-                    {%if batiment.numero %}
-                    {{ batiment.numero }}
-                    {%endif%}
+                    {{ batiment.numero  | default_if_none:''}}
                 </td>
                 <td>
-                    {%if batiment.boite %}
-                    {{ batiment.boite }}
-                    {%endif%}
+                    {{ batiment.boite | default_if_none:'' }}
                 </td>
                 <td>
-                    {{ batiment.localite }}
+                    {{ batiment.localite | default_if_none:'' }}
                 </td>
 
                 <td>

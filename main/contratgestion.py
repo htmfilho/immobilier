@@ -78,7 +78,8 @@ def update(request):
     if request.POST.get('gestionnaire',None):
         personne = get_object_or_404(Personne, pk=request.POST.get('gestionnaire',None))
         gestion.gestionnaire = personne
-
+    if request.POST.get('montant_mensuel',None):
+        gestion.montant_mensuel = request.POST.get('montant_mensuel')
     if request.POST.get('date_debut',None):
         valid_datetime = datetime.strptime(request.POST['date_debut'], '%d/%m/%Y')
         gestion.date_debut = valid_datetime
@@ -103,7 +104,6 @@ def update(request):
                        'action' :   'update',
                        'message' : message,
                        'prev': request.GET['prev']})
-
 
     gestion.save()
     if request.POST.get('prev', None) == 'fb':
