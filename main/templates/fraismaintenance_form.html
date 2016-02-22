@@ -43,7 +43,7 @@
 <div class="row">
   <div class="col-md-6">
     <label for="entrepreneur">Entrepreneur</label>
-    <input class="form-control"  value="{%if frais.entrepreneur %}{{ frais.entrepreneur }}{%endif%}" name="entrepreneur">
+    <input class="form-control"  value="{{ frais.entrepreneur | default_if_none:'' }}" name="entrepreneur">
   </div>
   <div class="col-md-6">
   </div>

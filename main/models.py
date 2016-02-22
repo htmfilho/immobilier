@@ -8,6 +8,8 @@ from dateutil.relativedelta import relativedelta
 from django.core.urlresolvers import reverse
 from django.core.exceptions import *
 from django.db.models import Q
+from django.db.models import Sum
+from django.db.models import FloatField
 
 
 class Localite(models.Model):
@@ -203,6 +205,7 @@ class Batiment(models.Model):
         return Proprietaire.objects.filter(batiment=self)
 
     def contrats_location(self):
+        print('contrats_location')
         return ContratLocation.objects.filter(batiment=self)
 
     def contrats_location_next(self):
@@ -255,6 +258,36 @@ class Batiment(models.Model):
     @property
     def frais_list(self):
         return FraisMaintenance.objects.filter(batiment=self)
+
+    @property
+    def gains(self):
+        print('gainss')
+        tot = 0
+        print('gainsss')
+        for c in self.contrats_location():
+            print('for1')
+            for f  in c.financements():
+                print('for2')
+                queryset = SuiviLoyer.find_suivis_paye(f)
+                aggregation = queryset.aggregate(loyer=Sum('loyer_percu'))
+                loyer = aggregation.get('loyer', 0)
+                print (loyer)
+                tot = tot + loyer
+
+        return tot
+
+    @property
+    def depenses(self):
+        queryset = FraisMaintenance.objects.filter(batiment=self)
+        aggregation = queryset.aggregate(price=Sum('montant'))
+        res = aggregation.get('price', 0)
+
+        if not res is None:
+            return res
+
+        return 0
+
+
 
 class Proprietaire(models.Model):
     proprietaire  = models.ForeignKey(Personne, verbose_name=u"Propriétaire")
@@ -369,13 +402,15 @@ class FinancementLocation(models.Model):
     index            = models.DecimalField(max_digits=5, decimal_places=2, default = 0)
 
     def __str__(self):
-        chaine = str(self.loyer) + "/" + str(self.charges)
-        if self.date_debut is not None :
-            chaine = chaine + " (" + self.date_debut.strftime('%d-%m-%Y')
-        if self.date_fin is not None :
-            chaine = chaine + " au " + self.date_fin.strftime('%d-%m-%Y') +")"
 
-        return chaine
+        chaine = str(self.loyer) + "/" + str(self.charges)
+        if not self.date_debut is None :
+            chaine = chaine + " (" + self.date_debut.strftime('%d-%m-%Y')
+        if not self.date_fin is None :
+            chaine = chaine + " au " + self.date_fin.strftime('%d-%m-%Y') +")"
+        if not chaine is None:
+            return chaine
+        return ""
 
 
 class Locataire(models.Model):
@@ -476,15 +511,21 @@ class SuiviLoyer(models.Model):
 
     def __str__(self):
         desc = ""
-        if not(self.date_paiement is None):
+        if not self.date_paiement is None :
             desc += self.date_paiement.strftime('%d-%m-%Y')
 
-        if not(self.remarque is None):
+        if not self.remarque is None :
             desc +=  " , (" + self.remarque + ")"
 
-        if not(self.etat_suivi is None):
+        if not self.etat_suivi is None :
             desc +=   " (" + self.etat_suivi + ")"
         return desc
+
+    @staticmethod
+    def find_suivis_paye(financement):
+        print('')
+        # return SuiviLoyer.objects.filter(financement_location = financement, etat_suivi='PAYE')
+        return SuiviLoyer.objects.all()
 
 
 class ContratGestion(models.Model):
