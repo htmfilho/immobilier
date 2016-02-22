@@ -5,6 +5,26 @@
 {% block content %}
 <div class="panel panel-default">
   <div class="panel-body">
+    <!-- Filtre -->
+    <div>
+      <form  method="get" action="{% url 'personne_search'%}" >
+        <div class="row">
+          <div class="col-md-4">
+              <label for="nom">Nom</label>
+              <input class="form-control" name="nom" value="{{ nom | default_if_none:'' }}" style="text-transform:uppercase" id="nom">
+          </div>
+          <div class="col-md-4">
+              <label for="prenom">Prénom</label>
+              <input class="form-control" name="prenom" value="{{ prenom | default_if_none:'' }}" style="text-transform:uppercase" id="prenom">
+          </div>
+          <div class="col-md-4">
+            <label class="invisible">&nbsp;</label>
+            <div class="btnbtn-as-block"><input type="submit" value="OK" name="btn" ><input type="button" value="Clean" name="btn" onclick="javascript:document.getElementById('nom').value='';" ></div>
+          </div>
+        </div>
+      </form>
+    </div>
+    <!-- fin Filtre -->
       <table class="table table-striped table-hover">
           <thead>
               <th>Nom</th>
@@ -15,7 +35,6 @@
               <th>Profession</th>
               <th>Batiment(s)</th>
           </thead>
-
       {% for personne in personnes %}
           <tr>
               <td>

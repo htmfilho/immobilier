@@ -33,6 +33,23 @@ def list(request):
     return render(request, "personne_list.html",
                   {'personnes': Personne.find_all()})
 
+def search(request):
+    nom = request.GET.get('nom')
+    prenom = request.GET.get('prenom')
+
+    query = Personne.find_all()
+
+    if nom:
+        query = query.filter(nom__icontains=nom)
+    if prenom:
+        query = query.filter(prenom__icontains=prenom)
+
+    return render(request, "personne_list.html",
+                  {'nom':nom,
+                   'prenom':prenom,
+                   'personnes': query })
+
+
 def update(request):
 
     form = PersonneForm(data=request.POST)

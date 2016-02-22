@@ -67,6 +67,8 @@ urlpatterns = [
     url(r'^personne/update/$', personne.update, name='personne-update'),
     url(r'^personne/delete/(?P<pk>[0-9]+)/$', views.PersonneDelete.as_view(), name='personne-delete'),
     url(r'^personnes/$', personne.list, name='personne_list'),
+    url(r'^personnes/search/$', personne.search, name='personne_search'),
+    
 
     url(r'^batiment/create/$', batiment.create, name='batiment-create'),
     url(r'^/batiment/([0-9]+)/$', batiment.batiment_form, name='batiment'),
