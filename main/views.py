@@ -267,8 +267,6 @@ class ProprietaireDelete(DeleteView):
     model=Proprietaire;
     success_url="../../../proprietaires"
 
-
-
 class SocieteList(ListView):
     model = Societe
 
@@ -286,7 +284,6 @@ class SocieteUpdate(UpdateView):
 class SocieteDelete(DeleteView):
     model=Societe;
     success_url="../../../societes"
-
 
 
 # class ContratLocationList(ListView):
