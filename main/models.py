@@ -1,20 +1,16 @@
 # -*- coding: utf-8 -*-
 from django.db import models
-from django import forms
 from django.utils import timezone
-import datetime
 
 from dateutil.relativedelta import relativedelta
 from django.core.urlresolvers import reverse
-from django.core.exceptions import *
 from django.db.models import Q
 from django.db.models import Sum
-from django.db.models import FloatField
 
 
 class Localite(models.Model):
-    code_postal            = models.CharField(max_length = 10, blank = False, null = False)
-    localite               = models.CharField(max_length = 150, blank = False, null = False)
+    code_postal = models.CharField(max_length=10, blank=False, null=False)
+    localite = models.CharField(max_length=150, blank=False, null=False)
 
     @staticmethod
     def find_all():
@@ -28,8 +24,8 @@ class Localite(models.Model):
 
 
 class Assurance(models.Model):
-    nom         = models.CharField(max_length = 100)
-    description = models.TextField(blank = True, null = True)
+    nom = models.CharField(max_length=100)
+    description = models.TextField(blank=True, null=True)
 
     @staticmethod
     def find_all():
@@ -43,8 +39,8 @@ class Assurance(models.Model):
 
 
 class Banque(models.Model):
-    nom         = models.CharField(max_length = 100)
-    description = models.TextField(blank = True, null = True)
+    nom = models.CharField(max_length=100)
+    description = models.TextField(blank=True, null=True)
 
     def __str__(self):
         return self.nom
@@ -58,17 +54,17 @@ def get_pays_choix():
 
 
 class Personne(models.Model):
-    nom            = models.CharField(max_length = 100)
-    prenom         = models.CharField(max_length = 100)
-    # societe        = models.CharField(max_length = 100, blank = True, null = True)
-    email          = models.EmailField(blank = True, null = True)
-    profession     = models.CharField(max_length = 100, blank = True, null = True)
-    date_naissance = models.DateField(auto_now = False, blank = True, null = True, auto_now_add = False)
-    lieu_naissance = models.CharField(max_length = 100, blank = True, null = True)
-    pays_naissance = models.CharField(max_length = 100, blank = True, null = True)
-    num_identite   = models.CharField(max_length = 100, blank = True, null = True, unique=False)
-    telephone      = models.CharField(max_length = 30, blank = True, null = True)
-    gsm            = models.CharField(max_length = 30, blank = True, null = True)
+    nom = models.CharField(max_length=100)
+    prenom = models.CharField(max_length=100)
+    # societe        = models.CharField(max_length=100, blank=True, null=True)
+    email = models.EmailField(blank=True, null=True)
+    profession = models.CharField(max_length=100, blank=True, null=True)
+    date_naissance = models.DateField(auto_now=False, blank=True, null=True, auto_now_add=False)
+    lieu_naissance = models.CharField(max_length=100, blank=True, null=True)
+    pays_naissance = models.CharField(max_length=100, blank=True, null=True)
+    num_identite = models.CharField(max_length=100, blank=True, null=True, unique=False)
+    telephone = models.CharField(max_length=30, blank=True, null=True)
+    gsm = models.CharField(max_length=30, blank=True, null=True)
 
     def __init__(self,  *args, **kwargs):
         super(Personne, self).__init__(*args, **kwargs)
@@ -79,14 +75,15 @@ class Personne(models.Model):
 
     def choix(self):
         return []
+    
     @staticmethod
     def find_personne(id):
         return Personne.objects.get(pk=id)
 
     @property
     def batiments(self):
-        proprietaire_list =  Proprietaire.objects.filter(proprietaire=self)
-        batiments=[]
+        proprietaire_list = Proprietaire.objects.filter(proprietaire=self)
+        batiments = []
         for p in proprietaire_list:
             # batiments.append(p.batiments)
             for b in p.batiments:
@@ -94,8 +91,8 @@ class Personne(models.Model):
         return batiments
 
     def contrat_gestions(self):
-        proprietaire_list =  Proprietaire.objects.filter(proprietaire=self)
-        contrats=[]
+        proprietaire_list = Proprietaire.objects.filter(proprietaire=self)
+        contrats = []
         for p in proprietaire_list:
 
             for b in p.batiments:
@@ -110,22 +107,19 @@ class Personne(models.Model):
 
     @staticmethod
     def find_gestionnaire_default():
-        nom='Marchal'
-        prenom='Stéphan'
-        list_personne =  Personne.objects.filter(nom=nom, prenom=prenom)
+        nom = 'Marchal'
+        prenom = 'Stéphan'
+        list_personne = Personne.objects.filter(nom=nom, prenom=prenom)
         if list_personne:
             return list_personne[0]
         return None
 
-
     class Meta:
-        ordering = ['nom','prenom']
+        ordering = ['nom', 'prenom']
         unique_together = (("nom", "prenom"),)
 
-
     def save(self,  *args, **kwargs):
-
-        p=super(Personne, self).save(*args, **kwargs)
+        p = super(Personne, self).save(*args, **kwargs)
         if Pays.objects.filter(pays=self.pays_naissance):
             pass
         else:
@@ -136,17 +130,17 @@ class Personne(models.Model):
 
 
 class Batiment(models.Model):
-    description            = models.TextField(blank = True, null = True)
-    rue                    = models.CharField(max_length = 200, blank = True, null = True)
-    numero                 = models.IntegerField(blank = True, null = True)
-    boite                  = models.CharField(max_length = 10, blank = True, null = True)
-    lieu_dit               = models.CharField(max_length = 200, blank = True, null = True)
-    localite               = models.ForeignKey(Localite)
-    superficie             = models.DecimalField(max_digits = 5, decimal_places = 3, blank = True, null = True)
-    peformance_energetique = models.CharField(max_length = 10,blank = True, null = True)
+    description = models.TextField(blank=True, null=True)
+    rue = models.CharField(max_length=200, blank=True, null=True)
+    numero = models.IntegerField(blank=True, null=True)
+    boite = models.CharField(max_length=10, blank=True, null=True)
+    lieu_dit = models.CharField(max_length=200, blank=True, null=True)
+    localite = models.ForeignKey(Localite)
+    superficie = models.DecimalField(max_digits=5, decimal_places=3, blank=True, null=True)
+    peformance_energetique = models.CharField(max_length=10, blank=True, null=True)
 
     class Meta:
-        ordering = ['localite','rue']
+        ordering = ['localite', 'rue']
 
     @staticmethod
     def find_all():
@@ -165,40 +159,40 @@ class Batiment(models.Model):
 
     def __str__(self):
         desc = ""
-        cptr=0
+        cptr = 0
         if not(self.rue is None):
             desc += " " + self.rue
-            cptr=cptr+1
+            cptr = cptr + 1
         if not(self.numero is None):
-            if cptr>0:
+            if cptr > 0:
                 desc += ", "
             desc += str(self.numero)
-            cptr=cptr+1
+            cptr = cptr + 1
         if not(self.boite is None):
-            if cptr>0:
+            if cptr > 0:
                 desc += ", "
             desc += self.boite
-            cptr=cptr+1
+            cptr = cptr + 1
         if not(self.localite is None):
-            if cptr>0:
+            if cptr > 0:
                 desc += ", "
             desc += str(self.localite)
         return desc
 
     def adresse_rue(self):
         adresse_complete=""
-        if self.rue is not None :
+        if self.rue is not None:
             adresse_complete += self.rue
-        if self.numero is not None :
-            adresse_complete += " " +str(self.numero)
-        if self.boite is not None :
-            adresse_complete += " " +str(self.boite)
+        if self.numero is not None:
+            adresse_complete += " " + str(self.numero)
+        if self.boite is not None:
+            adresse_complete += " " + str(self.boite)
         return adresse_complete
 
     def adresse_localite(self):
         adresse_complete=""
-        if self.localite is not None :
-            adresse_complete+= " " + str(self.localite)
+        if self.localite is not None:
+            adresse_complete += " " + str(self.localite)
         return adresse_complete
 
     def proprietaires(self):
@@ -215,38 +209,45 @@ class Batiment(models.Model):
         return ContratLocation.objects.filter(batiment=self, date_fin__lte=self.location_actuelle.date_debut)
 
     def contrat_location_next(self):
-        list_c =  ContratLocation.objects.filter(batiment=self, date_debut__gte=self.location_actuelle.date_fin)
+        list_c = ContratLocation.objects.filter(batiment=self, date_debut__gte=self.location_actuelle.date_fin)
         if list_c:
             return list_c[0]
         return None
 
     def contrat_location_previous(self):
-        list_c= ContratLocation.objects.filter(batiment=self, date_fin__lte=self.location_actuelle.date_debut)
+        list_c = ContratLocation.objects.filter(batiment=self, date_fin__lte=self.location_actuelle.date_debut)
         if list_c:
             return list_c[0]
         return None
 
     def locataires_actuels(self):
-        liste=[]
-        contrats = ContratLocation.objects.filter(batiment=self,date_debut__lte=timezone.now(), date_fin__gte=timezone.now() )
+        liste = []
+        contrats = ContratLocation.objects.filter(batiment=self, 
+                                                  date_debut__lte=timezone.now(), 
+                                                  date_fin__gte=timezone.now())
         if not(contrats is None):
             for contrat in contrats:
                 locataire = Locataire.objects.filter(contrat_location=contrat)
-                for l in locataire :
+                for l in locataire:
                     p = Personne.find_personne(l.personne.id)
                     liste.append(p)
 
         return liste
+    
     @property
     def location_actuelle(self):
-        l = ContratLocation.objects.filter(batiment=self,date_debut__lte=timezone.now(), date_fin__gte=timezone.now() ).first()
+        l = ContratLocation.objects.filter(batiment=self, 
+                                           date_debut__lte=timezone.now(), 
+                                           date_fin__gte=timezone.now()).first()
         if l:
             return l
         else:
-            return ContratLocation.objects.filter(batiment=self,date_fin__lte=timezone.now() ).last()
+            return ContratLocation.objects.filter(batiment=self, date_fin__lte=timezone.now()).last()
 
     def location_actuelle_pk(self):
-        contrat_location =  ContratLocation.objects.filter(batiment=self,date_debut__lte=timezone.now(), date_fin__gte=timezone.now() ).first()
+        contrat_location = ContratLocation.objects.filter(batiment=self, 
+                                                          date_debut__lte=timezone.now(), 
+                                                          date_fin__gte=timezone.now()).first()
         if contrat_location:
             return contrat_location.id
         return None
@@ -261,17 +262,12 @@ class Batiment(models.Model):
 
     @property
     def gains(self):
-        print('gainss')
         tot = 0
-        print('gainsss')
         for c in self.contrats_location():
-            print('for1')
-            for f  in c.financements():
-                print('for2')
+            for f in c.financements():
                 queryset = SuiviLoyer.find_suivis_paye(f)
                 aggregation = queryset.aggregate(loyer=Sum('loyer_percu'))
                 loyer = aggregation.get('loyer', 0)
-                print (loyer)
                 tot = tot + loyer
 
         return tot
@@ -288,12 +284,11 @@ class Batiment(models.Model):
         return 0
 
 
-
 class Proprietaire(models.Model):
-    proprietaire  = models.ForeignKey(Personne, verbose_name=u"Propriétaire")
-    batiment      = models.ForeignKey(Batiment)
-    date_debut    = models.DateField(auto_now = False, blank = True, null = True, auto_now_add = False, verbose_name=u"Date début")
-    date_fin      = models.DateField(auto_now = False, blank = True, null = True, auto_now_add = False)
+    proprietaire = models.ForeignKey(Personne, verbose_name=u"Propriétaire")
+    batiment = models.ForeignKey(Batiment)
+    date_debut = models.DateField(auto_now=False, blank=True, null=True, auto_now_add=False, verbose_name=u"Date début")
+    date_fin = models.DateField(auto_now=False, blank=True, null=True, auto_now_add=False)
 
     @staticmethod
     def find_proprietaire(id):
@@ -301,7 +296,7 @@ class Proprietaire(models.Model):
 
     @staticmethod
     def find_batiment_by_personne(personne):
-        list_p =  Proprietaire.objects.filter(proprietaire=personne)
+        list_p = Proprietaire.objects.filter(proprietaire=personne)
         batiments = []
         for p in list_p:
             batiments.append(p.batiment)
@@ -312,7 +307,10 @@ class Proprietaire(models.Model):
         return Batiment.objects.filter(proprietaire=self)
 
     def __str__(self):
-        return self.proprietaire.nom +", " + self.proprietaire.prenom + "-" +  self.batiment.rue +", " + self.batiment.localite
+        return self.proprietaire.nom + ", " + \
+               self.proprietaire.prenom + "-" + \
+               self.batiment.rue + ", " + \
+               self.batiment.localite
 
     def get_absolute_url(self):
         return reverse('proprietaire_list')
@@ -322,26 +320,26 @@ class Proprietaire(models.Model):
 
 
 class ContratLocation(models.Model):
-    batiment             = models.ForeignKey(Batiment)
-    date_debut           = models.DateField(auto_now = False,  auto_now_add = False, blank = False, null = False, verbose_name=u"Date début")
-    date_fin             = models.DateField(auto_now = False, auto_now_add = False, blank = False, null = False)
-    renonciation         = models.DateField(auto_now = False, auto_now_add = False, blank = True, null = True)
-    remarque             = models.TextField(blank = True, null = True)
-    assurance            = models.ForeignKey('Assurance', blank = True, null = True)
-    loyer_base           = models.DecimalField(max_digits=6, decimal_places=2, default = 0,blank = False, null = False)
-    charges_base         = models.DecimalField(max_digits=6, decimal_places=2, default = 0)
-    #index_base   = models.DecimalField(max_digits=5, decimal_places=2, default = 0)
+    batiment = models.ForeignKey(Batiment)
+    date_debut = models.DateField(auto_now=False,  auto_now_add=False, blank=False, null=False, verbose_name=u"Date début")
+    date_fin = models.DateField(auto_now=False, auto_now_add=False, blank=False, null=False)
+    renonciation = models.DateField(auto_now=False, auto_now_add=False, blank=True, null=True)
+    remarque = models.TextField(blank=True, null=True)
+    assurance = models.ForeignKey('Assurance', blank=True, null=True)
+    loyer_base = models.DecimalField(max_digits=6, decimal_places=2, default=0, blank=False, null=False)
+    charges_base = models.DecimalField(max_digits=6, decimal_places=2, default=0)
+    # index_base  = models.DecimalField(max_digits=5, decimal_places=2, default=0)
 
     def __str__(self):
-        desc=""
+        desc = ""
         if not(self.batiment.description is None):
-            desc+= self.batiment.description
+            desc += self.batiment.description
         if not(self.batiment.localite is None):
-            desc+= str(self.batiment.localite)
+            desc += str(self.batiment.localite)
         if not(self.date_debut is None):
-            desc+= self.date_debut.strftime('%d-%m-%Y')
+            desc += self.date_debut.strftime('%d-%m-%Y')
         if not(self.date_fin is None):
-            desc+= " au " + self.date_fin.strftime('%d-%m-%Y')
+            desc += " au " + self.date_fin.strftime('%d-%m-%Y')
         return desc
 
     @property
@@ -360,12 +358,11 @@ class ContratLocation(models.Model):
         return FinancementLocation.objects.filter(contrat_location=self)
 
     def save(self,  *args, **kwargs):
-        print('contrat location save' ,self.id)
         date_fin = self.date_fin
         nouveau = False
         if self.id is None:
             nouveau = True
-        c=super(ContratLocation, self).save(*args, **kwargs)
+        c = super(ContratLocation, self).save(*args, **kwargs)
         if nouveau:
             print('creation nouveau financement')
             b = FinancementLocation(date_debut=self.date_debut,date_fin=self.date_fin, loyer=self.loyer_base)
@@ -377,14 +374,21 @@ class ContratLocation(models.Model):
             i=0
             while date_f <= date_fin:
                 print(' creation nouveau suivi')
-                suivi = SuiviLoyer(etat_suivi='A_VERIFIER', date_paiement=date_d, remarque=None,loyer_percu = 0,charges_percu=0)
+                suivi = SuiviLoyer(etat_suivi='A_VERIFIER', 
+                                   date_paiement=date_d, 
+                                   remarque=None,
+                                   loyer_percu=0, 
+                                   charges_percu=0)
                 suivi.financement_location = b
                 suivi.save()
                 date_d = date_d + relativedelta(months=1)
                 date_f = date_f + relativedelta(months=1)
-                i=i+1
+                i = i + 1
             if self.date_fin:
-                alert = Alerte(description='Attention fin contrat location dans 4 mois',date_alerte=self.date_fin - relativedelta(months=4),etat='A_VERIFIER',contratLocation=self)
+                alert = Alerte(description='Attention fin contrat location dans 4 mois',
+                               date_alerte=self.date_fin - relativedelta(months=4),
+                               etat='A_VERIFIER', 
+                               contratLocation=self)
                 alert.save()
 
         return c
@@ -395,11 +399,11 @@ class ContratLocation(models.Model):
 
 class FinancementLocation(models.Model):
     contrat_location = models.ForeignKey(ContratLocation,default=None)
-    date_debut       = models.DateField(auto_now = False, auto_now_add = False, verbose_name=u"Date début")# je n'arrive pas à mettre la date du jour par défaut
-    date_fin         = models.DateField(auto_now = False, auto_now_add = False, blank = True, null = True)
-    loyer            = models.DecimalField(max_digits=6, decimal_places=2, default = 0)
-    charges          = models.DecimalField(max_digits=6, decimal_places=2, default = 0)
-    index            = models.DecimalField(max_digits=5, decimal_places=2, default = 0)
+    date_debut = models.DateField(auto_now=False, auto_now_add=False, verbose_name=u"Date début")# je n'arrive pas à mettre la date du jour par défaut
+    date_fin = models.DateField(auto_now=False, auto_now_add=False, blank=True, null=True)
+    loyer = models.DecimalField(max_digits=6, decimal_places=2, default=0)
+    charges = models.DecimalField(max_digits=6, decimal_places=2, default=0)
+    index = models.DecimalField(max_digits=5, decimal_places=2, default=0)
 
     def __str__(self):
 
@@ -415,25 +419,25 @@ class FinancementLocation(models.Model):
 
 class Locataire(models.Model):
     CIVILITE = (
-        ('NON_PRECISE','-'),
-        ('MADAME','Madame'),
-        ('MONSIEUR','Monsieur'),
-        ('MAITRE','Maitre'),
-        ('DOCTEUR','Docteur'),
+        ('NON_PRECISE', '-'),
+        ('MADAME', 'Madame'),
+        ('MONSIEUR', 'Monsieur'),
+        ('MAITRE', 'Maitre'),
+        ('DOCTEUR', 'Docteur'),
 
     )
-    personne             = models.ForeignKey(Personne,error_messages={'unique': 'Please enter your name'})
-    contrat_location     = models.ForeignKey(ContratLocation,default=None)
-    infos_complement     = models.TextField(blank = True, null = True)
-    principal            = models.BooleanField(default = True)
-    societe              = models.CharField(max_length=100, blank = True, null = True, verbose_name=u"Société")
-    tva                  = models.CharField(max_length=30, blank = True, null = True)
-    profession           = models.CharField(max_length=50, blank = True, null = True)
-    civilite             = models.CharField(max_length = 10, choices = CIVILITE, default = 'NON_PRECISE')
-    #personne_garante     = models.ForeignKey('Personne', blank = True, null = True)
+    personne = models.ForeignKey(Personne,error_messages={'unique': 'Please enter your name'})
+    contrat_location = models.ForeignKey(ContratLocation,default=None)
+    infos_complement = models.TextField(blank=True, null=True)
+    principal = models.BooleanField(default=True)
+    societe = models.CharField(max_length=100, blank=True, null=True, verbose_name=u"Société")
+    tva = models.CharField(max_length=30, blank=True, null=True)
+    profession = models.CharField(max_length=50, blank=True, null=True)
+    civilite = models.CharField(max_length=15, choices= CIVILITE, default = 'NON_PRECISE')
+    # personne_garante     = models.ForeignKey('Personne', blank=True, null=True)
 
     def __str__(self):
-        #return self.personne.nom + ", " + self.personne.prenom + " (" + self.financement_location.date_debut.strftime('%d-%m-%Y') + " au " + self.financement_location.date_fin.strftime('%d-%m-%Y') + ")"
+        # return self.personne.nom + ", " + self.personne.prenom + " (" + self.financement_location.date_debut.strftime('%d-%m-%Y') + " au " + self.financement_location.date_fin.strftime('%d-%m-%Y') + ")"
         return self.personne.nom + ", " + self.personne.prenom
 
     # def unique_error_message(self, model_class, unique_check):
@@ -448,27 +452,27 @@ class Locataire(models.Model):
 
 
 class Societe(models.Model):
-    nom                    = models.CharField(max_length = 100, blank=False, null=False)
-    description            = models.TextField(blank = True, null = True)
-    rue                    = models.CharField(max_length = 200, blank = True, null = True)
-    numero                 = models.IntegerField(blank = True, null = True)
-    boite                  = models.CharField(max_length = 10, blank = True, null = True)
-    lieu_dit               = models.CharField(max_length = 200, blank = True, null = True)
-    code_postal            = models.CharField(max_length = 10, blank = True, null = True)
-    localite               = models.CharField(max_length = 150, blank = True, null = True)
-    personnel              = models.ForeignKey(Personne, blank = True, null = True)
+    nom = models.CharField(max_length=100, blank=False, null=False)
+    description = models.TextField(blank=True, null=True)
+    rue = models.CharField(max_length=200, blank=True, null=True)
+    numero = models.IntegerField(blank=True, null=True)
+    boite = models.CharField(max_length=10, blank=True, null=True)
+    lieu_dit = models.CharField(max_length=200, blank=True, null=True)
+    code_postal = models.CharField(max_length=10, blank=True, null=True)
+    localite = models.CharField(max_length=150, blank=True, null=True)
+    personnel = models.ForeignKey(Personne, blank=True, null=True)
 
     def __str__(self):
         return self.nom
 
 
 class FraisMaintenance(models.Model):
-    batiment         = models.ForeignKey(Batiment, verbose_name=u"Batiment", blank = False, null = False)
-    entrepreneur     = models.ForeignKey(Personne, blank = True, null = True)
-    societe          = models.ForeignKey(Societe, blank = True, null = True)
-    description      = models.TextField()
-    montant          = models.DecimalField(max_digits=8, decimal_places=2, blank = False, null = False)
-    date_realisation = models.DateField(auto_now = False, auto_now_add = False, blank = True, null = True, verbose_name=u"Date réalisation")
+    batiment = models.ForeignKey(Batiment, verbose_name=u"Batiment", blank=False, null=False)
+    entrepreneur = models.ForeignKey(Personne, blank=True, null=True)
+    societe = models.ForeignKey(Societe, blank=True, null=True)
+    description = models.TextField()
+    montant = models.DecimalField(max_digits=8, decimal_places=2, blank=False, null=False)
+    date_realisation = models.DateField(auto_now=False, auto_now_add=False, blank=True, null=True, verbose_name=u"Date réalisation")
 
     @staticmethod
     def find_by_batiment(batiment_id):
@@ -483,17 +487,17 @@ class FraisMaintenance(models.Model):
 
 class SuiviLoyer(models.Model):
     ETAT = (
-        ('A_VERIFIER','A vérifier'),
-        ('IMPAYE','Impayé'),
-        ('EN_RETARD','En retard'),
-        ('PAYE','Payé')
+        ('A_VERIFIER', 'A vérifier'),
+        ('IMPAYE', 'Impayé'),
+        ('EN_RETARD', 'En retard'),
+        ('PAYE', 'Payé')
     )
     financement_location = models.ForeignKey(FinancementLocation)
-    date_paiement        = models.DateField(auto_now = False,auto_now_add = False)
-    etat_suivi           = models.CharField(max_length = 10, choices = ETAT, default = 'A_VERIFIER')
-    remarque             = models.TextField(blank = True, null = True)
-    loyer_percu          = models.DecimalField(max_digits=5, decimal_places=2, blank = True, null = True)
-    charges_percu        = models.DecimalField(max_digits=5, decimal_places=2 , blank = True, null = True)
+    date_paiement = models.DateField(auto_now=False, auto_now_add=False)
+    etat_suivi = models.CharField(max_length=10, choices= ETAT, default='A_VERIFIER')
+    remarque = models.TextField(blank=True, null=True)
+    loyer_percu = models.DecimalField(max_digits=5, decimal_places=2, blank=True, null=True)
+    charges_percu = models.DecimalField(max_digits=5, decimal_places=2, blank=True, null=True)
 
     class Meta:
         ordering = ['date_paiement']
@@ -501,13 +505,16 @@ class SuiviLoyer(models.Model):
     @staticmethod
     def find_suivis(date_d, date_f, etat):
         if etat is None:
-            return SuiviLoyer.objects.filter(date_paiement__gte = date_d, date_paiement__lte = date_f)
+            return SuiviLoyer.objects.filter(date_paiement__gte=date_d, date_paiement__lte=date_f)
         else:
-            return SuiviLoyer.objects.filter(date_paiement__gte = date_d, date_paiement__lte = date_f, etat_suivi = etat)
+            return SuiviLoyer.objects.filter(date_paiement__gte=date_d, date_paiement__lte=date_f, etat_suivi=etat)
 
     @staticmethod
     def find_suivis_a_verifier(date_d, date_f):
-        return SuiviLoyer.objects.filter(Q(date_paiement__gte = timezone.now(), date_paiement__lte = timezone.now() + relativedelta(months=1), etat_suivi = 'A_VERIFIER') | Q(date_paiement__lte = timezone.now() , etat_suivi = 'A_VERIFIER') )
+        return SuiviLoyer.objects.filter(Q(date_paiement__gte=timezone.now(),
+                                           date_paiement__lte=timezone.now() + relativedelta(months=1),
+                                           etat_suivi='A_VERIFIER')
+                                         | Q(date_paiement__lte = timezone.now(), etat_suivi='A_VERIFIER') )
 
     def __str__(self):
         desc = ""
@@ -515,10 +522,10 @@ class SuiviLoyer(models.Model):
             desc += self.date_paiement.strftime('%d-%m-%Y')
 
         if not self.remarque is None :
-            desc +=  " , (" + self.remarque + ")"
+            desc += " , (" + self.remarque + ")"
 
         if not self.etat_suivi is None :
-            desc +=   " (" + self.etat_suivi + ")"
+            desc += " (" + self.etat_suivi + ")"
         return desc
 
     @staticmethod
@@ -529,11 +536,11 @@ class SuiviLoyer(models.Model):
 
 
 class ContratGestion(models.Model):
-    batiment        = models.ForeignKey(Batiment)
-    gestionnaire    = models.ForeignKey(Personne)
-    date_debut      = models.DateField(auto_now = False,  auto_now_add = False,blank=True, null=True)
-    date_fin        = models.DateField(auto_now = False, auto_now_add = False, blank = True, null = True)
-    montant_mensuel = models.DecimalField(max_digits=6, decimal_places=2, blank = True, null = True)
+    batiment = models.ForeignKey(Batiment)
+    gestionnaire = models.ForeignKey(Personne)
+    date_debut = models.DateField(auto_now=False,  auto_now_add=False,blank=True, null=True)
+    date_fin = models.DateField(auto_now=False, auto_now_add=False, blank=True, null=True)
+    montant_mensuel = models.DecimalField(max_digits=6, decimal_places=2, blank=True, null=True)
 
     @staticmethod
     def find_all():
@@ -574,10 +581,10 @@ class ContratGestion(models.Model):
 
 class ModeleDocument(models.Model):
     # TYPE_DOCUMENT = (
-        # ('LETTRE_INDEXATION','Lettre indexation'),
+        # ('LETTRE_INDEXATION', 'Lettre indexation'),
     # )
-    type_document = models.CharField(max_length = 50)
-    contenu       = models.TextField()
+    type_document = models.CharField(max_length=50)
+    contenu = models.TextField()
 
     def __str__(self):
         return self.type_document
@@ -585,15 +592,15 @@ class ModeleDocument(models.Model):
 
 class Alerte(models.Model):
     ETAT = (
-        ('A_VERIFIER','A vérifier'),
-        ('VERIFIER','Vérifier'),
-        ('COURRIER','Courrier à préparer'))
+        ('A_VERIFIER', 'A vérifier'),
+        ('VERIFIER', 'Vérifier'),
+        ('COURRIER', 'Courrier à préparer'))
 
     description =  models.TextField( verbose_name=u"Description")
-    date_alerte = models.DateField(auto_now = False, auto_now_add = False, blank = True, null = True, verbose_name=u"Date alerte")
-    contratGestion = models.ForeignKey(ContratGestion, blank = True, null = True, verbose_name=u"Contrat de gestion")
-    contratLocation = models.ForeignKey(ContratLocation, blank = True, null = True, verbose_name=u"Contrat location")
-    etat = models.CharField(max_length = 10, choices = ETAT, default = 'A_VERIFIER', verbose_name=u"Etat")
+    date_alerte = models.DateField(auto_now=False, auto_now_add=False, blank=True, null=True, verbose_name=u"Date alerte")
+    contratGestion = models.ForeignKey(ContratGestion, blank=True, null=True, verbose_name=u"Contrat de gestion")
+    contratLocation = models.ForeignKey(ContratLocation, blank=True, null=True, verbose_name=u"Contrat location")
+    etat = models.CharField(max_length=10, choices=ETAT, default='A_VERIFIER', verbose_name=u"Etat")
 
     class Meta:
         ordering = ['date_alerte']
@@ -610,19 +617,19 @@ class Alerte(models.Model):
 
 
 class Pays(models.Model):
-    pays = models.CharField(max_length = 50)
+    pays = models.CharField(max_length=50)
 
 
 class Honoraire(models.Model):
     ETAT_HONORAIRE = (
-        ('A_VERIFIER','A vérifier'),
-        ('IMPAYE','Impayé'),
-        ('EN_RETARD','En retard'),
-        ('PAYE','Payé')
+        ('A_VERIFIER', 'A vérifier'),
+        ('IMPAYE', 'Impayé'),
+        ('EN_RETARD', 'En retard'),
+        ('PAYE', 'Payé')
     )
-    contrat_gestion = models.ForeignKey(ContratGestion, blank = True, null = True, verbose_name=u"Contrat de gestion")
-    date_paiement =  models.DateField(auto_now = False, auto_now_add = False, blank = True, null = True, verbose_name=u"Date paiement")
-    etat = models.CharField(max_length = 10, choices = ETAT_HONORAIRE, default = 'A_VERIFIER', verbose_name=u"Etat")
+    contrat_gestion = models.ForeignKey(ContratGestion, blank=True, null=True, verbose_name=u"Contrat de gestion")
+    date_paiement =  models.DateField(auto_now=False, auto_now_add=False, blank=True, null=True, verbose_name=u"Date paiement")
+    etat = models.CharField(max_length=10, choices=ETAT_HONORAIRE, default='A_VERIFIER', verbose_name=u"Etat")
 
     @staticmethod
     def find_honoraires_by_etat_today(etat):
@@ -635,10 +642,10 @@ class Honoraire(models.Model):
         return Honoraire.objects.all()
 
     @staticmethod
-    def find_by_batiment_etat_date(batiment_id,etat,date_limite_inf):
-        query =  Honoraire.objects.all()
+    def find_by_batiment_etat_date(batiment_id, etat, date_limite_inf):
+        query = Honoraire.objects.all()
 
-        if not batiment_id is None and batiment_id != "None" :
+        if not batiment_id is None and batiment_id != "None":
             query = query.filter(contrat_gestion__batiment__id=int(batiment_id))
 
         if not etat is None and len(etat) > 0  :
@@ -651,8 +658,8 @@ class Honoraire(models.Model):
 
     @staticmethod
     def find_all_batiments():
-        batiments=[]
-        for c  in ContratGestion.find_all():
+        batiments = []
+        for c in ContratGestion.find_all():
             if not c.batiment in batiments:
                 batiments.append(c.batiment)
         return batiments
@@ -665,8 +672,8 @@ class Honoraire(models.Model):
 
 
 class Photo(models.Model):
-    photo     = models.FileField( upload_to="photos")
-    texte     = models.TextField(default="")
+    photo = models.FileField( upload_to="photos")
+    texte = models.TextField(default="")
 
     def __str__(self):
         return self.texte

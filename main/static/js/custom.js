@@ -27,3 +27,19 @@ $("#date_finn" ).change(function(event) {
 
   }
 });
+
+$("#date_debut_location").change(function(event) {
+    if($("#date_fin_location")){
+        if($("#date_fin_location").val()=='') {
+            pos = $("#date_debut_location").val().lastIndexOf("/");
+            tt = $("#date_debut_location").val().slice(pos+1);
+            tt = parseInt(tt) + 1;
+            dd = $("#date_debut_location").val().slice(0,pos);
+            $("#date_fin_location").val(dd +"/"+ String(tt));
+        }
+    }
+
+});
+
+
+

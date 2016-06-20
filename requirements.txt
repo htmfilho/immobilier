@@ -67,3 +67,4 @@ urllib3==1.7.1
 virtualenv==1.11.4
 wsgiref==0.1.2
 zope.interface==4.0.5
+psycopg2==2.6.1

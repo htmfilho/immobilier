@@ -6,8 +6,11 @@
 {% block content %}
 <div class="panel panel-default">
   <div class="panel-body">
-    <form  id="batiment_form" method="post" action="{% url 'update_batiment' %}">
+    <form  id="batiment_form"
+           method="post"
+           action="{% url 'update_batiment' %}">
       {% csrf_token %}
+      <input type="text" value="" id="prev" name="prev"/>
       <input type="hidden" value="modify" name="action"/>
       <input type="hidden" value="{{ batiment.id }}" name="id"/>
       <div class="row">
@@ -26,7 +29,7 @@
       </div>
       <div class="row">
         <div class="col-md-4">
-          <label for="localite" class="control-label">Localité</label>
+          <labelclass="control-label">Localité</label>
           <select class="form-control" name="localite" >
             {%if batiment.localite%}
               <option value="">-</option>
@@ -47,11 +50,11 @@
       </div>
       <div class="row">
         <div class="col-md-6">
-          <label for="superficie" class="control-label">Superficie</label>
+          <label class="control-label">Superficie</label>
           <input class="form-control" type="text"  value="{{ batiment.superficie | default_if_none:'' }}" name="superficie">
         </div>
         <div class="col-md-6">
-          <label for="peformance_energetique" class="control-label">Performance énergetique</label>
+          <label class="control-label">Performance énergetique</label>
           <input class="form-control" type="text" value="{{ batiment.peformance_energetique | default_if_none:'' }}" name="peformance_energetique">
         </div>
       </div>
@@ -86,7 +89,8 @@
                           <td><a href="{% url 'proprietaire' proprietaire.id %}?prev=fb" title="Voir">{{ proprietaire.proprietaire }}</a></td>
                           <td>{{ proprietaire.date_debut|date:"j/m/Y" }}</td>
                           <td>{{ proprietaire.date_fin|date:"j/m/Y" }}</td>
-                          <td><a href="{% url 'delete_proprietaire_batiment' proprietaire.id %}" title="Pour supprimer le propriétaire du  batiment"><span class="glyphicon glyphicon-remove" aria-hidden="true"></span></a></td>
+                          <td><a href="{% url 'delete_proprietaire_batiment' proprietaire.id %}"
+                                 title="Pour supprimer le propriétaire du  batiment"><span class="glyphicon glyphicon-remove" aria-hidden="true"></span></a></td>
                         </tr>
                         {% endfor%}
                         </table>
@@ -98,7 +102,9 @@
                 <div class="col-md-10">
                 </div>
                 <div class="col-md-2">
-                  <a href="{% url 'add_proprietaire' batiment.id %}?prev=fb" title="Ajouter un propriétaire"><span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
+                  <a href="{% url 'add_proprietaire' batiment.id %}"
+                     onclick="$('#prev').val('fb';alert('kk');"
+                     title="Ajouter un propriétaire"><span class="glyphicon glyphicon-plus" aria-hidden="true"></span></a>
                 </div>
               </div>
             </div>
@@ -123,8 +129,8 @@
                 <div class="col-md-1">
 
                 {% if batiment.contrats_location|length > 1 and batiment.contrats_location_next|length > 0 %}
-
-                  <a href="{% url 'location-prepare-update-all' batiment.contrat_location_next.id %}" title="Prochain contrat de location"><span class="glyphicon glyphicon-chevron-right" aria-hidden="true"></span>
+                  <a href="{% url 'location-prepare-update-all' batiment.contrat_location_next.id %}"
+                     title="Prochain contrat de location"><span class="glyphicon glyphicon-chevron-right" aria-hidden="true"></span>
 
                     </a>
 
@@ -148,7 +154,10 @@
                   <br>
                   <table class="table table-bordered">
                     {% for p in batiment.locataires_actuels %}
-                    <tr><td><a href="{% url 'locataire' p.id%}?prev=fb" title="Pour modifier un locataire">{{  p.nom }} {{  p.prenom }}</a> </td>  </tr>
+                    <tr>
+                        <td><a href="{% url 'locataire' p.id%}?prev=fb" title="Pour modifier un locataire">{{  p.nom }} {{  p.prenom }}</a> </td>
+                        <td>{{p.}}</td>
+                    </tr>
                     {% endfor%}
                   </table>
                   {% endif %}

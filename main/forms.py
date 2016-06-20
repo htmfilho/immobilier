@@ -136,3 +136,7 @@ class HonoraireForm(ModelForm):
 #     class Meta:
 #         model = FinancementLocation
 #         fields=['date_debut','date_fin','loyer','charges','index']
+
+
+class FileForm(forms.Form):
+    file = forms.FileField()

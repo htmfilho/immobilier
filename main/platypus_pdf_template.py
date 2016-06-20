@@ -1,14 +1,15 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 """
-usage: platypus_pdf_template.py source.pdf
-Creates platypus.source.pdf
-Example of using pdfrw to use page 1 of a source PDF as the background
-for other pages programmatically generated with Platypus.
-Contributed by user asannes
+usage: platypus_pdf_template.py output.pdf pdf_file_to_use_as_template.pdf
+
+Example of using pdfrw to use a pdf (page one) as the background for all
+other pages together with platypus.
+
+There is a table of contents in this example for completeness sake.
+
 """
 import sys
-import os
 
 from reportlab.platypus import PageTemplate, BaseDocTemplate, Frame
 from reportlab.platypus import NextPageTemplate, Paragraph, PageBreak
@@ -22,14 +23,7 @@ from pdfrw import PdfReader
 from pdfrw.buildxobj import pagexobj
 from pdfrw.toreportlab import makerl
 from reportlab.lib.pagesizes import A4
-from django.shortcuts import render
-from reportlab.pdfgen.canvas import Canvas
-
-
-from pdfrw import PdfReader
-from pdfrw.buildxobj import pagexobj
-from pdfrw.toreportlab import makerl
-PAGE_WIDTH, PAGE_HEIGHT =A4
+PAGE_WIDTH,PAGE_HEIGHT = A4
 
 
 class MyTemplate(PageTemplate):
@@ -46,6 +40,7 @@ class MyTemplate(PageTemplate):
             )]
         PageTemplate.__init__(self, name, frames)
         # use first page as template
+        print('pdf_template_filename',pdf_template_filename)
         page = PdfReader(pdf_template_filename).pages[0]
         self.page_template = pagexobj(page)
         # Scale it to fill the complete page
@@ -60,7 +55,6 @@ class MyTemplate(PageTemplate):
         canvas.doForm(rl_obj)
         canvas.restoreState()
 
-
 class MyDocTemplate(BaseDocTemplate):
     """Used to apply heading to table of contents."""
 
@@ -74,64 +68,55 @@ class MyDocTemplate(BaseDocTemplate):
                 self.canv.bookmarkPage(key)
                 self.notify('TOCEntry', [1, text, self.page, key])
 
-
 def create_toc():
+    print('createtoc')
     """Creates the table of contents"""
     table_of_contents = TableOfContents()
     table_of_contents.dotsMinLevel = 0
-    header1 = ParagraphStyle(name='Heading1', fontSize=16, leading=16)
-    header2 = ParagraphStyle(name='Heading2', fontSize=14, leading=14)
+    header1 = ParagraphStyle(name = 'Heading1', fontSize = 16, leading = 16)
+    header2 = ParagraphStyle(name = 'Heading2', fontSize = 14, leading = 14)
     table_of_contents.levelStyles = [header1, header2]
-    return [table_of_contents, PageBreak()]
 
+    return [table_of_contents, PageBreak()]
 
 def create_pdf(filename, pdf_template_filename):
     """Create the pdf, with all the contents"""
+    print('create_pdf')
     pdf_report = open(filename, "wb")
+    print('k')
     document = MyDocTemplate(pdf_report)
-    templates = [MyTemplate(pdf_template_filename, name='background')]
+    templates = [MyTemplate(pdf_template_filename, name='background') ]
+    # pdf_template_filename2='chat.pdf'
+    # templates = [MyTemplate(pdf_template_filename, name='background'),MyTemplate(pdf_template_filename2, name='background2') ]
     document.addPageTemplates(templates)
+
 
     styles = getSampleStyleSheet()
     elements = [NextPageTemplate('background')]
     elements.extend(create_toc())
-
+    print('avt for')
     # Dummy content (hello world x 200)
-    for i in range(20):
+    for i in range(2):
+        page = PdfReader("chat.pdf").pages[0]
+        t = pagexobj(page)
+        #canvas.saveState()
+        #rl_obj = makerl(canvas, self.page_template)
+        # canvas.scale(self.page_xscale, self.page_yscale)
+        # canvas.doForm(rl_obj)
+        # canvas.restoreState()
+        # elements.append(Paragraph(pagexobj(page), styles['Heading1']))
         elements.append(Paragraph("Hello World" + str(i), styles['Heading1']))
-
+    print('apres for')
     document.multiBuild(elements)
     pdf_report.close()
 
 
 if __name__ == '__main__':
-    template, = sys.argv[1:]
-    output = 'platypus_pdf_template.' + os.path.basename(template)
-    create_pdf(output, template)
-
-
-def test_create_pdf(request):
-    #create_pdf('output.pdf','pdf1.pdf')
-    go('pdf1.pdf',1,3)
-    return render(request, "test.html")
-
-
-def hello(c):
-    c.drawString(100,100,"Hello World")
-
-
-def go(inpfn, firstpage, lastpage):
-    firstpage, lastpage = int(firstpage), int(lastpage)
-    outfn = 'subset_%s_to_%s.%s' % (firstpage, lastpage, os.path.basename(inpfn))
-
-    pages = PdfReader(inpfn, decompress=False).pages
-    pages = [pagexobj(x) for x in pages[firstpage-1:lastpage]]
-    canvas = Canvas(outfn)
-    hello(canvas)
-    canvas.showPage()
-    for page in pages:
-        canvas.setPageSize(tuple(page.BBox[2:]))
-        canvas.doForm(makerl(canvas, page))
-        canvas.showPage()
-
-    canvas.save()
+    print('ici')
+    try:
+        print('ici2')
+        output, template = sys.argv[1:]
+        print('ici3')
+        create_pdf(output, template)
+    except ValueError:
+        print ("Usage: %s <output> <template>" % (sys.argv[0]))

@@ -1,0 +1,65 @@
+{% extends "layout.html" %}
+{% load staticfiles %}
+{% load order %}
+{% block breadcrumb %}
+  <li class="active">Mon tableau de bord</li>
+{% endblock %}
+{% block content %}
+<a href="{% url 'test_image' %}">test image to pdf</a>
+<br>
+<a href="{% url 'test_merge' %}">test merge 2 pdf i one    fffffffff</a>
+<br>
+<a href="{% url 'test_pdf' %}">test merge 2 pdf i one</a>
+<br>
+            <button type="button" class="btn btn-default" data-toggle="modal" data-target="#pnl_upload_score_modal"
+                    id="bt_upload_score_modal"
+                   ><span class="glyphicon glyphicon-upload" aria-hidden="true"></span> Fichier</button>
+<!-- UploadFile modal -->
+<div class="modal fade" id="pnl_upload_score_modal" tabindex="-1" role="dialog" aria-labelledby="uploadScoresLabel">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <form method="post" enctype="multipart/form-data" action="{% url 'upload' %}">
+                {% csrf_token %}
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close" id="bt_close_upload_score_modal"><span aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title" id="uploadScroresLabel">Choisir un fichier image ou pdf</h4>
+                </div>
+                <div class="modal-body">
+                    <label for="fle_scores_input_file" class="btn btn-default" >Parcourir</label>
+                    <input type="file" id="fle_scores_input_file" name="file" style="display:none" />
+
+                    <p class="help-block">Fichier</p>
+                  <div id="pnl_selectedFiles"></div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal" id="bt_cancel_upload_score_modal">Annuler</button>
+                    <input type="submit" class="btn btn-primary"
+                           value="Ok" onclick="document.getElementById('files').style.visibility='visible'" id="bt_submit_upload_score_modal"/>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+<script language="javascript">
+    var selDiv = "";
+
+	document.addEventListener("DOMContentLoaded", init, false);
+
+	function init() {
+		document.querySelector('#fle_scores_input_file').addEventListener('change', handleFileSelect, false);
+		selDiv = document.querySelector("#pnl_selectedFiles");
+	}
+	function handleFileSelect(e) {
+		if(!e.target.files) return;
+
+		selDiv.innerHTML = "";
+
+		var files = e.target.files;
+		for(var i=0; i<files.length; i++) {
+			var f = files[i];
+
+			selDiv.innerHTML += f.name + "<br/>";
+		}
+	}
+</script>
+{% endblock %}
