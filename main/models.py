@@ -137,7 +137,7 @@ class Batiment(models.Model):
     lieu_dit = models.CharField(max_length=200, blank=True, null=True)
     localite = models.ForeignKey(Localite)
     superficie = models.DecimalField(max_digits=5, decimal_places=3, blank=True, null=True)
-    peformance_energetique = models.CharField(max_length=10, blank=True, null=True)
+    performance_energetique = models.CharField(max_length=10, blank=True, null=True)
 
     class Meta:
         ordering = ['localite', 'rue']

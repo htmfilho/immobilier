@@ -7,6 +7,7 @@
 
   <form method="post" action="{% url 'honoraire-update' %}">
     {% csrf_token %}
+    <input type="hidden" id="previous" name="previous" value="{{request.META.HTTP_REFERER }}"/>
     <input type="hidden" value="{{ honoraire.id }}" name="honoraire_id"/>
     <div class="row">
       <div class="col-md-6">

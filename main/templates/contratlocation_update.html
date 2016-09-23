@@ -8,7 +8,7 @@
   <div class="panel-body">
     <form  id="location_form" method="post" action="{% url 'update-location-all' %}">
       {% csrf_token %}
-
+      <input type="hidden" id="previous" name="previous" value="{{request.META.HTTP_REFERER }}"/>
       <input type="hidden" value="{{ location.id }}" name="id"/>
       <input type="hidden" id="prev" name="prev" value="{{prev}}"/>
       <div class="form-group">
@@ -21,6 +21,7 @@
         <input class="form-control"
                id="date_debut_location"
                value="{%if location.date_debut%}{{location.date_debut|date:"j/m/Y"}}{%endif%}" name="date_debut">
+       {% if form.date_debut.errors%}<font class="erreur_formulaire">{{form.date_debut.errors}}</font>{%endif%}
       </div>
 
       <div class="col-md-5">
@@ -42,16 +43,18 @@
         <div class="col-md-3">
         <label for="loyer_base">Loyer de base</label>
         <input class="form-control" id="loyer_base" value="{{location.loyer_base}}" name="loyer_base">
+          {% if form.charges_base.errors%}<font class="erreur_formulaire">{{form.loyer_base.errors}}</font>{%endif%}
       </div>
 
       <div class="col-md-3">
         <label for="charges_base">Charges de base</label>
         <input class="form-control" id="charges_base" value="{{location.charges_base}}" name="charges_base">
+        {% if form.charges_base.errors %}<font class="erreur_formulaire">{{form.charges_base.errors}}</font>{%endif%}
       </div>
       <div class="col-md-6">
-        <label for="assurance">Assurance {{location.assurance}}</label>
+        <label>Assurance {{location.assurance}}</label>
         <select class="form-control" name="assurance"  class="form-control">
-          <option value="None">-</option>
+          <option value="-">-</option>
           {%for a in assurances%}
             {%if a.id == location.assurance.id%}
               <option value="{{a.id}}" selected >{{ a }}</option>
@@ -62,13 +65,18 @@
       </select>
       </div>
     </div>
-
+    <br>
     <div class="row">
       <div class="col-md-11">
-
+        {%if form.errors%}
+          <font class="erreur_formulaire">{{form.errors}}</font>
+        {%endif%}
       </div>
       <div class="col-md-1">
-        <input type="submit" value="OK" title="Enregistrer les données relatives à la location">
+
+    <button type="submit" class="btn btn-primary"
+        title="Enregistrer les données relatives à la location"><span class="glyphicon glyphicon-floppy-disk" aria-hidden="true"></span>
+    Sauvegarder</button>
       </div>
     </div>
     </form>

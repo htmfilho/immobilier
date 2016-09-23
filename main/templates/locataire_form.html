@@ -8,6 +8,7 @@
   <div class="panel-body">
     <form  method="post" action="{% url 'locataire-add' %}">
       {% csrf_token %}
+      <input type="hidden" id="previous" name="previous" value="{{request.META.HTTP_REFERER }}"/>
       <input type="hidden" value="{{action}}" name="action"/>
       <input type="hidden" value="{{ locataire.id }}" name="locataire_id"/>
       <input type="hidden" value="{{ locataire.contrat_location.id}}" name="location_id"/>

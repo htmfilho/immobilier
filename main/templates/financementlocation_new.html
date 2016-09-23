@@ -6,16 +6,17 @@
 {% block content %}
 <form  id="financement_form" method="post" action="{% url 'create-financement' %}">
   {% csrf_token %}
+  <input type="hidden" id="previous" name="previous" value="{{request.META.HTTP_REFERER }}"/>
   <input type="hidden" value="{{ prev }}" name="prev"/>
   <input type="text" value="{{ id_location }}" id="id" name="id"/>
   <div class="row">
     <div class="col-md-6">
-      <label for="date_debut">Date début</label>
+      <label>Date début</label>
       <input type="date" class="form-control" value="{{ nouveau_financement.date_debut|date:"j/m/Y" }}" id="date_debut" name="date_debut"/>
     </div>
 
     <div class="col-md-6">
-      <label for="date_fin">Date fin</label>
+      <label>Date fin</label>
       <input type="date" class="form-control" value="{{ nouveau_financement.date_fin|date:"j/m/Y" }}"
       id="date_fin" name="date_fin"/>
     </div>

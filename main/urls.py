@@ -1,12 +1,8 @@
-from django.conf.urls import url, include
 from django.conf import settings
-from . import views, batiment, proprietaire, suivis, alertes, contratlocation, financement, locataire, contratgestion, frais, honoraire, personne, tests, test3
-from .models import *
-from main.views import BatimentDetailView
+from . import views, batiment, proprietaire, suivis, alertes, contratlocation, financement, locataire, contratgestion, \
+    frais, honoraire, personne, tests, test3
 from django.conf.urls import url
 from django.contrib.auth.views import login,logout
-from django.views.generic import ListView
-from main.views import ContratGestionList
 
 urlpatterns = [
     url(r'^$', views.home, name='home'),
@@ -112,7 +108,7 @@ urlpatterns = [
 
     url(r'^location/prepare/update/all/([0-9]+)/$', contratlocation.prepare_update, name='location-prepare-update-all'),
     url(r'^location/update/all/$', contratlocation.update, name='update-location-all'),
-    url(r'^location/createb/([0-9]+)/$', contratlocation.contratLocation_for_batiment, name='location-create-batiment'),
+    url(r'^location/createb/([0-9]+)/$', contratlocation.contrat_location_for_batiment, name='location-create-batiment'),
     url(r'^location/createl/$', contratlocation.test, name='add-location-for-batiment'),
 
     url(r'^location/delete/([0-9]+)/$', contratlocation.delete, name='location-delete'),

@@ -8,17 +8,17 @@
 
     <form  method="post" action="{% url 'update-gestion-all' %}">
       {% csrf_token %}
+      <input type="hidden" id="previous" name="previous" value="{{request.META.HTTP_REFERER }}"/>
       <input type="hidden" value="{{ action }}" name="action"/>
       <input type="hidden" value="{{ contrat.id }}" name="id"/>
-      <input type="text" id="prev" name="prev" value="{{prev}}"/>
       <div class="form-group">
-        <label for="batiment">Batiment</label>
+        <label>Batiment</label>
         <input class="form-control" value="{{contrat.batiment}}" name="batiment" readonly="readonly" >
         <input type="hidden" value="{{ contrat.batiment.id }}" name="batiment_id"/>
       </div>
       <div class="row">
         <div class="col-md-6">
-          <label for="gestionnaire">Gestionnaire</label>
+          <label>Gestionnaire</label>
           <select name="gestionnaire"  class="form-control">
             {%for p in personnes%}
             {%if contrat.gestionnaire and p = contrat.gestionnaire %}
@@ -30,21 +30,27 @@
           </select>
         </div>
         <div class="col-md-6">
-          <label for="montant_mensuel">Montant mensuel</label>
-          <input class="form-control" value="{{ contrat.montant_mensuel }}" name="montant_mensuel">
+          <label>Montant mensuel</label>
+          <input class="form-control"
+                 value="{{ contrat.montant_mensuel| default_if_none:'' }}"
+                 name="montant_mensuel">
         </div>
       </div>
       <div class="row">
         <div class="col-md-5">
         <label for="date_debut">Date début</label>
-        <input class="form-control" id="date_debut" value="{%if contrat.date_debut%}{{contrat.date_debut|date:"j/m/Y" }}{%endif%}" name="date_debut">
+        <input class="form-control" id="date_debut" value="{%if contrat.date_debut%}{{contrat.date_debut|date:"j/m/Y" }}{%endif%}"
+               name="date_debut">
+          {% if form.date_debut.errors%}<font class="erreur_formulaire">{{form.date_debut.errors}}</font>{%endif%}
       </div>
 
       <div class="col-md-5">
         <label for="date_fin">Date fin</label>
-        <input class="form-control" id="date_fin" value="{%if contrat.date_fin%}{{contrat.date_fin|date:"j/m/Y"}}{%endif%}" name="date_fin">
+        <input class="form-control" id="date_fin" value="{%if contrat.date_fin%}{{contrat.date_fin|date:"j/m/Y"}}{%endif%}"
+               name="date_fin">
       </div>
       </div>
+
 
       <input type="submit" value="OK">
 
@@ -54,6 +60,5 @@
       <div class="alert alert-danger" role="alert">{{message}}</div>
 
     {%endif%}
-
 
 {% endblock %}

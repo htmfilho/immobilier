@@ -11,12 +11,13 @@
 
 <form action="{% url 'fraismaintenance-update' %}" method="post">
   {% csrf_token %}
+  <input type="hidden" id="previous" name="previous" value="{{request.META.HTTP_REFERER }}"/>
   <input type="hidden" value="{{ frais.id }}" name="id"/>
   <input type="hidden" value="{{ action }}" name="action"/>
 
   <div class="row">
     <div class="col-md-6">
-    <label for="batiment_id">Batiment</label>
+    <label>Batiment</label>
     {% if frais.batiment %}
     <input type="hidden" value="{{ frais.batiment.id }}" name="batiment_id"/>
     <input class="form-control" value="{{ frais.batiment }}" name="batiment">
@@ -42,7 +43,7 @@
 </div>
 <div class="row">
   <div class="col-md-6">
-    <label for="entrepreneur">Entrepreneur</label>
+    <label>Entrepreneur</label>
     <input class="form-control"  value="{{ frais.entrepreneur | default_if_none:'' }}" name="entrepreneur">
   </div>
   <div class="col-md-6">
@@ -50,17 +51,17 @@
 </div>
 <div class="row">
   <div class="col-md-12">
-    <label for="description">Description</label>
+    <label>Description</label>
     <textarea class="form-control" name="description" required="true" cols="4" rows="4" >{%if frais.description %}{{ frais.description }}{%endif%}</textarea>
   </div>
 </div>
 <div class="row">
   <div class="col-md-3">
-    <label for="montant">Montant</label>
-    <input class="form-control" value="{{ frais.montant | default_if_none:'' }}" name="montant" >
+    <label>Montant</label>
+    <input class="form-control" value="{{ frais.montant | default_if_none:'' }}" name="montant" required>
   </div>
   <div class="col-md-3">
-    <label for="date_realisation">Date réalisation</label>
+    <label>Date réalisation</label>
     <input class="form-control"  value="{%if frais.date_realisation %}{{ frais.date_realisation|date:"j/m/Y" }}{%endif%}" name="date_realisation">
   </div>
   <div class="col-md-6">

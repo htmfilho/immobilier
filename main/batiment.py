@@ -1,23 +1,13 @@
-from django.shortcuts import render
-from django.contrib.auth.decorators import login_required
-
 from main.models import *
-from django.views.generic import DetailView
-from django.core.urlresolvers import reverse
-import os
-from .exportUtils import export_xls_batiment
-from django.http import HttpResponseRedirect
 from django.shortcuts import render, get_object_or_404
-from django.utils import timezone
-from dateutil.relativedelta import relativedelta
-import datetime
-from django.db import models
+
 
 def create(request):
     batiment = Batiment()
     return render(request, "batiment_form.html",
                   {'batiment':         batiment,
                    'localites':    Localite.find_all()})
+
 
 def batiment_form(request, batiment_id):
     print('batiment_form')
@@ -28,11 +18,12 @@ def batiment_form(request, batiment_id):
                    'assurances':   Assurance.find_all(),
                    'localites':    Localite.find_all()})
 
+
 def update(request):
 
     batiment = Batiment()
 
-    if ('add' == request.POST['action'] or 'modify' == request.POST['action']):
+    if 'add' == request.POST['action'] or 'modify' == request.POST['action']:
         if request.POST['id'] and not request.POST['id'] == 'None':
             batiment = get_object_or_404(Batiment, pk=request.POST['id'])
         else:
@@ -46,23 +37,18 @@ def update(request):
             localite = get_object_or_404(Localite, pk=request.POST['localite'])
 
         batiment.localite = localite
-        print(request.POST['superficie'])
+
         if request.POST['superficie']:
-            sup = request.POST['superficie']
-            sup=sup.replace(",", ".")
-            batiment.superficie = float(u"%s" % sup)
-            # batiment.superficie = u"%s" % request.POST['superficie']
+            batiment.superficie = float(request.POST['superficie'].strip().replace(',', '.'))
         else:
             batiment.superficie = None
 
-        if request.POST['peformance_energetique']:
-            sup = request.POST['peformance_energetique']
-            sup=sup.replace(",", ".")
-            batiment.peformance_energetique = float(u"%s" % sup)
+        if request.POST['performance_energetique']:
+            batiment.performance_energetique = float(request.POST['performance_energetique'].strip().replace(',', '.'))
         else:
-            batiment.peformance_energetique = None
-        batiment.save()
+            batiment.performance_energetique = None
 
+        batiment.save()
 
     return render(request, "batiment_form.html",
                   {'batiment':     batiment,

@@ -1,49 +1,26 @@
-from django.shortcuts import render
 from PyPDF2.pdf import RectangleObject
 from reportlab.pdfgen import canvas
 from django.contrib.auth.decorators import login_required
-from reportlab.pdfgen.canvas import Canvas
 from main.models import *
-from django.views.generic import DetailView
 from django.core.urlresolvers import reverse
-import os
-from .exportUtils import export_xls_batiment
 from django.http import HttpResponseRedirect
 from django.shortcuts import render, get_object_or_404
 from django.utils import timezone
-from dateutil.relativedelta import relativedelta
-import datetime
-from django.db import models
 from django.views.generic import *
 from django.core.urlresolvers import reverse_lazy
 from main.forms import PersonneForm, BatimentForm, ProprietaireForm, FraisMaintenanceForm, SocieteForm, ContratLocationForm, FileForm
-import datetime
 
 from dateutil.relativedelta import relativedelta
-from . import batiment, proprietaire, suivis, alertes, contratlocation, financement, locataire, contratgestion
 from io import BytesIO
 from django.http import HttpResponse
-from django.conf import settings
-from reportlab.lib.pagesizes import A4
 from reportlab.lib.enums import TA_JUSTIFY, TA_RIGHT, TA_CENTER, TA_LEFT
-from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, Image, PageBreak, Table, TableStyle, KeepTogether, KeepInFrame, BaseDocTemplate
+from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, Image, PageBreak, Table, TableStyle
 
 from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
 from reportlab.lib.units import mm
-from reportlab.lib import colors
 from django.utils.translation import ugettext_lazy as _
-import datetime
-import json
-import sys
-import PyPDF2
 from PyPDF2 import PdfFileMerger,  PdfFileReader, PdfFileWriter
-from io import StringIO
-from urllib.request import urlopen
-from urllib.request import Request
 from django.conf import settings
-import os
-from  reportlab.platypus.tableofcontents import TableOfContents
-import os.path
 from reportlab.lib import utils
 
 from reportlab.lib.units import cm, inch
@@ -56,21 +33,24 @@ from reportlab.platypus.frames import Frame
 class ContratGestionList(ListView):
     model = ContratGestion
 
+
 class ContratGestionDetail(DetailView):
     model = ContratGestion
+
 
 class FraisMaintenanceList(ListView):
     model = FraisMaintenance
 
+
 class FraisMaintenanceDetail(DetailView):
-    model= FraisMaintenance
+    model = FraisMaintenance
 
 
 def merge_pdf4(request):
     pdf1 = "pdf1.pdf"
     pdf2 = "pdf2.pdf"
 
-    pdfs=[pdf1, pdf2]
+    pdfs = [pdf1, pdf2]
     #
     buffer = BytesIO()
     doc = SimpleDocTemplate(buffer,
@@ -84,7 +64,7 @@ def merge_pdf4(request):
 
     if not pdfs or len(pdfs) < 2:
         exit("Please enter at least two pdfs for merging!")
-    no_page=1
+    no_page = 1
     legend_text = 'justification_legend'
     legend_text += "<br/><font color=red>%s</font>" % 'fffff'
     p = ParagraphStyle('normal')
@@ -100,15 +80,14 @@ def merge_pdf4(request):
     items.append(Paragraph(address, ParagraphStyle('body')))
     doc.multiBuild(items)
 
-    output= PdfFileWriter()
-    #output.addPage(buffer)
+    output = PdfFileWriter()
 
     num_page = 0
-    no_page=0
+    no_page = 0
     width, height = A4
 
-    output.addBlankPage(width,height)
-    cur=1
+    output.addBlankPage(width, height)
+    cur = 1
     cur_prev = 0
     for fname in pdfs:
         print('for')
@@ -121,48 +100,46 @@ def merge_pdf4(request):
         #     parent = output.addBookmark("One", no_page, None)
         # else:
         #     output.addBookmark("One", no_page, parent)
-        output.addBookmark(str(no_page),num_page)
-        num_page=num_page+1
+        output.addBookmark(str(no_page), num_page)
+        num_page = num_page + 1
         no_page = no_page + 1
 
         rect = RectangleObject([400, 400, 600, 600])
         output.addLink(cur_prev, cur, rect)
         cur_prev=cur_prev+1
-        cur=cur+1
+        cur = cur + 1
     d = open("output.pdf", "wb")
 
-    #merger.write(output)
-    #merger.write(doc)
     output.write(d)
     d.close()
     return render(request, "test.html")
 
-# Create your views here.
+
 def dashboard(request):
     return render(request, 'main/dashboard.html', {})
 
+
 def home(request):
-    # return alertes.list(request)
-    # return render(request, "home.html")
     date_debut = timezone.now(),
     date_fin = timezone.now() + relativedelta(months=1)
-    etat= None
+    etat = None
     for k, v in dict(SuiviLoyer.ETAT).items():
         if k == str('A_VERIFIER'):
             etat = str(k)
-    suivis = SuiviLoyer.find_suivis_a_verifier(date_debut,date_fin)
+    suivis = SuiviLoyer.find_suivis_a_verifier(date_debut, date_fin)
     # suivis=None
     return render(request, 'myhome.html',
-                        {'alertes':     Alerte.find_by_etat_today('A_VERIFIER'),
-                         'batiments':   Batiment.find_my_batiments(),
-                         'contrats':    ContratGestion.find_my_contrats(),
-                         'honoraires':  Honoraire.find_honoraires_by_etat_today('A_VERIFIER'),
-                         'suivis':      suivis})
+                  {'alertes':     Alerte.find_by_etat_today('A_VERIFIER'),
+                   'batiments':   Batiment.find_my_batiments(),
+                   'contrats':    ContratGestion.find_my_contrats(),
+                   'honoraires':  Honoraire.find_honoraires_by_etat_today('A_VERIFIER'),
+                   'suivis':      suivis})
 
 
 def listeBatiments(request):
     batiments = Batiment.objects.all()
     return render(request, 'listeBatiments.html', {'batiments': batiments})
+
 
 def listeBatiments_filtrer(request, personne_id):
     print('listeBatiments_filtrer')
@@ -181,17 +158,19 @@ def listePersonnes(request):
     personnes = Personne.objects.all()
     return render(request, 'listePersonnes.html', {'personnes': personnes})
 
+
 @login_required
 def listeComplete(request):
     batiments = Batiment.objects.all()
     contrats_location = ContratLocation.objects.all()
     return render(request, 'listeComplete.html', {'batiments': batiments})
 
+
 def alertes4(request):
     batiment = Batiment.objects.get(nom='batiment 5b')
     proprietaires = Proprietaire.objects.filter(batiment=batiment)
 
-    return render(request, 'main/alertes4.html', {'batiment' : batiment,'proprietaires': proprietaires})
+    return render(request, 'main/alertes4.html', {'batiment': batiment,'proprietaires': proprietaires})
 
 
 @login_required
@@ -202,8 +181,6 @@ def personne(request, personne_id):
 
 
 def update_personne(request):
-    print('update_personne')
-
     personne = Personne()
     print(request.POST['action'])
     if ('add' == request.POST['action'] or 'modify' == request.POST['action']):
@@ -213,8 +190,6 @@ def update_personne(request):
         personne.prenom = request.POST['prenom']
 
         personne.save()
-
-
     return render(request, "personne_form.html",
                   {'personne':         personne})
 
@@ -223,57 +198,56 @@ def xlsRead(request):
     short_description = u"Export XLS"
 
 
-class BatimentDetailView(DetailView):
-    model = Batiment
-
-    def get_context_data(self, **kwargs):
-        context = super(BatimentDetailView, self).get_context_data(**kwargs)
-        return context
-
-class FraisMaintenanceDetail(DetailView):
-    model= FraisMaintenance
-
 class FraisMaintenanceCreate(CreateView):
-    model=FraisMaintenance;
+    model = FraisMaintenance
     form_class = FraisMaintenanceForm
+
 
 class FraisMaintenanceUpdate(UpdateView):
-    model=FraisMaintenance;
+    model = FraisMaintenance
     form_class = FraisMaintenanceForm
 
+
 class FraisMaintenanceDelete(DeleteView):
-    model=FraisMaintenance;
+    model = FraisMaintenance
     success_url = reverse_lazy('fraismaintenance-list'),
 
 
 class PersonneDelete(DeleteView):
-    model=Personne;
-    success_url="../../../personnes"
+    model = Personne
+    success_url = "../../../personnes"
+
 
 class BatimentList(ListView):
     model = Batiment
 
+
 class BatimentCreate(CreateView):
-    model=Batiment;
+    model = Batiment
     form_class = BatimentForm
+
 
 class BatimentUpdate(UpdateView):
-    model=Batiment;
+    model = Batiment
     form_class = BatimentForm
 
+
 class BatimentDelete(DeleteView):
-    model=Batiment;
-    success_url="../../../batiments"
+    model = Batiment
+    success_url = "../../../batiments"
+
 
 class ProprietaireList(ListView):
     model = Proprietaire
 
+
 class ProprietaireDetail(DetailView):
-    model= Proprietaire
+    model = Proprietaire
+
 
 class ProprietaireCreate(CreateView):
-    model=Proprietaire;
-    form_class =ProprietaireForm
+    model = Proprietaire
+    form_class = ProprietaireForm
 
     def form_valid(self, form):
         print('form valid')
@@ -281,15 +255,17 @@ class ProprietaireCreate(CreateView):
         # article.author = self.request.user
         return super(ProprietaireCreate, self).form_valid(form)
 
+
 class ProprietaireCreateForBatiment(CreateView):
-    model=Proprietaire;
-    form_class =ProprietaireForm
+    model = Proprietaire
+    form_class = ProprietaireForm
+
     def get_initial(self):
         initial_data = super(ProprietaireCreateForBatiment, self)\
                             .get_initial()
         course = get_object_or_404(Batiment, pk=self.kwargs['pk'])
         if course:
-            initial_data['batiment']=course
+            initial_data['batiment'] = course
         # if self.form_class == TransferFormFrom:
         #     initial_data['from_account'] = self.acct_pk
         # elif self.form_class == TransferFormTo:
@@ -331,8 +307,9 @@ class ProprietaireCreateForBatiment(CreateView):
     #         print('les')
     #     return
     #
+
+
     def form_valid(self, form):
-        print('form valid')
         proprietaire = form.save(commit=False)
         # article.author = self.request.user
         return super(ProprietaireCreateForBatiment, self).form_valid(form)
@@ -362,74 +339,41 @@ class ProprietaireCreateForBatiment(CreateView):
     #     # event = Event.objects.get(pk=self.kwargs['class'])
     #     return super(ProprietaireCreateForBatiment, self).form_valid(form)
 
+
 class ProprietaireUpdate(UpdateView):
-    model=Proprietaire;
+    model = Proprietaire;
     form_class = ProprietaireForm
 
+
 class ProprietaireDelete(DeleteView):
-    model=Proprietaire;
-    success_url="../../../proprietaires"
+    model = Proprietaire;
+    success_url = "../../../proprietaires"
+
 
 class SocieteList(ListView):
     model = Societe
 
+
 class SocieteDetail(DetailView):
-    model= Societe
+    model = Societe
+
 
 class SocieteCreate(CreateView):
-    model=Societe;
+    model = Societe;
     form_class = SocieteForm
 
 class SocieteUpdate(UpdateView):
-    model=Societe;
+    model = Societe;
     form_class = SocieteForm
 
 class SocieteDelete(DeleteView):
-    model=Societe;
-    success_url="../../../societes"
+    model = Societe;
+    success_url = "../../../societes"
 
 
-# class ContratLocationList(ListView):
-#     model = ContratLocation
-#
-# class ContratLocationDetail(DetailView):
-#     model= ContratLocation
-#
-#
-# class ContratLocationUpdate(UpdateView):
-#     print('ContratLocationUpdate')
-#     model=ContratLocation
-#     form_class = ContratLocationForm
-#
-# class ContratLocationDelete(DeleteView):
-#     model=ContratLocation
-#     success_url="../../../batiments"
-#
-# class ContratLocationCreate(CreateView):
-#     model=ContratLocation
-#     form_class =ContratLocationForm
-#
-#     def get_initial(self):
-#         print('initiale')
-#         if self.kwargs:
-#             initial_data = super(ContratLocationCreate, self)\
-#                                 .get_initial()
-#             batiment = get_object_or_404(Batiment, pk=self.kwargs['pk'])
-#             location = get_object_or_404(ContratLocation, pk=batiment.location_actuelle.id)
-#
-#             if batiment:
-#                 initial_data['batiment']=batiment
-#                 initial_data['date_debut']=location.date_fin
-#                 initial_data['date_fin']=location.date_fin + relativedelta(years=1)
-#                 initial_data['loyer_base']=location.loyer_base
-#                 initial_data['charges_base']=location.charges_base
-#                 initial_data['action']='ddd'
-#
-#                 form_class.action ='kkk'
-#             return initial_data
 class HonoraireDelete(DeleteView):
     model=Honoraire
-    success_url="../../../honoraires"
+    success_url = "../../../honoraires"
 
 PAGE_SIZE = A4
 MARGIN_SIZE = 15 * mm
@@ -450,9 +394,11 @@ def test_merge(request):
 def test(request):
     return render(request, "test.html")
 
+
 def test_image(request):
     return build_pdf("http://www.louisetzeliemartin.org/medias/images/chat-1.jpg")
     # return render(request, "test.html")
+
 
 def build_pdf(image_file):
     filename = "%s.pdf" % _('scores_sheet')
@@ -497,7 +443,6 @@ def build_pdf(image_file):
     return response
 
 
-
 def merge_pdf(request):
     print('merge_pdf')
     pdf1 = "pdf1.pdf"
@@ -515,10 +460,6 @@ def merge_pdf(request):
                             bottomMargin=18)
 
     content = []
-
-
-    # merge
-
 
     if not pdfs or len(pdfs) < 2:
         exit("Please enter at least two pdfs for merging!")
@@ -612,18 +553,6 @@ def upload(request):
                 if 'image' in file_name.content_type:
                     print('image')
                     return build_pdf(file_name)
-                # extension = os.path.splitext(file_name)[1]
-                # print(extension)
-                # if extension.lower() in list_extension_image:
-                #     pass
-
-                # if ".xls" not in str(file_name):
-                #     messages.add_message(request, messages.INFO, _('file_must_be_xls'))
-                # else:
-                #     learning_unit_year = mdl.learning_unit_year.find_by_id(learning_unit_year_id)
-                #     is_program_manager = mdl.program_manager.is_program_manager(request.user)
-                #     __save_xls_scores(request, file_name, is_program_manager, request.user,
-                #                       learning_unit_year.id)
 
         return HttpResponseRedirect(reverse('test'))
 
@@ -644,9 +573,6 @@ def get_image(path, width, doc):
 
     aspect = ih / float(iw)
 
-
-    # image1 = Image(image_file)
-    # image1._restrictSize(1 * cm, 2 * cm)
     return Image(path, width=width, height=(height))
 
 
@@ -777,6 +703,7 @@ def makeTocHeaderStyle(level,  fontName='Times-Roman'):
                spaceAfter = size/8.0)
 
     return style
+
 
 def essai(request):
     filename = "%s.pdf" % _('scores_sheet')

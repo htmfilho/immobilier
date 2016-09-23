@@ -8,6 +8,7 @@
   <div class="panel-body">
     <form method="post" action="{% url 'add-location-for-batiment' %}">
       {% csrf_token %}
+      <input type="hidden" id="previous" name="previous" value="{{request.META.HTTP_REFERER }}"/>
       <input type="hidden" id="prev" name="prev" value="{{prev}}"/>
       <input type="hidden" name="batiment" value="{{location.batiment}}"/>
       <div class="form-group">
