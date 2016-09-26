@@ -56,9 +56,9 @@ def create(request):
     nouveau_financement=FinancementLocation()
     nouveau_financement.date_debut= dd
     nouveau_financement.date_fin= date_fin_initiale#j'estime que la date de fin ne change pas
-    nouveau_financement.loyer = float(request.POST['loyer'])
-    nouveau_financement.charges = float(request.POST['charges'])
-    nouveau_financement.index= float(request.POST['index'])
+    nouveau_financement.loyer = request.POST['loyer']
+    nouveau_financement.charges =request.POST['charges']
+    nouveau_financement.index= request.POST['index']
     nouveau_financement.contrat_location = location
     nouveau_financement.save()
     #on doit adapter les suivis existantes

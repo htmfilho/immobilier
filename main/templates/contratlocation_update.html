@@ -32,7 +32,7 @@
       </div>
       <div class="form-group">
         <label for="renonciation">Date renonciation</label>
-        <input class="form-control" id="renonciation" value="{%if location.renonciation%}{{location.renonciation}}{%endif%}" name="renonciation">
+        <input class="form-control" id="renonciation" value="{%if location.renonciation%}{{location.renonciation|date:"j/m/Y"}}{%endif%}" name="renonciation">
       </div>
       <div class="form-group">
         <label for="remarque">Remarque</label>
@@ -42,13 +42,13 @@
       <div class="row">
         <div class="col-md-3">
         <label for="loyer_base">Loyer de base</label>
-        <input class="form-control" id="loyer_base" value="{{location.loyer_base}}" name="loyer_base">
+        <input class="form-control" id="loyer_base" value="{{location.loyer_base}}" name="loyer_base" readonly disabled>
           {% if form.charges_base.errors%}<font class="erreur_formulaire">{{form.loyer_base.errors}}</font>{%endif%}
       </div>
 
       <div class="col-md-3">
         <label for="charges_base">Charges de base</label>
-        <input class="form-control" id="charges_base" value="{{location.charges_base}}" name="charges_base">
+        <input class="form-control" id="charges_base" value="{{location.charges_base}}" name="charges_base" readonly disabled>
         {% if form.charges_base.errors %}<font class="erreur_formulaire">{{form.charges_base.errors}}</font>{%endif%}
       </div>
       <div class="col-md-6">

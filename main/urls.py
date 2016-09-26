@@ -1,6 +1,6 @@
 from django.conf import settings
 from . import views, batiment, proprietaire, suivis, alertes, contratlocation, financement, locataire, contratgestion, \
-    frais, honoraire, personne, tests, test3
+    frais, honoraire, personne, tests, test3, assurance
 from django.conf.urls import url
 from django.contrib.auth.views import login,logout
 
@@ -138,7 +138,6 @@ urlpatterns = [
     url(r'^test/upload2/$', tests.test_create_pdf,name='test_pdf'),
     url(r'^test3/$', test3.test,name='test3'),
 
-
-
+    url(r'^assurance_create/$', assurance.create, name='assurance_create'),
 
 ]

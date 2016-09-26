@@ -15,6 +15,8 @@ import datetime
 from django.db import models
 from datetime import datetime
 from main.forms import ContratLocationForm
+from dateutil.relativedelta import relativedelta
+from django.http import HttpRequest
 
 
 def prepare_update(request, location_id):
@@ -32,15 +34,14 @@ def update(request):
     location = get_object_or_404(ContratLocation, pk=id)
 
     if request.POST['renonciation']:
-        location.renonciation = request.POST['renonciation']
+        location.renonciation = datetime.strptime(request.POST['renonciation'], '%d/%m/%Y')
     location.remarque = request.POST['remarque']
 
     if request.POST['assurance'] and not request.POST['assurance'] == '-':
-        print('ici1')
         location.assurance = get_object_or_404(Assurance, pk=request.POST['assurance'])
     else:
-        print('ici 2')
         location.assurance = None
+
     if form.is_valid():
 
         print('form is valid')
@@ -79,10 +80,12 @@ def contrat_location_for_batiment(request, batiment_id):
         nouvelle_location.date_debut = auj.strftime("%d/%m/%Y")
 
         # le financement sera crée automatiquement
+    print('11')
     return render(request, "contratlocation_new.html",
-                           {'location':    nouvelle_location,
+                           {'location': nouvelle_location,
                             'assurances': Assurance.find_all(),
-                            'nav':       'list_batiment'})
+                            'nav': 'list_batiment'})
+
 
 def list(request):
     locations = ContratLocation.objects.all()
@@ -104,6 +107,7 @@ def confirm_delete(request):
 
 
 def test(request):
+    print('test')
     """
     ok - 1
     """
@@ -114,21 +118,30 @@ def test(request):
     location.batiment = batiment
     if request.POST['date_debut']:
         location.date_debut = datetime.strptime(request.POST['date_debut'], '%d/%m/%Y')
+        location.date_fin =location.date_debut + relativedelta(years=1)
+        location.renonciation =location.date_debut + relativedelta(days=355)
     else:
         location.date_debut = None
-    if request.POST['date_fin']:
-        location.date_fin = datetime.strptime(request.POST['date_fin'], '%d/%m/%Y')
-    else:
-        location.date_fin = None
-    if request.POST['renonciation']:
-        location.renonciation = request.POST['renonciation']
-    else:
-        location.renonciation = None
+    # if request.POST.get('date_fin'):
+    #     location.date_fin = datetime.strptime(request.POST['date_fin'], '%d/%m/%Y')
+    # else:
+    #     location.date_fin = None
+    print('dd :',location.date_fin)
+    # if request.POST.get('renonciation'):
+    #     location.renonciation = request.POST['renonciation']
+    # else:
+    #     location.renonciation = None
     location.remarque = request.POST['remarque']
-    if request.POST['assurance'] and not request.POST['assurance'] == 'None':
-        location.assurance = get_object_or_404(Assurance, pk=request.POST['assurance'])
+    if request.POST.get('nom_assurance_other'):
+        assurance = Assurance()
+        assurance.nom = request.POST.get('nom_assurance_other')
+        assurance.save()
+        location.assurance = assurance
     else:
-        location.assurance = None
+        if request.POST['assurance'] and not request.POST['assurance'] == 'None':
+            location.assurance = get_object_or_404(Assurance, pk=request.POST['assurance'])
+        else:
+            location.assurance = None
 
     location.loyer_base = request.POST['loyer_base']
     location.charges_base = request.POST['charges_base']
@@ -138,6 +151,7 @@ def test(request):
         location.save()
     else:
         print('form invalid', form.errors)
+        print('1')
         return render(request, "contratlocation_new.html",
                                {'location':    location,
                                 'assurances': Assurance.find_all(),
@@ -148,4 +162,14 @@ def test(request):
         return render(request, "batiment_form.html",
                       {'batiment': batiment})
 
-    return redirect('/listeBatiments/')
+
+    lnk = None
+    if request.POST.get('return_lnk'):
+        print(request.POST.get('return_lnk'))
+        lnk = request.POST.get('return_lnk')
+    print(lnk)
+
+    if lnk:
+        return redirect(lnk)
+    else:
+        return redirect('/listeBatiments/')

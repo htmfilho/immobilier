@@ -108,18 +108,16 @@ class SocieteForm(ModelForm):
         self.helper.add_input(Submit('submit','Ok'))
 
 
-class ContratLocationForm(ModelForm):
+class ContratLocationForm(forms.Form):
     date_debut = forms.DateField(required=True, input_formats=['%d/%m/%Y'],
                                  widget=forms.DateInput(format='%d/%m/%Y'))
-    date_fin = forms.DateField(required=True, input_formats=['%d/%m/%Y'],
+    date_fin = forms.DateField(required=False, input_formats=['%d/%m/%Y'],
                                widget=forms.DateInput(format='%d/%m/%Y'))
+    renonciation = forms.DateField(required=False, input_formats=['%d/%m/%Y'],
+                                   widget=forms.DateInput(format='%d/%m/%Y'))
     loyer_base = forms.DecimalField(max_digits=8, decimal_places=2, localize=True)
     charges_base = forms.DecimalField(max_digits=8, decimal_places=2, localize=True)
-    assurance = forms.CharField()
-
-    class Meta:
-        model = ContratLocation
-        fields = ['date_debut', 'date_fin', 'renonciation', 'remarque', 'assurance', 'loyer_base', 'charges_base']
+    assurance = forms.CharField(required=False)
 
     def __init__(self, *args, **kwargs):
         super(ContratLocationForm, self).__init__(*args, ** kwargs)
@@ -136,12 +134,15 @@ class ContratLocationForm(ModelForm):
         data = self.cleaned_data['assurance']
 
         if data is None or data == '-':
-            date = None
-        return date
-    #
-    # def clean_loyer_base(self):
-    #     data = self.cleaned_data['loyer_base']
-    #     if data.
+            data = None
+        return data
+
+    def clean_date_debut(self):
+        data = self.cleaned_data['date_debut']
+
+        if data is None or data == '-':
+            data = None
+        return data
 
 
 class HonoraireForm(ModelForm):

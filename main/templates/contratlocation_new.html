@@ -1,5 +1,27 @@
 {% extends "layout.html" %}
 {% block breadcrumb %}
+{% comment "License" %}
+* Immobilier it's an application
+* designed to manage the core business of property management, buildings,
+* rental agreement and so on.
+*
+* Copyright (C) 2016-2017 Verpoorten Leïla
+*
+* This program is free software: you can redistribute it and/or modify
+* it under the terms of the GNU General Public License as published by
+* the Free Software Foundation, either version 3 of the License, or
+* (at your option) any later version.
+*
+* This program is distributed in the hope that it will be useful,
+* but WITHOUT ANY WARRANTY; without even the implied warranty of
+* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+* GNU General Public License for more details.
+*
+* A copy of this license - GNU General Public License - is available
+* at the root of the source code of this program.  If not,
+* see http://www.gnu.org/licenses/.
+{% endcomment %}
+
 
   <li class="active">Location</li>
 {% endblock %}
@@ -8,23 +30,31 @@
   <div class="panel-body">
     <form method="post" action="{% url 'add-location-for-batiment' %}">
       {% csrf_token %}
+      {{form.errors}}
       <input type="hidden" id="previous" name="previous" value="{{request.META.HTTP_REFERER }}"/>
       <input type="hidden" id="prev" name="prev" value="{{prev}}"/>
       <input type="hidden" name="batiment" value="{{location.batiment}}"/>
       <div class="form-group">
-        <label for="batiment_id">Batiment</label>
+        <label>Batiment</label>
         <br>{{location.batiment}}
         <input type="hidden" value="{{location.batiment.id}}" name="batiment_id" >
       </div>
       <div class="row">
         <div class="col-md-4">
         <label for="date_debut">Date début</label>
-        <input class="form-control" id="date_debut" value="{%if location.date_debut%}{{location.date_debut|date:"j/m/Y"}}{%endif%}" name="date_debut"><font class="erreur_formulaire">{{ form.date_debut.errors }}</font>
+        <input class="form-control"
+               id="date_debut"
+               value="{%if location.date_debut%}{{location.date_debut|date:"j/m/Y"}}{%endif%}" name="date_debut">
+          <font class="erreur_formulaire">{{ form.date_debut.errors }}</font>
         </div>
 
         <div class="col-md-4">
-          <label for="date_fin">Date fin</label>
-          <input class="form-control" id="date_fin" value="{%if location.date_fin%}{{location.date_fin|date:"j/m/Y"}}{%endif%}" name="date_fin"><font class="erreur_formulaire">{{ form.date_fin.errors }}</font>
+          <label>Date fin</label>
+          <input class="form-control" id="date_fin"
+                 name="date_fin"
+                 value="{%if location.date_fin%}{{location.date_fin|date:"j/m/Y"}}{%endif%}"
+                 readonly
+                 disabled><font class="erreur_formulaire">{{ form.date_fin.errors }}</font>
         </div>
         <div class="col-md-4">
         </div>
@@ -32,7 +62,11 @@
       <div class="row">
         <div class="col-md-4">
           <label for="renonciation">Date renonciation</label>
-          <input class="form-control" id="renonciation" value="{{ location.renonciation|date:"j/m/Y"| default_if_none:'' }}" name="renonciation">
+          <input class="form-control" id="renonciation"
+                 name="renonciation"
+                 value="{{ location.renonciation|date:"j/m/Y"| default_if_none:'' }}"
+                 readonly
+                 disabled>
         </div>
         <div class="col-md-8">
         </div>
@@ -44,30 +78,45 @@
 
       <div class="row">
         <div class="col-md-5">
-        <label for="loyer_base">Loyer de base</label>
+        <label>Loyer de base</label>
         <input class="form-control" type="number" step="any" value="{{ location.loyer_base }}" name="loyer_base"><font class="erreur_formulaire">{{ form.loyer_base.errors }}</font>
         </div>
 
         <div class="col-md-5">
-          <label for="charges_base">Charges de base</label>
+          <label>Charges de base</label>
           <input class="form-control" type="number" step="any" value="{{ location.charges_base }}" name="charges_base">
         </div>
       </div>
       <div class="row">
         <div class="col-md-8">
-          <label for="assurance">Assurance</label>
-          <select class="form-control" name="assurance"  class="form-control">
+          <label>Assurance</label>
+          <select class="form-control" name="assurance"  class="form-control" id="slt_assurances">
             <option value="">-</option>
             {%for a in assurances%}
             <option value="{{a.id}}">{{a}}</option>
             {%endfor%}
           </select>
+          <font class="erreur_formulaire">{{ form.assurance.errors }}</font>
+
         </div>
         <div class="col-md-4">
+          <label>Nouvelle assurance</label>
+          <input type="text" id="txt_nom_assurance_other"  name="nom_assurance_other">
+          <button type="button"
+                   id="bt_assurance_other"
+           class="btn btn-default"
+           title="Ajouter une nouvelle compagnie d'assurance"
+           data-toggle="modal" data-target="#pnl_create_assurance">
+             <span class="glyphicon glyphicon-&add" aria-hidden="true" id="spn_modify_picture">+</span>
+         </button>
         </div>
       </div>
-      <input type="submit" value="OK">
+      <br>
+      <input type="submit" class="btn btn-primary" value="Ok" data-dismiss="modal"/>
+      <input type="text " id="return_lnk" name="return_lnk" value="{{ request.META.HTTP_REFERER }}">
+
     </form>
   </div>
 </div>
+{% include "assurance_create.html" %}
 {% endblock %}
