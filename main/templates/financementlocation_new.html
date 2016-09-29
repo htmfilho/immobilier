@@ -1,56 +1,51 @@
 {% extends "layout.html" %}
 {% block breadcrumb %}
 
-  <li class="active">Nouveau financement</li>
+<li class="active">Nouveau financement</li>
 {% endblock %}
 {% block content %}
-<form  id="financement_form" method="post" action="{% url 'create-financement' %}">
-  {% csrf_token %}
-  <input type="hidden" id="previous" name="previous" value="{{request.META.HTTP_REFERER }}"/>
-  <input type="hidden" value="{{ prev }}" name="prev"/>
-  <input type="text" value="{{ id_location }}" id="id" name="id"/>
-  <div class="row">
-    <div class="col-md-6">
-      <label>Date début</label>
-      <input type="date" class="form-control" value="{{ nouveau_financement.date_debut|date:"j/m/Y" }}" id="date_debut" name="date_debut"/>
+<form id="financement_form" method="post" action="{% url 'create-financement' %}">
+    {% csrf_token %}
+    <input type="hidden" id="previous" name="previous" value="{{request.META.HTTP_REFERER }}"/>
+    <input type="hidden" value="{{ prev }}" name="prev"/>
+    <input type="hidden" value="{{ id_location }}" id="id" name="id"/>
+    <div class="row">
+        <div class="col-md-6">
+            <label>Date début</label>
+            <input type="date" class="form-control"
+                   id="date_debut" name="date_debut"
+                   value="{{ nouveau_financement.date_debut|date:" j/m/Y" }}"/>
+        </div>
+        <div class="col-md-6">
+            <label>Date fin</label>
+            <input type="date" class="form-control" value="{{ nouveau_financement.date_fin|date:" j/m/Y" }}"
+                   id="date_fin" name="date_fin"/>
+        </div>
     </div>
-
-    <div class="col-md-6">
-      <label>Date fin</label>
-      <input type="date" class="form-control" value="{{ nouveau_financement.date_fin|date:"j/m/Y" }}"
-      id="date_fin" name="date_fin"/>
+    <div class="row">
+        <div class="col-md-6">
+            <label for="loyer">Loyer</label>
+            <input type="text" class="form-control" value="{{ nouveau_financement.loyer }}" id="loyer"
+                   name="loyer"/>
+        </div>
+        <div class="col-md-6">
+            <label for="charges">Charges</label>
+            <input type="text" class="form-control" value="{{ nouveau_financement.charges }}" id="charges"
+                   name="charges"/>
+        </div>
     </div>
+    <div class="row">
+        <div class="col-md-4">
+            <label>Index</label>
+            <input type="text"  class="form-control" value="{{ nouveau_financement.index}}"
+                   name="index"/>
+        </div>
     </div>
-      <div class="row">
-      <div class="col-md-6">
-
-                    <label for="loyer">Loyer</label>
-
-                    <input type="number" step="any" class="form-control" value="{{ nouveau_financement.loyer }}" id="loyer" name="loyer"/>
-
-                </div>
-                <div class="col-md-6">
-
-                              <label for="charges">Charges</label>
-
-                              <input type="number"  step="any" class="form-control" value="{{ nouveau_financement.charges }}" id="charges" name="charges"/>
-
-                          </div>
-                        </div>
-                        <div class="row">
-                          <div class="col-md-4">
-
-                                        <label for="index">Index</label>
-
-                                        <input type="number"  step="any" class="form-control" value="{{ nouveau_financement.index }}"  name="index"/>
-
-                                    </div>
-  </div>
-
-
-  <div class="row">
-    <input type="submit" value="OK">
-  </div>
+    <br>
+    <div class="row">
+        <input type="submit" class="btn btn-primary" value="Ok" />
+        <input type="submit" class="btn btn-default" value="Annuler" name="cancel_financement_loc_new"/>
+    </div>
 
 </form>
 

@@ -32,7 +32,7 @@ def prepare_update(request, id):
 
 
 def update(request):
-    if request.POST['action'] == 'new':
+    if request.POST.get('action', None) == 'new':
         frais = FraisMaintenance()
         batiment = get_object_or_404(Batiment, pk=request.POST.get('batiment_id', None))
         frais.batiment = batiment

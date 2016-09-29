@@ -357,40 +357,32 @@ class ContratLocation(models.Model):
     def financements(self):
         return FinancementLocation.objects.filter(contrat_location=self)
 
-    def save(self,  *args, **kwargs):
-        date_fin = self.date_fin
-        nouveau = False
-        if self.id is None:
-            nouveau = True
+    def save_new(self,  *args, **kwargs):
+        df = (self.date_debut + relativedelta(years=1))-relativedelta(days=1)
+        self.date_fin = df
+        self.renonciation = (self.date_debut + relativedelta(years=1))-relativedelta(days=10)
+
         c = super(ContratLocation, self).save(*args, **kwargs)
-        if nouveau:
-            print('creation nouveau financement')
-            b = FinancementLocation(date_debut=self.date_debut,date_fin=self.date_fin, loyer=self.loyer_base)
-            b.contrat_location = self
-            b.save()
 
-            date_d = self.date_debut
-            date_f = self.date_debut + relativedelta(months=1)
-            i=0
-            while date_f <= date_fin:
-                print(' creation nouveau suivi')
-                suivi = SuiviLoyer(etat_suivi='A_VERIFIER', 
-                                   date_paiement=date_d, 
-                                   remarque=None,
-                                   loyer_percu=0, 
-                                   charges_percu=0)
-                suivi.financement_location = b
-                suivi.save()
-                date_d = date_d + relativedelta(months=1)
-                date_f = date_f + relativedelta(months=1)
-                i = i + 1
-            if self.date_fin:
-                alert = Alerte(description='Attention fin contrat location dans 4 mois',
-                               date_alerte=self.date_fin - relativedelta(months=4),
-                               etat='A_VERIFIER', 
-                               contratLocation=self)
-                alert.save()
+        b = FinancementLocation(date_debut=self.date_debut, date_fin=self.date_fin, loyer=self.loyer_base)
+        b.contrat_location = self
+        b.save()
+        update_suivi_alerte(self.date_debut, self, b, self.date_debut + relativedelta(years=1))
+        return c
 
+    def save_prolongation(self, type_prolongation,  *args, **kwargs):
+        df = (self.date_fin + relativedelta(years=type_prolongation))
+        self.date_fin = df
+        self.renonciation = (self.date_fin-relativedelta(days=10))
+        print(self.date_fin)
+        c = super(ContratLocation, self).save(*args, **kwargs)
+
+        dernier_financement = self.financement_courant
+        if dernier_financement:
+            date_debut_nouveau_fin = dernier_financement.date_fin + relativedelta(days=1)
+            dernier_financement.date_fin = self.date_fin
+            dernier_financement.save()
+            update_suivi_alerte(date_debut_nouveau_fin, self, dernier_financement,  self.date_fin + relativedelta(days=1))
         return c
 
     class Meta:
@@ -398,7 +390,7 @@ class ContratLocation(models.Model):
 
 
 class FinancementLocation(models.Model):
-    contrat_location = models.ForeignKey(ContratLocation,default=None)
+    contrat_location = models.ForeignKey(ContratLocation, default=None)
     date_debut = models.DateField(auto_now=False, auto_now_add=False, verbose_name=u"Date début")# je n'arrive pas à mettre la date du jour par défaut
     date_fin = models.DateField(auto_now=False, auto_now_add=False, blank=True, null=True)
     loyer = models.DecimalField(max_digits=6, decimal_places=2, default=0)
@@ -406,7 +398,6 @@ class FinancementLocation(models.Model):
     index = models.DecimalField(max_digits=5, decimal_places=2, default=0)
 
     def __str__(self):
-
         chaine = str(self.loyer) + "/" + str(self.charges)
         if not self.date_debut is None :
             chaine = chaine + " (" + self.date_debut.strftime('%d-%m-%Y')
@@ -677,3 +668,27 @@ class Photo(models.Model):
 
     def __str__(self):
         return self.texte
+
+
+def update_suivi_alerte(date_debut, location, financement_location, date_fin):
+    date_d = date_debut
+    date_f = date_debut + relativedelta(months=1)
+    i = 0
+    while date_f <= date_fin:
+        print(' creation nouveau suivi')
+        suivi = SuiviLoyer(etat_suivi='A_VERIFIER',
+                           date_paiement=date_d,
+                           remarque=None,
+                           loyer_percu=0,
+                           charges_percu=0)
+        suivi.financement_location = financement_location
+        suivi.save()
+        date_d = date_d + relativedelta(months=1)
+        date_f = date_f + relativedelta(months=1)
+        i = i + 1
+    if date_fin:
+        alert = Alerte(description='Attention fin contrat location dans 4 mois',
+                       date_alerte=location.date_fin - relativedelta(months=4),
+                       etat='A_VERIFIER',
+                       contratLocation=location)
+        alert.save()

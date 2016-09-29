@@ -40,29 +40,44 @@ def update(request):
     """
     previous = request.POST.get('previous', None)
     form = ContratGestionForm(data=request.POST)
-    if request.POST['action'] == 'new':
+    gestion = None
+    batiment = None
+    personne = None
+    print(request.POST.get('action', None))
+    if request.POST.get('action', None) == 'new':
         gestion = ContratGestion()
         batiment = get_object_or_404(Batiment, pk=request.POST.get('batiment_id', None))
         gestion.batiment = batiment
     else:
-        gestion = get_object_or_404(ContratGestion, pk=request.POST.get('id', None))
-        batiment = gestion.batiment
-    personne = None
+        if request.POST.get('id', None) != '':
+            gestion = get_object_or_404(ContratGestion, pk=request.POST.get('id', None))
+            batiment = gestion.batiment
+    if gestion is None:
+        gestion = ContratGestion()
+        batiment = get_object_or_404(Batiment, pk=request.POST.get('batiment_id', None))
+        gestion.batiment = batiment
     if request.POST.get('gestionnaire', None):
         personne = get_object_or_404(Personne, pk=request.POST.get('gestionnaire', None))
         gestion.gestionnaire = personne
     if request.POST.get('montant_mensuel', None):
         gestion.montant_mensuel = request.POST.get('montant_mensuel')
     if request.POST.get('date_debut', None):
-        valid_datetime = datetime.strptime(request.POST['date_debut'], '%d/%m/%Y')
-        gestion.date_debut = valid_datetime
+        try:
+            valid_datetime = datetime.strptime(request.POST['date_debut'], '%d/%m/%Y')
+            gestion.date_debut = valid_datetime
+        except:
+            gestion.date_debut = None
     else:
+
         gestion.date_debut = None
 
     # gestion.date_fin = request.POST['date_fin']
     if request.POST.get('date_fin', None):
-        valid_datetime = datetime.strptime(request.POST['date_fin'], '%d/%m/%Y')
-        gestion.date_fin = valid_datetime
+        try:
+            valid_datetime = datetime.strptime(request.POST['date_fin'], '%d/%m/%Y')
+            gestion.date_fin = valid_datetime
+        except:
+            gestion.date_fin = None
     else:
         gestion.date_fin = None
     if gestion.date_debut and gestion.date_fin:
@@ -87,11 +102,15 @@ def update(request):
         gestion.save()
         return redirect(previous)
     else:
+        personnes = []
+        personne_gestionnaire = Personne.find_gestionnaire_default()
+        personnes.append(personne_gestionnaire)
         return render(request, "contratgestion_update.html",
-                      {'contrat':  gestion,
-                       'action':  'update',
+                      {'contrat': gestion,
+                       'action': 'update',
                        'message': 'Invalide',
-                       'form':     form})
+                       'form': form,
+                       'personnes': personnes})
 
 
 def list(request):

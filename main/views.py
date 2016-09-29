@@ -182,8 +182,8 @@ def personne(request, personne_id):
 
 def update_personne(request):
     personne = Personne()
-    print(request.POST['action'])
-    if ('add' == request.POST['action'] or 'modify' == request.POST['action']):
+    print(request.POST.get('action', None))
+    if 'add' == request.POST.get('action', None) or 'modify' == request.POST.get('action', None):
         print(request.POST['id'])
         personne = get_object_or_404(Personne, pk=request.POST['id'])
         personne.nom = request.POST['nom']
@@ -191,7 +191,7 @@ def update_personne(request):
 
         personne.save()
     return render(request, "personne_form.html",
-                  {'personne':         personne})
+                  {'personne': personne})
 
 
 def xlsRead(request):
@@ -453,11 +453,11 @@ def merge_pdf(request):
     buffer = BytesIO()
 
     doc = MyDocTemplateMerge(buffer,
-                            pagesize=PAGE_SIZE,
-                            rightMargin=MARGIN_SIZE,
-                            leftMargin=MARGIN_SIZE,
-                            topMargin=85,
-                            bottomMargin=18)
+                             pagesize=PAGE_SIZE,
+                             rightMargin=MARGIN_SIZE,
+                             leftMargin=MARGIN_SIZE,
+                             topMargin=85,
+                             bottomMargin=18)
 
     content = []
 
@@ -492,8 +492,8 @@ def merge_pdf(request):
 
 
 
-    doc.build(content, onFirstPage=add_header_footer, onLaterPages=add_header_footer)#ne garnit que la 1iere page
-    #doc.build(content, canvasmaker=NumberedCanvas)
+    doc.build(content, onFirstPage=add_header_footer, onLaterPages=add_header_footer)  #  ne garnit que la 1iere page
+    # doc.build(content, canvasmaker=NumberedCanvas)
     merger = PdfFileMerger()
 
 
@@ -561,9 +561,7 @@ def get_image(path, width, doc):
     max_widh = doc.width - (MARGIN_SIZE*2)-50
     img = utils.ImageReader(path)
     iw, ih = img.getSize()
-    pw,ph=A4
-    print('dd',pw)
-    print('iw',iw)
+    pw,ph = A4    
     height = ih
 
     if iw > max_widh:
@@ -585,7 +583,7 @@ def get_image2(path):
     height = height - (BOTTOM_MARGIN + TOP_MARGIN)
     Im = Image(path)
 
-    if(xsize > ysize):  #deal with cases were xsize is bigger than ysize
+    if(xsize > ysize):  #  deal with cases were xsize is bigger than ysize
       if(xsize > width):
         nxsize = width - 12
         nysize = int(ysize*(nxsize/xsize))  #make ysize
@@ -648,7 +646,7 @@ def merge_pdf2(request):
     doc.multiBuild(items)
 
     output= PdfFileWriter()
-    #output.addPage(buffer)
+    # output.addPage(buffer)
     num_page = 0
     no_page=0
     width, height = A4
@@ -657,7 +655,6 @@ def merge_pdf2(request):
     cur=1
     cur_prev = 0
     for fname in pdfs:
-        print('for')
         input = PdfFileReader(open(fname, 'rb'))
 
         number_of_page = input.getNumPages()
@@ -668,7 +665,7 @@ def merge_pdf2(request):
         # else:
         #     output.addBookmark("One", no_page, parent)
         output.addBookmark(str(no_page),num_page)
-        num_page=num_page+1
+        num_page = num_page+1
         no_page = no_page + 1
 
         rect = RectangleObject([400, 400, 600, 600])
@@ -696,11 +693,11 @@ def makeTocHeaderStyle(level,  fontName='Times-Roman'):
     PS = ParagraphStyle
     size = 12
     style = PS(name = 'Heading' + str(level),
-               fontName = fontName,
-               fontSize = size,
-               leading = size*1.2,
-               spaceBefore = size/4.0,
-               spaceAfter = size/8.0)
+               fontName=fontName,
+               fontSize=size,
+               leading=size*1.2,
+               spaceBefore=size/4.0,
+               spaceAfter=size/8.0)
 
     return style
 
@@ -712,17 +709,16 @@ def essai(request):
     pdf1 = "pdf1.pdf"
     pdf2 = "pdf2.pdf"
 
-    pdfs=[pdf1,pdf2]
+    pdfs = [pdf1, pdf2]
     #
     buffer = BytesIO()
 
-
     doc = MyDocTemplate(buffer,
-                            pagesize=PAGE_SIZE,
-                            rightMargin=MARGIN_SIZE,
-                            leftMargin=MARGIN_SIZE,
-                            topMargin=85,
-                            bottomMargin=18)
+                        pagesize=PAGE_SIZE,
+                        rightMargin=MARGIN_SIZE,
+                        leftMargin=MARGIN_SIZE,
+                        topMargin=85,
+                        bottomMargin=18)
     content = []
 
     # to
@@ -730,9 +726,6 @@ def essai(request):
 
     # fin toc
     # merge
-    print('merge_pdf')
-
-
     if not pdfs or len(pdfs) < 2:
         exit("Please enter at least two pdfs for merging!")
     no_page=1
@@ -1085,20 +1078,27 @@ def static_back(canvas,doc):
     canvas.restoreState()
 def static_1col(canvas,doc):
     canvas.saveState()
-    canvas.drawImage('logo-oditorium-whitebg.jpg',doc.width-2.5*inch,doc.height, width=4*inch, preserveAspectRatio=True)
+    canvas.drawImage('logo-oditorium-whitebg.jpg',
+                     doc.width-2.5*inch, doc.height, width=4*inch,
+                     preserveAspectRatio=True)
     canvas.setFont('Times-Roman',48)
     canvas.drawString(inch, doc.height - 1*inch, "TITLE")
     canvas.setFont('Times-Roman',9)
     canvas.drawString(inch, 0.75 * inch, "Title - Page %d" % doc.page)
     canvas.restoreState()
+
+
 def static_2col(canvas,doc):
     canvas.saveState()
-    canvas.drawImage('logo-oditorium-whitebg.jpg',doc.width-2.5*inch,doc.height, width=4*inch, preserveAspectRatio=True)
+    canvas.drawImage('logo-oditorium-whitebg.jpg',
+                     doc.width-2.5*inch, doc.height, width=4*inch,
+                     preserveAspectRatio=True)
     canvas.setFont('Times-Roman',48)
     canvas.drawString(inch, doc.height - 1*inch, "TITLE")
     canvas.setFont('Times-Roman',9)
     canvas.drawString(inch, 0.75 * inch, "Title - Page %d" % doc.page)
     canvas.restoreState()
+
 
 def pagecat2(request):
     doc = BaseDocTemplate('test.pdf')
@@ -1106,13 +1106,13 @@ def pagecat2(request):
     frame_back = Frame(doc.leftMargin, doc.bottomMargin, doc.width/2-6, doc.height, id='back')
     frame_1col = Frame(doc.leftMargin, doc.bottomMargin, doc.width/2-6, doc.height, id='col12')
     frame1_2col = Frame(doc.leftMargin, doc.bottomMargin, doc.width/2-6, doc.height, id='col1')
-    frame2_2col = Frame(doc.leftMargin+doc.width/2+6, doc.bottomMargin, doc.width/2-6,doc.height, id='col2')
+    frame2_2col = Frame(doc.leftMargin+doc.width/2+6, doc.bottomMargin, doc.width/2-6, doc.height, id='col2')
 
     doc.addPageTemplates([
-    PageTemplate(id='Title',frames=frame_title,onPage=static_title),
-    PageTemplate(id='Back',frames=frame_back,onPage=static_back),
-    PageTemplate(id='OneCol',frames=frame_1col,onPage=static_1col),
-    PageTemplate(id='TwoCol',frames=[frame1_2col,frame2_2col],onPage=static_2col),
+    PageTemplate(id='Title',frames=frame_title, onPage=static_title),
+    PageTemplate(id='Back',frames=frame_back, onPage=static_back),
+    PageTemplate(id='OneCol',frames=frame_1col, onPage=static_1col),
+    PageTemplate(id='TwoCol',frames=[frame1_2col, frame2_2col], onPage=static_2col),
     ])
     story = []
     story.append(Paragraph('<b>Table of contents</b>', ParagraphStyle('normal')))
@@ -1200,42 +1200,41 @@ def merge_pdf_stack(request):
     buffer = BytesIO()
 
     doc = MyDocTemplateMerge(buffer,
-                            pagesize=PAGE_SIZE,
-                            rightMargin=MARGIN_SIZE,
-                            leftMargin=MARGIN_SIZE,
-                            topMargin=85,
-                            bottomMargin=18)
+                             pagesize=PAGE_SIZE,
+                             rightMargin=MARGIN_SIZE,
+                             leftMargin=MARGIN_SIZE,
+                             topMargin=85,
+                             bottomMargin=18)
 
     content = []
 
     no_page=2
 
     cpt = 0
-    content.append(Paragraph('Table of contents' , ParagraphStyle('normal')))
+    content.append(Paragraph('Table of contents', ParagraphStyle('normal')))
     for fname in pdfs:
         input = PdfFileReader(open(fname, 'rb'))
         number_of_page = input.getNumPages()
-        content.append(Paragraph('%s          %s-%s' % (fname, no_page, no_page + number_of_page), ParagraphStyle('normal')))
+        content.append(Paragraph('%s          %s-%s' % (fname, no_page, no_page + number_of_page), 
+                                 ParagraphStyle('normal')))
         no_page = no_page + number_of_page
-        cpt = cpt +1
+        cpt = cpt + 1
 
     doc.build(content)
     merger = PdfFileMerger()
     merger.setPageMode('/UseOC')
 
     num_page = 1
-    no_page=1
-    cpt=0
-    for fname in pdfs:
-        print('for')
+    no_page = 1
+    cpt = 0
+    for fname in pdfs:        
         input = PdfFileReader(open(fname, 'rb'))
-
         number_of_page = input.getNumPages()
         lien=fname
         merger.append(input, bookmark=lien, import_bookmarks=False)
-        num_page=num_page+1
+        num_page = num_page + 1
         no_page = no_page + number_of_page
-        cpt=cpt+1
+        cpt = cpt + 1
 
     merger.append(buffer)
     output = open("output.pdf", "wb")

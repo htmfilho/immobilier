@@ -3,7 +3,6 @@ from django.forms import ModelForm
 from main.models import *
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Submit
-from django.shortcuts import render, get_object_or_404
 
 
 class LoginForm(forms.Form):
@@ -53,7 +52,7 @@ class PersonneForm(ModelForm):
         self.helper.form_class = 'form-horizontal'
         self.helper.label_class = 'col-md-offset-1 col-md-2'
         self.helper.field_class = 'col-md-8'
-        self.helper.add_input(Submit('submit','Ok'))
+        self.helper.add_input(Submit('submit', 'Ok'))
 
 
 class BatimentForm(ModelForm):
@@ -105,18 +104,19 @@ class SocieteForm(ModelForm):
         self.helper.form_class = 'form-horizontal'
         self.helper.label_class = 'col-md-offset-1 col-md-2'
         self.helper.field_class = 'col-md-8'
-        self.helper.add_input(Submit('submit','Ok'))
+        self.helper.add_input(Submit('submit', 'Ok'))
 
 
 class ContratLocationForm(forms.Form):
+
     date_debut = forms.DateField(required=True, input_formats=['%d/%m/%Y'],
                                  widget=forms.DateInput(format='%d/%m/%Y'))
-    date_fin = forms.DateField(required=False, input_formats=['%d/%m/%Y'],
-                               widget=forms.DateInput(format='%d/%m/%Y'))
-    renonciation = forms.DateField(required=False, input_formats=['%d/%m/%Y'],
-                                   widget=forms.DateInput(format='%d/%m/%Y'))
-    loyer_base = forms.DecimalField(max_digits=8, decimal_places=2, localize=True)
-    charges_base = forms.DecimalField(max_digits=8, decimal_places=2, localize=True)
+    # date_fin = forms.DateField(required=False, input_formats=['%d/%m/%Y'],
+    #                            widget=forms.DateInput(format='%d/%m/%Y'))
+    # renonciation = forms.DateField(required=False, input_formats=['%d/%m/%Y'],
+    #                                widget=forms.DateInput(format='%d/%m/%Y'))
+    loyer_base = forms.DecimalField(required=True, max_digits=8, decimal_places=2, localize=True)
+    charges_base = forms.DecimalField(required=True, max_digits=8, decimal_places=2, localize=True)
     assurance = forms.CharField(required=False)
 
     def __init__(self, *args, **kwargs):
@@ -127,7 +127,8 @@ class ContratLocationForm(forms.Form):
         if cleaned_data.get('date_debut') and cleaned_data.get('date_fin'):
             if cleaned_data.get('date_debut') > cleaned_data.get('date_fin'):
                 self.errors['date_debut'] = 'Dates erronées'
-
+        if cleaned_data.get('loyer_base') <= 0 and cleaned_data.get('charges_base') <= 0:
+            self.errors['loyer_base'] = 'Il faut au minimun un loyer ou des charges'
         return cleaned_data
 
     def clean_assurance(self):
@@ -149,23 +150,24 @@ class HonoraireForm(ModelForm):
 
     class Meta:
         model = Honoraire
-        fields=['date_paiement', 'etat']
+        fields = ['date_paiement', 'etat']
 
     def __init__(self, *args, **kwargs):
         super(HonoraireForm, self).__init__(*args, ** kwargs)
 
-# class FinancementLocationForm(forms.ModelForm):
-#
-#     date_debut = forms.DateField(('%d/%m/%Y',), label='Birth Date', required=False,
-#         widget=forms.DateTimeInput(format='%d/%m/%Y', attrs={
-#             'class':'input',
-#             'size':'15'
-#         })
-#     )
-#
-#     class Meta:
-#         model = FinancementLocation
-#         fields=['date_debut','date_fin','loyer','charges','index']
+
+class FinancementLocationForm(forms.Form):
+    date_debut = forms.DateField(required=True, input_formats=['%d/%m/%Y'],
+                                 widget=forms.DateInput(format='%d/%m/%Y'))
+    date_fin = forms.DateField(required=False, input_formats=['%d/%m/%Y'],
+                               widget=forms.DateInput(format='%d/%m/%Y'))
+    loyer = forms.DecimalField(required=True, max_digits=8, decimal_places=2, localize=True)
+    charges = forms.DecimalField(required=True, max_digits=8, decimal_places=2, localize=True)
+    index = forms.DecimalField(required=True, max_digits=8, decimal_places=2, localize=True)
+
+    class Meta:
+        model = FinancementLocation
+        fields = ['date_debut', 'date_fin', 'loyer', 'charges', 'index']
 
 
 class FileForm(forms.Form):
@@ -173,6 +175,10 @@ class FileForm(forms.Form):
 
 
 class ContratGestionForm(ModelForm):
+    date_debut = forms.DateField(required=True, input_formats=['%d/%m/%Y'],
+                                 widget=forms.DateInput(format='%d/%m/%Y'))
+    date_fin = forms.DateField(required=False, input_formats=['%d/%m/%Y'],
+                               widget=forms.DateInput(format='%d/%m/%Y'))
     montant_mensuel = forms.DecimalField(max_digits=6, decimal_places=2, localize=True)
 
     class Meta:

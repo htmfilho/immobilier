@@ -27,11 +27,9 @@ from main.models import *
 
 
 def create(request):
-    print('createe')
     data = request.POST
     new_assurance = Assurance()
     new_assurance.nom = data['nom']
     new_assurance.description = data['description']
     new_assurance.save()
-    print(new_assurance.id)
     return HttpResponse('')

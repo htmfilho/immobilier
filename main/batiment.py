@@ -10,7 +10,6 @@ def create(request):
 
 
 def batiment_form(request, batiment_id):
-    print('batiment_form')
     batiment = Batiment.find_batiment(batiment_id)
 
     return render(request, "batiment_form.html",
@@ -23,8 +22,8 @@ def update(request):
 
     batiment = Batiment()
 
-    if 'add' == request.POST['action'] or 'modify' == request.POST['action']:
-        if request.POST['id'] and not request.POST['id'] == 'None':
+    if 'add' == request.POST.get('action') or 'modify' == request.POST.get('action'):
+        if request.POST.get('id') and not request.POST['id'] == 'None':
             batiment = get_object_or_404(Batiment, pk=request.POST['id'])
         else:
             batiment = Batiment()

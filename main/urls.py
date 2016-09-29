@@ -139,5 +139,7 @@ urlpatterns = [
     url(r'^test3/$', test3.test,name='test3'),
 
     url(r'^assurance_create/$', assurance.create, name='assurance_create'),
+    url(r'^prolongation/$', contratlocation.prolongation, name='prolongation'),
+
 
 ]

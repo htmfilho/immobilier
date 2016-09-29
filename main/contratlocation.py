@@ -1,22 +1,10 @@
-from django.shortcuts import render
-from django.contrib.auth.decorators import login_required
-
 from main.models import*
-from django.views.generic import DetailView
-from django.core.urlresolvers import reverse
-import os
-from .exportUtils import export_xls_batiment
 from django.http import HttpResponseRedirect
 from django.shortcuts import render, get_object_or_404, redirect
-from django.utils import timezone
-from dateutil.relativedelta import relativedelta
 from datetime import date
-import datetime
-from django.db import models
 from datetime import datetime
 from main.forms import ContratLocationForm
 from dateutil.relativedelta import relativedelta
-from django.http import HttpRequest
 
 
 def prepare_update(request, location_id):
@@ -27,11 +15,13 @@ def prepare_update(request, location_id):
 
 
 def update(request):
-    print('update')
     previous = request.POST.get('previous', None)
     id = request.POST.get('id', None)
     form = ContratLocationForm(data=request.POST)
     location = get_object_or_404(ContratLocation, pk=id)
+    prolongation_action = False
+    if 'bt_prolongation' in request.POST:
+        prolongation_action = True
 
     if request.POST['renonciation']:
         location.renonciation = datetime.strptime(request.POST['renonciation'], '%d/%m/%Y')
@@ -43,25 +33,25 @@ def update(request):
         location.assurance = None
 
     if form.is_valid():
+        if prolongation_action and request.POST.get('type_prolongation') == '1':
 
-        print('form is valid')
+            # Les financements seront adaptés via le save
+            location.save_prolongation(int(request.POST.get('type_prolongation')))
+        else:
+            location.save_new()
 
-        location.save()
-        # todo ici il faut retourner au fb
         return redirect(previous)
-        # return redirect('/contratlocations/')
+
     else:
-        print(form.errors)
-        print('form is not valid')
         return render(request, "contratlocation_update.html",
                                {'location':    location,
                                 'assurances':  Assurance.find_all(),
                                 'nav':         'list_batiment',
-                                'form':        form})
+                                'form':        form,
+                                'previous':    previous})
 
 
 def contrat_location_for_batiment(request, batiment_id):
-
     batiment = get_object_or_404(Batiment, pk=batiment_id)
     if batiment.location_actuelle:
         location = get_object_or_404(ContratLocation, pk=batiment.location_actuelle.id)
@@ -76,11 +66,10 @@ def contrat_location_for_batiment(request, batiment_id):
         nouvelle_location.loyer_base = location.loyer_base
         nouvelle_location.charges_base = location.charges_base
     else:
-        auj=date.today()
+        auj = date.today()
         nouvelle_location.date_debut = auj.strftime("%d/%m/%Y")
 
         # le financement sera crée automatiquement
-    print('11')
     return render(request, "contratlocation_new.html",
                            {'location': nouvelle_location,
                             'assurances': Assurance.find_all(),
@@ -93,7 +82,7 @@ def list(request):
                            {'locations': locations})
 
 
-def delete(request,location_id):
+def delete(request, location_id):
     location = get_object_or_404(ContratLocation, pk=location_id)
     if location:
         location.delete()
@@ -102,12 +91,10 @@ def delete(request,location_id):
 
 
 def confirm_delete(request):
-    location = get_object_or_404(ContratLocation, pk=request.POST['id'])
     return redirect('/contratlocations/')
 
 
 def test(request):
-    print('test')
     """
     ok - 1
     """
@@ -118,15 +105,15 @@ def test(request):
     location.batiment = batiment
     if request.POST['date_debut']:
         location.date_debut = datetime.strptime(request.POST['date_debut'], '%d/%m/%Y')
-        location.date_fin =location.date_debut + relativedelta(years=1)
-        location.renonciation =location.date_debut + relativedelta(days=355)
+        location.date_fin = location.date_debut + relativedelta(years=1)
+        location.renonciation = location.date_debut + relativedelta(days=355)
     else:
         location.date_debut = None
     # if request.POST.get('date_fin'):
     #     location.date_fin = datetime.strptime(request.POST['date_fin'], '%d/%m/%Y')
     # else:
     #     location.date_fin = None
-    print('dd :',location.date_fin)
+
     # if request.POST.get('renonciation'):
     #     location.renonciation = request.POST['renonciation']
     # else:
@@ -147,29 +134,46 @@ def test(request):
     location.charges_base = request.POST['charges_base']
 
     if form.is_valid():
-        print('form valid')
-        location.save()
+        location.save_new()
+        return HttpResponseRedirect(reverse('batiment', args=(location.batiment.id, )))
     else:
-        print('form invalid', form.errors)
-        print('1')
         return render(request, "contratlocation_new.html",
                                {'location':    location,
                                 'assurances': Assurance.find_all(),
                                 'nav':       'list_batiment',
                                 'form': form})
 
-    if request.POST.get('prev', None) == 'fb':
-        return render(request, "batiment_form.html",
-                      {'batiment': batiment})
+    # if request.POST.get('prev', None) == 'fb':
+    #     return render(request, "batiment_form.html",
+    #                   {'batiment': batiment})
+    #
+    # lnk = None
+    # if request.POST.get('return_lnk'):
+    #     lnk = request.POST.get('return_lnk')
+    #
+    # if lnk:
+    #     return redirect(lnk)
+    # else:
+    #     return redirect('/listeBatiments/')
 
 
-    lnk = None
-    if request.POST.get('return_lnk'):
-        print(request.POST.get('return_lnk'))
-        lnk = request.POST.get('return_lnk')
-    print(lnk)
+def prolongation(request):
+    id_location = request.GET['id_location']
+    type_prolongation = request.GET['type_prolongation']
+    location = get_object_or_404(ContratLocation, pk=id_location)
+    # response = []
+    if location:
+        date_trav = location.date_fin
+        if date_trav:
+            if type_prolongation == "1":
+                location.date_fin = date_trav + relativedelta(years=1)
+                location.save()
+                # response.append('date_fin',location.date_fin)
+    # return HttpResponseRedirect(reverse('location-prepare-update-all', args=(id_location,)))
+    # return HttpResponse('')
+    # return redirect(reverse('location-prepare-update-all', args=(id_location,)))
 
-    if lnk:
-        return redirect(lnk)
-    else:
-        return redirect('/listeBatiments/')
+    # return HttpResponse(simplejson.dumps(response))
+    return render(request, "contratlocation_update.html",
+                  {'location':    location,
+                   'assurances': Assurance.find_all(), })

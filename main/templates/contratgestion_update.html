@@ -7,14 +7,15 @@
 {% block content %}
 
     <form  method="post" action="{% url 'update-gestion-all' %}">
+      {{form.errors}}
       {% csrf_token %}
       <input type="hidden" id="previous" name="previous" value="{{request.META.HTTP_REFERER }}"/>
-      <input type="hidden" value="{{ action }}" name="action"/>
-      <input type="hidden" value="{{ contrat.id }}" name="id"/>
+      <input type="hidden" value="{{ action | default_if_none:'' }}" name="action"/>
+      <input type="hidden" value="{{ contrat.id | default_if_none:'' }}" name="id"/>
       <div class="form-group">
         <label>Batiment</label>
-        <input class="form-control" value="{{contrat.batiment}}" name="batiment" readonly="readonly" >
-        <input type="hidden" value="{{ contrat.batiment.id }}" name="batiment_id"/>
+        <input class="form-control" value="{{contrat.batiment| default_if_none:'' }}" name="batiment" readonly="readonly" >
+        <input type="hidden" value="{{ contrat.batiment.id | default_if_none:'' }}" name="batiment_id"/>
       </div>
       <div class="row">
         <div class="col-md-6">

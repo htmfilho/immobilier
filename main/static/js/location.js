@@ -23,7 +23,7 @@ $("#date_debut").blur(function() {
         var mm = result_plus_one.getMonth();
         var y = result_plus_one.getFullYear();
 
-        var someFormattedDate = dd + '/'+ mm + '/'+ y;
+        /*var someFormattedDate = dd + '/'+ mm + '/'+ y;
         $('#date_fin').val(someFormattedDate);
 
         result.setDate(result.getDate() + 355);
@@ -33,7 +33,7 @@ $("#date_debut").blur(function() {
         y = result.getFullYear();
 
         someFormattedDate = dd + '/'+ mm + '/'+ y;
-        $('#renonciation').val(someFormattedDate);
+        $('#renonciation').val(someFormattedDate);*/
 
     }
 });
@@ -82,9 +82,9 @@ $("#date_debut").blur(function() {
         var data = new FormData();
         data.append('description', description);
         data.append('nom', name);
-var loc = location.href;
-var url = "{% url 'assurance_create' %}";
-url = "http://127.0.0.1:8000/assurance_create/";
+        var loc = location.href;
+        var url = "{% url 'assurance_create' %}";
+        url = "http://127.0.0.1:8000/assurance_create/";
         $.ajax({
             url: url,
             type: 'POST',
@@ -104,3 +104,39 @@ url = "http://127.0.0.1:8000/assurance_create/";
         });
 
     });
+
+    $("#bt_prolongation_submit").click(function(event) {
+        event.preventDefault();
+        var id_location = $("#id_location_prolongation").val();
+        var type_prolongation = $( "#slt_type_prolongation option:selected" ).val();
+        if (type_prolongation=='1'){
+            $.ajax({
+
+                url: "/prolongation?id_location=" + id_location + "&type_prolongation="+type_prolongation,
+                processData: false,
+                complete: function(xhr, statusText){
+                    if(xhr.status=='0'){
+                        //problem occured
+
+                    }else{
+                        /*$.ajax({
+                            url: "/location/prepare/update/all/" + id_location,
+
+                        });*/
+                    }
+
+            }
+            });
+        }
+    });
+    $("#bt_prolongation").click(function(event) {
+        $("#txt_msg_error_slt_type_prolongation" ).html('');
+        $("#txt_msg_error_slt_type_prolongation").css('visibility', 'hidden').css('display','none');
+        if ($( "#slt_type_prolongation" ).prop('selectedIndex') <= 0 ){
+            $("#txt_msg_error_slt_type_prolongation").html('Faut sélectionner une durée de prolongation');
+            $("#txt_msg_error_slt_type_prolongation").css('visibility', 'visible').css('display','block');
+            return false;
+        }
+        return true;
+    });
+

@@ -11,7 +11,7 @@
            action="{% url 'update_batiment' %}">
       {% csrf_token %}
       <input type="hidden" id="previous" name="previous" value="{{request.META.HTTP_REFERER }}"/>
-      <input type="text" value="" id="prev" name="prev"/>
+      <input type="hidden" value="" id="prev" name="prev"/>
       <input type="hidden" value="modify" name="action"/>
       <input type="hidden" value="{{ batiment.id }}" name="id"/>
       <div class="row">

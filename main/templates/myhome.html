@@ -23,7 +23,8 @@
         {% for batiment in batiments %}
             <tr>
                 <td>
-                  <a href="{% url 'batiment' batiment.pk%}" title="Pour modifier un batiment">{{ batiment.rue }}</a>
+                  <a href="{% url 'batiment' batiment.pk%}"
+                     title="Pour modifier un batiment">{{ batiment.rue }}</a>
                 </td>
                 <td>
                     {{ batiment.numero  | default_if_none:''}}

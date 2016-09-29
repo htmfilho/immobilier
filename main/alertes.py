@@ -9,7 +9,6 @@ from .exportUtils import export_xls_batiment
 from django.http import HttpResponseRedirect
 from django.shortcuts import render, get_object_or_404
 from django.utils import timezone
-from dateutil.relativedelta import relativedelta
 import datetime
 from django.db import models
 from django.views.generic import *

@@ -1,0 +1,59 @@
+{% load staticfiles %}
+{% load i18n %}
+
+{% comment "License" %}
+ * OSIS stands for Open Student Information System. It's an application
+ * designed to manage the core business of higher education institutions,
+ * such as universities, faculties, institutes and professional schools.
+ * The core business involves the administration of students, teachers,
+ * courses, programs and so on.
+ *
+ * Copyright (C) 2015-2016 Université catholique de Louvain (http://www.uclouvain.be)
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * A copy of this license - GNU General Public License - is available
+ * at the root of the source code of this program.  If not,
+ * see http://www.gnu.org/licenses/.
+{% endcomment %}
+
+    <!-- UploadFile modal -->
+    <div class="modal fade" id="pnl_prolongation"
+         tabindex="-1" role="dialog" >
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <form method="post">
+                    {% csrf_token %}
+                    <input type="text" value="{{ location.id }}" id="id_location_prolongation"/>
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal"
+                                aria-label="Close" id="bt_close_pnl_prolongation_modal"><span aria-hidden="true">&times;</span></button>
+                        <h4 class="modal-title" >
+                            <label>Prolongation</label>
+                        </h4>
+                    </div>
+                    <div class="modal-body" id="pnl_modal_upload">
+                        <select id="slt_type_prolongation"
+                                name="type_prolongation">
+                            <option>-</option>
+                            <option value="1">1 an</option>
+                        </select>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal" >Annuler</button>
+                        <input type="submit"
+                               class="btn btn-primary" value="Ok" data-dismiss="modal"
+                               id="bt_prolongation_submit"/>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>

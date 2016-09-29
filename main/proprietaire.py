@@ -77,9 +77,9 @@ def proprietaire_update_save(request):
     previous = request.POST['previous']
     print('previous:', previous)
 
-    if 'update' == request.POST['action']:
+    if 'update' == request.POST.get('action', None):
         proprietaire = get_object_or_404(Proprietaire, pk=request.POST['id'])
-    if 'add' == request.POST['action']:
+    if 'add' == request.POST.get('action', None):
         proprietaire = Proprietaire()
 
     if request.POST['date_debut']:
@@ -89,7 +89,7 @@ def proprietaire_update_save(request):
 
     personne = get_object_or_404(Personne, pk=request.POST['proprietaire'])
     proprietaire.proprietaire = personne
-    if 'add' == request.POST['action']:
+    if 'add' == request.POST.get('action', None):
         batiment = get_object_or_404(Batiment, pk=request.POST['batiment_id'])
         proprietaire.batiment = batiment
     if not proprietaire.date_debut is None and not proprietaire.date_fin is None:
@@ -98,7 +98,7 @@ def proprietaire_update_save(request):
                           {'proprietaire': proprietaire,
                            'message': 'La date de début doit être < à la date de fin'})
     proprietaire.save()
-    # if 'add' == request.POST['action']:
+    # if 'add' == request.POST.get('action', None):
     #     batiments = Batiment.objects.all()
     #     return render(request, 'listeBatiments.html', {'batiments': batiments})
     if previous:
