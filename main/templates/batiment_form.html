@@ -157,9 +157,9 @@
                   <label class="control-label">Locataires actuelles</label>
                   <br>
                   <table class="table table-bordered">
-                    {% for p in batiment.locataires_actuels %}
+                    {% for p in batiment.locataires_actuels2 %}
                     <tr>
-                        <td><a href="{% url 'locataire' p.id%}?prev=fb" title="Pour modifier un locataire">{{  p.nom }} {{  p.prenom }}</a> </td>
+                        <td><a href="{% url 'locataire' p.id%}?prev=fb" title="Pour modifier un locataire">{{  p.personne.nom }} {{  p.personne.prenom }}</a> </td>
                         <td>{{p.}}</td>
                     </tr>
                     {% endfor%}
@@ -213,8 +213,7 @@
                   {% if batiment.frais_list %}
                   <table class="table table-striped">
                     <thead>
-                        <th>Entrepreneur</th>
-                        <th>Société</th>
+                        <th>Professionnel</th>
                         <th>Description</th>
                         <th>Montant</th>
                         <th>Date réalisation</th>
@@ -222,8 +221,7 @@
                     </thead>
                       {% for f in batiment.frais_list %}
                     <tr>
-                      <td>{{ f.entrepreneur | default_if_none:'' }}</td>
-                      <td>{{ f.societe | default_if_none:'' }}</td>
+                      <td>{{ f.entrepreneur.societe | default_if_none:'' }} / {{ f.entrepreneur.personne | default_if_none:'' }}</td>
                       <td>{{ f.description | default_if_none:''}}</td>
                       <td>{{ f.montant | default_if_none:''}}</td>
                       <td>{{ f.date_realisation | default_if_none:''|date:"j/m/Y" }}</td>

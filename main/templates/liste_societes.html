@@ -1,0 +1,47 @@
+{% extends "layout.html" %}
+{% load staticfiles %}
+{% block breadcrumb %}
+{% endblock %}
+{% block content %}
+
+<div class="panel panel-default">
+  <div class="panel-body">
+    <br>
+        <table class="table table-striped table-hover">
+            <thead>
+                <th>Nom</th>
+                <th>Description</th>
+                <th>Localité</th>
+                <th>Personnel</th>
+            </thead>
+        {% for societe in societes %}
+            <tr>
+                <td>
+                  {{ societe.nom }}
+                </td>
+                <td>
+                    {{ societe.description| default_if_none:'' }}
+                </td>
+                <td>
+                    {{ societe.localite.localite| default_if_none:'' }}
+                </td>
+
+                <td>
+                    <table>
+                    {% for professionnel in societe.professionnels %}
+                        <tr><td>{{ professionnel.personne }}</a></td></tr>
+                    {% endfor%}
+                    </table>
+
+                </td>
+
+
+
+
+            </tr>
+        {% endfor%}
+        </table>
+
+      </div>
+            </div>
+{% endblock %}

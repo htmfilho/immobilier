@@ -5,7 +5,6 @@
   <li class="active">Contrat gestion</li>
 {% endblock %}
 {% block content %}
-
     <form  method="post" action="{% url 'update-gestion-all' %}">
       {{form.errors}}
       {% csrf_token %}
@@ -37,6 +36,7 @@
                  name="montant_mensuel">
         </div>
       </div>
+      <br>
       <div class="row">
         <div class="col-md-5">
         <label for="date_debut">Date début</label>
@@ -52,7 +52,7 @@
       </div>
       </div>
 
-
+<br>
       <input type="submit" value="OK">
 
     </form>

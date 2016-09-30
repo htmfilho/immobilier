@@ -7,7 +7,7 @@
 {% block content %}
 <form  method="post" action="{% url 'update_suivi' %}">
   {% csrf_token %}
-  <input type="hidden" id="previous" name="previous" value="{{request.META.HTTP_REFERER }}"/>
+  <input type="text" id="previous" name="previous" value="{{request.META.HTTP_REFERER}}"/>
   <input type="hidden" value="{{date_debut|date:"j/m/Y"}}" name="date_debut"/>
   <input type="hidden" value="{{date_fin|date:"j/m/Y"}}" name="date_fin"/>
   <input type="hidden" value="{{etat}}" name="etat"/>
@@ -15,12 +15,25 @@
 
   <div class="row">
     <div class="col-md-4">
-      <label for="date_paiement">Date paiement</label>
-      <input class="form-control" value="{{ suivi.date_paiement|date:"j/m/Y" }}" name="date_paiement" title="Date théorique du paiement">
+      <label>Date paiement</label>
+      <input class="form-control"
+             name="date_paiement"
+             title="Date théorique du paiement"
+             value="{{ suivi.date_paiement|date:"j/m/Y" }}" readonly>
     </div>
+    <div class="col-md-4">
+      <label>Date réelle paiement</label>
+      <input class="form-control"
+             name="date_paiement_reel"
+             title="Date réelle du paiement"
+             value="{{ suivi.date_paiement_reel|date:"j/m/Y" }}">
+      {% if form.date_paiement_reel.errors%}<span class="erreur_formulaire">{{form.date_paiement_reel.errors}}</span>{%endif%}
+    </div>
+  </div>
+  <div class="row">
     <div class="col-md-6">
       <label for="etat_suivi">Etat suivi</label>
-      <select class="form-control"  name="etat_suivi" id ="etat_suivi" >
+      <select class="form-control"  name="etat_suivi" id="etat_suivi" >
         {% if suivi.etat_suivi == 'A_VERIFIER' %}
         <option value="A_VERIFIER" selected>A vérifier</option>
         {% else %}
@@ -54,12 +67,14 @@
   </div>
   <div class="row">
     <div class="col-md-6">
-      <label for="loyer_percu">Loyer percu</label>
-      <input type="number" class="form-control" value="{{suivi.loyer_percu}}" name="loyer_percu"> ({{suivi.financement_location.loyer}})
+      <label>Loyer percu</label>
+      <input type="number" class="form-control"
+             id="txt_loyer_percu"
+             value="{{suivi.loyer_percu}}" name="loyer_percu"> (<span id="spn_loyer_percu">{{suivi.financement_location.loyer}}</span>)
     </div>
     <div class="col-md-6">
       {% if suivi.financement_location.charges > 0 %}
-      <label for="charges_percu">Charges percues</label>
+      <label>Charges percues</label>
       <input type="number"  class="form-control" value="{{suivi.charges_percu}}" name="charges_percu">({{suivi.financement_location.charges}})
       {% endif %}
     </div>
@@ -67,11 +82,11 @@
 
   <div class="row">
     <div class="col-md-12">
-      <label for="remarque">Remarque</label>
+      <label>Remarque</label>
       <input class="form-control" value="{{suivi.remarque| default_if_none:''}}" name="remarque">
     </div>
   </div>
-
+  {% if form.errors%}<span class="erreur_formulaire">{{form.errors}}</span>{%endif%}
   <input type="submit" value="OK" title="Enregistrer les infos sur le suivi">
 
 </form>

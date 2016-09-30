@@ -1,6 +1,7 @@
 from main.models import *
 from django.shortcuts import render, get_object_or_404, redirect
 from datetime import datetime
+from main.forms import FraisMaintenanceForm
 
 
 def new(request):
@@ -10,7 +11,8 @@ def new(request):
                   {'frais':     frais,
                    'personnes': Personne.find_all(),
                    'action':   'new',
-                   'batiments': Batiment.find_all()})
+                   'batiments': Batiment.find_all(),
+                   'entrepreneurs': Professionnel.find_all()})
 
 
 def create(request, batiment_id):
@@ -21,14 +23,16 @@ def create(request, batiment_id):
     return render(request, "fraismaintenance_form.html",
                   {'frais':     frais,
                    'personnes': Personne.find_all(),
-                   'action':   'new'})
+                   'action':   'new',
+                   'entrepreneurs': Professionnel.find_all()})
 
 
 def prepare_update(request, id):
     frais = FraisMaintenance.objects.get(pk=id)
     return render(request, "fraismaintenance_form.html",
                   {'frais':  frais,
-                   'action': 'update'})
+                   'action': 'update',
+                   'entrepreneurs': Professionnel.find_all()})
 
 
 def update(request):
@@ -38,12 +42,12 @@ def update(request):
         frais.batiment = batiment
     else:
         frais = get_object_or_404(FraisMaintenance, pk=request.POST.get('id', None))
-        batiment = frais.batiment
 
-    if request.POST.get('entrepreneur', None):
-        frais.entrepreneur = request.POST['entrepreneur']
-    else:
-        frais.entrepreneur = None
+    professionnel = None
+    if request.POST.get('entrepreneur', None) and request.POST['entrepreneur']!= '' and request.POST['entrepreneur']!='None':
+        professionnel = get_object_or_404(Professionnel, pk=request.POST['entrepreneur'])
+
+    frais.entrepreneur = professionnel
     if request.POST.get('societe', None):
         frais.societe = request.POST['societe']
     else:
@@ -54,7 +58,7 @@ def update(request):
         frais.description = None
 
     if request.POST.get('montant', None):
-        frais.montant = request.POST['montant']
+        frais.montant = float(request.POST['montant'].replace(',', '.'))
     else:
         frais.montant = 0
     if request.POST.get('date_realisation', None):
@@ -62,11 +66,17 @@ def update(request):
         frais.date_realisation = valid_datetime
     else:
         frais.date_realisation = None
-
-    frais.save()
-
-    previous = request.POST.get('previous', None)
-    return redirect(previous)
+    form = FraisMaintenanceForm(data=request.POST)
+    if form.is_valid():
+        frais.save()
+        previous = request.POST.get('previous', None)
+        return redirect(previous)
+    else:
+        return render(request, "fraismaintenance_form.html", {
+             'frais': frais,
+             'form': form,
+             'action': 'update',
+             'entrepreneurs': Professionnel.find_all()})
 
 
 def list(request):

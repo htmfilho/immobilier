@@ -132,11 +132,50 @@ $("#date_debut").blur(function() {
     $("#bt_prolongation").click(function(event) {
         $("#txt_msg_error_slt_type_prolongation" ).html('');
         $("#txt_msg_error_slt_type_prolongation").css('visibility', 'hidden').css('display','none');
-        if ($( "#slt_type_prolongation" ).prop('selectedIndex') <= 0 ){
+        if ($( "#slt_type_prolongation").prop('selectedIndex') <= 0 ){
             $("#txt_msg_error_slt_type_prolongation").html('Faut sélectionner une durée de prolongation');
             $("#txt_msg_error_slt_type_prolongation").css('visibility', 'visible').css('display','block');
             return false;
         }
         return true;
     });
+    $("#etat_suivi").click(function(event) {
+        var etat = $("#etat_suivi option:selected" ).val();
+
+        if(etat=='PAYE'){
+            $("#txt_loyer_percu").val(parseFloat($("#spn_loyer_percu").html()));
+        }
+    });
+
+    $("#bt_save_new_fonction").click(function(event) {
+
+        event.preventDefault();
+        var target = $(event.target);
+        var id = target.attr("id");
+        var form = target.form;
+
+        var name = $("#txt_nom_fonction_other").val();
+        var data = new FormData();
+        data.append('nom', name);
+        var loc = location.href;
+        var url = "{% url 'assurance_create' %}";
+        url = "http://127.0.0.1:8000/fonction_create/?nom="+name;
+        $.ajax({
+            url: url,
+            type: 'GET',
+            processData: false,
+            success: function(data){
+            console.log(data);
+                alert('i'+data.id);
+                $('#slt_profession').append('<option val="1" selected>'+name+'</option>');
+            },
+
+
+        });
+
+    });
+
+
+
+
 

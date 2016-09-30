@@ -120,20 +120,15 @@ def dashboard(request):
 
 
 def home(request):
-    date_debut = timezone.now(),
-    date_fin = timezone.now() + relativedelta(months=1)
-    etat = None
-    for k, v in dict(SuiviLoyer.ETAT).items():
-        if k == str('A_VERIFIER'):
-            etat = str(k)
-    suivis = SuiviLoyer.find_suivis_a_verifier(date_debut, date_fin)
-    # suivis=None
+    suivis = SuiviLoyer.find_suivis_a_verifier_proche()
+
     return render(request, 'myhome.html',
-                  {'alertes':     Alerte.find_by_etat_today('A_VERIFIER'),
-                   'batiments':   Batiment.find_my_batiments(),
-                   'contrats':    ContratGestion.find_my_contrats(),
-                   'honoraires':  Honoraire.find_honoraires_by_etat_today('A_VERIFIER'),
-                   'suivis':      suivis})
+                  {'alertes':        Alerte.find_by_etat_today('A_VERIFIER'),
+                   'batiments':      Batiment.find_my_batiments(),
+                   'contrats':       ContratGestion.find_my_contrats(),
+                   'honoraires':     Honoraire.find_honoraires_by_etat_today('A_VERIFIER'),
+                   'suivis':         suivis,
+                   'previous':       request.POST.get('previous', None)})
 
 
 def listeBatiments(request):

@@ -1,0 +1,32 @@
+    <!-- UploadFile modal -->
+    <div class="modal fade" id="pnl_create_fonction"
+         tabindex="-1" role="dialog" >
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <form method="post">
+                    {% csrf_token %}
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"
+                                id="bt_pnl_create_fonction"><span aria-hidden="true">&times;</span></button>
+                        <h4 class="modal-title">
+                            <label id="lbl_description_label">Nouvelle fonction</label>
+                        </h4>
+                    </div>
+                    <div class="modal-body" id="pnl_create_fonction_body">
+                        <label>Nom</label>
+                        <br>
+                        <input type="text" id="txt_nom_fonction_other"  name="nom_fonction_other">
+                        <br>
+                    </div>
+
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal"
+                                id="bt_cancel_create_fonction">Annuler</button>
+
+                        <input type="submit" class="btn btn-primary" value="Ok" data-dismiss="modal"
+                               id="bt_save_new_fonction"/>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>

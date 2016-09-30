@@ -63,7 +63,31 @@
       "nom": "Lesquoy"
     }
   },
+  {
+    "model": "main.personne",
+    "pk": 9,
+    "fields": {
+      "prenom": "j",
+      "nom": "James"
+    }
+  },
 
+  {
+    "model": "main.personne",
+    "pk": 10,
+    "fields": {
+      "prenom": "André",
+      "nom": "Mignon"
+    }
+  },
+  {
+    "model": "main.personne",
+    "pk": 11,
+    "fields": {
+      "prenom": "Arnaud",
+      "nom": "Verpoorten"
+    }
+  },
 
         {       "model": "main.localite","pk": 1, "fields": {         "code_postal" :"5000",    "localite":"Beez"      }}
   ,     {       "model": "main.localite","pk": 2, "fields": {         "code_postal" :"5000",    "localite":"NAMUR"      }}
@@ -588,6 +612,80 @@
       "fields": {
         "proprietaire": "1",
         "batiment": "1"
+      }
+    },
+    {
+      "model": "main.fonction",
+      "pk": 1,
+      "fields": {
+        "nom_fonction": "Secrétaire"
+      }
+    },
+    {
+      "model": "main.fonction",
+      "pk": 2,
+      "fields": {
+        "nom_fonction": "Gérant"
+      }
+    },
+    {
+      "model": "main.fonction",
+      "pk": 3,
+      "fields": {
+        "nom_fonction": "Courtier"
+      }
+    },
+    {
+      "model": "main.societe",
+      "pk": 1,
+      "fields": {
+        "nom": "Waouw Events",
+        "localite": "187"
+      }
+    },
+    {
+      "model": "main.societe",
+      "pk": 2,
+      "fields": {
+        "nom": "James travaux",
+        "localite": "323"
+      }
+    },
+    {
+      "model": "main.societe",
+      "pk": 3,
+      "fields": {
+        "nom": "Mignon Electricité",
+        "localite": "171"
+      }
+    },
+    {
+      "model": "main.professionnel",
+      "pk": 3,
+      "fields": {
+        "societe": "3",
+        "personne": "10",
+        "fonction": "2"
+      }
+    }
+  ,
+    {
+      "model": "main.professionnel",
+      "pk": 3,
+      "fields": {
+        "societe": "2",
+        "personne": "9",
+        "fonction": "2"
+      }
+    }
+  ,
+    {
+      "model": "main.professionnel",
+      "pk": 3,
+      "fields": {
+        "societe": "1",
+        "personne": "11",
+        "fonction": "2"
       }
     }
 ]

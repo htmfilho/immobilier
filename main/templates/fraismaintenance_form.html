@@ -20,7 +20,7 @@
     <label>Batiment</label>
     {% if frais.batiment %}
     <input type="hidden" value="{{ frais.batiment.id }}" name="batiment_id"/>
-    <input class="form-control" value="{{ frais.batiment }}" name="batiment">
+    <input class="form-control" value="{{ frais.batiment }}" name="batiment" readonly>
     {% else %}
     <select class="form-control" name="batiment_id" >
       {%if frais.batiment %}
@@ -44,7 +44,13 @@
 <div class="row">
   <div class="col-md-6">
     <label>Entrepreneur</label>
-    <input class="form-control"  value="{{ frais.entrepreneur | default_if_none:'' }}" name="entrepreneur">
+    <select class="form-control" name="entrepreneur">
+      <option value="">-</option>
+      {% for entrepreneur in entrepreneurs%}
+      <option value="{{entrepreneur.id}}" {%if frais.entrepreneur.id = entrepreneur.id%}selected{%endif%}>{{entrepreneur}}</option>
+      {%endfor%}
+    </select>
+
   </div>
   <div class="col-md-6">
   </div>
@@ -58,7 +64,9 @@
 <div class="row">
   <div class="col-md-3">
     <label>Montant</label>
-    <input class="form-control" value="{{ frais.montant | default_if_none:'' }}" name="montant" required>
+    <input class="form-control"
+           value="{{frais.montant | default_if_none:''}}"
+           name="montant">
   </div>
   <div class="col-md-3">
     <label>Date réalisation</label>

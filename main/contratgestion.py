@@ -43,7 +43,7 @@ def update(request):
     gestion = None
     batiment = None
     personne = None
-    print(request.POST.get('action', None))
+
     if request.POST.get('action', None) == 'new':
         gestion = ContratGestion()
         batiment = get_object_or_404(Batiment, pk=request.POST.get('batiment_id', None))

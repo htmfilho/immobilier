@@ -85,18 +85,20 @@ class ProprietaireForm(forms.ModelForm):
         self.helper.add_input(Submit('submit', 'Ok'))
 
 
-class FraisMaintenanceForm(ModelForm):
+class FraisMaintenanceForm(forms.Form):
+    date_realisation = forms.DateField(required=False, input_formats=['%d/%m/%Y'],
+                                       widget=forms.DateInput(format='%d/%m/%Y'))
+    montant = forms.DecimalField(required=True, max_digits=8, decimal_places=2, localize=True)
 
-    class Meta:
-        model = FraisMaintenance
-        fields = ['batiment', 'entrepreneur', 'description', 'montant', 'date_realisation']
+    def __init__(self, *args, **kwargs):
+        super(FraisMaintenanceForm, self).__init__(*args, ** kwargs)
 
 
 class SocieteForm(ModelForm):
 
     class Meta:
         model = Societe
-        fields = ['nom', 'description', 'rue', 'numero', 'boite', 'lieu_dit', 'code_postal', 'localite', 'personnel']
+        fields = ['nom', 'description', 'rue', 'numero', 'boite', 'lieu_dit', 'code_postal', 'localite']
 
     def __init__(self, *args, **kwargs):
         super(SocieteForm, self).__init__(*args, ** kwargs)
@@ -195,3 +197,11 @@ class ContratGestionForm(ModelForm):
                 self.errors['date_debut'] = 'Dates erronées'
 
         return cleaned_data
+
+
+class SuiviForm(forms.Form):
+    date_paiement_reel = forms.DateField(required=False, input_formats=['%d/%m/%Y'],
+                                         widget=forms.DateInput(format='%d/%m/%Y'))
+
+    def __init__(self, *args, **kwargs):
+        super(SuiviForm, self).__init__(*args, ** kwargs)

@@ -1,55 +1,70 @@
 {% extends "layout.html" %}
 {% block breadcrumb %}
-  <li><a href="{% url 'honoraire-list' %}">Liste honoraires</a></li>
-  <li class="active">Honoraire</li>
+<li><a href="{% url 'honoraire-list' %}">Liste honoraires</a></li>
+<li class="active">Honoraire</li>
 {% endblock %}
 {% block content %}
 
-  <form method="post" action="{% url 'honoraire-update' %}">
+<form method="post" action="{% url 'honoraire-update' %}">
     {% csrf_token %}
     <input type="hidden" id="previous" name="previous" value="{{request.META.HTTP_REFERER }}"/>
     <input type="hidden" value="{{ honoraire.id }}" name="honoraire_id"/>
+    <input type="hidden" name="next"
+           value="{{next}}" />
     <div class="row">
-      <div class="col-md-6">
-          <label for="date_paiement">Date paiement</label>
-          <input class="form-control" name="date_paiement" value="{{ honoraire.date_paiement|date:"j/m/Y"| default_if_none:'' }}" >
-      </div>
-      <div class="col-md-6">
-          <label for="etat">Etat</label>
-          <select class="form-control"  name="etat" id ="etat" >
-            {% if honoraire.etat == 'A_VERIFIER' %}
-            <option value="A_VERIFIER" selected>A vérifier</option>
-            {% else %}
-            <option value="A_VERIFIER">A vérifier</option>
-            {% endif %}
-            {% if honoraire.etat == 'IMPAYE' %}
-            <option value="IMPAYE" selected>Impayé</option>
-            {% else %}
-            <option value="IMPAYE">Impayé</option>
-            {% endif %}
-            {% if honoraire.etat == 'EN_RETARD' %}
-            <option value="EN_RETARD" selected>En retard</option>
-            {% else %}
-            <option value="EN_RETARD">En retard</option>
-            {% endif %}
-            {% if honoraire.etat == 'PAYE' %}
-            <option value="PAYE" selected>Payé</option>
-            {% else %}
-            <option value="PAYE">Payé</option>
-            {% endif %}
-
-          </select>
-      </div>
+        <div class="col-md-4">
+            <label>Date paiement attendu</label>
+            <input class="form-control"
+                   name="date_paiement"
+                   value="{{ honoraire.date_paiement|date:" j/m/Y"| default_if_none:'' }}" readonly>
+        </div>
+        <div class="col-md-6">
+            <label for="etat">Etat</label>
+            <select class="form-control" name="etat" id="etat">
+                {% if honoraire.etat == 'A_VERIFIER' %}
+                <option value="A_VERIFIER" selected>A vérifier</option>
+                {% else %}
+                <option value="A_VERIFIER">A vérifier</option>
+                {% endif %}
+                {% if honoraire.etat == 'IMPAYE' %}
+                <option value="IMPAYE" selected>Impayé</option>
+                {% else %}
+                <option value="IMPAYE">Impayé</option>
+                {% endif %}
+                {% if honoraire.etat == 'EN_RETARD' %}
+                <option value="EN_RETARD" selected>En retard</option>
+                {% else %}
+                <option value="EN_RETARD">En retard</option>
+                {% endif %}
+                {% if honoraire.etat == 'PAYE' %}
+                <option value="PAYE" selected>Payé</option>
+                {% else %}
+                <option value="PAYE">Payé</option>
+                {% endif %}
+            </select>
+        </div>
+    </div>
+    <br>
+    <div class="row">
+        <div class="col-md-12">
+            <label>Contrat</label>
+            {% if honoraire.contrat_gestion %}
+            <input class="form-control"
+                   value="{{ honoraire.contrat_gestion | default_if_none:'' }}" readonly style="border:none;">
+            {%endif%}
+            {% if honoraire.contrat_location %}
+            <input class="form-control"
+                   value="{{ honoraire.contrat_location | default_if_none:'' }}" readonly>
+            {%endif%}
+        </div>
+    </div>
+    <br>
+    <div class="row">
+        <div class="pull-right">
+            <input type="submit" value="Ok" class="btn btn-primary" >
+            <input type="submit" value="Annuler" class="btn btn-default" name="bt_cancel">
+            </div>
     </div>
 
-
-    <div class="row">
-      <div class="col-md-11">
-      </div>
-      <div class="col-md-1">
-        <input type="submit" value="OK">
-      </div>
-    </div>
-
-  </form>
+</form>
 {% endblock %}

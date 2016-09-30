@@ -1,6 +1,29 @@
+##############################################################################
+#
+#    Immobilier it's an application
+#    designed to manage the core business of property management, buildings,
+#    rental agreement and so on.
+#
+#    Copyright (C) 2016-2017 Verpoorten Leïla
+#
+#    This program is free software: you can redistribute it and/or modify
+#    it under the terms of the GNU General Public License as published by
+#    the Free Software Foundation, either version 3 of the License, or
+#    (at your option) any later version.
+#
+#    This program is distributed in the hope that it will be useful,
+#    but WITHOUT ANY WARRANTY; without even the implied warranty of
+#    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#    GNU General Public License for more details.
+#
+#    A copy of this license - GNU General Public License - is available
+#    at the root of the source code of this program.  If not,
+#    see http://www.gnu.org/licenses/.
+#
+##############################################################################
 from django.conf import settings
 from . import views, batiment, proprietaire, suivis, alertes, contratlocation, financement, locataire, contratgestion, \
-    frais, honoraire, personne, tests, test3, assurance
+    frais, honoraire, personne, tests, test3, assurance, fonction, societe
 from django.conf.urls import url
 from django.contrib.auth.views import login,logout
 
@@ -140,6 +163,8 @@ urlpatterns = [
 
     url(r'^assurance_create/$', assurance.create, name='assurance_create'),
     url(r'^prolongation/$', contratlocation.prolongation, name='prolongation'),
+    url(r'^fonction_create/$', fonction.create, name='fonction_create'),
+    url(r'^societes_liste/$', societe.societe_liste, name='societe_liste'),
 
 
 ]

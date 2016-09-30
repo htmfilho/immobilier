@@ -19,8 +19,8 @@
       <tr>
           <td>{{ alerte.description| default_if_none:'' }}</td>
           <td>{{ alerte.date_alerte|date:"j/m/Y" | default_if_none:'' }}</td>
-          <td>{% if alerte.contratGestion%}{{ alerte.contratGestion }}{%endif%}</td>
-          <td>{% if alerte.contratLocation%}{{alerte.contratLocation.batiment}}, {{ alerte.contratLocation.date_debut|date:"j/m/Y" }}-{{ alerte.contratLocation.date_fin|date:"j/m/Y" }}{%endif%}</td>
+          <td>{% if alerte.contrat_gestion%}{{ alerte.contrat_gestion }}{%endif%}</td>
+          <td>{% if alerte.contrat_location%}{{alerte.contrat_location.batiment}}, {{ alerte.contrat_location.date_debut|date:"j/m/Y" }}-{{ alerte.contrat_location.date_fin|date:"j/m/Y" }}{%endif%}</td>
           <td>{{ alerte.etat| default_if_none:'' }}</td>
           <td>
             <a href="{% url 'alerte-update' alerte.pk %}" title="Passe à l'état vérifier"><img src="{% static 'images/glyphicons-153-check.png' %}"/></a>
