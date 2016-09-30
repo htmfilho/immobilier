@@ -51,11 +51,9 @@ def search(request):
 
 
 def update(request):
-
     form = PersonneForm(data=request.POST)
     if request.POST['personne_id'] and not request.POST['personne_id'] == 'None':
         personne = get_object_or_404(Personne, pk=request.POST['personne_id'])
-
     else:
         personne = Personne()
 

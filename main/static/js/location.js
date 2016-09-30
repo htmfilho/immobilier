@@ -174,6 +174,10 @@ $("#date_debut").blur(function() {
         });
 
     });
+    $("#btn_clean_personnes").click(function(event) {
+        $("#nom").val('');
+        $("#prenom").val('');
+    });
 
 
 

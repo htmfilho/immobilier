@@ -19,7 +19,8 @@
           </div>
           <div class="col-md-4">
             <label class="invisible">&nbsp;</label>
-            <div class="btnbtn-as-block"><input type="submit" value="OK" name="btn" ><input type="button" value="Clean" name="btn" onclick="javascript:document.getElementById('nom').value='';" ></div>
+            <div class="btnbtn-as-block"><input type="submit" value="OK" name="btn">
+                <input type="button" value="Clean" name="btn" id="btn_clean_personnes" style="visibility:hidden;display:none;" ></div>
           </div>
         </div>
       </form>
@@ -58,8 +59,9 @@
                   {% endif %}
               </td>
               <td>{% if personne.profession %}
-                  {{ personne.profession }}
+                  &nbsp;{{ personne.profession }}
                   {% endif %}
+
               </td>
               <td>
                 {% if personne.batiments %}

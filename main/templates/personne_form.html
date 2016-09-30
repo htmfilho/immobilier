@@ -1,7 +1,6 @@
 {% extends "layout.html" %}
 {% block breadcrumb %}
-  <li><a href="{% url 'personne_list' %}">Personnes</a></li>
-  <li class="active">Personne</li>
+
 {% endblock %}
 {% block content %}
 
@@ -9,19 +8,20 @@
     {% csrf_token %}
     <input type="hidden" id="previous" name="previous" value="{{request.META.HTTP_REFERER }}"/>
     <input type="hidden" value="{{ personne.id }}" name="personne_id"/>
+    {{form.errors}}
     <div class="row">
       <div class="col-md-6">
-          <label for="nom">Nom</label>
-          <input class="form-control" name="nom" value="{{ personne.nom| default_if_none:'' }}" >
+          <label>Nom</label>
+          <input class="form-control" name="nom" id="txt_nom" value="{{ personne.nom| default_if_none:'' }}" >
       </div>
       <div class="col-md-6">
-          <label for="prenom">Prénom</label>
-          <input class="form-control" name="prenom" value="{{ personne.prenom| default_if_none:'' }}" >
+          <label>Prénom</label>
+          <input class="form-control" name="prenom" id="txt_prenom" value="{{ personne.prenom| default_if_none:'' }}" >
       </div>
     </div>
     <div class="row">
       <div class="col-md-6">
-          <label for="email">Email</label>
+          <label>Email</label>
           <input class="form-control" name="email" value="{{ personne.email| default_if_none:'' }}" ><font style="color:red">{{ form.email.errors }}</font>
       </div>
       <div class="col-md-6">
@@ -44,7 +44,7 @@
           <input class="form-control" name="profession" value="{{ personne.profession| default_if_none:'' }}" >
       </div>
       <div class="col-md-6">
-        <label for="num_identite">num identite</label>
+        <label for="num_identite">Num identite</label>
         <input class="form-control" name="num_identite" value="{{ personne.num_identite| default_if_none:'' }}" ><font style="color:red">{{ form.num_identite.errors }}</font>
       </div>
     </div>

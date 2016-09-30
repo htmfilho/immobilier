@@ -30,7 +30,7 @@ def get_pays_choix():
     return choices_tuple
 
 
-class PersonneForm(ModelForm):
+class PersonneForm(forms.Form):
     # fonctionnepays_naissance = forms.ChoiceField(choices=get_pays_choix())
     class Meta:
         model = Personne
@@ -45,14 +45,8 @@ class PersonneForm(ModelForm):
             return self.cleaned_data['num_identite']
 
     def __init__(self, *args, **kwargs):
-
         super(PersonneForm, self).__init__(*args, ** kwargs)
 
-        self.helper = FormHelper()
-        self.helper.form_class = 'form-horizontal'
-        self.helper.label_class = 'col-md-offset-1 col-md-2'
-        self.helper.field_class = 'col-md-8'
-        self.helper.add_input(Submit('submit', 'Ok'))
 
 
 class BatimentForm(ModelForm):

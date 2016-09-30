@@ -76,6 +76,17 @@ def get_pays_choix():
     return choices_tuple
 
 
+
+class Fonction(models.Model):
+    nom_fonction = models.CharField(max_length=100, blank=False, null=False)
+
+    @staticmethod
+    def find_all():
+        return Fonction.objects.all().order_by('nom_fonction')
+
+    def __str__(self):
+        return str(self.nom_fonction)
+
 class Personne(models.Model):
     nom = models.CharField(max_length=100)
     prenom = models.CharField(max_length=100)
@@ -150,6 +161,7 @@ class Personne(models.Model):
                 pays = Pays(pays=self.pays_naissance)
                 pays.save()
         return p
+
 
 
 class Batiment(models.Model):
@@ -488,17 +500,46 @@ class Societe(models.Model):
             ch = ch + ", " + self.localite.localite
         return ch
 
-
-class Fonction(models.Model):
-    nom_fonction = models.CharField(max_length=100, blank=False, null=False)
+class Professionnel(models.Model):
+    personne = models.ForeignKey(Personne, blank=True, null=True)
+    societe = models.ForeignKey(Societe, blank=True, null=True)
+    fonction = models.ForeignKey(Fonction, blank=True, null=True)
 
     @staticmethod
     def find_all():
-        return Fonction.objects.all().order_by('nom_fonction')
+        return Professionnel.objects.all().order_by('societe')
+
+    @staticmethod
+    def search(personne=None, societe=None, fonction=None):
+        out = None
+        queryset = Professionnel.objects
+        if personne:
+            queryset = queryset.filter(personne=personne)
+        if societe:
+            queryset = queryset.filter(societe=societe)
+        if fonction:
+            queryset = queryset.filter(fonction=fonction)
+        if personne or societe or fonction:
+            out = queryset
+        return out
 
     def __str__(self):
-        return str(self.nom_fonction)
+        ch = ""
+        if self.societe:
+            ch = ch + " " + str(self.societe)
+        else:
+            ch = ch + " "
 
+        if self.personne:
+            ch = ch + "-" + str(self.personne)
+        else:
+            ch = " "
+
+        if self.fonction:
+            ch = ch + "-" + str(self.fonction)
+        else:
+            ch = ch + " "
+        return ch
 
 class Locataire(models.Model):
     CIVILITE = (
@@ -547,46 +588,6 @@ class Locataire(models.Model):
 
 
 
-class Professionnel(models.Model):
-    personne = models.ForeignKey(Personne, blank=True, null=True)
-    societe = models.ForeignKey(Societe, blank=True, null=True)
-    fonction = models.ForeignKey(Fonction, blank=True, null=True)
-
-    @staticmethod
-    def find_all():
-        return Professionnel.objects.all().order_by('societe')
-
-    @staticmethod
-    def search(personne=None, societe=None, fonction=None):
-        out = None
-        queryset = Professionnel.objects
-        if personne:
-            queryset = queryset.filter(personne=personne)
-        if societe:
-            queryset = queryset.filter(societe=societe)
-        if fonction:
-            queryset = queryset.filter(fonction=fonction)
-        if personne or societe or fonction:
-            out = queryset
-        return out
-
-    def __str__(self):
-        ch = ""
-        if self.societe:
-            ch = ch + " " + str(self.societe)
-        else:
-            ch = ch + " "
-
-        if self.personne:
-            ch = ch + "-" + str(self.personne)
-        else:
-            ch = " "
-
-        if self.fonction:
-            ch = ch + "-" + str(self.fonction)
-        else:
-            ch = ch + " "
-        return ch
 
 
 class FraisMaintenance(models.Model):
