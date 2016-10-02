@@ -121,19 +121,23 @@ def dashboard(request):
 
 def home(request):
     suivis = SuiviLoyer.find_suivis_a_verifier_proche()
-
+    suivis_recus = SuiviLoyer.find_suivis_by_etat_suivi(timezone.now(),'PAYE')
+    suivis_non_paye = SuiviLoyer.find_suivis_by_pas_etat_suivi(timezone.now(),'PAYE')
     return render(request, 'myhome.html',
-                  {'alertes':        Alerte.find_by_etat_today('A_VERIFIER'),
-                   'batiments':      Batiment.find_my_batiments(),
-                   'contrats':       ContratGestion.find_my_contrats(),
-                   'honoraires':     Honoraire.find_honoraires_by_etat_today('A_VERIFIER'),
-                   'suivis':         suivis,
-                   'previous':       request.POST.get('previous', None)})
+                  {'alertes':         Alerte.find_by_etat_today('A_VERIFIER'),
+                   'batiments':       Batiment.find_my_batiments(),
+                   'contrats':        ContratGestion.find_my_contrats(),
+                   'honoraires':      Honoraire.find_honoraires_by_etat_today('A_VERIFIER'),
+                   'suivis':          suivis,
+                   'previous':        request.POST.get('previous', None),
+                   'suivis_recus':    suivis_recus,
+                   'suivis_non_paye': suivis_non_paye,
+                   'locataires':      Locataire.find_my_locataires() })
 
 
 def listeBatiments(request):
     batiments = Batiment.objects.all()
-    return render(request, 'listeBatiments.html', {'batiments': batiments})
+    return render(request, 'listeBatiments.html', {'batiments': batiments, 'proprietaires': Proprietaire.find_distinct_proprietaires()})
 
 
 def listeBatiments_filtrer(request, personne_id):

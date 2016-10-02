@@ -16,6 +16,7 @@
   <div class="col-md-3">
     <label for="etat">Etat</label>
     <select class="form-control"  name="etat" id ="etat" >
+      <option value="">-</option>
       {% if etat == 'A_VERIFIER' %}
       <option value="A_VERIFIER" selected>A vérifier</option>
       {% else %}
@@ -36,11 +37,7 @@
       {% else %}
       <option value="PAYE">Payé</option>
       {% endif %}
-      {% if etat == 'TOUS' %}
-      <option value="TOUS" selected>Tous</option>
-      {% else %}
-      <option value="TOUS">Tous</option>
-      {% endif %}
+
     </select>
   </div>
   <div class="col-md-3">

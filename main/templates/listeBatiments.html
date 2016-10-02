@@ -2,42 +2,55 @@
 {% load staticfiles %}
 {% block breadcrumb %}
 
-  <li class="active">Liste des batiments</li>
-  {% if filtre%}
-  <li >Filtrer par {{filtre}}</li>
-  {%endif%}
-
 {% endblock %}
 {% block content %}
+
 {% if filtre%}
 <a href="{% url 'listeBatiments' %}">Voir tous les batiments</a>
 {%endif%}
+    <!-- Filtre -->
+    <div>
+      <form method="get"
+            action="{% url 'batiment_search'%}" >
+        <div class="row">
+          <div class="col-md-4">
+              <label>Propriétaires</label>
+              <select id="slt_proprietaire"
+                      name="proprietaire">
+                  <option value="">-</option>
+                  {% for p in proprietaires %}
+                  <option value="{{p.id}}">{{p.proprietaire}}</option>
+                  {% endfor %}
+              </select>
+          </div>
+          <div class="col-md-4">
+
+          </div>
+          <div class="col-md-4">
+            <label class="invisible">&nbsp;</label>
+            <div class="btnbtn-as-block"><input type="submit" value="OK" name="btn"></div>
+          </div>
+        </div>
+      </form>
+    </div>
+    <!-- fin Filtre -->
+<br>
 <div class="panel panel-default">
   <div class="panel-body">
     <br>
         <table class="table table-striped table-hover">
             <thead>
-                <th>Rue</th>
-                <th>Numéro</th>
-                <th>Boite</th>
+                <th>Bien</th>
                 <th>Localité</th>
-                <th colspan="2">Proprio(s)</th>
-                <th>Location actuelle</th>
+                <th>Proprio(s)</th>
+                <th colspan="2">Location actuelle</th>
             </thead>
         {% for batiment in batiments %}
             <tr>
                 <td>
-                  {{ batiment.rue }}
+                  <a href="{% url 'batiment' batiment.pk%}" title="Pour modifier un batiment">{{ batiment.adresse_rue | default_if_none:''}}</a>
                 </td>
-                <td>
-                    {{ batiment.numero| default_if_none:'' }}
-                </td>
-                <td>
-                    {{ batiment.boite| default_if_none:'' }}
-                </td>
-                <td>
-                    {{ batiment.localite| default_if_none:'' }}
-                </td>
+                <td><a href="{% url 'batiment' batiment.pk%}" title="Pour modifier un batiment">{{ batiment.adresse_localite | default_if_none:''}}</a></td>
                 <td>
                     <table>
                     {% for proprietaire in batiment.proprietaires %}
@@ -46,20 +59,31 @@
                     </table>
 
                 </td>
-                <td>
                 <!--  <a href="{% url 'proprietaire-create-batiment' batiment.pk %}" title="Pour ajouter un propriétaire"><span class="glyphicon glyphicon-plus" aria-hidden="true"></span></a>-->
-                </td>
-                </td>
+
 
                 <td>
+                  <table >
+                    {% for p in batiment.locataires_actuels2 %}
+                    <tr>
+                        <td><a href="{% url 'locataire-update' p.id %}">{{  p.personne.nom }} {{  p.personne.prenom }} </a></td>
+                    </tr>
+                  {% endfor%}
+                  </table>
+                </td>
+                <td>
+                    <span style="visibility:hidden;display:none;">
                   {% if batiment.location_actuelle%}
                   {{ batiment.location_actuelle.date_debut|date:"j/m/Y" }} - {{ batiment.location_actuelle.date_fin|date:"j/m/Y" }}
                   {%endif%}
-                  <table style="margin-top:10px;">
-                    {% for p in batiment.locataires_actuels %}
-                    <tr><td>{{  p.nom }} {{  p.prenom }} </td></tr>
-                  {% endfor%}
-                  </table>
+                        </span>
+                    {% if batiment.location_actuelle%}
+                    <table>
+                        <tr><td>Loyer :&nbsp;&nbsp;</td><td>{{batiment.location_actuelle.loyer_base}}</td></tr>
+                        <tr><td>Fin : </td><td>{{batiment.location_actuelle.date_fin|date:"j/m/Y"}}</td></tr>
+                    </table>
+
+{%endif%}
 
               </td>
                 </td>

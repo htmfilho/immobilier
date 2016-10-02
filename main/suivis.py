@@ -37,7 +37,7 @@ def suivis(request):
     return render(request, "suivis.html",
                   {'date_debut':       timezone.now(),
                    'date_fin':         timezone.now() + relativedelta(months=1),
-                   'suivis':           None
+                   'suivis':           SuiviLoyer.find_all()
                   })
 
 

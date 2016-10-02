@@ -52,3 +52,10 @@ def update(request):
     return render(request, "batiment_form.html",
                   {'batiment':     batiment,
                    'localites':    Localite.find_all()})
+
+
+def search(request):
+    proprietaire = request.GET.get('proprietaire',None)
+    batiments = Batiment.search(proprietaire)
+    return render(request, 'listeBatiments.html', {'batiments': batiments,
+                                                   'proprietaires': Proprietaire.find_distinct_proprietaires()})

@@ -13,10 +13,11 @@ def liste_proprietaires(request):
 def proprietaire(request, proprietaire_id):
     proprietaire = Proprietaire.find_proprietaire(proprietaire_id)
     return render(request, "proprietaire_form.html",
-                  {'proprietaire':         proprietaire,
-                   'action':               'update',
-                   'personnes':            Personne.objects.all(),
-                   'prev': request.GET.get('prev')})
+                  {'proprietaire': proprietaire,
+                   'action': 'update',
+                   'personnes': Personne.objects.all(),
+                   'prev': request.GET.get('prev'),
+                   'personne': proprietaire.proprietaire})
 
 
 def add_proprietaire(request, batiment_id):

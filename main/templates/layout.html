@@ -37,7 +37,12 @@
           <!-- Collect the nav links, forms, and other content for toggling -->
           <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
             <ul class="nav navbar-nav">
+              <li><a href="{% url 'listeBatiments' %}">Locaux</a></li>
               <li><a href="{% url 'personne_search' %}">Carnet d'adresses</a></li>
+              <li><a href="{% url 'contratlocation_list' %}">Locations</a><a href="#"></a></li>
+              <li><a href="{% url 'suivis' %}">Finances</a><a href="#"></a></li>
+              <li><a href="{% url 'honoraire-list' %}">Honoraires</a></li>
+              <li><a href="#">Agenda</a></li>
             </ul>
             <ul class="nav navbar-nav navbar-right">
                 <li><a href="/admin" target="_blank"><span class="glyphicon glyphicon-education" aria-hidden="true"></span> Admin</a></li>
@@ -50,12 +55,7 @@
       </nav>
 
       <div class="container">
-        <br/>
-          <ol class="breadcrumb">
-            <li><a href="{% url 'home' %}"><span class="glyphicon glyphicon-home" aria-hidden="true"></span></a></li>
-              </ol>
-            {% block breadcrumb %}
-            {% endblock %}
+
 <br/>
         {% block content %}
         {% endblock %}

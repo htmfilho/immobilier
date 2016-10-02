@@ -40,10 +40,9 @@ def locataire_form(request, id):
 
 
 def update(request, id):
-    print(update)
     locataire = get_object_or_404(Locataire, pk=id)
     return render(request, "locataire_form.html",
-                  {'locataire':         locataire})
+                  {'locataire':         locataire,'personne': locataire.personne})
 
 
 def new(request, location_id):

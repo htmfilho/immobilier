@@ -165,6 +165,7 @@ urlpatterns = [
     url(r'^prolongation/$', contratlocation.prolongation, name='prolongation'),
     url(r'^fonction_create/$', fonction.create, name='fonction_create'),
     url(r'^societes_liste/$', societe.societe_liste, name='societe_liste'),
+    url(r'^batiment/search/$', batiment.search, name='batiment_search'),
 
 
 ]

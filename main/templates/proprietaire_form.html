@@ -4,6 +4,14 @@
   <li class="active">Propriétaire</li>
 {% endblock %}
 {% block content %}
+
+<ul class="nav nav-tabs">
+  <li class="active"><a data-toggle="tab" href="#info_proprietaire">Info Propriétaire</a></li>
+  <li><a data-toggle="tab" href="#info_contact">Info contact</a></li>
+</ul>
+
+<div class="tab-content">
+    <div id="info_proprietaire" class="tab-pane fade in active">
 <div id="ff">
 {{ request.META.HTTP_REFERER }}
   <form method="post" action="{% url 'proprietaire-update-save' %}" id ="proprietaire_form">
@@ -31,7 +39,7 @@
           {%endfor%}
         </select>
       {%endif%}
-    
+
     </div>
   </div>
   <div class="row">
@@ -71,6 +79,12 @@
 </div>
   </form>
 </div>
+    </div>
+    <div id="info_contact" class="tab-pane fade ">
+      {% include 'personne_form.html'%}
+    </div>
+</div>
+
   {%if message%}
   <br>
     <div class="alert alert-danger" role="alert" id="message">{{message}}</div>

@@ -29,6 +29,9 @@ from dateutil.relativedelta import relativedelta
 from django.core.urlresolvers import reverse
 from django.db.models import Q
 from django.db.models import Sum
+from calendar import monthrange
+import datetime
+import calendar
 
 
 class Localite(models.Model):
@@ -192,6 +195,13 @@ class Batiment(models.Model):
             return Proprietaire.find_batiment_by_personne(personne)
         return None
 
+    @staticmethod
+    def search(proprietaire=None):
+        if proprietaire and proprietaire!="":
+            proprio = Proprietaire.find_proprietaire(proprietaire)
+            return Proprietaire.find_batiment_by_personne(proprio.proprietaire)
+        return Batiment.objects.all()
+
     def __str__(self):
         desc = ""
         cptr = 0
@@ -208,7 +218,7 @@ class Batiment(models.Model):
                 desc += ", "
             desc += self.boite
             cptr = cptr + 1
-        if not(self.localite is None):
+        if self.localite is not None:
             if cptr > 0:
                 desc += ", "
             desc += str(self.localite.localite)
@@ -234,7 +244,6 @@ class Batiment(models.Model):
         return Proprietaire.objects.filter(batiment=self)
 
     def contrats_location(self):
-        print('contrats_location')
         return ContratLocation.objects.filter(batiment=self)
 
     def contrats_location_next(self):
@@ -279,10 +288,10 @@ class Batiment(models.Model):
                 locataire = Locataire.objects.filter(contrat_location=contrat)
                 for l in locataire:
                     if l not in liste:
-
                         liste.append(l)
 
         return liste
+
     @property
     def location_actuelle(self):
         l = ContratLocation.objects.filter(batiment=self, 
@@ -348,18 +357,36 @@ class Proprietaire(models.Model):
         list_p = Proprietaire.objects.filter(proprietaire=personne)
         batiments = []
         for p in list_p:
-            batiments.append(p.batiment)
+            if p.batiment:
+                batiments.append(p.batiment)
         return batiments
 
     @property
     def batiments(self):
         return Batiment.objects.filter(proprietaire=self)
 
+    @staticmethod
+    def find_all():
+        return Proprietaire.objects.all().order_by('proprietaire')
+
+    @staticmethod
+    def find_distinct_proprietaires():
+        results = Proprietaire.objects.all().order_by('proprietaire')
+        liste = []
+        liste_personne = []
+        for result in results:
+            if result.proprietaire not in liste_personne:
+                liste.append(result)
+                liste_personne.append(result.proprietaire)
+        return liste
+
     def __str__(self):
-        return self.proprietaire.nom + ", " + \
-               self.proprietaire.prenom + "-" + \
-               self.batiment.rue + ", " + \
-               self.batiment.localite
+        ch = ""
+        ch = ch + self.proprietaire.nom
+        ch = ch + self.proprietaire.prenom
+        ch = ch + self.batiment.rue
+        ch = ch + self.batiment.localite.localite
+        return ch
 
     def get_absolute_url(self):
         return reverse('proprietaire_list')
@@ -434,6 +461,7 @@ class ContratLocation(models.Model):
             update_suivi_alerte(date_debut_nouveau_fin, self, dernier_financement,  self.date_fin + relativedelta(days=1), 'LOCATION')
         return c
 
+
     class Meta:
         ordering = ['date_debut']
 
@@ -488,7 +516,6 @@ class Societe(models.Model):
         for ll in l:
             print(ll)
         return l
-
 
     @staticmethod
     def find_all():
@@ -550,7 +577,7 @@ class Locataire(models.Model):
         ('MAITRE', 'Maitre'),
         ('DOCTEUR', 'Docteur'),
     )
-    personne = models.ForeignKey(Personne,error_messages={'unique': 'Please enter your name'})
+    personne = models.ForeignKey(Personne, error_messages={'unique': 'Please enter your name'})
     contrat_location = models.ForeignKey(ContratLocation, default=None)
     infos_complement = models.TextField(blank=True, null=True)
     principal = models.BooleanField(default=True)
@@ -586,8 +613,15 @@ class Locataire(models.Model):
             professionnel.save()
         return c
 
-
-
+    @staticmethod
+    def find_my_locataires():
+        personne = Personne.find_gestionnaire_default()
+        l=[]
+        if personne:
+            batiments = Proprietaire.find_batiment_by_personne(personne)
+            for b in batiments:
+                l.extend(b.locataires_actuels2())
+        return l
 
 
 class FraisMaintenance(models.Model):
@@ -629,11 +663,27 @@ class SuiviLoyer(models.Model):
         ordering = ['date_paiement']
 
     @staticmethod
-    def find_suivis(date_d, date_f, etat):
-        if etat is None:
-            return SuiviLoyer.objects.filter(date_paiement__gte=date_d, date_paiement__lte=date_f)
-        else:
-            return SuiviLoyer.objects.filter(date_paiement__gte=date_d, date_paiement__lte=date_f, etat_suivi=etat)
+    def find_suivis(date_d_param, date_f_param, etat_param):
+        etat =None
+        if etat_param !="":
+            etat = etat_param
+        date_d=None
+        if date_d_param!="":
+            date_d=date_d_param
+        date_f = None
+        if date_f_param!="":
+            date_f=date_f_param
+        out = None
+        queryset = SuiviLoyer.objects
+        if etat:
+            queryset = queryset.filter(etat_suivi=etat)
+        if date_d:
+            queryset = queryset.filter(date_paiement__gte=date_d)
+        if date_f:
+            queryset = queryset.filter(date_paiement__lte=date_f)
+        if etat or date_d or date_f:
+            out = queryset
+        return out
 
     @staticmethod
     def find_suivis_a_verifier(date_d, date_f):
@@ -646,6 +696,22 @@ class SuiviLoyer(models.Model):
     def find_suivis_a_verifier_proche():
         return SuiviLoyer.objects.filter(Q(date_paiement__lte=timezone.now() + relativedelta(months=2),
                                            etat_suivi='A_VERIFIER'))
+
+    @staticmethod
+    def find_suivis_by_etat_suivi(date_ref, etat_suivi):
+        start_date = datetime.datetime(date_ref.year, date_ref.month, 1)
+        end_date = datetime.datetime(date_ref.year, date_ref.month, calendar.mdays[date_ref.month])
+        return SuiviLoyer.objects.filter(date_paiement__lte=end_date,date_paiement__gte=start_date,
+                                           etat_suivi=etat_suivi)
+    @staticmethod
+    def find_suivis_by_pas_etat_suivi(date_ref, etat_suivi):
+        start_date = datetime.datetime(date_ref.year, date_ref.month, 1)
+        end_date = datetime.datetime(date_ref.year, date_ref.month, calendar.mdays[date_ref.month])
+        return SuiviLoyer.objects.filter(date_paiement__lte=end_date, date_paiement__gte=start_date)\
+            .exclude(etat_suivi=etat_suivi)
+    @staticmethod
+    def find_all():
+        return SuiviLoyer.objects.all()
 
     def __str__(self):
         desc = ""

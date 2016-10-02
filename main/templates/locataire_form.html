@@ -1,9 +1,15 @@
 {% extends "layout.html" %}
 {% block breadcrumb %}
 
-  <li class="active">Locataire</li>
 {% endblock %}
 {% block content %}
+<ul class="nav nav-tabs">
+  <li class="active"><a data-toggle="tab" href="#info_locataire">Info locataire</a></li>
+  <li><a data-toggle="tab" href="#info_contact">Info contact</a></li>
+</ul>
+
+<div class="tab-content">
+    <div id="info_locataire" class="tab-pane fade in active">
 <div class="panel panel-default">
   <div class="panel-body">
     <form  method="post" action="{% url 'locataire-add' %}">
@@ -146,8 +152,18 @@
         <input type="submit" value="Cancel" name="bt_cancel">
       </div>
     </form>
+
 </div>
 </div>
+    </div>
+    <div id="info_contact" class="tab-pane fade ">
+      {% include 'personne_form.html'%}
+    </div>
+</div>
+
+
+
+
 <!-- Ajout personne modal -->
 <div class="modal fade" id="ajoutPersonneModal" tabindex="-1" role="dialog" aria-labelledby="submissionScoresLabel">
     <div class="modal-dialog" role="document">
