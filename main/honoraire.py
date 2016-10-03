@@ -34,9 +34,11 @@ from main.forms import HonoraireForm
 
 def list(request):
     date_limite = timezone.now() - relativedelta(days=15)
+    honoraires = Honoraire.find_by_batiment_etat_date(None, 'A_VERIFIER', date_limite)
+    batiments = Honoraire.find_all_batiments()
     return render(request, "honoraire_list.html",
-                  {'honoraires':  Honoraire.find_by_batiment_etat_date(None,'A_VERIFIER', date_limite),
-                   'batiments':   Honoraire.find_all_batiments(),
+                  {'honoraires':  honoraires,
+                   'batiments':   batiments  ,
                    'date_limite': date_limite,
                    'etat':        'A_VERIFIER',
                    'batiment':    None})
@@ -45,21 +47,22 @@ def list(request):
 def search(request):
     batiment_id = None
     if not request.GET['batiment_id'] is None and not request.GET['batiment_id'] == 'TOUS':
-        batiment_id = request.GET['batiment_id']
+        batiment_id = int(request.GET['batiment_id'])
 
     etat = None
     etat_query = None
-    if not request.GET['etat'] is None :
+    if not request.GET['etat'] is None:
         etat = request.GET['etat']
     if not request.GET['etat'] is None and not request.GET['etat'] == 'TOUS':
         etat_query = request.GET['etat']
     date_limite = None
 
-    if not request.GET.get('date_limite') is None and not request.GET.get('date_limite')== 'None' and not request.GET.get('date_limite')== '':
+    if not request.GET.get('date_limite') is None and not request.GET.get('date_limite') == 'None' \
+            and not request.GET.get('date_limite') == '':
         date_limite = datetime.strptime(request.GET.get('date_limite'), '%d/%m/%Y')
 
     return render(request, "honoraire_list.html",
-                  {'honoraires':   Honoraire.find_by_batiment_etat_date(batiment_id,etat_query,date_limite),
+                  {'honoraires':   Honoraire.find_by_batiment_etat_date(batiment_id, etat_query, date_limite),
                    'batiments':    Honoraire.find_all_batiments(),
                    'date_limite':  date_limite,
                    'etat':         etat,
@@ -69,6 +72,7 @@ def search(request):
 def update(request):
     next_page = request.POST.get('next', None)
     form = HonoraireForm(data=request.POST)
+    honoraire = None
     if 'bt_cancel' not in request.POST:
         if request.POST['honoraire_id'] and not request.POST['honoraire_id'] == 'None':
             honoraire = get_object_or_404(Honoraire, pk=request.POST['honoraire_id'])
@@ -90,7 +94,7 @@ def update(request):
             else:
                 return render(request, "honoraire_list.html", {'honoraires': Honoraire.find_all()})
         else:
-            return render(request, "honoraire_form.html", {'honoraire': honoraire,'form': form})
+            return render(request, "honoraire_form.html", {'honoraire': honoraire, 'form': form})
     else:
         return HttpResponseRedirect(reverse('home'))
 

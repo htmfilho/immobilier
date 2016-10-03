@@ -179,7 +179,45 @@ $("#date_debut").blur(function() {
         $("#prenom").val('');
     });
 
+    $("#bt_honoraire_search").click(function() {
+        $("#spn_date_limite").html();
+        if(isDate($("#txt_date_limite").val())){
+            return true;
+        }else{
+            $("#spn_date_limite").html('Date invalide');
+            return false;
+        }
+    });
+    $("#bt_fraismaintenance_save").click(function() {
+        $("#spn_date_realisation").html();
+        if($("#txt_date_realisation").val()!=''){
+            if(isDate($("#txt_date_realisation").val())){
+                return true;
+            }else{
+                $("#spn_date_realisation").html('Date invalide');
+                return false;
+            }
+        }
+    });
+    $("#date_debut_suivi").dblclick(function() {
+        $("#date_debut_suivi").val(date_jour());
 
+    });
+    $("#date_fin_suivi").dblclick(function() {
+        $("#date_fin_suivi").val(date_jour());
+
+    });
+    function date_jour(){
+        var d = new Date();
+        var strDate = d.getDate() + "/"+ (d.getMonth()+1)+"/" +d.getFullYear() ;
+        return strDate;
+    }
+    $("#bt_contrat_gestion_update").click(function() {
+        if($("#slt_batiment_id").val()=='' || $("#txt_montant_mensuel").val()=='' || $("#date_debut").val()=='' || $("#date_fin").val()==''){
+            return false;
+        }
+        return true;
+    });
 
 
 

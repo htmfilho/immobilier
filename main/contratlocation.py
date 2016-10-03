@@ -33,7 +33,8 @@ def update(request):
         location.assurance = None
 
     if form.is_valid():
-        if prolongation_action and request.POST.get('type_prolongation') == '1':
+        if prolongation_action and (request.POST.get('type_prolongation') == '1'
+                                    or request.POST.get('type_prolongation') == '7'):
             # Les financements seront adaptés via le save
             location.save_prolongation(int(request.POST.get('type_prolongation')))
         else:

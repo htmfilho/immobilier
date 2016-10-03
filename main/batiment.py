@@ -46,12 +46,16 @@ def update(request):
             batiment.performance_energetique = float(request.POST['performance_energetique'].strip().replace(',', '.'))
         else:
             batiment.performance_energetique = None
-
+        if request.POST['description']:
+            batiment.description = request.POST['description']
+        else:
+            batiment.description = None
         batiment.save()
-
+    message_info = "ok"
     return render(request, "batiment_form.html",
                   {'batiment':     batiment,
-                   'localites':    Localite.find_all()})
+                   'localites':    Localite.find_all(),
+                   'message_info': message_info})
 
 
 def search(request):

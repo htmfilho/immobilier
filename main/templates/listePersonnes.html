@@ -4,25 +4,25 @@
 {% endblock %}
 {% block content %}
 
-            <table class="table table-striped table-hover">
-                <thead>
-                    <th>Personne</th>
-                    <th>Adresse</th>
-                    <th>Batiment</th>
-                </thead>
-            {% for personne in personnes %}        
-                <tr>
-                    <td>
-                        <a href="{% url 'personne' personne.id %}">{{ personne }}</a>
-                    </td>
-                    <td>
-                        
-                    </td>
-                    <td>
-                    </td>
-                </tr>
-            {% endfor%}
-            </table>    
+<table class="table table-striped table-hover">
+    <thead>
+        <th>Personne</th>
+        <th>Adresse</th>
+        <th>Batiment</th>
+    </thead>
+{% for personne in personnes %}
+    <tr>
+        <td>
+            <a href="{% url 'personne' personne.id %}">{{ personne }}</a>
+        </td>
+        <td>
+
+        </td>
+        <td>
+        </td>
+    </tr>
+{% endfor%}
+</table>
                         
 
 {% endblock %}

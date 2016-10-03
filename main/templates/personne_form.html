@@ -29,36 +29,58 @@
     </div>
     <div class="row">
       <div class="col-md-6">
-          <label for="gsm">Gsm</label>
-          <input class="form-control" name="gsm" value="{{ personne.gsm| default_if_none:'' }}" >
+          <label>Gsm</label>
+          <input class="form-control"
+                 name="gsm"
+                 value="{{ personne.gsm| default_if_none:'' }}" >
       </div>
       <div class="col-md-6">
-          <label for="telephone">Téléphone</label>
+          <label>Téléphone</label>
           <input class="form-control" name="telephone" value="{{ personne.telephone| default_if_none:'' }}" >
       </div>
     </div>
-
     <div class="row">
       <div class="col-md-6">
-          <label for="profession">Profession</label>
+          <label>Profession</label>
           <input class="form-control" name="profession" value="{{ personne.profession| default_if_none:'' }}" >
       </div>
       <div class="col-md-6">
-        <label for="num_identite">Num identite</label>
-        <input class="form-control" name="num_identite" value="{{ personne.num_identite| default_if_none:'' }}" ><font style="color:red">{{ form.num_identite.errors }}</font>
+        <label>Société</label>
+        <select name="societe" class="form-control">
+          <option value="">-</option>
+          {%for s in societes%}
+          <option value="{{s.id}}" {%if s.id = personne.societe.id%}selected{%endif%}>{{s}}</option>
+          {%endfor %}
+        </select>
+        <span style="color:red">{{ form.societe.errors }}</span>
+      </div>
+    </div>
+    <div class="row">
+
+      <div class="col-md-6">
+        <label>Num registre national</label>
+        <input class="form-control" name="num_identite"
+               value="{{ personne.num_identite| default_if_none:'' }}" ><font style="color:red">{{ form.num_identite.errors }}</font>
+      </div>
+      <div class="col-md-6">
+        <label>Num compte banque</label>
+        <input class="form-control" name="num_compte_banque"
+               value="{{ personne.num_compte_banque| default_if_none:'' }}" >
       </div>
     </div>
     <div class="row">
       <div class="col-md-4">
-        <label for="date_naissance">Date naissance</label>
-        <input class="form-control" name="date_naissance" value="{{ personne.date_naissance|date:"j/m/Y"| default_if_none:'' }}" ><font style="color:red">{{ form.date_naissance.errors }}</font>
+        <label>Date naissance</label>
+        <input class="form-control" name="date_naissance"
+               value="{{ personne.date_naissance|date:"j/m/Y"| default_if_none:'' }}">
+        <font style="color:red">{{ form.date_naissance.errors }}</font>
       </div>
       <div class="col-md-4">
-        <label for="lieu_naissance">Lieu naissance</label>
+        <label>Lieu naissance</label>
         <input class="form-control" name="lieu_naissance" value="{{ personne.lieu_naissance| default_if_none:'' }}" >
       </div>
       <div class="col-md-4">
-        <label for="pays_naissance">Pays naissance</label>
+        <label>Pays naissance</label>
         <input class="form-control" name="pays_naissance" value="{{ personne.pays_naissance| default_if_none:'' }}" >
       </div>
     </div>

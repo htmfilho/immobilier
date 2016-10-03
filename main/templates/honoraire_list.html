@@ -9,67 +9,67 @@
   <div class="panel-body">
     <div class="panel-heading">Filtrer par
       <form method="get" action="{% url 'honoraires-search'%}">
-    <div class="row">
-      <div class="col-md-3">
-        <label for="batiment_id">Batiment</label>
-        <select class="form-control" name="batiment_id" >
-          {%if batiment %}
-          <option value="TOUS" >Tous</option>
-          {%else%}
-          <option value="TOUS" selected>Tous</option>
-          {%endif%}
-
-            {% for b in batiments %}
-                {% if batiment == b.id %}
-                  <option value="{{ b.id }}" selected>{{ b }}</option>
-                {%else%}
-                  <option value="{{ b.id }}">{{ b }}</option>
-                {% endif %}
-            {% endfor %}
-
-
-        </select>
-      </div>
-      <div class="col-md-3">
-        <label for="etat">Etat</label>
-        <select class="form-control"  name="etat" id ="etat">
-          {% if etat == 'A_VERIFIER' %}
-          <option value="A_VERIFIER" selected>A vérifier</option>
-          {% else %}
-          <option value="A_VERIFIER">A vérifier</option>
-          {% endif %}
-          {% if etat == 'IMPAYE' %}
-          <option value="IMPAYE" selected>Impayé</option>
-          {% else %}
-          <option value="IMPAYE">Impayé</option>
-          {% endif %}
-          {% if etat == 'EN_RETARD' %}
-          <option value="EN_RETARD" selected>En retard</option>
-          {% else %}
-          <option value="EN_RETARD">En retard</option>
-          {% endif %}
-          {% if etat == 'PAYE' %}
-          <option value="PAYE" selected>Payé</option>
-          {% else %}
-          <option value="PAYE">Payé</option>
-          {% endif %}
-          {% if etat == 'TOUS' %}
-          <option value="TOUS" selected>Tous</option>
-          {% else %}
-          <option value="TOUS">Tous</option>
-          {% endif %}
-        </select>
-      </div>
-      <div class="col-md-3">
-        <label for="date_limite">Date limite inférieure</label>
-        <input class="form-control" value="{%if date_limite%}{{ date_limite|date:"j/m/Y" }}{%endif%}"  name="date_limite"/>
-      </div>
-      <div class="col-md-3">
-        <label class="invisible">&nbsp;</label>
-        <div class="btnbtn-as-block"><input type="submit" value="OK" id="btn"  name="btn" ></div>
-      </div>
-    </div>
-  </form>
+        <div class="row">
+          <div class="col-md-3">
+            <label>Batiment</label>
+            <select class="form-control" name="batiment_id" >
+              {%if batiment %}
+              <option value="TOUS" >Tous</option>
+              {%else%}
+              <option value="TOUS" selected>Tous</option>
+              {%endif%}
+                {% for b in batiments %}
+                    {% if batiment == b.id %}
+                      <option value="{{ b.id }}" selected>{{ b }}{{batiment}}</option>
+                    {%else%}
+                      <option value="{{ b.id }}">{{ b }}{{batiment}}</option>
+                    {% endif %}
+                {% endfor %}
+            </select>
+          </div>
+          <div class="col-md-3">
+            <label for="etat">Etat</label>
+            <select class="form-control"  name="etat" id ="etat">
+              {% if etat == 'A_VERIFIER' %}
+              <option value="A_VERIFIER" selected>A vérifier</option>
+              {% else %}
+              <option value="A_VERIFIER">A vérifier</option>
+              {% endif %}
+              {% if etat == 'IMPAYE' %}
+              <option value="IMPAYE" selected>Impayé</option>
+              {% else %}
+              <option value="IMPAYE">Impayé</option>
+              {% endif %}
+              {% if etat == 'EN_RETARD' %}
+              <option value="EN_RETARD" selected>En retard</option>
+              {% else %}
+              <option value="EN_RETARD">En retard</option>
+              {% endif %}
+              {% if etat == 'PAYE' %}
+              <option value="PAYE" selected>Payé</option>
+              {% else %}
+              <option value="PAYE">Payé</option>
+              {% endif %}
+              {% if etat == 'TOUS' %}
+              <option value="TOUS" selected>Tous</option>
+              {% else %}
+              <option value="TOUS">Tous</option>
+              {% endif %}
+            </select>
+          </div>
+          <div class="col-md-3">
+            <label >Date limite inférieure</label>
+            <input class="form-control"
+                   id="txt_date_limite"
+                   value="{%if date_limite%}{{ date_limite|date:"j/m/Y" }}{%endif%}"  name="date_limite"/>
+            <span class="erreur_formulaire" id="spn_date_limite"></span>
+          </div>
+          <div class="col-md-3">
+            <label class="invisible">&nbsp;</label>
+            <div class="btnbtn-as-block"><input type="submit" value="OK" id="bt_honoraire_search"  name="btn" ></div>
+          </div>
+        </div>
+      </form>
     </div>
 {% include "sub_honoraire_list.html" %}
 </div>

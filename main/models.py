@@ -42,6 +42,11 @@ class Localite(models.Model):
     def find_all():
         return Localite.objects.all()
 
+    @staticmethod
+    def find_by_id(an_id):
+        return Localite.objects.get(pk=an_id)
+
+
     def __str__(self):
         return self.code_postal + " " + self.localite
 
@@ -79,7 +84,6 @@ def get_pays_choix():
     return choices_tuple
 
 
-
 class Fonction(models.Model):
     nom_fonction = models.CharField(max_length=100, blank=False, null=False)
 
@@ -87,8 +91,63 @@ class Fonction(models.Model):
     def find_all():
         return Fonction.objects.all().order_by('nom_fonction')
 
+    @staticmethod
+    def find_by_nom(nom):
+        l = Fonction.objects.filter(nom_fonction__iexact=nom)
+        if l.exists():
+            return l[0]
+        return None
     def __str__(self):
         return str(self.nom_fonction)
+
+class TypeSociete(models.Model):
+    type = models.CharField(max_length=50, blank=False, null=False)
+
+    def __str__(self):
+        return self.type
+
+
+class Societe(models.Model):
+    TYPE_SOCIETE = (
+        ('NON_PRECISE', '-'),
+        ('ASSURANCE', 'Assurance'),
+        ('BANQUE', 'Banque'),
+        ('NOTAIRE', 'Notaire'),
+    )
+    nom = models.CharField(max_length=100, blank=False, null=False)
+    description = models.TextField(blank=True, null=True)
+    rue = models.CharField(max_length=200, blank=True, null=True)
+    numero = models.IntegerField(blank=True, null=True)
+    boite = models.CharField(max_length=10, blank=True, null=True)
+    lieu_dit = models.CharField(max_length=200, blank=True, null=True)
+    code_postal = models.CharField(max_length=10, blank=True, null=True)
+    localite = models.ForeignKey(Localite, blank=True, null=True)
+    # personnel = models.ForeignKey(Personne, blank=True, null=True)
+    type = models.ForeignKey(TypeSociete, blank=True, null=True)
+
+    @property
+    def professionnels(self):
+        l = Professionnel.objects.filter(societe=self)
+        for ll in l:
+            print(ll)
+        return l
+
+    @staticmethod
+    def find_all():
+        return Societe.objects.all().order_by('nom')
+
+    @staticmethod
+    def find_by_id(id):
+        return Societe.objects.get(pk=id)
+
+    def personnel(self):
+        return Professionnel.find_by_societe(self)
+
+    def __str__(self):
+        ch = self.nom
+        if self.localite:
+            ch = ch + ", " + self.localite.localite
+        return ch
 
 class Personne(models.Model):
     nom = models.CharField(max_length=100)
@@ -102,6 +161,8 @@ class Personne(models.Model):
     num_identite = models.CharField(max_length=100, blank=True, null=True, unique=False)
     telephone = models.CharField(max_length=30, blank=True, null=True)
     gsm = models.CharField(max_length=30, blank=True, null=True)
+    societe = models.ForeignKey(Societe, blank=True, null=True)
+    num_compte_banque = models.CharField(max_length=30, blank=True, null=True)
 
     def __init__(self,  *args, **kwargs):
         super(Personne, self).__init__(*args, **kwargs)
@@ -127,6 +188,28 @@ class Personne(models.Model):
                 batiments.append(b)
         return batiments
 
+    @property
+    def type(self):
+        type_personne = ""
+        cpt = 0
+        proprietaire_list = Proprietaire.objects.filter(proprietaire=self)
+        if proprietaire_list.exists():
+            type_personne = "proriétaire"
+            cpt = cpt + 1
+        locataire_list = Locataire.objects.filter(personne=self)
+        if locataire_list.exists():
+            if cpt > 0:
+                type_personne = type_personne + ", "
+            type_personne = type_personne + "locataire"
+            cpt = cpt + 1
+        liste = Professionnel.objects.filter(personne=self)
+        if liste.exists():
+            if cpt > 0:
+                type_personne = type_personne + ", "
+            type_personne = type_personne + "professionnel"
+            cpt = cpt + 1
+        return type_personne
+
     def contrat_gestions(self):
         proprietaire_list = Proprietaire.objects.filter(proprietaire=self)
         contrats = []
@@ -134,7 +217,7 @@ class Personne(models.Model):
 
             for b in p.batiments:
                 contrat_gestion = ContratGestion.objects.filter(batiment=b)
-                if not contrat_gestion is None:
+                if contrat_gestion is not None:
                     contrats.append(contrat_gestion)
         return contrats
 
@@ -160,9 +243,25 @@ class Personne(models.Model):
         if Pays.objects.filter(pays=self.pays_naissance):
             pass
         else:
-            if not self.pays_naissance is None:
+            if self.pays_naissance:
                 pays = Pays(pays=self.pays_naissance)
                 pays.save()
+        fonction = None
+        if self.profession:
+            fonction = Fonction.find_by_nom(self.profession)
+            if fonction is None:
+                fonction = Fonction()
+                fonction.nom_fonction=self.profession
+                fonction.save()
+
+        professionnels = Professionnel.search(self, self.societe, fonction)
+        if not professionnels.exists():
+            professionnel = Professionnel()
+            professionnel.personne=self
+            professionnel.societe = self.societe
+            professionnel.fonction = fonction
+            professionnel.save()
+
         return p
 
 
@@ -197,7 +296,7 @@ class Batiment(models.Model):
 
     @staticmethod
     def search(proprietaire=None):
-        if proprietaire and proprietaire!="":
+        if proprietaire and proprietaire != "":
             proprio = Proprietaire.find_proprietaire(proprietaire)
             return Proprietaire.find_batiment_by_personne(proprio.proprietaire)
         return Batiment.objects.all()
@@ -225,7 +324,7 @@ class Batiment(models.Model):
         return desc
 
     def adresse_rue(self):
-        adresse_complete=""
+        adresse_complete = ""
         if self.rue is not None:
             adresse_complete += self.rue
         if self.numero is not None:
@@ -235,7 +334,7 @@ class Batiment(models.Model):
         return adresse_complete
 
     def adresse_localite(self):
-        adresse_complete=""
+        adresse_complete = ""
         if self.localite is not None:
             adresse_complete += " " + str(self.localite.localite)
         return adresse_complete
@@ -336,7 +435,7 @@ class Batiment(models.Model):
         aggregation = queryset.aggregate(price=Sum('montant'))
         res = aggregation.get('price', 0)
 
-        if not res is None:
+        if res:
             return res
 
         return 0
@@ -397,7 +496,8 @@ class Proprietaire(models.Model):
 
 class ContratLocation(models.Model):
     batiment = models.ForeignKey(Batiment)
-    date_debut = models.DateField(auto_now=False,  auto_now_add=False, blank=False, null=False, verbose_name=u"Date début")
+    date_debut = models.DateField(auto_now=False,  auto_now_add=False, blank=False, null=False,
+                                  verbose_name=u"Date début")
     date_fin = models.DateField(auto_now=False, auto_now_add=False, blank=False, null=False)
     renonciation = models.DateField(auto_now=False, auto_now_add=False, blank=True, null=True)
     remarque = models.TextField(blank=True, null=True)
@@ -424,7 +524,7 @@ class ContratLocation(models.Model):
 
     @property
     def financement_courant(self):
-        list= FinancementLocation.objects.filter(contrat_location=self)\
+        list = FinancementLocation.objects.filter(contrat_location=self)\
                                            .order_by('date_fin')
         for f in list:
             return f
@@ -458,9 +558,16 @@ class ContratLocation(models.Model):
             date_debut_nouveau_fin = dernier_financement.date_fin + relativedelta(days=1)
             dernier_financement.date_fin = self.date_fin
             dernier_financement.save()
-            update_suivi_alerte(date_debut_nouveau_fin, self, dernier_financement,  self.date_fin + relativedelta(days=1), 'LOCATION')
+            update_suivi_alerte(date_debut_nouveau_fin,
+                                self,
+                                dernier_financement,
+                                self.date_fin + relativedelta(days=1),
+                                'LOCATION')
         return c
 
+    @staticmethod
+    def find_all():
+        return ContratLocation.objects.all()
 
     class Meta:
         ordering = ['date_debut']
@@ -468,7 +575,7 @@ class ContratLocation(models.Model):
 
 class FinancementLocation(models.Model):
     contrat_location = models.ForeignKey(ContratLocation, default=None)
-    date_debut = models.DateField(auto_now=False, auto_now_add=False, verbose_name=u"Date début")# je n'arrive pas à mettre la date du jour par défaut
+    date_debut = models.DateField(auto_now=False, auto_now_add=False, verbose_name=u"Date début")  # je n'arrive pas à mettre la date du jour par défaut
     date_fin = models.DateField(auto_now=False, auto_now_add=False, blank=True, null=True)
     loyer = models.DecimalField(max_digits=6, decimal_places=2, default=0)
     charges = models.DecimalField(max_digits=6, decimal_places=2, default=0)
@@ -476,56 +583,14 @@ class FinancementLocation(models.Model):
 
     def __str__(self):
         chaine = str(self.loyer) + "/" + str(self.charges)
-        if not self.date_debut is None:
+        if self.date_debut:
             chaine = chaine + " (" + self.date_debut.strftime('%d-%m-%Y')
-        if not self.date_fin is None:
-            chaine = chaine + " au " + self.date_fin.strftime('%d-%m-%Y') +")"
-        if not chaine is None:
+        if self.date_fin:
+            chaine = chaine + " au " + self.date_fin.strftime('%d-%m-%Y') + ")"
+        if chaine:
             return chaine
         return ""
 
-
-class TypeSociete(models.Model):
-    type = models.CharField(max_length=50, blank=False, null=False)
-
-    def __str__(self):
-        return self.type
-
-
-class Societe(models.Model):
-    TYPE_SOCIETE = (
-        ('NON_PRECISE', '-'),
-        ('ASSURANCE', 'Assurance'),
-        ('BANQUE', 'Banque'),
-        ('NOTAIRE', 'Notaire'),
-    )
-    nom = models.CharField(max_length=100, blank=False, null=False)
-    description = models.TextField(blank=True, null=True)
-    rue = models.CharField(max_length=200, blank=True, null=True)
-    numero = models.IntegerField(blank=True, null=True)
-    boite = models.CharField(max_length=10, blank=True, null=True)
-    lieu_dit = models.CharField(max_length=200, blank=True, null=True)
-    code_postal = models.CharField(max_length=10, blank=True, null=True)
-    localite = models.ForeignKey(Localite, blank=True, null=True)
-    # personnel = models.ForeignKey(Personne, blank=True, null=True)
-    type = models.ForeignKey(TypeSociete, blank=True, null=True)
-
-    @property
-    def professionnels(self):
-        l= Professionnel.objects.filter(societe=self)
-        for ll in l:
-            print(ll)
-        return l
-
-    @staticmethod
-    def find_all():
-        return Societe.objects.all().order_by('nom')
-
-    def __str__(self):
-        ch = self.nom
-        if self.localite:
-            ch = ch + ", " + self.localite.localite
-        return ch
 
 class Professionnel(models.Model):
     personne = models.ForeignKey(Personne, blank=True, null=True)
@@ -550,6 +615,10 @@ class Professionnel(models.Model):
             out = queryset
         return out
 
+    @staticmethod
+    def find_by_societe(une_societe):
+        return Professionnel.search(None, une_societe, None)
+
     def __str__(self):
         ch = ""
         if self.societe:
@@ -568,6 +637,7 @@ class Professionnel(models.Model):
             ch = ch + " "
         return ch
 
+
 class Locataire(models.Model):
     CIVILITE = (
         ('NON_PRECISE', '-'),
@@ -584,7 +654,7 @@ class Locataire(models.Model):
     societe = models.ForeignKey(Societe, blank=True, null=True)
     tva = models.CharField(max_length=30, blank=True, null=True)
     profession = models.ForeignKey(Fonction, blank=True, null=True)
-    civilite = models.CharField(max_length=15, choices= CIVILITE, default='NON_PRECISE')
+    civilite = models.CharField(max_length=15, choices=CIVILITE, default='NON_PRECISE')
     # personne_garante     = models.ForeignKey('Personne', blank=True, null=True)
 
     def __str__(self):
@@ -625,7 +695,8 @@ class Locataire(models.Model):
 
 
 class FraisMaintenance(models.Model):
-    batiment = models.ForeignKey(Batiment, verbose_name=u"Batiment", blank=False, null=False)
+    batiment = models.ForeignKey(Batiment, verbose_name=u"Batiment", blank=True, null=True)
+    contrat_location = models.ForeignKey(ContratLocation, blank=True, null=True)
     entrepreneur = models.ForeignKey(Professionnel, blank=True, null=True)
     societe = models.ForeignKey(Societe, blank=True, null=True)
     description = models.TextField()
@@ -639,8 +710,27 @@ class FraisMaintenance(models.Model):
         print (batiment)
         return FraisMaintenance.objects.all()
 
+    @staticmethod
+    def find_my_frais():
+        batiments = Batiment.find_my_batiments()
+        frais = []
+        n = timezone.now()
+        for b in batiments:
+            frais_liste = FraisMaintenance.find_by_batiment(b.id)
+            for f in frais_liste:
+                if f.contrat_location is None and f.date_realisation is not None \
+                        and (f.date_realisation.month == n.month and f.date_realisation.year == n.year):
+                    if f not in frais:
+                        frais.append(f)
+        return frais
+
+
     def __str__(self):
-        return self.batiment + " " + self.description
+        ch = ""
+
+        if self.description:
+            ch = ch + "" + self.description
+        return ch
 
 
 class SuiviLoyer(models.Model):
@@ -701,8 +791,17 @@ class SuiviLoyer(models.Model):
     def find_suivis_by_etat_suivi(date_ref, etat_suivi):
         start_date = datetime.datetime(date_ref.year, date_ref.month, 1)
         end_date = datetime.datetime(date_ref.year, date_ref.month, calendar.mdays[date_ref.month])
-        return SuiviLoyer.objects.filter(date_paiement__lte=end_date,date_paiement__gte=start_date,
+        return SuiviLoyer.objects.filter(date_paiement__lte=end_date, date_paiement__gte=start_date,
                                            etat_suivi=etat_suivi)
+
+    @staticmethod
+    def find_mes_suivis_by_etat_suivi(date_ref, etat_suivi):
+        mes_batiment = Batiment.find_my_batiments()
+        start_date = datetime.datetime(date_ref.year, date_ref.month, 1)
+        end_date = datetime.datetime(date_ref.year, date_ref.month, calendar.mdays[date_ref.month])
+        return SuiviLoyer.objects.filter(date_paiement__lte=end_date, date_paiement__gte=start_date,
+                                         etat_suivi=etat_suivi,
+                                         financement_location__contrat_location__batiment__in=mes_batiment)
     @staticmethod
     def find_suivis_by_pas_etat_suivi(date_ref, etat_suivi):
         start_date = datetime.datetime(date_ref.year, date_ref.month, 1)
@@ -747,6 +846,20 @@ class ContratGestion(models.Model):
     def find_my_contrats():
         personne = Personne.find_gestionnaire_default()
         return ContratGestion.objects.filter(gestionnaire=personne)
+
+    @staticmethod
+    def search(batiment, date_debut, date_fin):
+        out = None
+        queryset = ContratGestion.objects
+        if batiment:
+            queryset = queryset.filter(batiment=batiment)
+        if date_debut:
+            queryset = queryset.filter(date_debut_lte=date_debut)
+        if date_fin:
+            queryset = queryset.filter(date_fin_gte=date_fin)
+        if batiment or date_debut or date_fin:
+            out = queryset
+        return out
 
     def __str__(self):
         return self.gestionnaire.nom + ", " + self.gestionnaire.prenom  + str(self.batiment)
@@ -840,18 +953,19 @@ class Honoraire(models.Model):
 
     @staticmethod
     def find_by_batiment_etat_date(batiment_id, etat, date_limite_inf):
-        query = Honoraire.objects.all()
+        queryset = Honoraire.objects
 
-        if not batiment_id is None and batiment_id != "None":
-            query = query.filter(contrat_gestion__batiment__id=int(batiment_id))
+        if batiment_id:
+            queryset = queryset.filter(contrat_gestion__batiment__id=int(batiment_id))
 
-        if not etat is None and len(etat) > 0:
-            query = query.filter(etat=etat)
+        if etat is not None and len(etat) > 0:
+            queryset = queryset.filter(etat=etat)
 
-        if not date_limite_inf is None:
-            query = query.filter(date_paiement__gte=date_limite_inf)
+        if date_limite_inf:
+            queryset = queryset.filter(date_paiement__gte=date_limite_inf)
 
-        return query
+        return queryset
+
 
     @staticmethod
     def find_all_batiments():

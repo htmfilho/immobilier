@@ -6,13 +6,16 @@ from main.forms import FraisMaintenanceForm
 
 def new(request):
     frais = FraisMaintenance()
+    previous = request.POST.get('previous', None)
 
     return render(request, "fraismaintenance_form.html",
                   {'frais':     frais,
                    'personnes': Personne.find_all(),
                    'action':   'new',
                    'batiments': Batiment.find_all(),
-                   'entrepreneurs': Professionnel.find_all()})
+                   'contrats_location':ContratLocation.find_all(),
+                   'entrepreneurs': Professionnel.find_all(),
+                   'previous':  previous})
 
 
 def create(request, batiment_id):
@@ -36,13 +39,25 @@ def prepare_update(request, id):
 
 
 def update(request):
+    batiment_id = request.POST.get('batiment_id', None)
+    print('batiment_id', batiment_id)
     if request.POST.get('action', None) == 'new':
         frais = FraisMaintenance()
-        batiment = get_object_or_404(Batiment, pk=request.POST.get('batiment_id', None))
+        batiment = get_object_or_404(Batiment, pk=int(batiment_id))
         frais.batiment = batiment
     else:
         frais = get_object_or_404(FraisMaintenance, pk=request.POST.get('id', None))
-
+        batiment = get_object_or_404(Batiment, pk=int(batiment_id))
+        frais.batiment = batiment
+    frais.contrat_location = None
+    if request.POST.get('contrat_location') == 'on':
+        cl = frais.batiment.location_actuelle
+        print(cl)
+        if cl:
+            frais.contrat_location = cl
+            print('if')
+        else:
+            print('else')
     professionnel = None
     if request.POST.get('entrepreneur', None) and request.POST['entrepreneur']!= '' and request.POST['entrepreneur']!='None':
         professionnel = get_object_or_404(Professionnel, pk=request.POST['entrepreneur'])

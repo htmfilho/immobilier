@@ -25,7 +25,7 @@ from django.conf import settings
 from . import views, batiment, proprietaire, suivis, alertes, contratlocation, financement, locataire, contratgestion, \
     frais, honoraire, personne, tests, test3, assurance, fonction, societe
 from django.conf.urls import url
-from django.contrib.auth.views import login,logout
+from django.contrib.auth.views import login, logout
 
 urlpatterns = [
     url(r'^$', views.home, name='home'),
@@ -35,7 +35,8 @@ urlpatterns = [
     # listes
     url(r'^listeComplete', views.listeComplete),
     url(r'^listeBatiments', views.listeBatiments, name='listeBatiments'),
-    url(r'^listeBatiments/filtrer/personne/([0-9]+)/$', views.listeBatiments_filtrer, name='listeBatiments-filtrer-personne'),
+    url(r'^listeBatiments/filtrer/personne/([0-9]+)/$', views.listeBatiments_filtrer,
+        name='listeBatiments-filtrer-personne'),
 
     url(r'^listeProprietaires', proprietaire.liste_proprietaires, name='listeProprietaires'),
     url(r'^listeContratGestion/$', views.ContratGestionList.as_view(), name='contrat_gestion_list'),
@@ -47,9 +48,10 @@ urlpatterns = [
     url(r'^proprietaire/delete/([0-9]+)/$', proprietaire.delete_proprietaire, name='delete_proprietaire'),
     url(r'^proprietaire/dadd/([0-9]+)/$', proprietaire.add_proprietaire, name='add_proprietaire'),
     url(r'^proprietaire/$', proprietaire.proprietaire_update_save, name='proprietaire-update-save'),
-    url(r'^proprietaire/createb/([0-9]+)/$', proprietaire.proprietaire_create_for_batiment, name='proprietaire-create-batiment'),
+    url(r'^proprietaire/createb/([0-9]+)/$', proprietaire.proprietaire_create_for_batiment,
+        name='proprietaire-create-batiment'),
 
-    #old
+    # old
     # url(r'^suivis/$', suivis.suivis, name='suivis'),
     # url(r'^suivis/refresh/$', suivis.refresh_suivis, name='refresh_suivis'),
     url(r'^suivis/$', suivis.suivis, name='suivis'),
@@ -75,7 +77,8 @@ urlpatterns = [
     url(r'^fraismaintenance/create/([0-9]+)/$', frais.create, name='fraismaintenance-create'),
     url(r'^fraismaintenance/prepare/update/([0-9]+)/$', frais.prepare_update, name='fraismaintenance-prepare-update'),
     url(r'^fraismaintenance/update/$', frais.update, name='fraismaintenance-update'),
-    url(r'^fraismaintenance/delete/(?P<pk>[0-9]+)/$', views.FraisMaintenanceDelete.as_view(), name='fraismaintenance-delete'),
+    url(r'^fraismaintenance/delete/(?P<pk>[0-9]+)/$', views.FraisMaintenanceDelete.as_view(),
+        name='fraismaintenance-delete'),
     url(r'^fraismaintenance/(?P<pk>[0-9]+)/$', views.FraisMaintenanceDetail.as_view(), name='fraismaintenance_detail'),
 
     url(r'^personne/create/$', personne.create, name='personne-create'),
@@ -94,7 +97,8 @@ urlpatterns = [
     url(r'^batiment/update/([0-9]+)/$', batiment.update, name='batiment-update'),
     url(r'^batiment/delete/(?P<pk>[0-9]+)/$', views.BatimentDelete.as_view(), name='batiment-delete'),
     url(r'^batiments/$', views.BatimentList.as_view(), name='batiment_list'),
-    url(r'^batiment/deletep/([0-9]+)/$', proprietaire.delete_proprietaire_batiment, name='delete_proprietaire_batiment'),
+    url(r'^batiment/deletep/([0-9]+)/$', proprietaire.delete_proprietaire_batiment,
+        name='delete_proprietaire_batiment'),
 
 
 
@@ -104,7 +108,7 @@ urlpatterns = [
     # url(r'^proprietaire/delete/(?P<pk>[0-9]+)/$', views.ProprietaireDelete.as_view(), name='proprietaire-delete'),
     # url(r'^proprietaires/$', views.ProprietaireList.as_view(), name='proprietaire_list'),
     # url(r'^proprietaire/(?P<pk>[0-9]+)/$', views.ProprietaireDetail.as_view(), name='proprietaire_detail'),
-
+    url(r'^contratgestion/new/$', contratgestion.new, name='contratgestion-new'),
     url(r'^contratgestion/create/([0-9]+)/$', contratgestion.create, name='contratgestion-create'),
     # url(r'^contratgestion/update/(?P<pk>[0-9]+)/$', views.ContratGestionUpdate.as_view(), name='contratgestion-update'),
     url(r'^contratgestion/delete/([0-9]+)/$', contratgestion.delete, name='contratgestion-delete'),
@@ -131,7 +135,8 @@ urlpatterns = [
 
     url(r'^location/prepare/update/all/([0-9]+)/$', contratlocation.prepare_update, name='location-prepare-update-all'),
     url(r'^location/update/all/$', contratlocation.update, name='update-location-all'),
-    url(r'^location/createb/([0-9]+)/$', contratlocation.contrat_location_for_batiment, name='location-create-batiment'),
+    url(r'^location/createb/([0-9]+)/$', contratlocation.contrat_location_for_batiment,
+        name='location-create-batiment'),
     url(r'^location/createl/$', contratlocation.test, name='add-location-for-batiment'),
 
     url(r'^location/delete/([0-9]+)/$', contratlocation.delete, name='location-delete'),
@@ -152,20 +157,22 @@ urlpatterns = [
     url(r'^honoraires/$', honoraire.list, name='honoraire-list'),
     url(r'^honoraires/search/$', honoraire.search, name='honoraires-search'),
     url(r'^honoraire/update/$', honoraire.update, name='honoraire-update'),
-    url(r'^honoraire/([0-9]+)/$', honoraire.honoraire_form, name='honoraire'),
+    url(r'^honoraire/edit/([0-9]+)/$', honoraire.honoraire_form, name='honoraire'),
     url(r'^honoraire/delete/(?P<pk>[0-9]+)/$', views.HonoraireDelete.as_view(), name='honoraire-delete'),
     url(r'^test/$', views.test, name='test'),
     url(r'^test/image/$', views.test_image, name='test_image'),
     url(r'^test/merge/$', views.test_merge, name='test_merge'),
-    url(r'^test/upload/$', views.upload,name='upload'),
-    url(r'^test/upload2/$', tests.test_create_pdf,name='test_pdf'),
-    url(r'^test3/$', test3.test,name='test3'),
+    url(r'^test/upload/$', views.upload, name='upload'),
+    url(r'^test/upload2/$', tests.test_create_pdf, name='test_pdf'),
+    url(r'^test3/$', test3.test, name='test3'),
 
     url(r'^assurance_create/$', assurance.create, name='assurance_create'),
     url(r'^prolongation/$', contratlocation.prolongation, name='prolongation'),
     url(r'^fonction_create/$', fonction.create, name='fonction_create'),
     url(r'^societes_liste/$', societe.societe_liste, name='societe_liste'),
     url(r'^batiment/search/$', batiment.search, name='batiment_search'),
+    url(r'^societe/update/$', societe.update, name='societe_update'),
+    url(r'^societe/edit/([0-9]+)/$', societe.edit, name='societe_edit'),
 
 
 ]

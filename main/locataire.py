@@ -69,7 +69,6 @@ def new(request, location_id):
                    'fonctions': Fonction.find_all(),})
 
 def add(request):
-    print('add')
     if 'bt_cancel' not in request.POST:
         if request.POST['locataire_id'] and not request.POST['locataire_id']== 'None':
             locataire = get_object_or_404(Locataire, pk=request.POST.get('locataire_id', None))
@@ -91,15 +90,20 @@ def add(request):
             societe = get_object_or_404(Societe, pk=request.POST['societe'])
         locataire.societe = societe
         locataire.tva = request.POST['tva']
-        fonction = None
+        fonction_locataire = None
         if request.POST['profession']:
-            fonction = get_object_or_404(Fonction, pk=request.POST['profession'])
-        locataire.profession = fonction
+            fonction_locataire = Fonction.find_by_nom(request.POST['profession'])
+            if fonction_locataire is None:
+                fonction_locataire = Fonction()
+                fonction_locataire.nom_fonction=request.POST['profession']
+                fonction_locataire.save()
+
+
+        locataire.profession = fonction_locataire
 
         locataire.contrat_location = location
         locataire.save()
-        return render(request, "contratlocation_update.html",
-                      {'location': location})
+        return render(request, "contratlocation_update.html", {'location': location})
     else:
         return redirect(request.POST.get('next'), None)
 

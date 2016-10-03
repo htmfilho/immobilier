@@ -8,12 +8,11 @@ from django.shortcuts import render, get_object_or_404
 from django.utils import timezone
 from django.views.generic import *
 from django.core.urlresolvers import reverse_lazy
-from main.forms import PersonneForm, BatimentForm, ProprietaireForm, FraisMaintenanceForm, SocieteForm, ContratLocationForm, FileForm
+from main.forms import PersonneForm, BatimentForm, ProprietaireForm, FraisMaintenanceForm, SocieteForm, FileForm
 
-from dateutil.relativedelta import relativedelta
 from io import BytesIO
 from django.http import HttpResponse
-from reportlab.lib.enums import TA_JUSTIFY, TA_RIGHT, TA_CENTER, TA_LEFT
+from reportlab.lib.enums import TA_JUSTIFY, TA_CENTER
 from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, Image, PageBreak, Table, TableStyle
 
 from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
@@ -106,7 +105,7 @@ def merge_pdf4(request):
 
         rect = RectangleObject([400, 400, 600, 600])
         output.addLink(cur_prev, cur, rect)
-        cur_prev=cur_prev+1
+        cur_prev = cur_prev+1
         cur = cur + 1
     d = open("output.pdf", "wb")
 
@@ -121,8 +120,23 @@ def dashboard(request):
 
 def home(request):
     suivis = SuiviLoyer.find_suivis_a_verifier_proche()
-    suivis_recus = SuiviLoyer.find_suivis_by_etat_suivi(timezone.now(),'PAYE')
-    suivis_non_paye = SuiviLoyer.find_suivis_by_pas_etat_suivi(timezone.now(),'PAYE')
+    suivis_recus = SuiviLoyer.find_suivis_by_etat_suivi(timezone.now(), 'PAYE')
+    suivis_recus = SuiviLoyer.find_mes_suivis_by_etat_suivi(timezone.now(), 'PAYE')
+    suivis_non_paye = SuiviLoyer.find_suivis_by_pas_etat_suivi(timezone.now(), 'PAYE')
+    montant_recu=0
+    montant_attendu=0
+    mois_en_cours = str(datetime.datetime.now().month) + "/" + str(datetime.datetime.now().year)
+    mes_frais = FraisMaintenance.find_my_frais()
+    tot_depenses = 0
+    for f in mes_frais:
+        if f.montant:
+            tot_depenses += f.montant
+    tot_recettes = 0
+    for s in suivis_recus:
+        if s.loyer_percu:
+            tot_recettes = tot_recettes + s.loyer_percu
+        if s.charges_percu:
+            tot_recettes = tot_recettes + s.charges_percu
     return render(request, 'myhome.html',
                   {'alertes':         Alerte.find_by_etat_today('A_VERIFIER'),
                    'batiments':       Batiment.find_my_batiments(),
@@ -131,13 +145,20 @@ def home(request):
                    'suivis':          suivis,
                    'previous':        request.POST.get('previous', None),
                    'suivis_recus':    suivis_recus,
+                   'montant_recu':    montant_recu,
+                   'montant_attendu': montant_attendu,
                    'suivis_non_paye': suivis_non_paye,
-                   'locataires':      Locataire.find_my_locataires() })
+                   'locataires':      Locataire.find_my_locataires(),
+                   'mois_en_cours':   mois_en_cours,
+                   'mes_frais':       mes_frais,
+                   'tot_depenses':    tot_depenses,
+                   'tot_recettes':    tot_recettes})
 
 
 def listeBatiments(request):
     batiments = Batiment.objects.all()
-    return render(request, 'listeBatiments.html', {'batiments': batiments, 'proprietaires': Proprietaire.find_distinct_proprietaires()})
+    return render(request, 'listeBatiments.html', {'batiments': batiments, 
+                                                   'proprietaires': Proprietaire.find_distinct_proprietaires()})
 
 
 def listeBatiments_filtrer(request, personne_id):
@@ -151,6 +172,7 @@ def listeBatiments_filtrer(request, personne_id):
 
     return render(request, 'listeBatiments.html', {'batiments': batiments,
                                                    'filtre': personne})
+
 
 @login_required
 def listePersonnes(request):
@@ -169,14 +191,15 @@ def alertes4(request):
     batiment = Batiment.objects.get(nom='batiment 5b')
     proprietaires = Proprietaire.objects.filter(batiment=batiment)
 
-    return render(request, 'main/alertes4.html', {'batiment': batiment,'proprietaires': proprietaires})
+    return render(request, 'main/alertes4.html', {'batiment': batiment, 'proprietaires': proprietaires})
 
 
 @login_required
 def personne(request, personne_id):
     personne = Personne.find_personne(personne_id)
     return render(request, "personne_form.html",
-                  {'personne':         personne})
+                  {'personne':         personne,
+                   'societes': Societe.find_all()})
 
 
 def update_personne(request):
@@ -190,7 +213,8 @@ def update_personne(request):
 
         personne.save()
     return render(request, "personne_form.html",
-                  {'personne': personne})
+                  {'personne': personne,
+                   'societes': Societe.find_all()})
 
 
 def xlsRead(request):
@@ -307,7 +331,6 @@ class ProprietaireCreateForBatiment(CreateView):
     #     return
     #
 
-
     def form_valid(self, form):
         proprietaire = form.save(commit=False)
         # article.author = self.request.user
@@ -340,12 +363,12 @@ class ProprietaireCreateForBatiment(CreateView):
 
 
 class ProprietaireUpdate(UpdateView):
-    model = Proprietaire;
+    model = Proprietaire
     form_class = ProprietaireForm
 
 
 class ProprietaireDelete(DeleteView):
-    model = Proprietaire;
+    model = Proprietaire
     success_url = "../../../proprietaires"
 
 
@@ -358,36 +381,39 @@ class SocieteDetail(DetailView):
 
 
 class SocieteCreate(CreateView):
-    model = Societe;
+    model = Societe
     form_class = SocieteForm
+
 
 class SocieteUpdate(UpdateView):
-    model = Societe;
+    model = Societe
     form_class = SocieteForm
 
+
 class SocieteDelete(DeleteView):
-    model = Societe;
+    model = Societe
     success_url = "../../../societes"
 
 
 class HonoraireDelete(DeleteView):
-    model=Honoraire
+    model = Honoraire
     success_url = "../../../honoraires"
 
 PAGE_SIZE = A4
 MARGIN_SIZE = 15 * mm
-COLS_WIDTH = [20*mm,55*mm,45*mm,15*mm,40*mm]
+COLS_WIDTH = [20*mm, 55*mm, 45*mm, 15*mm, 40*mm]
 STUDENTS_PER_PAGE = 24
 BOTTOM_MARGIN = 18
 TOP_MARGIN = 85
 
+
 def test_merge(request):
     return merge_pdf(request)
-    #return merge_pdf2(request)
-    #return merge_pdf4(request)
-    #return essai(request)
-    #return pagecat(request)
-    #return pagecat2(request)
+    # return merge_pdf2(request)
+    # return merge_pdf4(request)
+    # return essai(request)
+    # return pagecat(request)
+    # return pagecat2(request)
 
 
 def test(request):
@@ -411,13 +437,11 @@ def build_pdf(image_file):
                             leftMargin=MARGIN_SIZE,
                             topMargin=TOP_MARGIN,
                             bottomMargin=BOTTOM_MARGIN)
-    print('ww',doc.width)
     image1 = get_image2(image_file)
 
     styles = getSampleStyleSheet()
     styles.add(ParagraphStyle(name='Justify', alignment=TA_JUSTIFY))
     content = []
-    #content.append(KeepInFrame(image1))
     content.append(image1)
     p = ParagraphStyle('legend')
     p.textColor = 'grey'
@@ -447,7 +471,7 @@ def merge_pdf(request):
     pdf1 = "pdf1.pdf"
     pdf2 = "pdf2.pdf"
 
-    pdfs=[pdf1,pdf2, ]
+    pdfs = [pdf1, pdf2]
     #
     buffer = BytesIO()
 
@@ -462,12 +486,12 @@ def merge_pdf(request):
 
     if not pdfs or len(pdfs) < 2:
         exit("Please enter at least two pdfs for merging!")
-    no_page=2
+    no_page = 2
     manual_toc = True
     if manual_toc:
         print('manual_toc')
         cpt = 0
-        content.append(Paragraph('Table of contents' , ParagraphStyle('normal')))
+        content.append(Paragraph('Table of contents', ParagraphStyle('normal')))
         for fname in pdfs:
             input = PdfFileReader(open(fname, 'rb'))
             number_of_page = input.getNumPages()
@@ -481,33 +505,32 @@ def merge_pdf(request):
             #                         </para>
             #                         ''' % (fname,no_page, no_page + number_of_page,lien), ParagraphStyle('normal')))
 
-            content.append(Paragraph('%s          %s-%s' % (fname, no_page, no_page + number_of_page), ParagraphStyle('normal')))
+            content.append(Paragraph('%s          %s-%s' % (fname, no_page, no_page + number_of_page), 
+                                     ParagraphStyle('normal')))
             # ancre = '<a name="%s"></a>' % fname
             # content.append(Paragraph('''
             #                             %s
             #                         ''' % (ancre), ParagraphStyle('normal')))
             no_page = no_page + number_of_page
-            cpt = cpt +1
-
+            cpt = cpt + 1
 
 
     doc.build(content, onFirstPage=add_header_footer, onLaterPages=add_header_footer)  #  ne garnit que la 1iere page
     # doc.build(content, canvasmaker=NumberedCanvas)
     merger = PdfFileMerger()
 
-
     merger.setPageMode('/UseOC')
     merger.append(buffer)
     num_page = 1
-    no_page=1
-    cpt=0
+    no_page = 1
+    cpt = 0
     for fname in pdfs:
         print('for')
         input = PdfFileReader(open(fname, 'rb'))
 
         number_of_page = input.getNumPages()
         lien = "lnk2_" + str(no_page)
-        lien=fname
+        lien = fname
         # ancre = '<a name="%s"></a>' % fname
         # content.append(Paragraph('''
         #
@@ -529,9 +552,9 @@ def merge_pdf(request):
         #     sub = merger.addBookmark("SUBBOOKMARK",doc_length,parent)
 
 
-        num_page=num_page+1
+        num_page = num_page + 1
         no_page = no_page + number_of_page
-        cpt=cpt+1
+        cpt = cpt + 1
 
 
     output = open("output.pdf", "wb")
@@ -542,7 +565,7 @@ def merge_pdf(request):
 
 
 def upload(request):
-    list_extension_image = ['jpg','jpge','png', 'gif']
+    list_extension_image = ['jpg', 'jpge', 'png', 'gif']
     if request.method == 'POST':
         form = FileForm(request.POST, request.FILES)
         if form.is_valid():
@@ -578,7 +601,7 @@ def get_image2(path):
     xsize, ysize = img.getSize()
 
     width, height = A4
-    width = width - (MARGIN_SIZE *2)
+    width = width - (MARGIN_SIZE * 2)
     height = height - (BOTTOM_MARGIN + TOP_MARGIN)
     Im = Image(path)
 
@@ -598,15 +621,15 @@ def get_image2(path):
         xsize = int(nxsize)
         ysize = int(nysize)
 
-
         return Image(path, width=nxsize, height=(nysize))
     return Image(path)
+
 
 def merge_pdf2(request):
     pdf1 = "pdf1.pdf"
     pdf2 = "pdf2.pdf"
 
-    pdfs=[pdf1,pdf2]
+    pdfs = [pdf1,pdf2]
     #
     buffer = BytesIO()
     doc = SimpleDocTemplate(buffer,
@@ -987,7 +1010,6 @@ class MyDocTemplate(BaseDocTemplate):
 
 
 
-
 # Entries to the table of contents can be done either manually by
 # calling the addEntry method on the TableOfContents object or automatically
 # by sending a 'TOCEntry' notification in the afterFlowable method of
@@ -1015,27 +1037,26 @@ def pagecat(request):
     pdf1 = "pdf1.pdf"
     pdf2 = "pdf2.pdf"
 
-    pdfs=[pdf1,pdf2]
+    pdfs = [pdf1, pdf2]
     #
-
 
     Story = []
 
-    centered = ParagraphStyle(name = 'centered',
-        fontSize = 30,
-        leading = 16,
-        alignment = 1,
-        spaceAfter = 20)
+    centered = ParagraphStyle(name='centered',
+        fontSize=30,
+        leading=16,
+        alignment=1,
+        spaceAfter=20)
 
     h1 = ParagraphStyle(
-        name = 'Heading1',
-        fontSize = 14,
-        leading = 16)
+        name='Heading1',
+        fontSize=14,
+        leading=16)
 
 
-    h2 = ParagraphStyle(name = 'Heading2',
-        fontSize = 12,
-        leading = 14)
+    h2 = ParagraphStyle(name='Heading2',
+        fontSize=12,
+        leading=14)
 
     toc = TableOfContents()
     toc.levelStyles = [
@@ -1058,23 +1079,27 @@ def pagecat(request):
     doc.multiBuild(Story)
     return render(request, "test.html")
 
+
 def static_title(canvas,doc):
     canvas.saveState()
-    canvas.drawImage('logo-oditorium-whitebg.jpg',doc.width-2.5*inch,doc.height, width=4*inch, preserveAspectRatio=True)
+    canvas.drawImage('logo-oditorium-whitebg.jpg', doc.width-2.5*inch, doc.height, width=4*inch, preserveAspectRatio=True)
+    canvas.setFont('Times-Roman', 48)
+    canvas.drawString(inch, doc.height - 1*inch, "TITLE")
+    canvas.setFont('Times-Roman', 9)
+    canvas.drawString(inch, 0.75 * inch, "Title - Page %d" % doc.page)
+    canvas.restoreState()
+
+
+def static_back(canvas,doc):
+    canvas.saveState()
+    canvas.drawImage('logo-oditorium-whitebg.jpg',doc.width-2.5*inch, doc.height, width=4*inch, preserveAspectRatio=True)
     canvas.setFont('Times-Roman',48)
     canvas.drawString(inch, doc.height - 1*inch, "TITLE")
     canvas.setFont('Times-Roman',9)
     canvas.drawString(inch, 0.75 * inch, "Title - Page %d" % doc.page)
     canvas.restoreState()
 
-def static_back(canvas,doc):
-    canvas.saveState()
-    canvas.drawImage('logo-oditorium-whitebg.jpg',doc.width-2.5*inch,doc.height, width=4*inch, preserveAspectRatio=True)
-    canvas.setFont('Times-Roman',48)
-    canvas.drawString(inch, doc.height - 1*inch, "TITLE")
-    canvas.setFont('Times-Roman',9)
-    canvas.drawString(inch, 0.75 * inch, "Title - Page %d" % doc.page)
-    canvas.restoreState()
+
 def static_1col(canvas,doc):
     canvas.saveState()
     canvas.drawImage('logo-oditorium-whitebg.jpg',
@@ -1108,10 +1133,10 @@ def pagecat2(request):
     frame2_2col = Frame(doc.leftMargin+doc.width/2+6, doc.bottomMargin, doc.width/2-6, doc.height, id='col2')
 
     doc.addPageTemplates([
-    PageTemplate(id='Title',frames=frame_title, onPage=static_title),
-    PageTemplate(id='Back',frames=frame_back, onPage=static_back),
-    PageTemplate(id='OneCol',frames=frame_1col, onPage=static_1col),
-    PageTemplate(id='TwoCol',frames=[frame1_2col, frame2_2col], onPage=static_2col),
+    PageTemplate(id='Title', frames=frame_title, onPage=static_title),
+    PageTemplate(id='Back', frames=frame_back, onPage=static_back),
+    PageTemplate(id='OneCol', frames=frame_1col, onPage=static_1col),
+    PageTemplate(id='TwoCol', frames=[frame1_2col, frame2_2col], onPage=static_2col),
     ])
     story = []
     story.append(Paragraph('<b>Table of contents</b>', ParagraphStyle('normal')))
@@ -1190,11 +1215,12 @@ class NumberedCanvas(canvas.Canvas):
         self.drawRightString(200*mm, 20*mm,
             "Page %d of %d" % (self._pageNumber, page_count))
 
+
 def merge_pdf_stack(request):
     pdf1 = "pdf1.pdf"
     pdf2 = "pdf2.pdf"
 
-    pdfs=[pdf1,pdf2, ]
+    pdfs=[pdf1, pdf2]
 
     buffer = BytesIO()
 
@@ -1207,7 +1233,7 @@ def merge_pdf_stack(request):
 
     content = []
 
-    no_page=2
+    no_page = 2
 
     cpt = 0
     content.append(Paragraph('Table of contents', ParagraphStyle('normal')))
@@ -1229,7 +1255,7 @@ def merge_pdf_stack(request):
     for fname in pdfs:        
         input = PdfFileReader(open(fname, 'rb'))
         number_of_page = input.getNumPages()
-        lien=fname
+        lien = fname
         merger.append(input, bookmark=lien, import_bookmarks=False)
         num_page = num_page + 1
         no_page = no_page + number_of_page

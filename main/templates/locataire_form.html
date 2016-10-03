@@ -130,13 +130,13 @@
         </div>
         <div class="col-md-4">
           <label>Profession</label>
+          <input list="professions" type="text" id="slt_profession" class="form-control" name="profession" value="{{locataire.profession.nom_fonction| default_if_none:''}}">
+          <datalist id="professions">
+              {% for fonction in fonctions%}
+                <option value="{{fonction.id}}" {%if fonction.id = locataire.profession.id %}selected{%endif%}>{{fonction}}</option>
+              {%endfor%}
+          </datalist>
 
-          <select name="profession" id="slt_profession"  class="form-control">
-            <option value="">-</option>
-            {% for fonction in fonctions%}
-              <option value="{{fonction.id}}" {%if fonction.id = locataire.profession.id %}selected{%endif%}>{{fonction}}</option>
-            {%endfor%}
-          </select>
           <button style="visibility:hidden;display:none" type="button"
                    id="bt_fonction_add"
                    class="btn btn-default"

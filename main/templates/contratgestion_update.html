@@ -6,15 +6,23 @@
 {% endblock %}
 {% block content %}
     <form  method="post" action="{% url 'update-gestion-all' %}">
-      {{form.errors}}
-      {% csrf_token %}
+     {% csrf_token %}
       <input type="hidden" id="previous" name="previous" value="{{request.META.HTTP_REFERER }}"/>
       <input type="hidden" value="{{ action | default_if_none:'' }}" name="action"/>
       <input type="hidden" value="{{ contrat.id | default_if_none:'' }}" name="id"/>
       <div class="form-group">
         <label>Batiment</label>
-        <input class="form-control" value="{{contrat.batiment| default_if_none:'' }}" name="batiment" readonly="readonly" >
-        <input type="hidden" value="{{ contrat.batiment.id | default_if_none:'' }}" name="batiment_id"/>
+        <select class="form-control" id="slt_batiment_id"  name="batiment_id" >
+            <option>-</option>
+          {% for b in batiments %}
+              {% if contrat.batiment == b.id %}
+                <option value="{{ b.id }}" selected>{{ b }}</option>
+              {%else%}
+                <option value="{{ b.id }}">{{ b }}</option>
+              {% endif %}
+          {% endfor %}
+        </select>
+        {% if form.batiment_id.errors%}<font class="erreur_formulaire">{{form.batiment_id.errors}}</font>{%endif%}
       </div>
       <div class="row">
         <div class="col-md-6">
@@ -29,23 +37,26 @@
             {%endfor%}
           </select>
         </div>
-        <div class="col-md-6">
-          <label>Montant mensuel</label>
-          <input class="form-control"
-                 value="{{ contrat.montant_mensuel| default_if_none:'' }}"
-                 name="montant_mensuel">
-        </div>
+
       </div>
       <br>
       <div class="row">
-        <div class="col-md-5">
+        <div class="col-md-4">
+          <label>Montant mensuel</label>
+          <input class="form-control"
+                 value="{{ contrat.montant_mensuel| default_if_none:'' }}"
+                 name="montant_mensuel"
+                 id="txt_montant_mensuel">
+          {% if form.montant_mensuel.errors%}<font class="erreur_formulaire">{{form.montant_mensuel.errors}}</font>{%endif%}
+        </div>
+        <div class="col-md-4">
         <label for="date_debut">Date début</label>
         <input class="form-control" id="date_debut" value="{%if contrat.date_debut%}{{contrat.date_debut|date:"j/m/Y" }}{%endif%}"
                name="date_debut">
           {% if form.date_debut.errors%}<font class="erreur_formulaire">{{form.date_debut.errors}}</font>{%endif%}
       </div>
 
-      <div class="col-md-5">
+      <div class="col-md-4">
         <label for="date_fin">Date fin</label>
         <input class="form-control" id="date_fin" value="{%if contrat.date_fin%}{{contrat.date_fin|date:"j/m/Y"}}{%endif%}"
                name="date_fin">
@@ -53,7 +64,7 @@
       </div>
 
 <br>
-      <input type="submit" value="OK">
+      <input type="submit" value="OK" id="bt_contrat_gestion_update">
 
     </form>
     {%if message%}

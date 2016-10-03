@@ -35,7 +35,7 @@ class PersonneForm(forms.Form):
     class Meta:
         model = Personne
         fields = ['nom', 'prenom', 'email', 'profession', 'date_naissance', 'lieu_naissance', 'pays_naissance',
-                  'num_identite', 'telephone', 'gsm']
+                  'num_identite', 'telephone', 'gsm','societe']
         autocomplete_fields = ('prenom', 'profession', 'lieu_naissance', 'pays_naissance')
 
     def num_identite(self):
@@ -170,7 +170,8 @@ class FileForm(forms.Form):
     file = forms.FileField()
 
 
-class ContratGestionForm(ModelForm):
+class ContratGestionForm(forms.Form):
+    batiment_id = forms.ChoiceField( widget=forms.Select(attrs={'class':'selector'}))
     date_debut = forms.DateField(required=True, input_formats=['%d/%m/%Y'],
                                  widget=forms.DateInput(format='%d/%m/%Y'))
     date_fin = forms.DateField(required=False, input_formats=['%d/%m/%Y'],
@@ -183,6 +184,8 @@ class ContratGestionForm(ModelForm):
 
     def __init__(self, *args, **kwargs):
         super(ContratGestionForm, self).__init__(*args, ** kwargs)
+
+        self.fields["batiment_id"].queryset = Batiment.objects.all()
 
     def clean(self):
         cleaned_data = super(ContratGestionForm, self).clean()

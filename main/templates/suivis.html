@@ -6,12 +6,16 @@
 <form method="get" action="{% url 'suivis_search'%}" >
   <div class="row">
     <div class="col-md-3">
-    <label for="date_debut">Date début</label>
-    <input class="form-control" id="date_debut" placeholder="Date début" value="{{ date_debut|date:"j/m/Y" }}" name="date_debut">
+    <label>Date début</label>
+    <input class="form-control" id="date_debut_suivi"
+           value="{{ date_debut|date:"j/m/Y" }}"
+           name="date_debut">
   </div>
   <div class="col-md-3">
-    <label for="date_fin">Date fin</label>
-    <input class="form-control" id="date_fin" placeholder="Date fin" value="{{ date_fin|date:"j/m/Y" }}" name="date_fin">
+    <label>Date fin</label>
+    <input class="form-control"
+           id="date_fin_suivi"
+           value="{{ date_fin|date:"j/m/Y" }}" name="date_fin">
   </div>
   <div class="col-md-3">
     <label for="etat">Etat</label>
@@ -62,7 +66,7 @@
     {% for s in suivis %}
       <tr class="{{s.etat_suivi}}">
         <td>{{s.financement_location.contrat_location.batiment}}</td>
-        <td>{{s.date_paiement|date:"j/m/Y"}}</td>
+        <td>{{s.date_paiement|date:"d/m/Y"}}</td>
         <td>{{s.etat_suivi}}</td>
         <td style="background-color:{%if s.loyer_percu == s.financement_location.loyer%}transparent{% else %}red{% endif %};">{{s.loyer_percu}} ({{s.financement_location.loyer}})</td>
         {% if s.financement_location.charges > 0 %}

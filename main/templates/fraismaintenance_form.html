@@ -39,6 +39,8 @@
     {% endif %}
   </div>
   <div class="col-md-6">
+    <label>A charge des locataires</label>
+    <input class="form-control" type="checkbox" name="contrat_location" {%if frais.contrat_location%}checked{%endif%}>
   </div>
 </div>
 <div class="row">
@@ -70,7 +72,11 @@
   </div>
   <div class="col-md-3">
     <label>Date réalisation</label>
-    <input class="form-control"  value="{%if frais.date_realisation %}{{ frais.date_realisation|date:"j/m/Y" }}{%endif%}" name="date_realisation">
+    <input class="form-control"
+           id="txt_date_realisation"
+           value="{%if frais.date_realisation %}{{ frais.date_realisation|date:"d/m/Y" }}{%endif%}"
+           name="date_realisation">
+    <span class="erreur_formulaire" id="spn_date_realisation"></span>
   </div>
   <div class="col-md-6">
   </div>
@@ -79,7 +85,7 @@
   <div class="col-md-11">
   </div>
   <div class="col-md-1">
-    <input type="submit" value="ok"/>
+    <input type="submit" value="ok" id="bt_fraismaintenance_save"/>
   </div>
 </div>
 
