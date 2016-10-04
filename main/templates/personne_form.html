@@ -25,6 +25,15 @@
           <input class="form-control" name="email" value="{{ personne.email| default_if_none:'' }}" ><font style="color:red">{{ form.email.errors }}</font>
       </div>
       <div class="col-md-6">
+        <label>Type personne</label>
+          <select class="form-control" name="type_personne" value="{{ personne.personne_type| default_if_none:'' }}" >
+            <option value="NON_PRECISE" >Non précisé</option>
+            <option value="LOCATAIRE" {% if personne.personne_type == 'LOCATAIRE' %}selected{%endif%}>Locataire</option>
+            <option value="PROFESSIONNEL"  {% if personne.personne_type == 'PROFESSIONNEL' %}selected{%endif%}>Professionnel</option>
+            <option value="ANCIEN_LOCATAIRE"  {% if personne.personne_type == 'ANCIEN_LOCATAIRE' %}selected{%endif%}>Ancien locataire</option>
+            <option value="ANCIEN_PROPRIETAIRE"  {% if personne.personne_type == 'ANCIEN_PROPRIETAIRE' %}selected{%endif%}>Ancien propriétaire</option>
+          </select>
+
       </div>
     </div>
     <div class="row">

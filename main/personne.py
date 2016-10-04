@@ -49,10 +49,14 @@ def update(request):
     else:
         personne = Personne()
 
-    personne.nom =request.POST['nom']
-    personne.prenom =request.POST['prenom']
-    personne.email =request.POST['email']
-    personne.profession =request.POST['profession']
+    personne.nom = request.POST['nom']
+    personne.prenom = request.POST['prenom']
+    personne.email = request.POST['email']
+    personne.personne_type = 'NON_PRECISE'
+    if request.POST['type_personne']:
+        personne.personne_type = request.POST['type_personne']
+
+    personne.profession = request.POST['profession']
     personne.societe = None
     if request.POST.get('societe', None):
         if request.POST['societe']!='':

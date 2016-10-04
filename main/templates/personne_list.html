@@ -51,7 +51,7 @@
               <td>
                   <a href="{% url 'personne-edit' personne.id %}" title="Pour modifier une personne">{{ personne.prenom }}</a>
               </td>
-              <td>{{personne.type}}</td>
+              <td>{{personne.get_personne_type_display}}</td>
               <td>
                 {% if personne.email %}
                   {{ personne.email }}

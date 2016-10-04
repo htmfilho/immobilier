@@ -150,6 +150,15 @@ class Societe(models.Model):
         return ch
 
 class Personne(models.Model):
+
+    TYPE_PERSONNE = (
+        ('NON_PRECISE', '-'),
+        ('LOCATAIRE', 'Locataire'),
+        ('PROFESSIONNEL', 'Professionnel'),
+        ('PROPRIETAIRE', 'Propriétaire'),
+        ('ANCIEN_LOCATAIRE', 'Ancien locataire'),
+        ('ANCIEN_PROPRIETAIRE', 'Ancien propriétaire'),
+    )
     nom = models.CharField(max_length=100)
     prenom = models.CharField(max_length=100)
     # societe        = models.CharField(max_length=100, blank=True, null=True)
@@ -163,6 +172,7 @@ class Personne(models.Model):
     gsm = models.CharField(max_length=30, blank=True, null=True)
     societe = models.ForeignKey(Societe, blank=True, null=True)
     num_compte_banque = models.CharField(max_length=30, blank=True, null=True)
+    personne_type = models.CharField(max_length=20, choices=TYPE_PERSONNE, default='NON_PRECISE', blank=True, null=True)
 
     def __init__(self,  *args, **kwargs):
         super(Personne, self).__init__(*args, **kwargs)
@@ -656,6 +666,7 @@ class Locataire(models.Model):
     profession = models.ForeignKey(Fonction, blank=True, null=True)
     civilite = models.CharField(max_length=15, choices=CIVILITE, default='NON_PRECISE')
     # personne_garante     = models.ForeignKey('Personne', blank=True, null=True)
+
 
     def __str__(self):
         # return self.personne.nom + ", " + self.personne.prenom + " (" + self.financement_location.date_debut.strftime('%d-%m-%Y') + " au " + self.financement_location.date_fin.strftime('%d-%m-%Y') + ")"
