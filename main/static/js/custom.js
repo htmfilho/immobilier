@@ -41,5 +41,62 @@ $("#date_debut_location").change(function(event) {
 
 });
 
+document.querySelector('input[list="localites_nom"]').addEventListener('input', onInput);
+document.querySelector('input[list="localites"]').addEventListener('input', onInput2);
+
+function onInput(e) {
+   var input = e.target,
+       val = input.value;
+       list = input.getAttribute('list');
+       options = document.getElementById(list).childNodes;
+
+  for(var i = 0; i < options.length; i++) {
+    if(options[i].innerText === val) {
+      // An item was selected from the list!
+      // yourCallbackHere()
+
+    var value = options[i];
+
+    var id_localite = options[i].getAttribute('data-id');
+
+        $('#localites option').each(function(){
+
+            if ($(this).attr('data-id') == id_localite){
+                $('#localite').val($(this).val());
+            }
+        });
+
+
+      break;
+    }
+  }
+}
+
+function onInput2(e) {
+   var input = e.target,
+       val = input.value;
+       list = input.getAttribute('list');
+       options = document.getElementById(list).childNodes;
+
+  for(var i = 0; i < options.length; i++) {
+    if(options[i].innerText === val) {
+      // An item was selected from the list!
+      // yourCallbackHere()
+
+    var value = options[i];
+
+    var id_localite = options[i].getAttribute('data-id');
+
+        $('#localites_nom option').each(function(){
+            if ($(this).attr('data-id') == id_localite){
+                $('#localite_nom').val($(this).val());
+            }
+        });
+
+
+      break;
+    }
+  }
+}
 
 

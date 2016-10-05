@@ -28,27 +28,35 @@
           <input class="form-control" id="boite" value="{{ batiment.boite| default_if_none:'' }}" name="boite">
         </div>
       </div>
+        <br>
       <div class="row">
         <div class="col-md-4">
-          <labelclass="control-label">Localité</label>
-          <select class="form-control" name="localite" >
-            {%if batiment.localite%}
-              <option value="">-</option>
-            {%else%}
-              <option value="" selected>-</option>
-            {%endif%}
+          <label class="control-label">Code postal</label>
+          <input list="localites" type="text" id="localite"
+                 class="form-control" name="localite_cp"
+                 value="{{batiment.localite.code_postal| default_if_none:''}} "
+          >
+          <datalist id="localites">
             {% for l in localites %}
-                {% if batiment.localite.id == l.id %}
-                  <option value="{{ l.id }}" selected>{{ l }}</option>
-                {%else%}
-                  <option value="{{ l.id }}">{{ l }}</option>
-                {% endif %}
+                  <option value="{{ l.code_postal }}" data-id="{{l.id}}">{{ l.code_postal }}</option>
             {% endfor %}
-          </select>
+          </datalist>
         </div>
-        <div class="col-md-8">
+         <div class="col-md-4">
+          <label class="control-label">Localité</label>
+          <input list="localites_nom" type="text" id="localite_nom"
+                 class="form-control" name="localite_nom"
+                 value="{{batiment.localite.localite| default_if_none:''}} ">
+          <datalist id="localites_nom">
+            {% for l in localites %}
+                  <option value="{{ l.localite }}" data-id="{{l.id}}">{{ l.localite }}</option>
+            {% endfor %}
+          </datalist>
+        </div>
+        <div class="col-md-4">
         </div>
       </div>
+         <br>
       <div class="row">
         <div class="col-md-6">
           <label class="control-label">Superficie</label>
@@ -63,6 +71,7 @@
                  name="performance_energetique">
         </div>
       </div>
+         <br>
       <label class="control-label">Description</label>
          <textarea class="form-control" name="description" cols="4" rows="4" >{{ batiment.description | default_if_none:'' }}</textarea>
       <div class="row">
@@ -71,7 +80,7 @@
             <p align="right"><input type="submit" title="Enregistrer les infos propres au batiment" value="Enregistrer"></p>
         </div>
       </div>
-
+ <br>
       {% if batiment.id %}
           <ul class="nav nav-tabs">
             <li class="active"><a data-toggle="tab" href="#proprietaires">Propriétaires</a></li>

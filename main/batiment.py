@@ -31,9 +31,18 @@ def update(request):
         print(request.POST['numero'])
         batiment.numero = request.POST['numero']
         batiment.boite = request.POST['boite']
+
         localite = None
-        if request.POST['localite']:
-            localite = get_object_or_404(Localite, pk=request.POST['localite'])
+        if request.POST['localite_cp'] and request.POST['localite_cp'] != '' \
+                and request.POST['localite_nom'] and request.POST['localite_nom'] != '':
+            localites = Localite.search(request.POST['localite_cp'], request.POST['localite_nom'])
+            if not localites.exists():
+                localite = Localite()
+                localite.localite = request.POST['localite_nom']
+                localite.code_postal = request.POST['localite_cp']
+                localite.save()
+            else:
+                localite = localites[0]
 
         batiment.localite = localite
 
@@ -51,7 +60,7 @@ def update(request):
         else:
             batiment.description = None
         batiment.save()
-    message_info = "ok"
+    message_info = "Données sauvegardées"
     return render(request, "batiment_form.html",
                   {'batiment':     batiment,
                    'localites':    Localite.find_all(),
@@ -59,7 +68,7 @@ def update(request):
 
 
 def search(request):
-    proprietaire = request.GET.get('proprietaire',None)
+    proprietaire = request.GET.get('proprietaire', None)
     batiments = Batiment.search(proprietaire)
     return render(request, 'listeBatiments.html', {'batiments': batiments,
                                                    'proprietaires': Proprietaire.find_distinct_proprietaires()})

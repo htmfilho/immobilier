@@ -29,7 +29,6 @@ from dateutil.relativedelta import relativedelta
 from django.core.urlresolvers import reverse
 from django.db.models import Q
 from django.db.models import Sum
-from calendar import monthrange
 import datetime
 import calendar
 
@@ -46,6 +45,18 @@ class Localite(models.Model):
     def find_by_id(an_id):
         return Localite.objects.get(pk=an_id)
 
+    @staticmethod
+    def search(un_code_postal, une_localite):
+        out = None
+        queryset = Localite.objects
+        if un_code_postal:
+            queryset = queryset.filter(code_postal=un_code_postal)
+        if une_localite:
+            queryset = queryset.filter(localite__iexact=une_localite)
+
+        if un_code_postal or une_localite:
+            out = queryset
+        return out
 
     def __str__(self):
         return self.code_postal + " " + self.localite
@@ -97,8 +108,10 @@ class Fonction(models.Model):
         if l.exists():
             return l[0]
         return None
+
     def __str__(self):
         return str(self.nom_fonction)
+
 
 class TypeSociete(models.Model):
     type = models.CharField(max_length=50, blank=False, null=False)
@@ -148,6 +161,7 @@ class Societe(models.Model):
         if self.localite:
             ch = ch + ", " + self.localite.localite
         return ch
+
 
 class Personne(models.Model):
 
@@ -261,19 +275,18 @@ class Personne(models.Model):
             fonction = Fonction.find_by_nom(self.profession)
             if fonction is None:
                 fonction = Fonction()
-                fonction.nom_fonction=self.profession
+                fonction.nom_fonction = self.profession
                 fonction.save()
 
         professionnels = Professionnel.search(self, self.societe, fonction)
         if not professionnels.exists():
             professionnel = Professionnel()
-            professionnel.personne=self
+            professionnel.personne = self
             professionnel.societe = self.societe
             professionnel.fonction = fonction
             professionnel.save()
 
         return p
-
 
 
 class Batiment(models.Model):
@@ -765,14 +778,14 @@ class SuiviLoyer(models.Model):
 
     @staticmethod
     def find_suivis(date_d_param, date_f_param, etat_param):
-        etat =None
-        if etat_param !="":
+        etat = None
+        if etat_param != "":
             etat = etat_param
-        date_d=None
-        if date_d_param!="":
+        date_d= None
+        if date_d_param != "":
             date_d=date_d_param
         date_f = None
-        if date_f_param!="":
+        if date_f_param != "":
             date_f=date_f_param
         out = None
         queryset = SuiviLoyer.objects
@@ -791,7 +804,7 @@ class SuiviLoyer(models.Model):
         return SuiviLoyer.objects.filter(Q(date_paiement__gte=timezone.now(),
                                            date_paiement__lte=timezone.now() + relativedelta(months=1),
                                            etat_suivi='A_VERIFIER')
-                                         | Q(date_paiement__lte=timezone.now(), etat_suivi='A_VERIFIER') )
+                                         | Q(date_paiement__lte=timezone.now(), etat_suivi='A_VERIFIER'))
 
     @staticmethod
     def find_suivis_a_verifier_proche():
@@ -873,13 +886,13 @@ class ContratGestion(models.Model):
         return out
 
     def __str__(self):
-        return self.gestionnaire.nom + ", " + self.gestionnaire.prenom  + str(self.batiment)
+        return self.gestionnaire.nom + ", " + self.gestionnaire.prenom + str(self.batiment)
 
     def save(self,  *args, **kwargs):
 
         c = super(ContratGestion, self).save(*args, **kwargs)
 
-        if self.date_fin :
+        if self.date_fin:
             alert = Alerte(description='Attention fin contrat location dans 4 mois',
                            date_alerte=self.date_fin - relativedelta(months=4), etat='A_VERIFIER', contrat_gestion=self)
             alert.save()
@@ -914,7 +927,7 @@ class Alerte(models.Model):
         ('VERIFIER', 'Vérifier'),
         ('COURRIER', 'Courrier à préparer'))
 
-    description = models.TextField( verbose_name=u"Description")
+    description = models.TextField(verbose_name=u"Description")
     date_alerte = models.DateField(auto_now=False, auto_now_add=False, blank=True, null=True, verbose_name=u"Date alerte")
     contrat_gestion = models.ForeignKey(ContratGestion, blank=True, null=True, verbose_name=u"Contrat de gestion")
     contrat_location = models.ForeignKey(ContratLocation, blank=True, null=True, verbose_name=u"Contrat location")
@@ -929,8 +942,8 @@ class Alerte(models.Model):
 
     @staticmethod
     def find_by_etat_today(etat_alerte):
-        date_d=timezone.now() - relativedelta(months=1)
-        date_f=timezone.now() + relativedelta(months=1)
+        date_d = timezone.now() - relativedelta(months=1)
+        date_f = timezone.now() + relativedelta(months=1)
         return Alerte.objects.filter(etat=etat_alerte,date_alerte__lte=date_f,date_alerte__gte=date_d)
 
     def __str__(self):
@@ -954,9 +967,9 @@ class Honoraire(models.Model):
 
     @staticmethod
     def find_honoraires_by_etat_today(etat):
-        date_d=timezone.now() - relativedelta(months=1)
-        date_f=timezone.now() + relativedelta(months=1)
-        return Honoraire.objects.filter(etat=etat,date_paiement__lte=date_f,date_paiement__gte=date_d)
+        date_d = timezone.now() - relativedelta(months=1)
+        date_f = timezone.now() + relativedelta(months=1)
+        return Honoraire.objects.filter(etat=etat, date_paiement__lte=date_f, date_paiement__gte=date_d)
 
     @staticmethod
     def find_all():
@@ -977,7 +990,6 @@ class Honoraire(models.Model):
 
         return queryset
 
-
     @staticmethod
     def find_all_batiments():
         batiments = []
@@ -994,7 +1006,7 @@ class Honoraire(models.Model):
 
 
 class Photo(models.Model):
-    photo = models.FileField( upload_to="photos")
+    photo = models.FileField(upload_to="photos")
     texte = models.TextField(default="")
 
     def __str__(self):

@@ -59,16 +59,16 @@ def update(request):
     personne.profession = request.POST['profession']
     personne.societe = None
     if request.POST.get('societe', None):
-        if request.POST['societe']!='':
+        if request.POST['societe'] != '':
             societe = Societe.find_by_id(int(request.POST['societe']))
-            personne.societe=societe
+            personne.societe = societe
 
     personne.lieu_naissance = request.POST['lieu_naissance']
     personne.pays_naissance = request.POST['pays_naissance']
     personne.num_identite = request.POST['num_identite']
     personne.num_compte_banque = request.POST['num_compte_banque']
 
-    personne.telephone =request.POST['telephone']
+    personne.telephone = request.POST['telephone']
     personne.gsm = request.POST['gsm']
     if request.POST['date_naissance']:
         try:

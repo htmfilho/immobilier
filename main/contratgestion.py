@@ -124,14 +124,13 @@ def update(request):
         personne_gestionnaire = Personne.find_gestionnaire_default()
         personnes.append(personne_gestionnaire)
 
-        return render_to_response( "contratgestion_update.html",
-                      {'contrat': gestion,
-                       'action': 'update',
-                       'message': 'Invalide',
-                       'form': form,
-                       'personnes': personnes,
-                       'batiments': Batiment.objects.all()},context_instance=RequestContext(request))
-        # return render_to_response('new_stmt.html', {'form': form, },context_instance=RequestContext(request))
+        return render_to_response("contratgestion_update.html",
+                                  {'contrat': gestion,
+                                   'action': 'update',
+                                   'message': 'Invalide',
+                                   'form': form,
+                                   'personnes': personnes,
+                                   'batiments': Batiment.objects.all()}, context_instance=RequestContext(request))
 
 
 def list(request):
