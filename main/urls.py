@@ -95,7 +95,7 @@ urlpatterns = [
     url(r'^batiment/create/$', batiment.create, name='batiment-create'),
     url(r'^batiment/([0-9]+)/$', batiment.batiment_form, name='batiment'),
     url(r'^batiment/update/([0-9]+)/$', batiment.update, name='batiment-update'),
-    url(r'^batiment/delete/(?P<pk>[0-9]+)/$', views.BatimentDelete.as_view(), name='batiment-delete'),
+    url(r'^batiment/delete/([0-9]+)/$', batiment.delete, name='batiment-delete'),
     url(r'^batiments/$', views.BatimentList.as_view(), name='batiment_list'),
     url(r'^batiment/deletep/([0-9]+)/$', proprietaire.delete_proprietaire_batiment,
         name='delete_proprietaire_batiment'),

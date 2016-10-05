@@ -41,8 +41,7 @@ $("#date_debut_location").change(function(event) {
 
 });
 
-document.querySelector('input[list="localites_nom"]').addEventListener('input', onInput);
-document.querySelector('input[list="localites"]').addEventListener('input', onInput2);
+
 
 function onInput(e) {
    var input = e.target,

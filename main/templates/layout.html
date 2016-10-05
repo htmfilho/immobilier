@@ -75,6 +75,14 @@
         $(document).ready(function() {
             $('#tbl_data').DataTable();
             $('#message_info').fadeOut(5000);
+            //document.querySelector('input[list="localites_nom"]').addEventListener('input', onInput);
+
+
+            var applyTo = document.querySelector('input[list="localites_nom"]');
+            if(applyTo) { applyTo.addEventListener('input', onInput);}
+            applyTo = document.querySelector('input[list="localites"]');
+            if(applyTo) { applyTo.addEventListener('input', onInput2);}
+
         } );
     </script>
       {% endblock %}

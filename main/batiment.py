@@ -1,5 +1,7 @@
 from main.models import *
 from django.shortcuts import render, get_object_or_404
+from django.core.urlresolvers import reverse
+from django.http import HttpResponseRedirect
 
 
 def create(request):
@@ -72,3 +74,12 @@ def search(request):
     batiments = Batiment.search(proprietaire)
     return render(request, 'listeBatiments.html', {'batiments': batiments,
                                                    'proprietaires': Proprietaire.find_distinct_proprietaires()})
+
+def delete(request, batiment_id):
+    print('delete',batiment_id)
+    if batiment_id:
+        batiment = get_object_or_404(Batiment, pk=batiment_id)
+        if batiment:
+            batiment.delete()
+
+    return search(request)
