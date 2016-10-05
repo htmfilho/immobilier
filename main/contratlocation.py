@@ -178,15 +178,12 @@ def prolongation(request):
                   {'location':    location,
                    'assurances': Assurance.find_all(), })
 
+
 def contrat_location_form(request):
-
     nouvelle_location = ContratLocation()
-
     auj = date.today()
     nouvelle_location.date_debut = auj.strftime("%d/%m/%Y")
-    form = ContratLocationForm(data=request.POST)
-        # le financement sera crée automatiquement
-    return render(request, "contratlocation_form.html",{
+    return render(request, "contratlocation_form.html", {
                             'assurances': Assurance.find_all(),
                             'batiments': Batiment.find_all(),
                             'location': nouvelle_location,

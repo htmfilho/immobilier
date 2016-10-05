@@ -231,7 +231,7 @@ class Personne(models.Model):
             if cpt > 0:
                 type_personne = type_personne + ", "
             type_personne = type_personne + "professionnel"
-            cpt = cpt + 1
+
         return type_personne
 
     def contrat_gestions(self):
@@ -592,13 +592,23 @@ class ContratLocation(models.Model):
     def find_all():
         return ContratLocation.objects.all()
 
+    def suivis(self):
+        financements = self.financements()
+        suivis_liste = []
+        for f in financements:
+
+            sui = SuiviLoyer.objects.filter(financement_location=f)
+            if sui.exists():
+                suivis_liste.extend(sui)
+        return suivis_liste
+
     class Meta:
         ordering = ['date_debut']
 
 
 class FinancementLocation(models.Model):
     contrat_location = models.ForeignKey(ContratLocation, default=None)
-    date_debut = models.DateField(auto_now=False, auto_now_add=False, verbose_name=u"Date début")  # je n'arrive pas à mettre la date du jour par défaut
+    date_debut = models.DateField(auto_now=False, auto_now_add=False, verbose_name=u"Date début")
     date_fin = models.DateField(auto_now=False, auto_now_add=False, blank=True, null=True)
     loyer = models.DecimalField(max_digits=6, decimal_places=2, default=0)
     charges = models.DecimalField(max_digits=6, decimal_places=2, default=0)
@@ -682,7 +692,6 @@ class Locataire(models.Model):
 
 
     def __str__(self):
-        # return self.personne.nom + ", " + self.personne.prenom + " (" + self.financement_location.date_debut.strftime('%d-%m-%Y') + " au " + self.financement_location.date_fin.strftime('%d-%m-%Y') + ")"
         return self.personne.nom + ", " + self.personne.prenom
 
     # def unique_error_message(self, model_class, unique_check):
@@ -701,7 +710,7 @@ class Locataire(models.Model):
         professionnels = Professionnel.search(self.personne, self.societe, self.profession)
         if not professionnels.exists():
             professionnel = Professionnel()
-            professionnel.personne=self.personne
+            professionnel.personne = self.personne
             professionnel.societe = self.societe
             professionnel.fonction = self.profession
             professionnel.save()
@@ -710,7 +719,7 @@ class Locataire(models.Model):
     @staticmethod
     def find_my_locataires():
         personne = Personne.find_gestionnaire_default()
-        l=[]
+        l = []
         if personne:
             batiments = Proprietaire.find_batiment_by_personne(personne)
             for b in batiments:
@@ -729,9 +738,7 @@ class FraisMaintenance(models.Model):
 
     @staticmethod
     def find_by_batiment(batiment_id):
-        print('find_by_batiment')
         batiment = Batiment.find_batiment(batiment_id)
-        print (batiment)
         return FraisMaintenance.objects.all()
 
     @staticmethod
@@ -747,7 +754,6 @@ class FraisMaintenance(models.Model):
                     if f not in frais:
                         frais.append(f)
         return frais
-
 
     def __str__(self):
         ch = ""
@@ -781,12 +787,12 @@ class SuiviLoyer(models.Model):
         etat = None
         if etat_param != "":
             etat = etat_param
-        date_d= None
+        date_d = None
         if date_d_param != "":
-            date_d=date_d_param
+            date_d = date_d_param
         date_f = None
         if date_f_param != "":
-            date_f=date_f_param
+            date_f = date_f_param
         out = None
         queryset = SuiviLoyer.objects
         if etat:
@@ -816,7 +822,7 @@ class SuiviLoyer(models.Model):
         start_date = datetime.datetime(date_ref.year, date_ref.month, 1)
         end_date = datetime.datetime(date_ref.year, date_ref.month, calendar.mdays[date_ref.month])
         return SuiviLoyer.objects.filter(date_paiement__lte=end_date, date_paiement__gte=start_date,
-                                           etat_suivi=etat_suivi)
+                                         etat_suivi=etat_suivi)
 
     @staticmethod
     def find_mes_suivis_by_etat_suivi(date_ref, etat_suivi):
@@ -826,31 +832,32 @@ class SuiviLoyer(models.Model):
         return SuiviLoyer.objects.filter(date_paiement__lte=end_date, date_paiement__gte=start_date,
                                          etat_suivi=etat_suivi,
                                          financement_location__contrat_location__batiment__in=mes_batiment)
+
     @staticmethod
     def find_suivis_by_pas_etat_suivi(date_ref, etat_suivi):
         start_date = datetime.datetime(date_ref.year, date_ref.month, 1)
         end_date = datetime.datetime(date_ref.year, date_ref.month, calendar.mdays[date_ref.month])
         return SuiviLoyer.objects.filter(date_paiement__lte=end_date, date_paiement__gte=start_date)\
             .exclude(etat_suivi=etat_suivi)
+
     @staticmethod
     def find_all():
         return SuiviLoyer.objects.all()
 
     def __str__(self):
         desc = ""
-        if not self.date_paiement is None:
+        if self.date_paiement:
             desc += self.date_paiement.strftime('%d-%m-%Y')
 
-        if not self.remarque is None:
+        if self.remarque:
             desc += " , (" + self.remarque + ")"
 
-        if not self.etat_suivi is None:
+        if self.etat_suivi:
             desc += " (" + self.etat_suivi + ")"
         return desc
 
     @staticmethod
     def find_suivis_paye(financement):
-        print('')
         # return SuiviLoyer.objects.filter(financement_location = financement, etat_suivi='PAYE')
         return SuiviLoyer.objects.all()
 
@@ -858,7 +865,7 @@ class SuiviLoyer(models.Model):
 class ContratGestion(models.Model):
     batiment = models.ForeignKey(Batiment)
     gestionnaire = models.ForeignKey(Personne)
-    date_debut = models.DateField(auto_now=False,  auto_now_add=False,blank=True, null=True)
+    date_debut = models.DateField(auto_now=False,  auto_now_add=False, blank=True, null=True)
     date_fin = models.DateField(auto_now=False, auto_now_add=False, blank=True, null=True)
     montant_mensuel = models.DecimalField(max_digits=6, decimal_places=2, blank=True, null=True)
 
@@ -928,7 +935,8 @@ class Alerte(models.Model):
         ('COURRIER', 'Courrier à préparer'))
 
     description = models.TextField(verbose_name=u"Description")
-    date_alerte = models.DateField(auto_now=False, auto_now_add=False, blank=True, null=True, verbose_name=u"Date alerte")
+    date_alerte = models.DateField(auto_now=False, auto_now_add=False, blank=True, null=True,
+                                   verbose_name=u"Date alerte")
     contrat_gestion = models.ForeignKey(ContratGestion, blank=True, null=True, verbose_name=u"Contrat de gestion")
     contrat_location = models.ForeignKey(ContratLocation, blank=True, null=True, verbose_name=u"Contrat location")
     etat = models.CharField(max_length=10, choices=ETAT, default='A_VERIFIER', verbose_name=u"Etat")
@@ -944,7 +952,7 @@ class Alerte(models.Model):
     def find_by_etat_today(etat_alerte):
         date_d = timezone.now() - relativedelta(months=1)
         date_f = timezone.now() + relativedelta(months=1)
-        return Alerte.objects.filter(etat=etat_alerte,date_alerte__lte=date_f,date_alerte__gte=date_d)
+        return Alerte.objects.filter(etat=etat_alerte, date_alerte__lte=date_f, date_alerte__gte=date_d)
 
     def __str__(self):
         return self.date_alerte.strftime('%d-%m-%Y') + " " + self.etat
@@ -962,7 +970,8 @@ class Honoraire(models.Model):
         ('PAYE', 'Payé')
     )
     contrat_gestion = models.ForeignKey(ContratGestion, blank=True, null=True, verbose_name=u"Contrat de gestion")
-    date_paiement =  models.DateField(auto_now=False, auto_now_add=False, blank=True, null=True, verbose_name=u"Date paiement")
+    date_paiement = models.DateField(auto_now=False, auto_now_add=False, blank=True, null=True,
+                                     verbose_name=u"Date paiement")
     etat = models.CharField(max_length=10, choices=ETAT_HONORAIRE, default='A_VERIFIER', verbose_name=u"Etat")
 
     @staticmethod
