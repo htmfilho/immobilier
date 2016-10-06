@@ -1,7 +1,6 @@
 from main.models import *
 from django.shortcuts import render, get_object_or_404
-from django.core.urlresolvers import reverse
-from django.http import HttpResponseRedirect
+from main.forms import BatimentForm
 
 
 def create(request):
@@ -23,20 +22,27 @@ def batiment_form(request, batiment_id):
 def update(request):
 
     batiment = Batiment()
-
+    message_info = None
     if 'add' == request.POST.get('action') or 'modify' == request.POST.get('action'):
+        form = BatimentForm(data=request.POST)
         if request.POST.get('id') and not request.POST['id'] == 'None':
             batiment = get_object_or_404(Batiment, pk=request.POST['id'])
         else:
             batiment = Batiment()
         batiment.rue = request.POST['rue']
-        print(request.POST['numero'])
-        batiment.numero = request.POST['numero']
-        batiment.boite = request.POST['boite']
-
+        if request.POST['numero'] and request.POST['numero'] != '':
+            batiment.numero = request.POST['numero']
+        else:
+            batiment.numero = None
+        if request.POST['numero'] and request.POST['boite'] != '':
+            batiment.boite = request.POST['boite']
+        else:
+            batiment.boite = None
         localite = None
         if request.POST['localite_cp'] and request.POST['localite_cp'] != '' \
                 and request.POST['localite_nom'] and request.POST['localite_nom'] != '':
+            print(request.POST['localite_cp'])
+            print(request.POST['localite_nom'])
             localites = Localite.search(request.POST['localite_cp'], request.POST['localite_nom'])
             if not localites.exists():
                 localite = Localite()
@@ -49,24 +55,28 @@ def update(request):
         batiment.localite = localite
 
         if request.POST['superficie']:
-            batiment.superficie = float(request.POST['superficie'].strip().replace(',', '.'))
+            batiment.superficie = request.POST['superficie']
         else:
             batiment.superficie = None
 
-        if request.POST['performance_energetique']:
-            batiment.performance_energetique = float(request.POST['performance_energetique'].strip().replace(',', '.'))
+        if request.POST['performance_energetique'] and request.POST['performance_energetique'] != '':
+            batiment.performance_energetique = request.POST['performance_energetique']
         else:
             batiment.performance_energetique = None
         if request.POST['description']:
             batiment.description = request.POST['description']
         else:
             batiment.description = None
-        batiment.save()
-    message_info = "Données sauvegardées"
+
+        if form.is_valid():
+            batiment.save()
+            message_info = "Données sauvegardées"
+
     return render(request, "batiment_form.html",
                   {'batiment':     batiment,
                    'localites':    Localite.find_all(),
-                   'message_info': message_info})
+                   'message_info': message_info,
+                   'form':form})
 
 
 def search(request):

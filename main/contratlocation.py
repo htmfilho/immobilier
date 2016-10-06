@@ -33,7 +33,7 @@ def update(request):
         location.assurance = None
 
     if form.is_valid():
-        if prolongation_action and (request.POST.get('type_prolongation') == '1'
+        if prolongation_action and (request.POST.get('type_prolongation') == '1' \
                                     or request.POST.get('type_prolongation') == '7'):
             # Les financements seront adaptés via le save
             location.save_prolongation(int(request.POST.get('type_prolongation')))
@@ -77,9 +77,11 @@ def contrat_location_for_batiment(request, batiment_id):
 
 
 def list(request):
-    locations = ContratLocation.objects.all()
+    date_fin = timezone.now()
+    locations = ContratLocation.search(date_fin)
     return render(request, "contratlocation_list.html",
-                           {'locations': locations})
+                           {'locations': locations,
+                            'date_fin_filtre_location': date_fin})
 
 
 def delete(request, location_id):
@@ -188,3 +190,15 @@ def contrat_location_form(request):
                             'batiments': Batiment.find_all(),
                             'location': nouvelle_location,
                             'form': None})
+
+
+def search(request):
+    date_fin = request.GET.get('date_fin_filtre_location', None)
+    if date_fin:
+        date_fin = datetime.strptime(date_fin, '%d/%m/%Y')
+        locations = ContratLocation.search(date_fin)
+    else:
+        locations = ContratLocation.find_all()
+    return render(request, "contratlocation_list.html",
+                           {'locations': locations,
+                            'date_fin_filtre_location': date_fin})

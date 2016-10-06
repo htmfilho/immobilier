@@ -5,6 +5,30 @@
   <li class="active">Liste des contrats de location</li>
 {% endblock %}
 {% block content %}
+
+<!-- Filtre -->
+<div class="panel panel-info">
+    <div class="panel-heading">Filtre</div>
+    <div class="panel-body">
+        <form method="get"
+            action="{% url 'location_search'%}" >
+        <div class="row">
+          <div class="col-md-4">
+              <label>Date fin location supérieure à </label>
+              <input id="txt_date_fin_filtre_location"
+                     name="date_fin_filtre_location"
+                     class="form-control"
+                     value="{{date_fin_filtre_location|date:"j/m/Y"}}">
+          </div>
+          <div class="col-md-8">
+              <input type="submit" value="OK" name="btn" class="btn btn-default pull-right">
+          </div>
+        </div>
+        </form>
+    </div>
+</div>
+<!-- fin Filtre -->
+<br>
 <div class="panel panel-default">
   <div class="panel-body">
     <table class="table table-striped table-hover">
@@ -19,12 +43,19 @@
             {% for contrat in locations %}
                 <tr>
                     <td><a href="{% url 'location-prepare-update-all' contrat.pk %}" title="Pour modifier un contrat de location">{{ contrat.batiment }}</a></td>
-                    <td>                  <table >
-                            {% for p in contrat.batiment.locataires_actuels2 %}
-                            <tr><td><a href="{% url 'locataire-update' p.id %}">{{  p.personne.nom }} {{  p.personne.prenom }} </a></td></tr>
-                          {% endfor%}
-                          </table></td>
-
+                    <td>
+                        <table>
+                            {% if contrat.batiment.locataires_actuels2 %}
+                                {% for p in contrat.batiment.locataires_actuels2 %}
+                                    <tr><td><a href="{% url 'locataire-update' p.id %}">{{  p.personne.nom }} {{  p.personne.prenom }} </a></td></tr>
+                                {% endfor%}
+                            {%else%}
+                                {% for p in contrat.batiment.dernier_locataires %}
+                                    <tr style="color:red"><td><a href="{% url 'locataire-update' p.id %}" style="color:red">{{  p.personne.nom }} {{  p.personne.prenom }} </a></td></tr>
+                                {% endfor%}
+                            {%endif%}
+                        </table>
+                    </td>
                     <td>{{ contrat.date_fin|date:"j/m/Y" }}</td>
                     <td>{% if contrat.renonciation%}{{ contrat.renonciation|date:"j/m/Y" }}{% endif %}</td>
                     <td>
@@ -34,7 +65,8 @@
             {% endfor%}
         </tbody>
     </table>
-      <a class="btn btn-default" href="{% url 'contrat_location_form' %}" title="Pour ajouter un honoraire"><span class="glyphicon glyphicon-plus" aria-hidden="true"> Ajout honoraire</span></a>
+      <a class="btn btn-default" href="{% url 'contrat_location_form' %}"
+         title="Pour ajouter un contrat de location"><span class="glyphicon glyphicon-plus" aria-hidden="true"> Ajout contrat location</span></a>
   </div>
 </div>
 {% endblock %}

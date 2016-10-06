@@ -11,77 +11,74 @@
 </ul>
 
 <div class="tab-content">
+  <br>
     <div id="info_proprietaire" class="tab-pane fade in active">
-<div id="ff">
-{{ request.META.HTTP_REFERER }}
-  <form method="post" action="{% url 'proprietaire-update-save' %}" id ="proprietaire_form">
-    <input type="hidden" id="previous" name="previous" value="{{request.META.HTTP_REFERER }}"/>
-    <input type="hidden" id="action" name="action" value="{{action}}"/>
-    <input type="hidden" id="id" name="id" value="{{proprietaire.id}}"/>
-    <input type="hidden" id="prev" name="prev" value="{{prev}}"/>
-
-  {% csrf_token %}
-  <div class="row">
-    <div class="col-md-12">
-      <label for="proprietaire">Propriétaire</label>
-      {% if action == 'update'%}
-      <input  class="form-control" type="text" value="{{ proprietaire.proprietaire }}" readonly="readonly" />
-        <input  class="form-control" type="hidden" value="{{ proprietaire.proprietaire.id }}" readonly="readonly" id="proprietaire" name="proprietaire"/>
-      {%endif%}
-      {% if action == 'add'%}
-        <select id="proprietaire" name="proprietaire"  class="form-control">
-          {%for p in personnes%}
-          {%if p = proprietaire.proprietaire %}
-          <option value="{{p.id}}" selected="">{{p}}</option>
-          {%else%}
-            <option value="{{p.id}}" >{{p}}</option>
-          {%endif%}
-          {%endfor%}
-        </select>
-      {%endif%}
-
-    </div>
-  </div>
-  <div class="row">
-    <div class="col-md-12">
-      <label for="batiment_id">Batiment</label><br>
-      {{ proprietaire.batiment }}
-      <input type="hidden" id="batiment_id" name="batiment_id" value="{{proprietaire.batiment.id}}"/>
-
-    </div>
-  </div>
-  <div class="row">
-    <div class="col-md-4">
-      <label>Date début</label>
-      <input class="form-control" type="text" value="{%if proprietaire.date_debut%}{{ proprietaire.date_debut|date:"j/m/Y" }}{%endif%}" id="date_debut" name="date_debut"/>
-    </div>
-    <div class="col-md-4">
-      <label>Date fin</label>
-      <input class="form-control" type="date" value="{%if proprietaire.date_fin%}{{ proprietaire.date_fin|date:"j/m/Y" }}{% endif %}" id="date_fin" name="date_fin"/>
-    </div>
-    <div class="col-md-4">
-    </div>
-  </div>
-
-  <div class="row">
-    <div class="col-md-1">
-      <br>
-    <button type="submit" class="btn btn-primary"
-        title="Sauvegarder"><span class="glyphicon glyphicon-floppy-disk" aria-hidden="true"></span>
-    Sauvegarder</button>
-</div>
-<div class="col-md-10">
-</div>
-  <div class="col-md-1">
-
-
-</div>
-</div>
-  </form>
-</div>
+      <div id="ff">
+        <form method="post" action="{% url 'proprietaire-update-save' %}" id ="proprietaire_form">
+          <input type="hidden" id="previous" name="previous" value="{{request.META.HTTP_REFERER }}"/>
+          <input type="hidden" id="action" name="action" value="{{action}}"/>
+          <input type="hidden" id="id" name="id" value="{{proprietaire.id}}"/>
+          <input type="hidden" id="prev" name="prev" value="{{prev}}"/>
+          {% csrf_token %}
+          <div class="row">
+            <div class="col-md-12">
+              <label for="proprietaire">Propriétaire</label>
+              {% if action == 'update'%}
+              <input  class="form-control" type="text" value="{{ proprietaire.proprietaire }}" readonly="readonly" />
+                <input  class="form-control" type="hidden" value="{{ proprietaire.proprietaire.id }}" readonly="readonly" id="proprietaire" name="proprietaire"/>
+              {%endif%}
+              {% if action == 'add'%}
+                <select id="proprietaire" name="proprietaire"  class="form-control">
+                  <option value="" >-</option>
+                  {%for p in personnes%}
+                  {%if p = proprietaire.proprietaire %}
+                  <option value="{{p.id}}" selected>{{p}}</option>
+                  {%else%}
+                    <option value="{{p.id}}" >{{p}}</option>
+                  {%endif%}
+                  {%endfor%}
+                </select>
+              {%endif%}
+            </div>
+          </div>
+          <br>
+          <div class="row">
+            <div class="col-md-12">
+              <label for="batiment_id">Batiment</label><br>
+              {{ proprietaire.batiment }}
+              <input type="hidden" id="batiment_id" name="batiment_id" value="{{proprietaire.batiment.id}}"/>
+            </div>
+          </div>
+          <br>
+          <div class="row">
+            <div class="col-md-4">
+              <label>Date début</label>
+              <input class="form-control" type="text" value="{%if proprietaire.date_debut%}{{ proprietaire.date_debut|date:"j/m/Y" }}{%endif%}" id="date_debut" name="date_debut"/>
+            </div>
+            <div class="col-md-4">
+              <label>Date fin</label>
+              <input class="form-control" type="date" value="{%if proprietaire.date_fin%}{{ proprietaire.date_fin|date:"j/m/Y" }}{% endif %}" id="date_fin" name="date_fin"/>
+            </div>
+            <div class="col-md-4">
+            </div>
+          </div>
+          <br>
+          <div class="row">
+            <div class="col-md-1">
+                <button type="submit" class="btn btn-primary"
+                    title="Sauvegarder"><span class="glyphicon glyphicon-floppy-disk" aria-hidden="true"></span>
+                    Ok</button>
+            </div>
+            <div class="col-md-10">
+            </div>
+            <div class="col-md-1">
+            </div>
+          </div>
+        </form>
+      </div>
     </div>
     <div id="info_contact" class="tab-pane fade ">
-      {% include 'personne_form.html'%}
+      {% include 'personne_sub_form.html'%}
     </div>
 </div>
 

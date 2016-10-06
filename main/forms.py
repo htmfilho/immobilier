@@ -49,12 +49,8 @@ class PersonneForm(forms.Form):
 
 
 
-class BatimentForm(ModelForm):
-
-    class Meta:
-        model = Batiment
-        fields = ['description', 'rue', 'numero', 'boite', 'lieu_dit', 'localite', 'superficie',
-                  'performance_energetique']
+class BatimentForm(forms.Form):
+    superficie = forms.DecimalField(required=False, max_digits=8, decimal_places=3, localize=True)
 
     def __init__(self, *args, **kwargs):
         super(BatimentForm, self).__init__(*args, ** kwargs)

@@ -29,6 +29,7 @@
           <br>
           {%else%}
           <select class="form-control" name="personne_id" >
+            <option value="">-</option>
             {% for p in personnes %}
                 {% if locataire.personne.id == p.id %}
                   <option value="{{ p.id }}" selected>{{ p }}</option>
@@ -147,10 +148,14 @@
         </div>
       </div>
       <br>
+      <span><div class="pull-left"><a href="{% url 'locataire-new' locataire.contrat_location.pk %}"
+
+                                      title="Pour ajouter un nouveau locataire"><span class="glyphicon glyphicon-plus" aria-hidden="true"></span></a></div>
       <div class="pull-right">
         <input type="submit" value="OK">
         <input type="submit" value="Cancel" name="bt_cancel">
       </div>
+        </span>
     </form>
 
 </div>
@@ -160,9 +165,6 @@
       {% include 'personne_form.html'%}
     </div>
 </div>
-
-
-
 
 <!-- Ajout personne modal -->
 <div class="modal fade" id="ajoutPersonneModal" tabindex="-1" role="dialog" aria-labelledby="submissionScoresLabel">

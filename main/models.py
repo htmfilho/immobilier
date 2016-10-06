@@ -296,8 +296,8 @@ class Batiment(models.Model):
     boite = models.CharField(max_length=10, blank=True, null=True)
     lieu_dit = models.CharField(max_length=200, blank=True, null=True)
     localite = models.ForeignKey(Localite)
-    superficie = models.DecimalField(max_digits=5, decimal_places=3, blank=True, null=True)
-    performance_energetique = models.CharField(max_length=10, blank=True, null=True)
+    superficie = models.DecimalField(max_digits=8, decimal_places=3, blank=True, null=True)
+    performance_energetique = models.CharField(max_length=30, blank=True, null=True)
 
     class Meta:
         ordering = ['localite', 'rue']
@@ -411,6 +411,17 @@ class Batiment(models.Model):
                 for l in locataire:
                     if l not in liste:
                         liste.append(l)
+
+        return liste
+
+    def dernier_locataires(self):
+        liste = []
+        contrats = ContratLocation.objects.filter(batiment=self).order_by('date_fin')
+        if contrats.exists():
+            locataire = Locataire.objects.filter(contrat_location=contrats.last())
+            for l in locataire:
+                if l not in liste:
+                    liste.append(l)
 
         return liste
 
@@ -588,6 +599,9 @@ class ContratLocation(models.Model):
                                 'LOCATION')
         return c
 
+    def liste_frais(self):
+        return FraisMaintenance.objects.filter(contrat_location=self)
+
     @staticmethod
     def find_all():
         return ContratLocation.objects.all()
@@ -601,6 +615,16 @@ class ContratLocation(models.Model):
             if sui.exists():
                 suivis_liste.extend(sui)
         return suivis_liste
+
+    @staticmethod
+    def search(date_fin):
+        out = None
+        queryset = ContratLocation.objects
+        if date_fin:
+            queryset = queryset.filter(date_fin__gte=date_fin)
+        if date_fin:
+            out = queryset
+        return out
 
     class Meta:
         ordering = ['date_debut']
@@ -690,7 +714,6 @@ class Locataire(models.Model):
     civilite = models.CharField(max_length=15, choices=CIVILITE, default='NON_PRECISE')
     # personne_garante     = models.ForeignKey('Personne', blank=True, null=True)
 
-
     def __str__(self):
         return self.personne.nom + ", " + self.personne.prenom
 
@@ -734,7 +757,11 @@ class FraisMaintenance(models.Model):
     societe = models.ForeignKey(Societe, blank=True, null=True)
     description = models.TextField()
     montant = models.DecimalField(max_digits=8, decimal_places=2, blank=False, null=False)
-    date_realisation = models.DateField(auto_now=False, auto_now_add=False, blank=True, null=True, verbose_name=u"Date réalisation")
+    date_realisation = models.DateField(auto_now=False,
+                                        auto_now_add=False,
+                                        blank=True,
+                                        null=True,
+                                        verbose_name=u"Date réalisation")
 
     @staticmethod
     def find_by_batiment(batiment_id):
@@ -806,7 +833,7 @@ class SuiviLoyer(models.Model):
         return out
 
     @staticmethod
-    def find_suivis_a_verifier(date_d, date_f):
+    def find_suivis_a_verifier():
         return SuiviLoyer.objects.filter(Q(date_paiement__gte=timezone.now(),
                                            date_paiement__lte=timezone.now() + relativedelta(months=1),
                                            etat_suivi='A_VERIFIER')

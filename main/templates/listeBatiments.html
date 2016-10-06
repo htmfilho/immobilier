@@ -9,30 +9,35 @@
 <a href="{% url 'listeBatiments' %}">Voir tous les batiments</a>
 {%endif%}
     <!-- Filtre -->
-    <div>
-      <form method="get"
-            action="{% url 'batiment_search'%}" >
-        <div class="row">
-          <div class="col-md-4">
-              <label>Propriétaires</label>
-              <select id="slt_proprietaire"
-                      name="proprietaire">
-                  <option value="">-</option>
-                  {% for p in proprietaires %}
-                  <option value="{{p.id}}">{{p.proprietaire}}</option>
-                  {% endfor %}
-              </select>
-          </div>
-          <div class="col-md-4">
+<div class="panel panel-info">
+    <div class="panel-heading">Filtre</div>
+    <div class="panel-body">
+        <div>
+          <form method="get"
+                action="{% url 'batiment_search'%}" >
+            <div class="row">
+              <div class="col-md-4">
+                  <label>Propriétaires</label>
+                  <select id="slt_proprietaire"
+                          name="proprietaire">
+                      <option value="">-</option>
+                      {% for p in proprietaires %}
+                      <option value="{{p.id}}">{{p.proprietaire}}</option>
+                      {% endfor %}
+                  </select>
+              </div>
+              <div class="col-md-4">
 
-          </div>
-          <div class="col-md-4">
-            <label class="invisible">&nbsp;</label>
-            <div class="btnbtn-as-block"><input type="submit" value="OK" name="btn"></div>
-          </div>
+              </div>
+              <div class="col-md-4">
+                <label class="invisible">&nbsp;</label>
+                <div class="btnbtn-as-block"><input type="submit" value="OK" name="btn"></div>
+              </div>
+            </div>
+          </form>
         </div>
-      </form>
     </div>
+</div>
     <!-- fin Filtre -->
 <br>
 <div class="panel panel-default">
@@ -58,7 +63,7 @@
                 </td>
                 <td><a href="{% url 'batiment' batiment.pk%}" title="Pour modifier un batiment">{{ batiment.adresse_localite | default_if_none:''}}</a></td>
                 <td>
-                    <table >
+                    <table style="margin-top:-10px;">
                     {% for proprietaire in batiment.proprietaires %}
                         <tr style="background-color:transparent;"><td><a href="{% url 'proprietaire' proprietaire.proprietaire.id %}">{{ proprietaire.proprietaire }}</a></td></tr>
                     {% endfor%}
@@ -66,10 +71,8 @@
 
                 </td>
                 <!--  <a href="{% url 'proprietaire-create-batiment' batiment.pk %}" title="Pour ajouter un propriétaire"><span class="glyphicon glyphicon-plus" aria-hidden="true"></span></a>-->
-
-
                 <td>
-                  <table >
+                  <table style="margin-top:-10px;">
                     {% for p in batiment.locataires_actuels2 %}
                     <tr style="background-color:transparent;">
                         <td><a href="{% url 'locataire-update' p.id %}">{{  p.personne.nom }} {{  p.personne.prenom }} </a></td>
@@ -79,19 +82,17 @@
                 </td>
                 <td>
                     <span style="visibility:hidden;display:none;">
-                  {% if batiment.location_actuelle%}
-                  {{ batiment.location_actuelle.date_debut|date:"j/m/Y" }} - {{ batiment.location_actuelle.date_fin|date:"j/m/Y" }}
-                  {%endif%}
-                        </span>
+                      {% if batiment.location_actuelle%}
+                        {{ batiment.location_actuelle.date_debut|date:"j/m/Y" }} - {{ batiment.location_actuelle.date_fin|date:"j/m/Y" }}
+                      {%endif%}
+                    </span>
                     {% if batiment.location_actuelle%}
-                    <table>
-                        <tr style="background-color:transparent;"><td>Loyer :&nbsp;&nbsp;</td><td>{{batiment.location_actuelle.loyer_base}}</td></tr>
-                        <tr style="background-color:transparent;"><td>Fin : </td><td>{{batiment.location_actuelle.date_fin|date:"j/m/Y"}}</td></tr>
-                    </table>
-
-{%endif%}
-
-              </td>
+                        <table style="margin-top:-10px;">
+                            <tr style="background-color:transparent;"><td>Loyer :&nbsp;&nbsp;</td><td>{{batiment.location_actuelle.loyer_base}}</td></tr>
+                            <tr style="background-color:transparent;"><td>Fin : </td><td>{{batiment.location_actuelle.date_fin|date:"j/m/Y"}}</td></tr>
+                        </table>
+                    {%endif%}
+                </td>
                 </td>
                 <td>
                     <a href="{% url 'batiment-delete' batiment.pk%}"
@@ -99,13 +100,12 @@
                     </a>
                 </td>
             </tr>
-
         {% endfor%}
              </tbody>
         </table>
-        <p align="right">
-          <a href="{% url 'batiment-create' %}" title="Pour créer un nouveau batiment"><span class="glyphicon glyphicon-plus" aria-hidden="true"></span></a>
-        </p>
+        <a href="{% url 'batiment-create' %}"
+           title="Pour créer un nouveau batiment"
+           class="btn pull-right"><span class="glyphicon glyphicon-plus" aria-hidden="true"></span></a>
       </div>
             </div>
 {% endblock %}

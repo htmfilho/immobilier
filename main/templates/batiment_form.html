@@ -9,6 +9,7 @@
     <form  id="batiment_form"
            method="post"
            action="{% url 'update_batiment' %}">
+        <font class="erreur_formulaire">{{form.errors}}</font>
       {% csrf_token %}
       <input type="hidden" id="previous" name="previous" value="{{request.META.HTTP_REFERER }}"/>
       <input type="hidden" value="" id="prev" name="prev"/>
@@ -60,7 +61,7 @@
       <div class="row">
         <div class="col-md-6">
           <label class="control-label">Superficie</label>
-          <input class="form-control" type="text"
+          <input class="form-control"
                  value="{{ batiment.superficie | default_if_none:'' }}"
                  name="superficie">
         </div>
@@ -68,7 +69,16 @@
           <label class="control-label">Performance énergetique</label>
           <input class="form-control" type="text"
                  value="{{ batiment.performance_energetique | default_if_none:'' }}"
-                 name="performance_energetique">
+                 name="performance_energetique" list="performance_choix">
+          <datalist id="performance_choix">
+            <option value="A <= 50 kwh/m².an" >A <= 50 kwh/m².an</option>
+            <option value="B 51>= <90 kwh/m².an">B 51>= <90 kwh/m².an</option>
+            <option value="C 91>= <150 kwh/m².an">C 91>= <150 kwh/m².an</option>
+            <option value="D 151>= <230 kwh/m².an">D 151>= <230 kwh/m².an</option>
+            <option value="E 231>= <330 kwh/m².an">E 231>= <330 kwh/m².an</option>
+            <option value="F 331>= <450 kwh/m².an">F 331>= <450 kwh/m².an</option>
+            <option value="G >450 kwh/m².an">G >450 kwh/m².an</option>
+          </datalist>
         </div>
       </div>
          <br>
@@ -80,7 +90,7 @@
             <p align="right"><input type="submit" title="Enregistrer les infos propres au batiment" value="Enregistrer"></p>
         </div>
       </div>
- <br>
+      <br>
       {% if batiment.id %}
           <ul class="nav nav-tabs">
             <li class="active"><a data-toggle="tab" href="#proprietaires">Propriétaires</a></li>
@@ -113,16 +123,10 @@
                       {% endif %}
                     </div>
                 </div>
-
-              <div class="row">
-                <div class="col-md-10">
-                </div>
-                <div class="col-md-2">
-                  <a href="{% url 'add_proprietaire' batiment.id %}"
-                     onclick="$('#prev').val('fb');"
-                     title="Ajouter un propriétaire"><span class="glyphicon glyphicon-plus" aria-hidden="true"></span></a>
-                </div>
-              </div>
+              <br>
+              <a href="{% url 'add_proprietaire' batiment.id %}" class="btn pull-right"
+                 onclick="$('#prev').val('fb');"
+                 title="Ajouter un propriétaire"><span class="glyphicon glyphicon-plus" aria-hidden="true"></span></a>
             </div>
               <div id="location" class="tab-pane fade">
                   <br>
@@ -139,17 +143,14 @@
                         du {{ batiment.location_actuelle.date_debut|date:"j/m/Y"}} au {{ batiment.location_actuelle.date_fin|date:"j/m/Y"}}
                         </a>
                       {%endif%}
-
                     </div>
-
                 <div class="col-md-1">
-
                 {% if batiment.contrats_location|length > 1 and batiment.contrats_location_next|length > 0 %}
                   <a href="{% url 'location-prepare-update-all' batiment.contrat_location_next.id %}"
-                     title="Prochain contrat de location"><span class="glyphicon glyphicon-chevron-right" aria-hidden="true"></span>
+                     title="Prochain contrat de location"
+                     class="btn pull-right"><span class="glyphicon glyphicon-chevron-right" aria-hidden="true"></span>
                     </a>
                 {% endif %}
-
               </div>
                  </div>
                  <div class="row">
@@ -176,11 +177,11 @@
                   </table>
                   {% endif %}
                   {% if batiment.location_actuelle %}
-                  <a href="{% url 'locataire-new' batiment.location_actuelle.id %}" title="Pour ajouter un nouveau locataire"><span class="glyphicon glyphicon-plus" aria-hidden="true"></span></a>
+                  <a href="{% url 'locataire-new' batiment.location_actuelle.id %}"
+                     title="Pour ajouter un nouveau locataire"
+                     style="btn pull-right"><span class="glyphicon glyphicon-plus" aria-hidden="true"></span></a>
                   {% endif %}
-
               </div>
-
               <div id="gestion" class="tab-pane fade">
                 <div class="row">
                   <div class="col-md-12">
@@ -199,8 +200,10 @@
                             <td>{{ c.date_fin|date:"j/m/Y" }}</td>
                             <td>{{ c.montant_mensuel }}</td>
                             <td>{{ c.gestionnaire }}</td>
-                            <td><a href="{% url 'gestion-prepare-update-all' c.pk %}?prev=fb" title="Pour modifier un contrat de gestion"><span class="glyphicon glyphicon-pencil" aria-hidden="true"></span></a>
-                                <a href="{% url 'contratgestion-delete' c.id %}" title="Pour supprimer un contrat de gestion"><span class="glyphicon glyphicon-remove" aria-hidden="true"></span></a></td>
+                            <td><a href="{% url 'gestion-prepare-update-all' c.pk %}?prev=fb"
+                                   title="Pour modifier un contrat de gestion"><span class="glyphicon glyphicon-pencil" aria-hidden="true"></span></a>
+                                <a href="{% url 'contratgestion-delete' c.id %}"
+                                   title="Pour supprimer un contrat de gestion"><span class="glyphicon glyphicon-remove" aria-hidden="true"></span></a></td>
                           </tr>
                         {% endfor %}
                         <tr><td colspan="3"></td></tr>
@@ -209,11 +212,13 @@
 
                 </div>
               </div>
+              <br>
               <div class="row">
                 <div class="col-md-11">
                 </div>
                 <div class="col-md-1">
-                  <a href="{% url 'contratgestion-create' batiment.id %}" title="Pour ajouter un contrat de gestion"><span class="glyphicon glyphicon-plus" aria-hidden="true"></span></a>
+                  <a href="{% url 'contratgestion-create' batiment.id %}"
+                     title="Pour ajouter un contrat de gestion"><span class="glyphicon glyphicon-plus" aria-hidden="true"></span></a>
                 </div>
               </div>
             </div>
@@ -246,18 +251,11 @@
 
                 </div>
               </div>
-              <div class="row">
-                <div class="col-md-11">
-                </div>
-                <div class="col-md-1">
-                    <a href="{% url 'fraismaintenance-create' batiment.id %}" title="Pour ajouter un FRAIS"><span class="glyphicon glyphicon-plus" aria-hidden="true"></span></a>
-                </div>
-              </div>
+              <br>
+              <a href="{% url 'fraismaintenance-create' batiment.id %}" title="Pour ajouter un FRAIS" class="btn pull-right"><span class="glyphicon glyphicon-plus" aria-hidden="true"></span></a>
           </div>
         </div>
     {% endif%}
-
-
     </form>
   </div>
 </div>

@@ -174,6 +174,9 @@ urlpatterns = [
     url(r'^societe/update/$', societe.update, name='societe_update'),
     url(r'^societe/edit/([0-9]+)/$', societe.edit, name='societe_edit'),
     url(r'^location/form/$', contratlocation.contrat_location_form, name="contrat_location_form"),
+    url(r'^location/search/$', contratlocation.search, name='location_search'),
+    url(r'^fraismaintenance/contrat/new/([0-9]+)/$', frais.contrat_new, name='fraismaintenance-new-contrat'),
+
 
 
 ]

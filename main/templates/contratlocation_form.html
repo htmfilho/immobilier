@@ -58,12 +58,12 @@
           <font class="erreur_formulaire">{{ form.date_debut.errors }}</font>
         </div>
       </div>
-
-      <div class="form-group">
+      <br>
+      <div>
         <label for="remarque">Remarque</label>
         <input class="form-control" id="remarque" value="{{ location.remarque| default_if_none:'' }}" name="remarque">
       </div>
-
+      <br>
       <div class="row">
         <div class="col-md-5">
         <label>Loyer de base</label>
@@ -80,6 +80,7 @@
                  name="charges_base">
         </div>
       </div>
+      <br>
       <div class="row">
         <div class="col-md-8">
           <label>Assurance</label>
@@ -93,8 +94,8 @@
 
         </div>
         <div class="col-md-4">
-          <label>Nouvelle assurance</label>
-          <input type="text" id="txt_nom_assurance_other"  name="nom_assurance_other">
+          <label style="visibility:hidden;display:none;">Nouvelle assurance</label>
+          <input type="text" id="txt_nom_assurance_other"  name="nom_assurance_other" style="visibility:hidden;display:none;">
           <button type="button"
                    id="bt_assurance_other"
            class="btn btn-default"

@@ -47,35 +47,8 @@
                value="{%if location.date_debut%}{{location.date_debut|date:"j/m/Y"}}{%endif%}" name="date_debut">
           <font class="erreur_formulaire">{{ form.date_debut.errors }}</font>
         </div>
-
-        <!--<div class="col-md-4">
-          <label>Date fin</label>
-          <input class="form-control" id="date_fin"
-                 name="date_fin"
-                 value="{%if location.date_fin%}{{location.date_fin|date:"j/m/Y"}}{%endif%}"
-                 readonly
-                 disabled><font class="erreur_formulaire">{{ form.date_fin.errors }}</font>
-        </div>
-        <div class="col-md-4">
-        </div>-->
       </div>
-      <!--<div class="row">
-        <div class="col-md-4">
-          <label for="renonciation">Date renonciation</label>
-          <input class="form-control" id="renonciation"
-                 name="renonciation"
-                 value="{{ location.renonciation|date:"j/m/Y"| default_if_none:'' }}"
-                 readonly
-                 disabled>
-        </div>
-        <div class="col-md-8">
-        </div>
-      </div>-->
-      <div class="form-group">
-        <label for="remarque">Remarque</label>
-        <input class="form-control" id="remarque" value="{{ location.remarque| default_if_none:'' }}" name="remarque">
-      </div>
-
+      <br>
       <div class="row">
         <div class="col-md-5">
         <label>Loyer de base</label>
@@ -92,6 +65,7 @@
                  name="charges_base">
         </div>
       </div>
+      <br>
       <div class="row">
         <div class="col-md-8">
           <label>Assurance</label>
@@ -105,8 +79,8 @@
 
         </div>
         <div class="col-md-4">
-          <label>Nouvelle assurance</label>
-          <input type="text" id="txt_nom_assurance_other"  name="nom_assurance_other">
+          <label style="visibility:hidden;display:none;">Nouvelle assurance</label>
+          <input type="text" id="txt_nom_assurance_other"  name="nom_assurance_other" style="visibility:hidden;display:none;">
           <button type="button"
                    id="bt_assurance_other"
            class="btn btn-default"
@@ -117,8 +91,14 @@
         </div>
       </div>
       <br>
-      <input type="submit" class="btn btn-primary" value="Ok" />
-      <input type="text " id="return_lnk" name="return_lnk" value="{{ request.META.HTTP_REFERER }}">
+      <label for="remarque">Remarque</label>
+      <input class="form-control"
+             id="remarque"
+             value="{{ location.remarque| default_if_none:'' }}"
+             name="remarque">
+      <br>
+      <input type="submit" class="btn btn-primary pull-right" value="Ok" />
+      <input type="hidden" id="return_lnk" name="return_lnk" value="{{ request.META.HTTP_REFERER }}">
 
     </form>
   </div>

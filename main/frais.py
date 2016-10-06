@@ -13,7 +13,7 @@ def new(request):
                    'personnes': Personne.find_all(),
                    'action':   'new',
                    'batiments': Batiment.find_all(),
-                   'contrats_location':ContratLocation.find_all(),
+                   'contrats_location': ContratLocation.find_all(),
                    'entrepreneurs': Professionnel.find_all(),
                    'previous':  previous})
 
@@ -59,7 +59,9 @@ def update(request):
         else:
             print('else')
     professionnel = None
-    if request.POST.get('entrepreneur', None) and request.POST['entrepreneur']!= '' and request.POST['entrepreneur']!='None':
+    if request.POST.get('entrepreneur', None) \
+            and request.POST['entrepreneur'] != '' \
+            and request.POST['entrepreneur'] != 'None':
         professionnel = get_object_or_404(Professionnel, pk=request.POST['entrepreneur'])
 
     frais.entrepreneur = professionnel
@@ -102,8 +104,26 @@ def list(request):
 
 def delete(request, id):
     frais = get_object_or_404(FraisMaintenance, pk=id)
-    batiment = frais.batiment
     if frais:
         frais.delete()
     return render(request, "fraismaintenance_confirm_delete.html",
                            {'object': frais})
+
+
+def contrat_new(request, contrat_location_id):
+    print('contrat_new')
+    print(contrat_location_id)
+    frais = FraisMaintenance()
+    previous = request.POST.get('previous', None)
+    location = get_object_or_404(ContratLocation, pk=contrat_location_id)
+    if location:
+        frais.contrat_location = location
+        frais.batiment = location.batiment
+    return render(request, "fraismaintenance_form.html",
+                  {'frais':             frais,
+                   'personnes':         Personne.find_all(),
+                   'action':            'new',
+                   'batiments':         Batiment.find_all(),
+                   'contrats_location': ContratLocation.find_all(),
+                   'entrepreneurs':     Professionnel.find_all(),
+                   'previous':          previous})
