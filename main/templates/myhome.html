@@ -9,7 +9,7 @@
 <a class="btn btn-default" href="{% url 'batiment-create' %}" title="Pour créer un nouveau batiment">
     <span class="glyphicon glyphicon-plus" aria-hidden="true"> Ajout local</span>
 </a>
-<a class="btn btn-default" href="#" title="Pour ajouter un nouveau locataire"><span class="glyphicon glyphicon-plus" aria-hidden="true"> Ajout locataire</span></a>
+<a class="btn btn-default" href="{% url 'locataire-new-location' %}" title="Pour ajouter un nouveau locataire"><span class="glyphicon glyphicon-plus" aria-hidden="true"> Ajout locataire</span></a>
 <a class="btn btn-default" href="{% url 'contrat_location_form' %}" title="Pour ajouter une nouvelle location"><span class="glyphicon glyphicon-plus" aria-hidden="true"> Ajout location</span></a>
 <a class="btn btn-default" href="{% url 'personne-create' %}" title="Pour créer un nouveau contact">
     <span class="glyphicon glyphicon-plus" aria-hidden="true"> Ajout contact</span>
@@ -64,7 +64,7 @@
                 </div>
                 <br>
                 <div style="border-style:outset;">
-                    <label>Loyers impayé</label>
+                    <label>Loyer(s) impayé(s)</label>
                     <table class="table table-condensed">
                         <thead>
                         <th>Batiment</th>
@@ -116,7 +116,7 @@
     </div>
     <div class="col-md-6">
         <div class="panel panel-default">
-            <div class="panel-heading">Mes batiments</div>
+            <div class="panel-heading">Mes locaux</div>
             <div class="panel-body">
                 <table class="table table-striped table-hover">
                     <thead>
@@ -167,6 +167,7 @@
         <div class="panel panel-default">
             <div class="panel-heading">Administration</div>
             <div class="panel-body">
+                {% include 'main/alert_list_sub.html' %}
             </div>
         </div>
     </div>

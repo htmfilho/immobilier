@@ -24,9 +24,9 @@
     {% else %}
     <select class="form-control" name="batiment_id" >
       {%if frais.batiment %}
-        <option value="TOUS" >Tous</option>
+        <option value="-" >-</option>
       {%else%}
-        <option value="TOUS" selected>Tous</option>
+        <option value="-" selected>-</option>
       {%endif%}
       {% for b in batiments %}
           {% if frais.batiment == b.id %}
@@ -49,7 +49,7 @@
     <select class="form-control" name="entrepreneur">
       <option value="">-</option>
       {% for entrepreneur in entrepreneurs%}
-      <option value="{{entrepreneur.id}}" {%if frais.entrepreneur.id = entrepreneur.id%}selected{%endif%}>{{entrepreneur}}</option>
+            <option value="{{entrepreneur.id}}" {%if frais.entrepreneur.id == entrepreneur.id%}selected{%endif%}>{{entrepreneur}}</option>
       {%endfor%}
     </select>
 
@@ -68,7 +68,7 @@
     <label>Montant</label>
     <input class="form-control"
            value="{{frais.montant | default_if_none:''}}"
-           name="montant">
+           name="montant" required>
   </div>
   <div class="col-md-3">
     <label>Date réalisation</label>

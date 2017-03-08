@@ -87,7 +87,7 @@
           <select class="form-control" name="assurance"  class="form-control" id="slt_assurances">
             <option value="">-</option>
             {%for a in assurances%}
-            <option value="{{a.id}}">{{a}}</option>
+                <option value="{{a.id}}">{{a.name}}</option>
             {%endfor%}
           </select>
           <font class="erreur_formulaire">{{ form.assurance.errors }}</font>
@@ -97,17 +97,17 @@
           <label style="visibility:hidden;display:none;">Nouvelle assurance</label>
           <input type="text" id="txt_nom_assurance_other"  name="nom_assurance_other" style="visibility:hidden;display:none;">
           <button type="button"
-                   id="bt_assurance_other"
-           class="btn btn-default"
-           title="Ajouter une nouvelle compagnie d'assurance"
-           data-toggle="modal" data-target="#pnl_create_assurance">
+                  id="bt_assurance_other"
+                  class="btn btn-default"
+                  title="Ajouter une nouvelle compagnie d'assurance"
+                  data-toggle="modal" data-target="#pnl_create_assurance">
              <span class="glyphicon glyphicon-&add" aria-hidden="true" id="spn_modify_picture">+</span>
          </button>
         </div>
       </div>
       <br>
       <input type="submit" class="btn btn-primary" value="Ok" />
-      <input type="hidden " id="return_lnk" name="return_lnk" value="{{ request.META.HTTP_REFERER }}">
+      <input type="hidden" id="return_lnk" name="return_lnk" value="{{ request.META.HTTP_REFERER }}">
 
     </form>
   </div>

@@ -6,11 +6,11 @@
     <div class="row">
       <div class="col-md-6">
           <label>Nom</label>
-          <input class="form-control" name="nom" id="txt_nom" value="{{ personne.nom| default_if_none:'' }}" >
+          <input class="form-control" name="nom" id="txt_nom" value="{{ personne.nom| default_if_none:'' }}" required>
       </div>
       <div class="col-md-6">
           <label>Prénom</label>
-          <input class="form-control" name="prenom" id="txt_prenom" value="{{ personne.prenom| default_if_none:'' }}" >
+          <input class="form-control" name="prenom" id="txt_prenom" value="{{ personne.prenom| default_if_none:'' }}" required>
       </div>
     </div>
     <br>
@@ -55,7 +55,7 @@
         <select name="societe" class="form-control">
           <option value="">-</option>
           {%for s in societes%}
-          <option value="{{s.id}}" {%if s.id = personne.societe.id%}selected{%endif%}>{{s}}</option>
+          <option value="{{s.id}}" {%if s.id == personne.societe.id%}selected{%endif%}>{{s}}</option>
           {%endfor %}
         </select>
         <span style="color:red">{{ form.societe.errors }}</span>

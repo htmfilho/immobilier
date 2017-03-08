@@ -4,6 +4,7 @@ from main.forms import ContratGestionForm
 from datetime import datetime
 from django.shortcuts import render_to_response
 from django.template import RequestContext
+from main.views_utils import get_key
 
 
 def new(request):
@@ -32,10 +33,12 @@ def create(request, batiment_id):
     personne_gestionnaire = Personne.find_gestionnaire_default()
     if personne_gestionnaire:
         contrat.gestionnaire = personne_gestionnaire
+
     return render(request, "contratgestion_update.html",
                   {'contrat':   contrat,
                    'personnes': Personne.find_all(),
                    'action':   'new',
+                   'batiments': Batiment.find_all(),
                    'prev':      'fb'})
 
 
@@ -54,13 +57,14 @@ def update(request):
     """
     ok - 1
     """
+    print('update CONTRAT  GESTION')
     previous = request.POST.get('previous', None)
     form = ContratGestionForm(data=request.POST)
     gestion = None
     personne = None
-    batiment_id = request.POST.get('batiment_id', None)
-    if batiment_id == "":
-        batiment_id = None
+
+    batiment_id = get_key(request.POST.get('batiment_id', None))
+    print('action : ', request.POST.get('action', None))
     if request.POST.get('action', None) == 'new':
         gestion = ContratGestion()
         batiment = get_object_or_404(Batiment, pk=batiment_id)
@@ -86,7 +90,6 @@ def update(request):
         except:
             gestion.date_debut = None
     else:
-
         gestion.date_debut = None
 
     # gestion.date_fin = request.POST['date_fin']
@@ -104,6 +107,7 @@ def update(request):
                           {'contrat': gestion,
                            'message': 'La date de début doit être < à la date de fin'})
     if personne is None:
+        print('personne is none')
         message = "Il faut sélectionner un gestionnaire"
         return render(request, "contratgestion_update.html",
                       {'contrat': gestion,
@@ -111,6 +115,7 @@ def update(request):
                        'message': message,
                        'form':     form})
     if form.is_valid() and data_valid(form, gestion):
+        print('form valid')
         montant_mensuel = request.POST.get('montant_mensuel', None)
         if montant_mensuel:
             try:
@@ -120,17 +125,24 @@ def update(request):
         gestion.save()
         return redirect(previous)
     else:
+        print('form invalid')
         personnes = []
         personne_gestionnaire = Personne.find_gestionnaire_default()
         personnes.append(personne_gestionnaire)
-
-        return render_to_response("contratgestion_update.html",
-                                  {'contrat': gestion,
-                                   'action': 'update',
-                                   'message': 'Invalide',
-                                   'form': form,
-                                   'personnes': personnes,
-                                   'batiments': Batiment.objects.all()}, context_instance=RequestContext(request))
+        return render(request, "contratgestion_update.html",
+                      {'contrat': gestion,
+                       'action': 'update',
+                       'message': 'Invalide',
+                       'form': form,
+                       'personnes': personnes,
+                       'batiments': Batiment.find_all()})
+        # return render_to_response("contratgestion_update.html",
+        #                           {'contrat': gestion,
+        #                            'action': 'update',
+        #                            'message': 'Invalide',
+        #                            'form': form,
+        #                            'personnes': personnes,
+        #                            'batiments': Batiment.objects.all()}, context_instance=RequestContext(request))
 
 
 def list(request):

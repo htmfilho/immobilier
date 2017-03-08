@@ -123,8 +123,8 @@ def home(request):
     suivis_recus = SuiviLoyer.find_suivis_by_etat_suivi(timezone.now(), 'PAYE')
     suivis_recus = SuiviLoyer.find_mes_suivis_by_etat_suivi(timezone.now(), 'PAYE')
     suivis_non_paye = SuiviLoyer.find_suivis_by_pas_etat_suivi(timezone.now(), 'PAYE')
-    montant_recu=0
-    montant_attendu=0
+    montant_recu = 0
+    montant_attendu = 0
     mois_en_cours = str(datetime.datetime.now().month) + "/" + str(datetime.datetime.now().year)
     mes_frais = FraisMaintenance.find_my_frais()
     tot_depenses = 0
@@ -138,7 +138,7 @@ def home(request):
         if s.charges_percu:
             tot_recettes = tot_recettes + s.charges_percu
     return render(request, 'myhome.html',
-                  {'alertes':         Alerte.find_by_etat_today('A_VERIFIER'),
+                  {'alertes':         Alerte.find_by_etat('A_VERIFIER'),
                    'batiments':       Batiment.find_my_batiments(),
                    'contrats':        ContratGestion.find_my_contrats(),
                    'honoraires':      Honoraire.find_honoraires_by_etat_today('A_VERIFIER'),
@@ -284,8 +284,7 @@ class ProprietaireCreateForBatiment(CreateView):
     form_class = ProprietaireForm
 
     def get_initial(self):
-        initial_data = super(ProprietaireCreateForBatiment, self)\
-                            .get_initial()
+        initial_data = super(ProprietaireCreateForBatiment, self).get_initial()
         course = get_object_or_404(Batiment, pk=self.kwargs['pk'])
         if course:
             initial_data['batiment'] = course
@@ -441,8 +440,7 @@ def build_pdf(image_file):
 
     styles = getSampleStyleSheet()
     styles.add(ParagraphStyle(name='Justify', alignment=TA_JUSTIFY))
-    content = []
-    content.append(image1)
+    content = [image1]
     p = ParagraphStyle('legend')
     p.textColor = 'grey'
     p.borderColor = 'grey'
@@ -514,7 +512,6 @@ def merge_pdf(request):
             no_page = no_page + number_of_page
             cpt = cpt + 1
 
-
     doc.build(content, onFirstPage=add_header_footer, onLaterPages=add_header_footer)  #  ne garnit que la 1iere page
     # doc.build(content, canvasmaker=NumberedCanvas)
     merger = PdfFileMerger()
@@ -551,11 +548,9 @@ def merge_pdf(request):
         #     merger.append(input,bookmark=lien, import_bookmarks=False)
         #     sub = merger.addBookmark("SUBBOOKMARK",doc_length,parent)
 
-
         num_page = num_page + 1
         no_page = no_page + number_of_page
         cpt = cpt + 1
-
 
     output = open("output.pdf", "wb")
     merger.write(output)
@@ -583,7 +578,7 @@ def get_image(path, width, doc):
     max_widh = doc.width - (MARGIN_SIZE*2)-50
     img = utils.ImageReader(path)
     iw, ih = img.getSize()
-    pw,ph = A4    
+    pw, ph = A4
     height = ih
 
     if iw > max_widh:
@@ -591,9 +586,7 @@ def get_image(path, width, doc):
         ratio = width/max_widh
         height = ih/ratio
 
-    aspect = ih / float(iw)
-
-    return Image(path, width=width, height=(height))
+    return Image(path, width=width, height=height)
 
 
 def get_image2(path):
@@ -605,23 +598,23 @@ def get_image2(path):
     height = height - (BOTTOM_MARGIN + TOP_MARGIN)
     Im = Image(path)
 
-    if(xsize > ysize):  #  deal with cases were xsize is bigger than ysize
-      if(xsize > width):
-        nxsize = width - 12
-        nysize = int(ysize*(nxsize/xsize))  #make ysize
-        xsize = nxsize
-        ysize = nysize
+    if(xsize > ysize):  #deal with cases were xsize is bigger than ysize
+        if xsize > width:
+            nxsize = width - 12
+            nysize = int(ysize*(nxsize/xsize))  #make ysize
+            xsize = nxsize
+            ysize = nysize
 
-        return Image(path, width=nxsize, height=(nysize))
+            return Image(path, width=nxsize, height=(nysize))
     else:  #deal with cases where ysize is bigger than xsize
-      if(ysize > height):
-        nysize = height -12
-        a = nysize/ysize
-        nxsize = xsize * a
-        xsize = int(nxsize)
-        ysize = int(nysize)
+        if ysize > height:
+            nysize = height - 12
+            a = nysize/ysize
+            nxsize = xsize * a
+            xsize = int(nxsize)
+            ysize = int(nysize)
 
-        return Image(path, width=nxsize, height=(nysize))
+            return Image(path, width=nxsize, height=(nysize))
     return Image(path)
 
 
@@ -629,7 +622,7 @@ def merge_pdf2(request):
     pdf1 = "pdf1.pdf"
     pdf2 = "pdf2.pdf"
 
-    pdfs = [pdf1,pdf2]
+    pdfs = [pdf1, pdf2]
     #
     buffer = BytesIO()
     doc = SimpleDocTemplate(buffer,
@@ -642,16 +635,13 @@ def merge_pdf2(request):
     content = []
 
     # to
-
-
     # fin toc
     # merge
     print('merge_pdf')
 
-
     if not pdfs or len(pdfs) < 2:
         exit("Please enter at least two pdfs for merging!")
-    no_page=1
+    no_page = 1
     legend_text = 'justification_legend'
     legend_text += "<br/><font color=red>%s</font>" % 'fffff'
     p = ParagraphStyle('normal')
@@ -667,14 +657,14 @@ def merge_pdf2(request):
     items.append(Paragraph(address, ParagraphStyle('body')))
     doc.multiBuild(items)
 
-    output= PdfFileWriter()
+    output = PdfFileWriter()
     # output.addPage(buffer)
     num_page = 0
-    no_page=0
+    no_page = 0
     width, height = A4
 
-    output.addBlankPage(width,height)
-    cur=1
+    output.addBlankPage(width, height)
+    cur = 1
     cur_prev = 0
     for fname in pdfs:
         input = PdfFileReader(open(fname, 'rb'))
@@ -686,35 +676,35 @@ def merge_pdf2(request):
         #     parent = output.addBookmark("One", no_page, None)
         # else:
         #     output.addBookmark("One", no_page, parent)
-        output.addBookmark(str(no_page),num_page)
+        output.addBookmark(str(no_page), num_page)
         num_page = num_page+1
         no_page = no_page + 1
 
         rect = RectangleObject([400, 400, 600, 600])
         output.addLink(cur_prev, cur, rect)
-        cur_prev=cur_prev+1
-        cur=cur+1
+        cur_prev = cur_prev + 1
+        cur = cur + 1
     d = open("output.pdf", "wb")
 
-    #merger.write(output)
-    #merger.write(doc)
+    # merger.write(output)
+    # merger.write(doc)
     output.write(d)
     d.close()
     return render(request, "test.html")
+
 
 def add_header_footer(canvas, doc):
     canvas.saveState()
     print('add_header_footer')
     canvas.restoreState()
 
-def makeTocHeaderStyle(level,  fontName='Times-Roman'):
-    "Make a header style for different levels."
 
+def makeTocHeaderStyle(level,  fontName='Times-Roman'):
     assert level >= 0, "Level must be >= 0."
 
     PS = ParagraphStyle
     size = 12
-    style = PS(name = 'Heading' + str(level),
+    style = PS(name='Heading' + str(level),
                fontName=fontName,
                fontSize=size,
                leading=size*1.2,
@@ -744,13 +734,11 @@ def essai(request):
     content = []
 
     # to
-
-
     # fin toc
     # merge
     if not pdfs or len(pdfs) < 2:
         exit("Please enter at least two pdfs for merging!")
-    no_page=1
+    no_page = 1
     manual_toc = True
     if manual_toc:
         print('manual_toc')
@@ -761,23 +749,22 @@ def essai(request):
         for fname in pdfs:
             input = PdfFileReader(open(fname, 'rb'))
             number_of_page = input.getNumPages()
-            if cpt >0:
+            if cpt > 0:
                 lien = '<link href="http://uclouvain.be/index.html" color="blue">is a link to</link>'
             else:
                 lien = '<link href="#lnk_1" color="blue">is a link to</link>'
-            lien ="kk"
+            lien = "kk"
             content.append(Paragraph('''
                                     <para>
                                         %s       %s-%s %s
                                     </para>
-                                    ''' % (fname,no_page, no_page + number_of_page,lien), ParagraphStyle('normal')) )
-            #content.append(lien)
+                                    ''' % (fname, no_page, no_page + number_of_page, lien), ParagraphStyle('normal')))
+            # content.append(lien)
             no_page = no_page + number_of_page
-            cpt = cpt +1
+            cpt = cpt + 1
 
         content.append(toc)
     doc.multiBuild(content)
-
 
     pdf = buffer.getvalue()
     buffer.close()
@@ -796,11 +783,11 @@ class MyDocTemplateMerge(SimpleDocTemplate):
          "Registers TOC entries."
          if flowable.__class__.__name__ == 'Paragraph':
              text = flowable.getPlainText()
-             print('kkkkk',flowable)
              style = flowable.style.name
              print('style',style)
              if style == 'normal':
                  self.notify('TOCEntry', (0, text, self.page))
+
 
 class MyDocTemplate(SimpleDocTemplate):
     """Override the BaseDocTemplate class to do custom handle_XXX actions"""
@@ -812,21 +799,17 @@ class MyDocTemplate(SimpleDocTemplate):
          "Registers TOC entries."
          if flowable.__class__.__name__ == 'Paragraph':
              text = flowable.getPlainText()
-             print('kkkkk',flowable)
              style = flowable.style.name
-             print('style',style)
+             print('style', style)
              if style == 'normal':
                  self.notify('TOCEntry', (0, text, self.page))
-
-
-
 
 
 def merge_pdf3(request):
     pdf1 = "pdf1.pdf"
     pdf2 = "pdf2.pdf"
 
-    pdfs=[pdf1,pdf2]
+    pdfs=[pdf1, pdf2]
     #
     buffer = BytesIO()
 
@@ -876,7 +859,7 @@ def merge_pdf3(request):
             ancre = '<a name="%s"></a>' % fname
             content.append(Paragraph('''
                                         %s
-                                    ''' % (ancre), ParagraphStyle('normal')))
+                                    ''' % ancre, ParagraphStyle('normal')))
             cpt = cpt +1
 
 
@@ -1070,7 +1053,7 @@ def pagecat(request):
         cpt = 0
         Story.append(Paragraph('<b>Table of contents</b>', centered))
         for fname in pdfs:
-            Story.append(Paragraph('<includePdfPages filename="%s" pages="1" outlineText="crasher"/>' % (fname),h1))
+            Story.append(Paragraph('<includePdfPages filename="%s" pages="1" outlineText="crasher"/>' % fname,h1))
 
             Story.append(Paragraph('%s' % (fname), h2))
             cpt = cpt +1

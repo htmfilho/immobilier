@@ -32,7 +32,7 @@ from .models import Locataire
 from .models import ContratLocation
 from .models import ContratGestion
 from .models import FraisMaintenance
-from .models import SuiviLoyer
+from .models import SuiviLoyer, SuiviLoyerAdmin
 from .models import Proprietaire
 from .models import ModeleDocument
 from .models import Photo
@@ -68,7 +68,7 @@ admin.site.register(Locataire)
 admin.site.register(ContratLocation)
 admin.site.register(ContratGestion)
 admin.site.register(FraisMaintenance)
-admin.site.register(SuiviLoyer)
+admin.site.register(SuiviLoyer, SuiviLoyerAdmin)
 admin.site.register(Proprietaire)
 admin.site.register(ModeleDocument)
 admin.site.register(Photo)

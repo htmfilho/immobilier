@@ -21,7 +21,6 @@
 #    see http://www.gnu.org/licenses/.
 #
 ##############################################################################
-from django.conf import settings
 from . import views, batiment, proprietaire, suivis, alertes, contratlocation, financement, locataire, contratgestion, \
     frais, honoraire, personne, tests, test3, assurance, fonction, societe
 from django.conf.urls import url
@@ -67,9 +66,9 @@ urlpatterns = [
     # test
     url(r'^xlsRead', views.xlsRead, name='xlsRead'),
 
-    url(r'^photos/(?P<path>.*)$', 'django.views.static.serve', {
-            'document_root': settings.MEDIA_ROOT,
-        }),
+    # url(r'^photos/(?P<path>.*)$', 'django.views.static.serve', {
+    #         'document_root': settings.MEDIA_ROOT,
+    #     }),
     url(r'^test4', views.alertes4),
 
     url(r'^fraismaintenances/$', frais.list, name='fraismaintenance_list'),
@@ -148,6 +147,7 @@ urlpatterns = [
     url(r'^financement/new/([0-9]+)/$', financement.new, name='financement-new'),
     url(r'^financement/create/$', financement.create, name='create-financement'),
     url(r'^locataire/new/([0-9]+)/$', locataire.new, name='locataire-new'),
+    url(r'^locataire/all/new/$', locataire.new_without_known_location, name='locataire-new-location'),
     url(r'^locataire/add/$', locataire.add, name='locataire-add'),
     url(r'^locataire/delete/([0-9]+)/$', locataire.delete, name='locataire-delete'),
     url(r'^locataires/$', locataire.list, name='locataire-list'),

@@ -1,0 +1,28 @@
+
+{% load staticfiles %}
+{% load order %}
+<table class="table table-striped table-hover"
+       id="tbl_data">
+    <thead>
+    <tr>
+        <th>Description</th>
+        <th>Date alerte</th>
+        <th>Contrat gestion</th>
+        <th>Contrat location</th>
+        <th>Etat</th>
+        <th></th>
+    </tr>
+    </thead>
+    {% for alerte in alertes %}
+        <tr>
+            <td>{{ alerte.description| default_if_none:'' }}</td>
+            <td data-order="{{ alerte.date_alerte|date:"Y-m-d" | default_if_none:'' }}">{{ alerte.date_alerte|date:"d/m/Y" | default_if_none:'' }}</td>
+            <td>{% if alerte.contrat_gestion%}{{ alerte.contrat_gestion }}{%endif%}</td>
+            <td>{% if alerte.contrat_location%}{{alerte.contrat_location.batiment}}, {{ alerte.contrat_location.date_debut|date:"j/m/Y" }}-{{ alerte.contrat_location.date_fin|date:"j/m/Y" }}{%endif%}</td>
+            <td>{{ alerte.etat| default_if_none:'' }}</td>
+            <td>
+                <a href="{% url 'alerte-update' alerte.pk %}" title="Passe à l'état vérifier"><img src="{% static 'images/glyphicons-153-check.png' %}"/></a>
+            </td>
+        </tr>
+    {% endfor%}
+</table>

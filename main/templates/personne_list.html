@@ -5,27 +5,38 @@
 {% block content %}
 <div class="panel panel-default">
   <div class="panel-body">
-    <!-- Filtre -->
-    <div>
-      <form  method="get" action="{% url 'personne_search'%}" >
-        <div class="row">
-          <div class="col-md-4">
-              <label for="nom">Nom</label>
-              <input class="form-control" name="nom" value="{{ nom | default_if_none:'' }}" style="text-transform:uppercase" id="nom">
+      <div class="row">
+          <div class="col-md-8">
+              <div class="panel panel-info">
+                  <div class="panel-heading">Filtre</div>
+                  <div class="panel-body">
+                      <form  method="get" action="{% url 'personne_search'%}" >
+                          <div class="row">
+                              <div class="col-md-4">
+                                  <label for="nom">Nom</label>
+                                  <input class="form-control" name="nom" value="{{ nom | default_if_none:'' }}" style="text-transform:uppercase" id="nom">
+                              </div>
+                              <div class="col-md-4">
+                                  <label for="prenom">Prénom</label>
+                                  <input class="form-control" name="prenom" value="{{ prenom | default_if_none:'' }}" style="text-transform:uppercase" id="prenom">
+                              </div>
+                              <div class="col-md-4">
+                                  <label class="invisible">&nbsp;</label>
+                                  <div class="btnbtn-as-block"><input type="submit" value="OK" name="btn">
+                                      <input type="button" value="Clean" name="btn" id="btn_clean_personnes" style="visibility:hidden;display:none;" ></div>
+                              </div>
+                          </div>
+                      </form>
+                  </div>
+              </div>
           </div>
           <div class="col-md-4">
-              <label for="prenom">Prénom</label>
-              <input class="form-control" name="prenom" value="{{ prenom | default_if_none:'' }}" style="text-transform:uppercase" id="prenom">
+              <p align="right">
+                  <a href="{% url 'personne-create' %}" title="Pour ajouter une nouvelle personne"><span class="glyphicon glyphicon-plus" aria-hidden="true"></span></a>
+              </p>
           </div>
-          <div class="col-md-4">
-            <label class="invisible">&nbsp;</label>
-            <div class="btnbtn-as-block"><input type="submit" value="OK" name="btn">
-                <input type="button" value="Clean" name="btn" id="btn_clean_personnes" style="visibility:hidden;display:none;" ></div>
-          </div>
-        </div>
-      </form>
-    </div>
-    <!-- fin Filtre -->
+      </div>
+
       <br>
       <table class="table table-striped table-hover display"
              id="tbl_data">
@@ -82,9 +93,7 @@
       {% endfor%}
           </tbody>
       </table>
-      <p align="right">
-        <a href="{% url 'personne-create' %}" title="Pour ajouter une nouvelle personne"><span class="glyphicon glyphicon-plus" aria-hidden="true"></span></a>
-      </p>
+
     </div>
 </div>
 

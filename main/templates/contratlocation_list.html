@@ -6,31 +6,41 @@
 {% endblock %}
 {% block content %}
 
-<!-- Filtre -->
-<div class="panel panel-info">
-    <div class="panel-heading">Filtre</div>
-    <div class="panel-body">
-        <form method="get"
-            action="{% url 'location_search'%}" >
-        <div class="row">
-          <div class="col-md-4">
-              <label>Date fin location supérieure à </label>
-              <input id="txt_date_fin_filtre_location"
-                     name="date_fin_filtre_location"
-                     class="form-control"
-                     value="{{date_fin_filtre_location|date:"j/m/Y"}}">
-          </div>
-          <div class="col-md-8">
-              <input type="submit" value="OK" name="btn" class="btn btn-default pull-right">
-          </div>
-        </div>
-        </form>
-    </div>
-</div>
-<!-- fin Filtre -->
+
 <br>
 <div class="panel panel-default">
   <div class="panel-body">
+    <div class="row">
+        <div class="col-md-8">
+            <!-- Filtre -->
+            <div class="panel panel-info">
+                <div class="panel-heading">Filtre</div>
+                <div class="panel-body">
+                    <form method="get"
+                          action="{% url 'location_search'%}" >
+                        <div class="row">
+                            <div class="col-md-4">
+                                <label>Date fin location supérieure à </label>
+                                <input id="txt_date_fin_filtre_location"
+                                       name="date_fin_filtre_location"
+                                       class="form-control"
+                                       value="{{date_fin_filtre_location|date:"j/m/Y"}}">
+                            </div>
+                            <div class="col-md-8">
+                                <input type="submit" value="OK" name="btn" class="btn btn-default pull-right">
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            <!-- fin Filtre -->
+        </div>
+        <div class="col-md-4">
+            <a class="btn btn-default pull-right" href="{% url 'contrat_location_form' %}"
+               title="Pour ajouter un contrat de location"><span class="glyphicon glyphicon-plus" aria-hidden="true"></span></a>
+        </div>
+
+    </div>
     <table class="table table-striped table-hover">
         <thead>
             <th>Batiment</th>
@@ -65,8 +75,7 @@
             {% endfor%}
         </tbody>
     </table>
-      <a class="btn btn-default" href="{% url 'contrat_location_form' %}"
-         title="Pour ajouter un contrat de location"><span class="glyphicon glyphicon-plus" aria-hidden="true"> Ajout contrat location</span></a>
+
   </div>
 </div>
 {% endblock %}

@@ -3,7 +3,7 @@ from django.forms import ModelForm
 from main.models import *
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Submit
-
+from main import views_utils
 
 class LoginForm(forms.Form):
     username = forms.CharField()
@@ -35,7 +35,7 @@ class PersonneForm(forms.Form):
     class Meta:
         model = Personne
         fields = ['nom', 'prenom', 'email', 'profession', 'date_naissance', 'lieu_naissance', 'pays_naissance',
-                  'num_identite', 'telephone', 'gsm','societe']
+                  'num_identite', 'telephone', 'gsm', 'societe']
         autocomplete_fields = ('prenom', 'profession', 'lieu_naissance', 'pays_naissance')
 
     def num_identite(self):
@@ -48,12 +48,16 @@ class PersonneForm(forms.Form):
         super(PersonneForm, self).__init__(*args, ** kwargs)
 
 
-
 class BatimentForm(forms.Form):
     superficie = forms.DecimalField(required=False, max_digits=8, decimal_places=3, localize=True)
 
     def __init__(self, *args, **kwargs):
         super(BatimentForm, self).__init__(*args, ** kwargs)
+
+    def clean(self):
+        cleaned_data = super(BatimentForm, self).clean()
+        if cleaned_data.get('superficie') and cleaned_data.get('superficie') < 0:
+            self.errors['superficie'] = 'Si une superficie est encodée elle doit être > à 0'
 
 
 class ProprietaireForm(forms.ModelForm):
@@ -76,8 +80,8 @@ class ProprietaireForm(forms.ModelForm):
 
 
 class FraisMaintenanceForm(forms.Form):
-    date_realisation = forms.DateField(required=False, input_formats=['%d/%m/%Y'],
-                                       widget=forms.DateInput(format='%d/%m/%Y'))
+    date_realisation = forms.DateField(required=False, input_formats=[views_utils.DATE_SHORT_FORMAT],
+                                       widget=forms.DateInput(format=views_utils.DATE_SHORT_FORMAT))
     montant = forms.DecimalField(required=True, max_digits=8, decimal_places=2, localize=True)
 
     def __init__(self, *args, **kwargs):
@@ -101,8 +105,8 @@ class SocieteForm(ModelForm):
 
 class ContratLocationForm(forms.Form):
 
-    date_debut = forms.DateField(required=True, input_formats=['%d/%m/%Y'],
-                                 widget=forms.DateInput(format='%d/%m/%Y'))
+    date_debut = forms.DateField(required=True, input_formats=[views_utils.DATE_SHORT_FORMAT],
+                                 widget=forms.DateInput(format=views_utils.DATE_SHORT_FORMAT))
     # date_fin = forms.DateField(required=False, input_formats=['%d/%m/%Y'],
     #                            widget=forms.DateInput(format='%d/%m/%Y'))
     # renonciation = forms.DateField(required=False, input_formats=['%d/%m/%Y'],
@@ -149,10 +153,10 @@ class HonoraireForm(ModelForm):
 
 
 class FinancementLocationForm(forms.Form):
-    date_debut = forms.DateField(required=True, input_formats=['%d/%m/%Y'],
-                                 widget=forms.DateInput(format='%d/%m/%Y'))
-    date_fin = forms.DateField(required=False, input_formats=['%d/%m/%Y'],
-                               widget=forms.DateInput(format='%d/%m/%Y'))
+    date_debut = forms.DateField(required=True, input_formats=[views_utils.DATE_SHORT_FORMAT],
+                                 widget=forms.DateInput(format=views_utils.DATE_SHORT_FORMAT))
+    date_fin = forms.DateField(required=False, input_formats=[views_utils.DATE_SHORT_FORMAT],
+                               widget=forms.DateInput(format=views_utils.DATE_SHORT_FORMAT))
     loyer = forms.DecimalField(required=True, max_digits=8, decimal_places=2, localize=True)
     charges = forms.DecimalField(required=True, max_digits=8, decimal_places=2, localize=True)
     index = forms.DecimalField(required=True, max_digits=8, decimal_places=2, localize=True)
@@ -167,11 +171,18 @@ class FileForm(forms.Form):
 
 
 class ContratGestionForm(forms.Form):
-    batiment_id = forms.ChoiceField( widget=forms.Select(attrs={'class':'selector'}))
-    date_debut = forms.DateField(required=True, input_formats=['%d/%m/%Y'],
-                                 widget=forms.DateInput(format='%d/%m/%Y'))
-    date_fin = forms.DateField(required=False, input_formats=['%d/%m/%Y'],
-                               widget=forms.DateInput(format='%d/%m/%Y'))
+    batiment_id = forms.ChoiceField(widget=forms.Select(attrs={'class': 'selector'}))
+    # batiments=[]
+    # for x in Batiment.objects.all():
+    #     batiments.append(x.id)
+
+    # batiments =  [(x.id) for x in Batiment.objects.all()]
+    # print(batiments)
+    # batiment_id = forms.ModelChoiceField(queryset=Batiment.objects.all())
+    date_debut = forms.DateField(required=True, input_formats=[views_utils.DATE_SHORT_FORMAT],
+                                 widget=forms.DateInput(format=views_utils.DATE_SHORT_FORMAT))
+    date_fin = forms.DateField(required=False, input_formats=[views_utils.DATE_SHORT_FORMAT],
+                               widget=forms.DateInput(format=views_utils.DATE_SHORT_FORMAT))
     montant_mensuel = forms.DecimalField(max_digits=6, decimal_places=2, localize=True)
 
     class Meta:
@@ -180,21 +191,25 @@ class ContratGestionForm(forms.Form):
 
     def __init__(self, *args, **kwargs):
         super(ContratGestionForm, self).__init__(*args, ** kwargs)
-
-        self.fields["batiment_id"].queryset = Batiment.objects.all()
+        self.fields["batiment_id"].queryset = Batiment.find_all()
 
     def clean(self):
         cleaned_data = super(ContratGestionForm, self).clean()
         if cleaned_data.get('date_debut') and cleaned_data.get('date_fin'):
             if cleaned_data.get('date_debut') > cleaned_data.get('date_fin'):
                 self.errors['date_debut'] = 'Dates erronées'
-
+        if cleaned_data.get('batiment_id'):
+            print(cleaned_data.get('batiment_id'))
+            print('if')
+        else:
+            print('else')
+            print(cleaned_data.get('batiment_id'))
         return cleaned_data
 
 
 class SuiviForm(forms.Form):
-    date_paiement_reel = forms.DateField(required=False, input_formats=['%d/%m/%Y'],
-                                         widget=forms.DateInput(format='%d/%m/%Y'))
+    date_paiement_reel = forms.DateField(required=False, input_formats=[views_utils.DATE_SHORT_FORMAT],
+                                         widget=forms.DateInput(format=views_utils.DATE_SHORT_FORMAT))
 
     def __init__(self, *args, **kwargs):
         super(SuiviForm, self).__init__(*args, ** kwargs)

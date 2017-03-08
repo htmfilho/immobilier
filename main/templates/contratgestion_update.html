@@ -1,35 +1,34 @@
 {% extends "layout.html" %}
-
+{% load staticfiles %}
 {% block breadcrumb %}
-
   <li class="active">Contrat gestion</li>
 {% endblock %}
 {% block content %}
-    <form  method="post" action="{% url 'update-gestion-all' %}">
+    <form action="{% url 'update-gestion-all' %}" method="post">
      {% csrf_token %}
-      <input type="hidden" id="previous" name="previous" value="{{request.META.HTTP_REFERER }}"/>
-      <input type="hidden" value="{{ action | default_if_none:'' }}" name="action"/>
-      <input type="hidden" value="{{ contrat.id | default_if_none:'' }}" name="id"/>
+      <input type="hidden" id="previous" name="previous" value="{{request.META.HTTP_REFERER }}" >
+      <input type="hidden" value="{{ action|default_if_none:'' }}" name="action" >
+      <input type="hidden" value="{{ contrat.id | default_if_none:'' }}" name="id" >
       <div class="form-group">
-        <label>Batiment</label>
-        <select class="form-control" id="slt_batiment_id"  name="batiment_id" >
+          <label for="slt_batiment_id">Batiment</label>
+          <select class="form-control" id="slt_batiment_id"  name="batiment_id">
             <option>-</option>
           {% for b in batiments %}
-              {% if contrat.batiment == b.id %}
+              {% if contrat.batiment.id == b.id %}
                 <option value="{{ b.id }}" selected>{{ b }}</option>
               {%else%}
                 <option value="{{ b.id }}">{{ b }}</option>
               {% endif %}
           {% endfor %}
         </select>
-        {% if form.batiment_id.errors%}<font class="erreur_formulaire">{{form.batiment_id.errors}}</font>{%endif%}
+        {% if form.batiment_id.errors%}<span class="erreur_formulaire">{{form.batiment_id.errors}}</span>{%endif%}
       </div>
       <div class="row">
         <div class="col-md-6">
-          <label>Gestionnaire</label>
-          <select name="gestionnaire"  class="form-control">
+          <label for="gestionnaire">Gestionnaire</label>
+          <select name="gestionnaire"  id="gestionnaire" class="form-control">
             {%for p in personnes%}
-            {%if contrat.gestionnaire and p = contrat.gestionnaire %}
+            {%if contrat.gestionnaire and p == contrat.gestionnaire %}
             <option value="{{p.id}}" selected="">{{p}}</option>
             {%else%}
               <option value="{{p.id}}" >{{p}}</option>
@@ -42,35 +41,37 @@
       <br>
       <div class="row">
         <div class="col-md-4">
-          <label>Montant mensuel</label>
+          <label for="txt_montant_mensuel">Montant mensuel</label>
           <input class="form-control"
                  value="{{ contrat.montant_mensuel| default_if_none:'' }}"
                  name="montant_mensuel"
                  id="txt_montant_mensuel">
-          {% if form.montant_mensuel.errors%}<font class="erreur_formulaire">{{form.montant_mensuel.errors}}</font>{%endif%}
+          {% if form.montant_mensuel.errors%}<span class="erreur_formulaire">{{form.montant_mensuel.errors}}</span>{%endif%}
         </div>
         <div class="col-md-4">
         <label for="date_debut">Date début</label>
         <input class="form-control" id="date_debut" value="{%if contrat.date_debut%}{{contrat.date_debut|date:"j/m/Y" }}{%endif%}"
                name="date_debut">
-          {% if form.date_debut.errors%}<font class="erreur_formulaire">{{form.date_debut.errors}}</font>{%endif%}
+          {% if form.date_debut.errors%}<span class="erreur_formulaire">{{form.date_debut.errors}}</span>{%endif%}
       </div>
 
       <div class="col-md-4">
         <label for="date_fin">Date fin</label>
         <input class="form-control" id="date_fin" value="{%if contrat.date_fin%}{{contrat.date_fin|date:"j/m/Y"}}{%endif%}"
                name="date_fin">
+          {% if form.date_fin.errors%}<span class="erreur_formulaire">{{form.date_fin.errors}}</span>{%endif%}
       </div>
       </div>
 
-<br>
-      <input type="submit" value="OK" id="bt_contrat_gestion_update">
+      <br>
+        <button type="submit" class="btn btn-primary" id="bt_contrat_gestion_updater"
+                title="Sauvegarder"><span class="glyphicon glyphicon-floppy-disk" aria-hidden="true"></span>
+        </button>
 
     </form>
     {%if message%}
     <br>
       <div class="alert alert-danger" role="alert">{{message}}</div>
-
     {%endif%}
 
 {% endblock %}

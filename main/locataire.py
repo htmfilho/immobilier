@@ -25,12 +25,15 @@
 from django.shortcuts import redirect
 from main.models import Personne, ContratLocation, Locataire, Societe, Fonction
 from django.shortcuts import render, get_object_or_404
+from main.views_utils import get_key
+
+LOCATAIRE_FORM_HTML = "locataire_form.html"
 
 
 def locataire_form(request, id):
     locataire = get_object_or_404(Locataire, pk=id)
     next = request.META.get('HTTP_REFERER', '/')
-    return render(request, "locataire_form.html",
+    return render(request, LOCATAIRE_FORM_HTML,
                   {'locataire': locataire,
                    'action':    'update',
                    'personnes': Personne.find_all(),
@@ -41,17 +44,24 @@ def locataire_form(request, id):
 
 def update(request, id):
     locataire = get_object_or_404(Locataire, pk=id)
-    return render(request, "locataire_form.html",
-                  {'locataire':         locataire,'personne': locataire.personne})
+    return render(request, LOCATAIRE_FORM_HTML,
+                  {'locataire': locataire,
+                   'personne': locataire.personne})
 
 
 def new(request, location_id):
-    print(new)
-    print('new locataire', location_id)
     location = get_object_or_404(ContratLocation, pk=location_id)
-
     locataire = Locataire()
-    locataire.contrat_location=location
+    locataire.contrat_location = location
+    return render(request, LOCATAIRE_FORM_HTML,
+                  {'locataire': locataire,
+                   'location': location,
+                   'personnes': get_personnes_non_locataires(location),
+                   'societes': Societe.find_all(),
+                   'fonctions': Fonction.find_all(), })
+
+
+def get_personnes_non_locataires(location, personnes):
     personnes = Personne.objects.filter()
     l = []
     if personnes:
@@ -60,28 +70,42 @@ def new(request, location_id):
 
         for loca in location.locataires:
             l.remove(loca.personne)
+    return l
 
-    return render(request, "locataire_form.html",
+
+def new_without_known_location(request):
+    locataire = Locataire()
+    return render(request, LOCATAIRE_FORM_HTML,
                   {'locataire': locataire,
-                   'location' : location,
-                   'personnes': l,
+                   'locations': ContratLocation.find_all(),
+                   'personnes': Personne.find_all(),
                    'societes': Societe.find_all(),
-                   'fonctions': Fonction.find_all(),})
+                   'fonctions': Fonction.find_all(), })
+
 
 def add(request):
     if 'bt_cancel' not in request.POST:
-        if request.POST['locataire_id'] and not request.POST['locataire_id']== 'None':
-            locataire = get_object_or_404(Locataire, pk=request.POST.get('locataire_id', None))
+        print(request.POST)
+        locataire_id = get_key(request.POST.get('locataire_id', None))
+
+        if locataire_id:
+            locataire = get_object_or_404(Locataire, pk=locataire_id)
         else:
             locataire = Locataire()
+        location_id = request.POST.get('location_id', None)
 
-        location = get_object_or_404(ContratLocation, pk=request.POST.get('location_id', None))
-        if request.POST['personne_id']:
-            personne = get_object_or_404(Personne, pk=request.POST['personne_id'])
+        if location_id:
+            location = get_object_or_404(ContratLocation, pk=location_id)
+
+
+        locataire.contrat_location = location
+        personne_id = get_key(request.POST.get('personne_id',None))
+        if personne_id:
+            personne = get_object_or_404(Personne, pk=personne_id)
             locataire.personne = personne
 
         locataire.principal = False
-        if request.POST.get('principal',None) and request.POST['principal'] == 'on':
+        if request.POST.get('principal', None) and request.POST['principal'] == 'on':
             locataire.principal = True
         locataire.civilite = request.POST['civilite']
         locataire.infos_complement = request.POST['infos_complement']
@@ -95,12 +119,10 @@ def add(request):
             fonction_locataire = Fonction.find_by_nom(request.POST['profession'])
             if fonction_locataire is None:
                 fonction_locataire = Fonction()
-                fonction_locataire.nom_fonction=request.POST['profession']
+                fonction_locataire.nom_fonction = request.POST['profession']
                 fonction_locataire.save()
 
-
         locataire.profession = fonction_locataire
-
         locataire.contrat_location = location
         locataire.save()
         return render(request, "contratlocation_update.html", {'location': location})
@@ -108,7 +130,7 @@ def add(request):
         return redirect(request.POST.get('next'), None)
 
 
-def delete(request,locataire_id):
+def delete(request, locataire_id):
     locataire = get_object_or_404(Locataire, pk=locataire_id)
     location = locataire.contrat_location
     locataire.delete()
@@ -117,26 +139,28 @@ def delete(request,locataire_id):
 
 
 def personne_create(request):
-    location = get_object_or_404(ContratLocation, pk=request.POST['location_id_pers'])
+    location_id = request.POST.get('location_id_pers', None)
     locataire = Locataire()
-    locataire.contrat_location=location
+    location = None
+    if location_id:
+        location = get_object_or_404(ContratLocation, pk=location_id)
+        locataire.contrat_location = location
 
-    personne = Personne()
-    personne.nom =request.POST['nom']
-    personne.prenom =request.POST['prenom']
+    personne = Personne(nom=request.POST.get('nom', None), prenom=request.POST.get('prenom', None))
     personne.save()
-    locataire.personne=personne
+    locataire.personne = personne
     personnes = Personne.objects.filter()
 
-    return render(request, "locataire_form.html",
+    return render(request, LOCATAIRE_FORM_HTML,
                   {'locataire': locataire,
-                   'location' : location,
+                   'location': location,
                    'personnes': personnes,
                    'societes': Societe.find_all(),
-                   'fonctions': Fonction.find_all(),})
+                   'fonctions': Fonction.find_all(), })
 
 
 def list(request):
     return render(request, "locataire_list.html",
                   {'locataires': Locataire.objects.all(),
                    'personnes': Personne.find_all()})
+

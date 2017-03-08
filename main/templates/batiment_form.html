@@ -9,7 +9,6 @@
     <form  id="batiment_form"
            method="post"
            action="{% url 'update_batiment' %}">
-        <font class="erreur_formulaire">{{form.errors}}</font>
       {% csrf_token %}
       <input type="hidden" id="previous" name="previous" value="{{request.META.HTTP_REFERER }}"/>
       <input type="hidden" value="" id="prev" name="prev"/>
@@ -18,7 +17,7 @@
       <div class="row">
         <div class="col-md-10">
         <label for="rue">Rue</label>
-        <input class="form-control" id="rue" value="{{ batiment.rue| default_if_none:'' }}" name="rue">
+        <input class="form-control" id="rue" value="{{ batiment.rue| default_if_none:'' }}" name="rue" required>
         </div>
         <div class="col-md-1">
           <label for="numero" class="control-label">Numéro</label>
@@ -35,8 +34,7 @@
           <label class="control-label">Code postal</label>
           <input list="localites" type="text" id="localite"
                  class="form-control" name="localite_cp"
-                 value="{{batiment.localite.code_postal| default_if_none:''}} "
-          >
+                 value="{{batiment.localite.code_postal| default_if_none:''}} ">
           <datalist id="localites">
             {% for l in localites %}
                   <option value="{{ l.code_postal }}" data-id="{{l.id}}">{{ l.code_postal }}</option>
@@ -64,6 +62,7 @@
           <input class="form-control"
                  value="{{ batiment.superficie | default_if_none:'' }}"
                  name="superficie">
+            <font class="erreur_formulaire">{{ form.superficie.errors }}</font>
         </div>
         <div class="col-md-6">
           <label class="control-label">Performance énergetique</label>

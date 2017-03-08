@@ -31,6 +31,7 @@ from django.db.models import Q
 from django.db.models import Sum
 import datetime
 import calendar
+from django.contrib import admin
 
 
 class Localite(models.Model):
@@ -61,6 +62,10 @@ class Localite(models.Model):
     def __str__(self):
         return self.code_postal + " " + self.localite
 
+    @staticmethod
+    def autocomplete_search_fields():
+        return 'localite', 'code_postal'
+
     class Meta:
         ordering = ['localite']
 
@@ -90,9 +95,7 @@ class Banque(models.Model):
 
 @staticmethod
 def get_pays_choix():
-    choices_tuple = []
-    choices_tuple.append('Belgique')
-    return choices_tuple
+    return ['Belgique']
 
 
 class Fonction(models.Model):
@@ -474,6 +477,10 @@ class Batiment(models.Model):
 
         return 0
 
+    @staticmethod
+    def autocomplete_search_fields():
+        return 'localite'
+
 
 class Proprietaire(models.Model):
     proprietaire = models.ForeignKey(Personne, verbose_name=u"Propriétaire")
@@ -558,8 +565,7 @@ class ContratLocation(models.Model):
 
     @property
     def financement_courant(self):
-        list = FinancementLocation.objects.filter(contrat_location=self)\
-                                           .order_by('date_fin')
+        list = FinancementLocation.objects.filter(contrat_location=self).order_by('date_fin')
         for f in list:
             return f
         return None
@@ -765,8 +771,10 @@ class FraisMaintenance(models.Model):
 
     @staticmethod
     def find_by_batiment(batiment_id):
-        batiment = Batiment.find_batiment(batiment_id)
-        return FraisMaintenance.objects.all()
+        a_batiment = Batiment.find_batiment(batiment_id)
+        if a_batiment:
+            return FraisMaintenance.objects.filter(batiment=a_batiment)
+        return None
 
     @staticmethod
     def find_my_frais():
@@ -790,7 +798,14 @@ class FraisMaintenance(models.Model):
         return ch
 
 
+class SuiviLoyerAdmin(admin.ModelAdmin):
+    list_display = ('loyer_percu','etat_suivi', 'financement_location')
+    fieldsets = ((None, {'fields': ('loyer_percu','etat_suivi', 'financement_location')}),)
+    search_fields = ['etat_suivi', 'financement_location__contrat_location']
+
+
 class SuiviLoyer(models.Model):
+
     ETAT = (
         ('A_VERIFIER', 'A vérifier'),
         ('IMPAYE', 'Impayé'),

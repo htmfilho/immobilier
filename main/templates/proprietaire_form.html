@@ -31,11 +31,11 @@
                 <select id="proprietaire" name="proprietaire"  class="form-control">
                   <option value="" >-</option>
                   {%for p in personnes%}
-                  {%if p = proprietaire.proprietaire %}
-                  <option value="{{p.id}}" selected>{{p}}</option>
-                  {%else%}
-                    <option value="{{p.id}}" >{{p}}</option>
-                  {%endif%}
+                      {%if p == proprietaire.proprietaire %}
+                        <option value="{{p.id}}" selected>{{p}}</option>
+                      {%else%}
+                        <option value="{{p.id}}" >{{p}}</option>
+                      {%endif%}
                   {%endfor%}
                 </select>
               {%endif%}

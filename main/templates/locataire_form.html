@@ -4,8 +4,10 @@
 {% endblock %}
 {% block content %}
 <ul class="nav nav-tabs">
-  <li class="active"><a data-toggle="tab" href="#info_locataire">Info locataire</a></li>
-  <li><a data-toggle="tab" href="#info_contact">Info contact</a></li>
+    <li class="active"><a data-toggle="tab" href="#info_locataire">Info locataire</a></li>
+    {% if locataire.contrat_location %}
+        <li><a data-toggle="tab" href="#info_contact">Info contact</a></li>
+    {% endif %}
 </ul>
 
 <div class="tab-content">
@@ -20,7 +22,7 @@
       <input type="hidden" value="{{ locataire.contrat_location.id}}" name="location_id"/>
       <div class="row">
         <div class="col-md-4">
-          <label>Locataire</label>
+          <label>Personne</label>
           {% if action == 'update'%}
           <br>
           {{locataire.personne}}
@@ -77,7 +79,7 @@
         </div>
         <div class="col-md-3">
           <label>Principal</label><br>
-          <input type="checkbox" name="principal" {%if  locataire.principal  = True %}checked{%else%}''{%endif%}>
+          <input type="checkbox" name="principal" {%if  locataire.principal  == True %}checked{%else%}''{%endif%}>
         </div>
         <div class="col-md-1">
           {% if not locataire.id %}
@@ -98,9 +100,25 @@
           <br>
           <br>
           {%else%}
-          <input class="form-control" value="{{ locataire.contrat_location.batiment| default_if_none:'' }}" >
-          <input class="form-control" value="{{ locataire.contrat_location.date_debut|date:"j/m/Y" }} au {{ locataire.contrat_location.date_fin|date:"j/m/Y" }}"
-                 name="contrat_location" >
+              {% if locations %}
+                  <div class="row">
+                      <div class="col-md-6">
+                          <select name="location_id" >
+                              <option>-</option>
+                              {% for location in locations %}
+                                  <option value="{{ location.id }}">{{ location }}</option>
+                              {% endfor %}
+                          </select>
+                      </div>
+                      <div class="col-md-6">
+                      </div>
+                  </div>
+              {% else %}
+                  <input class="form-control" value="{{ locataire.contrat_location.batiment| default_if_none:'' }}" >
+                  <input class="form-control" value="{{ locataire.contrat_location.date_debut|date:"j/m/Y" }} au {{ locataire.contrat_location.date_fin|date:"j/m/Y" }}"
+                         name="contrat_location" >
+              {% endif %}
+
           {%endif%}
         </div>
         <div class="col-md-3">
@@ -121,7 +139,7 @@
           <select name="societe" class="form-control">
             <option value="">-</option>
             {% for societe in societes%}
-              <option value="{{societe.id}}" {%if societe.id = locataire.societe.id %}selected{%endif%}>{{societe}}</option>
+              <option value="{{societe.id}}" {%if societe.id == locataire.societe.id %}selected{%endif%}>{{societe}}</option>
             {%endfor%}
           </select>
         </div>
@@ -134,7 +152,7 @@
           <input list="professions" type="text" id="slt_profession" class="form-control" name="profession" value="{{locataire.profession.nom_fonction| default_if_none:''}}">
           <datalist id="professions">
               {% for fonction in fonctions%}
-                <option value="{{fonction.id}}" {%if fonction.id = locataire.profession.id %}selected{%endif%}>{{fonction}}</option>
+                <option value="{{fonction.id}}" {%if fonction.id == locataire.profession.id %}selected{%endif%}>{{fonction}}</option>
               {%endfor%}
           </datalist>
 
@@ -147,15 +165,25 @@
          </button>
         </div>
       </div>
-      <br>
-      <span><div class="pull-left"><a href="{% url 'locataire-new' locataire.contrat_location.pk %}"
 
-                                      title="Pour ajouter un nouveau locataire"><span class="glyphicon glyphicon-plus" aria-hidden="true"></span></a></div>
-      <div class="pull-right">
-        <input type="submit" value="OK">
-        <input type="submit" value="Cancel" name="bt_cancel">
-      </div>
+      <br>
+      <span>
+          {% if locataire.contrat_location %}
+              <div class="pull-left">
+                  <a href="{% url 'locataire-new' locataire.contrat_location.pk %}"
+                     title="Pour ajouter un nouveau locataire">
+                      <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
+                  </a>
+              </div>
+          {% endif %}
+          <div class="pull-right">
+            <input type="submit" value="OK">
+              {% if locataire.contrat_location %}
+            <input type="submit" value="Cancel" name="bt_cancel">
+              {% endif %}
+          </div>
         </span>
+
     </form>
 
 </div>
@@ -175,30 +203,33 @@
                 <h4 class="modal-title" id="submissionScoresLabel">Ajout Personne</h4>
             </div>
             <div class="modal-body">
-            <form  method="post" enctype="multipart/form-data" action="{% url 'personne-create-locataire' %}">
+            <form  method="post"
+                   enctype="multipart/form-data"
+                   action="{% url 'personne-create-locataire' %}">
               {% csrf_token %}
               <input type="hidden" value="{{ location.id}}" name="location_id_pers"/>
-              <div class="row">
-      <div class="col-md-6">
-                  <label for="nom" class="control-label">Nom</label>
-                  <input class="form-control" id="nom" placeholder="Nom" name="nom" style="text-transform:uppercase">
-                </div>
-                <div class="col-md-6">
-                </div>
-              </div>
-                <div class="row">
-                  <div class="col-md-6">
-                  <label for="prenom"  class="control-label">Prénom</label>
-                  <input class="form-control" id="prenom" placeholder="Prenom" name="prenom" style="text-transform:uppercase">
-                </div>
-                <div class="col-md-6">
-                </div>
-              </div>
 
-            <div class="modal-footer">
-                <input type="submit" value="ok"/>
-                <button type="button" class="btn btn-default" data-dismiss="modal">Annuler</button>
-            </div>
+                <div class="row">
+                    <div class="col-md-6">
+                        <label for="nom" class="control-label">Nom</label>
+                        <input class="form-control" id="nom" placeholder="Nom" name="nom" style="text-transform:uppercase" required>
+                    </div>
+                    <div class="col-md-6">
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-6">
+                        <label for="prenom"  class="control-label">Prénom</label>
+                        <input class="form-control" id="prenom" placeholder="Prenom" name="prenom" style="text-transform:uppercase" required>
+                    </div>
+                    <div class="col-md-6">
+                    </div>
+                </div>
+                <br>
+                <div class="modal-footer">
+                    <input type="submit" value="ok"/>
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Annuler</button>
+                </div>
           </form>
         </div>
     </div>

@@ -21,16 +21,9 @@
 #    see http://www.gnu.org/licenses/.
 #
 ##############################################################################
+DATE_SHORT_FORMAT = "%d/%m/%Y"
 
-from django.http import *
-from main.models import *
-
-
-def create(request):
-    print('create assurance')
-    data = request.POST
-    new_assurance = Assurance()
-    new_assurance.nom = data['nom']
-    new_assurance.description = data['description']
-    new_assurance.save()
-    return HttpResponse('')
+def get_key(id):
+    if  id == "" or id == "-" or id == "None":
+        return None
+    return int(id)

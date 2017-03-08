@@ -5,6 +5,7 @@ from datetime import date
 from datetime import datetime
 from main.forms import ContratLocationForm
 from dateutil.relativedelta import relativedelta
+from main.views_utils import get_key
 
 
 def prepare_update(request, location_id):
@@ -101,8 +102,11 @@ def test(request):
     ok - 1
     """
     form = ContratLocationForm(data=request.POST)
+    batiment_id = get_key(request.POST.get('batiment_id', None))
+    batiment = None
+    if batiment_id:
+        batiment = get_object_or_404(Batiment, pk=batiment_id)
 
-    batiment = get_object_or_404(Batiment, pk=request.POST['batiment_id'])
     location = ContratLocation()
     location.batiment = batiment
     if request.POST['date_debut']:

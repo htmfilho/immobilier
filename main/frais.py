@@ -2,6 +2,7 @@ from main.models import *
 from django.shortcuts import render, get_object_or_404, redirect
 from datetime import datetime
 from main.forms import FraisMaintenanceForm
+from main.views_utils import get_key
 
 
 def new(request):
@@ -39,30 +40,27 @@ def prepare_update(request, id):
 
 
 def update(request):
-    batiment_id = request.POST.get('batiment_id', None)
-    print('batiment_id', batiment_id)
+    batiment_id = get_key(request.POST.get('batiment_id', None))
     if request.POST.get('action', None) == 'new':
         frais = FraisMaintenance()
-        batiment = get_object_or_404(Batiment, pk=int(batiment_id))
-        frais.batiment = batiment
+        if batiment_id:
+            batiment = get_object_or_404(Batiment, pk=batiment_id)
+            frais.batiment = batiment
     else:
         frais = get_object_or_404(FraisMaintenance, pk=request.POST.get('id', None))
-        batiment = get_object_or_404(Batiment, pk=int(batiment_id))
+        batiment = get_object_or_404(Batiment, pk=batiment_id)
         frais.batiment = batiment
     frais.contrat_location = None
     if request.POST.get('contrat_location') == 'on':
         cl = frais.batiment.location_actuelle
-        print(cl)
+
         if cl:
             frais.contrat_location = cl
-            print('if')
-        else:
-            print('else')
+
     professionnel = None
-    if request.POST.get('entrepreneur', None) \
-            and request.POST['entrepreneur'] != '' \
-            and request.POST['entrepreneur'] != 'None':
-        professionnel = get_object_or_404(Professionnel, pk=request.POST['entrepreneur'])
+    entrepreneur = get_key(request.POST.get('entrepreneur', None))
+    if entrepreneur:
+        professionnel = get_object_or_404(Professionnel, pk=entrepreneur)
 
     frais.entrepreneur = professionnel
     if request.POST.get('societe', None):
@@ -90,10 +88,10 @@ def update(request):
         return redirect(previous)
     else:
         return render(request, "fraismaintenance_form.html", {
-             'frais': frais,
-             'form': form,
-             'action': 'update',
-             'entrepreneurs': Professionnel.find_all()})
+            'frais': frais,
+            'form': form,
+            'action': 'update',
+            'entrepreneurs': Professionnel.find_all()})
 
 
 def list(request):
@@ -111,8 +109,6 @@ def delete(request, id):
 
 
 def contrat_new(request, contrat_location_id):
-    print('contrat_new')
-    print(contrat_location_id)
     frais = FraisMaintenance()
     previous = request.POST.get('previous', None)
     location = get_object_or_404(ContratLocation, pk=contrat_location_id)
