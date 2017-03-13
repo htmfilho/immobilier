@@ -1,3 +1,26 @@
+##############################################################################
+#
+#    Immobilier it's an application
+#    designed to manage the core business of property management, buildings,
+#    rental agreement and so on.
+#
+#    Copyright (C) 2016-2017 Verpoorten Leïla
+#
+#    This program is free software: you can redistribute it and/or modify
+#    it under the terms of the GNU General Public License as published by
+#    the Free Software Foundation, either version 3 of the License, or
+#    (at your option) any later version.
+#
+#    This program is distributed in the hope that it will be useful,
+#    but WITHOUT ANY WARRANTY; without even the implied warranty of
+#    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#    GNU General Public License for more details.
+#
+#    A copy of this license - GNU General Public License - is available
+#    at the root of the source code of this program.  If not,
+#    see http://www.gnu.org/licenses/.
+#
+##############################################################################
 from django import forms
 from django.forms import ModelForm
 from main.models import *
@@ -33,7 +56,7 @@ def get_pays_choix():
 class PersonneForm(forms.Form):
     # fonctionnepays_naissance = forms.ChoiceField(choices=get_pays_choix())
     class Meta:
-        model = Personne
+        model = personne.Personne
         fields = ['nom', 'prenom', 'email', 'profession', 'date_naissance', 'lieu_naissance', 'pays_naissance',
                   'num_identite', 'telephone', 'gsm', 'societe']
         autocomplete_fields = ('prenom', 'profession', 'lieu_naissance', 'pays_naissance')
@@ -62,7 +85,7 @@ class BatimentForm(forms.Form):
 
 class ProprietaireForm(forms.ModelForm):
     class Meta:
-        model = Proprietaire
+        model = proprietaire.Proprietaire
         fields = ['proprietaire', 'batiment', 'date_debut', 'date_fin']
 
     def __init__(self, *args, **kwargs):
@@ -91,7 +114,7 @@ class FraisMaintenanceForm(forms.Form):
 class SocieteForm(ModelForm):
 
     class Meta:
-        model = Societe
+        model = societe.Societe
         fields = ['nom', 'description', 'rue', 'numero', 'boite', 'lieu_dit', 'code_postal', 'localite']
 
     def __init__(self, *args, **kwargs):
@@ -145,7 +168,7 @@ class ContratLocationForm(forms.Form):
 class HonoraireForm(ModelForm):
 
     class Meta:
-        model = Honoraire
+        model = honoraire.Honoraire
         fields = ['date_paiement', 'etat']
 
     def __init__(self, *args, **kwargs):
@@ -162,7 +185,7 @@ class FinancementLocationForm(forms.Form):
     index = forms.DecimalField(required=True, max_digits=8, decimal_places=2, localize=True)
 
     class Meta:
-        model = FinancementLocation
+        model = financement_location.FinancementLocation
         fields = ['date_debut', 'date_fin', 'loyer', 'charges', 'index']
 
 
@@ -186,7 +209,7 @@ class ContratGestionForm(forms.Form):
     montant_mensuel = forms.DecimalField(max_digits=6, decimal_places=2, localize=True)
 
     class Meta:
-        model = ContratGestion
+        model = contrat_gestion.ContratGestion
         fields = ['montant_mensuel']
 
     def __init__(self, *args, **kwargs):

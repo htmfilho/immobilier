@@ -1,54 +1,78 @@
+##############################################################################
+#
+#    Immobilier it's an application
+#    designed to manage the core business of property management, buildings,
+#    rental agreement and so on.
+#
+#    Copyright (C) 2016-2017 Verpoorten Leïla
+#
+#    This program is free software: you can redistribute it and/or modify
+#    it under the terms of the GNU General Public License as published by
+#    the Free Software Foundation, either version 3 of the License, or
+#    (at your option) any later version.
+#
+#    This program is distributed in the hope that it will be useful,
+#    but WITHOUT ANY WARRANTY; without even the implied warranty of
+#    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#    GNU General Public License for more details.
+#
+#    A copy of this license - GNU General Public License - is available
+#    at the root of the source code of this program.  If not,
+#    see http://www.gnu.org/licenses/.
+#
+##############################################################################
 from main.models import *
 from django.shortcuts import render, get_object_or_404, redirect
 from datetime import datetime
 from main.forms import FraisMaintenanceForm
 from main.views_utils import get_key
+from main import models as mdl
 
 
 def new(request):
-    frais = FraisMaintenance()
+    frais = mdl.frais_maintenance.FraisMaintenance()
     previous = request.POST.get('previous', None)
 
     return render(request, "fraismaintenance_form.html",
                   {'frais':     frais,
-                   'personnes': Personne.find_all(),
+                   'personnes': mdl.personne.find_all(),
                    'action':   'new',
-                   'batiments': Batiment.find_all(),
-                   'contrats_location': ContratLocation.find_all(),
-                   'entrepreneurs': Professionnel.find_all(),
+                   'batiments': mdl.batiment.find_all(),
+                   'contrats_location': mdl.contrat_location.find_all(),
+                   'entrepreneurs': mdl.professionnel.find_all(),
                    'previous':  previous})
 
 
 def create(request, batiment_id):
-    batiment = get_object_or_404(Batiment, pk=batiment_id)
-    frais = FraisMaintenance()
+    batiment = get_object_or_404(mdl.batiment.Batiment, pk=batiment_id)
+    frais = mdl.frais_maintenance.FraisMaintenance()
     frais.batiment = batiment
 
     return render(request, "fraismaintenance_form.html",
                   {'frais':     frais,
-                   'personnes': Personne.find_all(),
+                   'personnes': mdl.personne.find_all(),
                    'action':   'new',
-                   'entrepreneurs': Professionnel.find_all()})
+                   'entrepreneurs': mdl.professionnel.find_all()})
 
 
 def prepare_update(request, id):
-    frais = FraisMaintenance.objects.get(pk=id)
+    frais = mdl.frais_maintenance.find_by_id(id)
     return render(request, "fraismaintenance_form.html",
                   {'frais':  frais,
                    'action': 'update',
-                   'entrepreneurs': Professionnel.find_all()})
+                   'entrepreneurs': mdl.professionnel.find_all()})
 
 
 def update(request):
     batiment_id = get_key(request.POST.get('batiment_id', None))
     if request.POST.get('action', None) == 'new':
-        frais = FraisMaintenance()
+        frais = mdl.frais_maintenance.FraisMaintenance()
         if batiment_id:
-            batiment = get_object_or_404(Batiment, pk=batiment_id)
+            batiment = get_object_or_404(mdl.batiment.Batiment, pk=batiment_id)
             frais.batiment = batiment
     else:
-        frais = get_object_or_404(FraisMaintenance, pk=request.POST.get('id', None))
-        batiment = get_object_or_404(Batiment, pk=batiment_id)
+        frais = get_object_or_404(mdl.frais_maintenance.FraisMaintenance, pk=request.POST.get('id', None))
+        batiment = get_object_or_404(mdl.batiment.Batiment, pk=batiment_id)
         frais.batiment = batiment
     frais.contrat_location = None
     if request.POST.get('contrat_location') == 'on':
@@ -60,7 +84,7 @@ def update(request):
     professionnel = None
     entrepreneur = get_key(request.POST.get('entrepreneur', None))
     if entrepreneur:
-        professionnel = get_object_or_404(Professionnel, pk=entrepreneur)
+        professionnel = get_object_or_404(mdl.professionnel.Professionnel, pk=entrepreneur)
 
     frais.entrepreneur = professionnel
     if request.POST.get('societe', None):
@@ -91,17 +115,17 @@ def update(request):
             'frais': frais,
             'form': form,
             'action': 'update',
-            'entrepreneurs': Professionnel.find_all()})
+            'entrepreneurs': mdl.professionnel.find_all()})
 
 
 def list(request):
-    frais_list = FraisMaintenance.objects.all()
+    frais_list = mdl.frais_maintenance.find_all()
     return render(request, "fraismaintenance_list.html",
                            {'frais_list': frais_list})
 
 
 def delete(request, id):
-    frais = get_object_or_404(FraisMaintenance, pk=id)
+    frais = get_object_or_404(mdl.frais_maintenance.FraisMaintenance, pk=id)
     if frais:
         frais.delete()
     return render(request, "fraismaintenance_confirm_delete.html",
@@ -109,17 +133,17 @@ def delete(request, id):
 
 
 def contrat_new(request, contrat_location_id):
-    frais = FraisMaintenance()
+    frais = mdl.frais_maintenance.FraisMaintenance()
     previous = request.POST.get('previous', None)
-    location = get_object_or_404(ContratLocation, pk=contrat_location_id)
+    location = get_object_or_404(mdl.contrat_location.ContratLocation, pk=contrat_location_id)
     if location:
         frais.contrat_location = location
         frais.batiment = location.batiment
     return render(request, "fraismaintenance_form.html",
                   {'frais':             frais,
-                   'personnes':         Personne.find_all(),
+                   'personnes':         mdl.personne.find_all(),
                    'action':            'new',
-                   'batiments':         Batiment.find_all(),
-                   'contrats_location': ContratLocation.find_all(),
-                   'entrepreneurs':     Professionnel.find_all(),
+                   'batiments':         mdl.batiment.find_all(),
+                   'contrats_location': mdl.contrat_location.find_all(),
+                   'entrepreneurs':     mdl.professionnel.find_all(),
                    'previous':          previous})

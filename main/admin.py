@@ -21,78 +21,48 @@
 #    see http://www.gnu.org/licenses/.
 #
 ##############################################################################
-
 from django.contrib import admin
-from .models import Personne
-from .models import Assurance
-from .models import Banque
-from .models import Batiment
-from .models import FinancementLocation
-from .models import Locataire
-from .models import ContratLocation
-from .models import ContratGestion
-from .models import FraisMaintenance
-from .models import SuiviLoyer, SuiviLoyerAdmin
-from .models import Proprietaire
-from .models import ModeleDocument
-from .models import Photo
-from .models import Societe
-from .models import Alerte
-from .models import Pays
-from .models import Localite
-from .models import Honoraire
-from .models import Fonction
-from .models import Professionnel
-from .models import TypeSociete
+from main.models import *
 from .exportUtils import export_xls_batiment
-from .pdfUtils import pdf_batiment
 
 
-class PersonneAdmin(admin.ModelAdmin):
-    search_fields = ['nom']
-    list_filter = ('nom','prenom',)
-
-admin.site.register(Personne, PersonneAdmin)
-admin.site.register(Assurance)
-admin.site.register(Banque)
 
 
-class BatimentAdmin(admin.ModelAdmin):
-    search_fields = ['localite']
-    actions = [export_xls_batiment, pdf_batiment]
 
-admin.site.register(Batiment, BatimentAdmin)
-
-admin.site.register(FinancementLocation)
-admin.site.register(Locataire)
-admin.site.register(ContratLocation)
-admin.site.register(ContratGestion)
-admin.site.register(FraisMaintenance)
-admin.site.register(SuiviLoyer, SuiviLoyerAdmin)
-admin.site.register(Proprietaire)
-admin.site.register(ModeleDocument)
-admin.site.register(Photo)
+admin.site.register(personne.Personne, personne.PersonneAdmin)
+admin.site.register(assurance.Assurance)
+admin.site.register(banque.Banque)
 
 
-class SocieteAdmin(admin.ModelAdmin):
-    search_fields = ['nom']
-    list_filter = ('localite',)
-
-admin.site.register(Societe, SocieteAdmin)
 
 
-class AlertAdmin(admin.ModelAdmin):
-    list_filter = ('etat',)
+admin.site.register(batiment.Batiment, batiment.BatimentAdmin)
 
-admin.site.register(Alerte, AlertAdmin)
-admin.site.register(Pays)
-admin.site.register(Localite)
+admin.site.register(financement_location.FinancementLocation)
+admin.site.register(locataire.Locataire)
+admin.site.register(contrat_location.ContratLocation)
+admin.site.register(contrat_gestion.ContratGestion)
+admin.site.register(frais_maintenance.FraisMaintenance)
+admin.site.register(suivi_loyer.SuiviLoyer, suivi_loyer.SuiviLoyerAdmin)
+admin.site.register(proprietaire.Proprietaire)
+admin.site.register(modele_document.ModeleDocument)
+admin.site.register(photo.Photo)
 
 
-class HonoraireAdmin(admin.ModelAdmin):
-    list_filter = ('etat',)
 
-admin.site.register(Honoraire, HonoraireAdmin)
-admin.site.register(Fonction)
-admin.site.register(Professionnel)
-admin.site.register(TypeSociete)
+admin.site.register(societe.Societe, societe.SocieteAdmin)
+
+
+
+
+admin.site.register(alerte.Alerte, alerte.AlerteAdmin)
+admin.site.register(pays.Pays)
+admin.site.register(localite.Localite)
+
+
+
+
+admin.site.register(honoraire.Honoraire, honoraire.HonoraireAdmin)
+admin.site.register(fonction.Fonction)
+admin.site.register(professionnel.Professionnel)
+admin.site.register(type_societe.TypeSociete)

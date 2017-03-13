@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 ##############################################################################
 #
 #    Immobilier it's an application
@@ -22,10 +21,50 @@
 #    see http://www.gnu.org/licenses/.
 #
 ##############################################################################
+from django.db import models
+from django.utils import timezone
 
 from dateutil.relativedelta import relativedelta
-from main.models.alerte import Alerte
-from main.models.suivi_loyer import SuiviLoyer
+from django.core.urlresolvers import reverse
+from django.db.models import Q
+from django.db.models import Sum
+import datetime
+import calendar
+from django.contrib import admin
+
+class Localite(models.Model):
+    code_postal = models.CharField(max_length=10, blank=False, null=False)
+    localite = models.CharField(max_length=150, blank=False, null=False)
 
 
 
+    def __str__(self):
+        return self.code_postal + " " + self.localite
+
+
+    class Meta:
+        ordering = ['localite']
+
+
+def autocomplete_search_fields():
+    return 'localite', 'code_postal'
+
+def find_all():
+    return Localite.objects.all()
+
+
+def find_by_id(an_id):
+    return Localite.objects.get(pk=an_id)
+
+
+def search(un_code_postal, une_localite):
+    out = None
+    queryset = Localite.objects
+    if un_code_postal:
+        queryset = queryset.filter(code_postal=un_code_postal)
+    if une_localite:
+        queryset = queryset.filter(localite__iexact=une_localite)
+
+    if un_code_postal or une_localite:
+        out = queryset
+    return out

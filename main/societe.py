@@ -21,12 +21,21 @@
 #    see http://www.gnu.org/licenses/.
 #
 ##############################################################################
-
-from main.models import Societe, Localite
+from main.models import *
 from django.shortcuts import render, get_object_or_404
 from django.core.urlresolvers import reverse
 from django.http import HttpResponseRedirect
-
+from main.models import alerte as Alerte
+from main.models import assurance as Assurance
+from main.models import locataire as Locataire
+from main.models import personne as Personne
+from main.models import proprietaire as Proprietaire
+from main.models import localite as Localite
+from main.models import suivi_loyer as SuiviLoyer
+from main.models import frais_maintenance as FraisMaintenance
+from main.models import financement_location as FinancementLocation
+from main.models import contrat_location as ContratLocation
+from main.models import contrat_gestion as ContratGestion
 
 def societe_liste(request):
     print('societe_liste')
@@ -39,7 +48,7 @@ def update(request):
         societe_id = int(request.POST['societe_id'])
     print(societe_id)
     if societe_id:
-        societe = get_object_or_404(Societe, pk=societe_id)
+        societe = get_object_or_404(mdl.societe.Societe, pk=societe_id)
     else:
         societe = Societe()
 
@@ -64,7 +73,7 @@ def update(request):
 
 def edit(request, societe_id):
     if societe_id:
-        societe = get_object_or_404(Societe, pk=societe_id)
+        societe = get_object_or_404(mdl.societe.Societe, pk=societe_id)
     else:
         societe = Societe()
     return render(request, "societe_form.html",

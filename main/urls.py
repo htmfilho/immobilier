@@ -69,7 +69,7 @@ urlpatterns = [
     # url(r'^photos/(?P<path>.*)$', 'django.views.static.serve', {
     #         'document_root': settings.MEDIA_ROOT,
     #     }),
-    url(r'^test4', views.alertes4),
+
 
     url(r'^fraismaintenances/$', frais.list, name='fraismaintenance_list'),
     url(r'^fraismaintenance/new/$', frais.new, name='fraismaintenance-new'),
@@ -87,6 +87,7 @@ urlpatterns = [
     url(r'^personne/edit/([0-9]+)/$', personne.edit, name='personne-edit'),
     url(r'^personne/update/$', personne.update, name='personne-update'),
     url(r'^personne/delete/(?P<pk>[0-9]+)/$', views.PersonneDelete.as_view(), name='personne-delete'),
+    url(r'^personne/delete2/([0-9]+)/$', views.personne_delete, name='personne-delete-2'),
     url(r'^personnes/$', personne.list, name='personne_list'),
     url(r'^personnes/search/$', personne.search, name='personne_search'),
 

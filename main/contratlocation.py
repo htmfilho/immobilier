@@ -1,3 +1,26 @@
+##############################################################################
+#
+#    Immobilier it's an application
+#    designed to manage the core business of property management, buildings,
+#    rental agreement and so on.
+#
+#    Copyright (C) 2016-2017 Verpoorten Leïla
+#
+#    This program is free software: you can redistribute it and/or modify
+#    it under the terms of the GNU General Public License as published by
+#    the Free Software Foundation, either version 3 of the License, or
+#    (at your option) any later version.
+#
+#    This program is distributed in the hope that it will be useful,
+#    but WITHOUT ANY WARRANTY; without even the implied warranty of
+#    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#    GNU General Public License for more details.
+#
+#    A copy of this license - GNU General Public License - is available
+#    at the root of the source code of this program.  If not,
+#    see http://www.gnu.org/licenses/.
+#
+##############################################################################
 from main.models import*
 from django.http import HttpResponseRedirect
 from django.shortcuts import render, get_object_or_404, redirect
@@ -6,20 +29,22 @@ from datetime import datetime
 from main.forms import ContratLocationForm
 from dateutil.relativedelta import relativedelta
 from main.views_utils import get_key
+from main import models as mdl
+from django.utils import timezone
 
 
 def prepare_update(request, location_id):
-    location = ContratLocation.objects.get(pk=location_id)
+    location = mdl.contrat_location.find_by_id(location_id)
     return render(request, "contratlocation_update.html",
                   {'location':    location,
-                   'assurances': Assurance.find_all(), })
+                   'assurances': mdl.assurance.find_all(), })
 
 
 def update(request):
     previous = request.POST.get('previous', None)
     id = request.POST.get('id', None)
     form = ContratLocationForm(data=request.POST)
-    location = get_object_or_404(ContratLocation, pk=id)
+    location = get_object_or_404(mdl.contrat_location.ContratLocation, pk=id)
     prolongation_action = False
     if 'bt_prolongation' in request.POST:
         prolongation_action = True
@@ -29,7 +54,7 @@ def update(request):
     location.remarque = request.POST['remarque']
 
     if request.POST['assurance'] and not request.POST['assurance'] == '-':
-        location.assurance = get_object_or_404(Assurance, pk=request.POST['assurance'])
+        location.assurance = get_object_or_404(mdl.assurance.Assurance, pk=request.POST['assurance'])
     else:
         location.assurance = None
 
@@ -46,19 +71,19 @@ def update(request):
     else:
         return render(request, "contratlocation_update.html",
                                {'location':    location,
-                                'assurances':  Assurance.find_all(),
+                                'assurances':  mdl.assurance.find_all(),
                                 'nav':         'list_batiment',
                                 'form':        form,
                                 'previous':    previous})
 
 
 def contrat_location_for_batiment(request, batiment_id):
-    batiment = get_object_or_404(Batiment, pk=batiment_id)
+    batiment = get_object_or_404(mdl.batiment.Batiment, pk=batiment_id)
     if batiment.location_actuelle:
-        location = get_object_or_404(ContratLocation, pk=batiment.location_actuelle.id)
+        location = get_object_or_404(mdl.contrat_location.ContratLocation, pk=batiment.location_actuelle.id)
     else:
         location = None
-    nouvelle_location = ContratLocation()
+    nouvelle_location = mdl.contrat_location.ContratLocation()
     if batiment:
         nouvelle_location.batiment = batiment
     if location is not None:
@@ -73,20 +98,20 @@ def contrat_location_for_batiment(request, batiment_id):
         # le financement sera crée automatiquement
     return render(request, "contratlocation_new.html",
                            {'location': nouvelle_location,
-                            'assurances': Assurance.find_all(),
+                            'assurances': mdl.assurance.find_all(),
                             'nav': 'list_batiment'})
 
 
 def list(request):
     date_fin = timezone.now()
-    locations = ContratLocation.search(date_fin)
+    locations = mdl.contrat_location.search(date_fin)
     return render(request, "contratlocation_list.html",
                            {'locations': locations,
                             'date_fin_filtre_location': date_fin})
 
 
 def delete(request, location_id):
-    location = get_object_or_404(ContratLocation, pk=location_id)
+    location = get_object_or_404(mdl.contrat_location.ContratLocation, pk=location_id)
     if location:
         location.delete()
     return render(request, "contratlocation_confirm_delete.html",
@@ -105,9 +130,9 @@ def test(request):
     batiment_id = get_key(request.POST.get('batiment_id', None))
     batiment = None
     if batiment_id:
-        batiment = get_object_or_404(Batiment, pk=batiment_id)
+        batiment = get_object_or_404(mdl.batiment.Batiment, pk=batiment_id)
 
-    location = ContratLocation()
+    location = mdl.contrat_location.ContratLocation()
     location.batiment = batiment
     if request.POST['date_debut']:
         location.date_debut = datetime.strptime(request.POST['date_debut'], '%d/%m/%Y')
@@ -132,7 +157,7 @@ def test(request):
         location.assurance = assurance
     else:
         if request.POST['assurance'] and not request.POST['assurance'] == 'None':
-            location.assurance = get_object_or_404(Assurance, pk=request.POST['assurance'])
+            location.assurance = get_object_or_404(mdl.assurance.Assurance, pk=request.POST['assurance'])
         else:
             location.assurance = None
 
@@ -145,28 +170,17 @@ def test(request):
     else:
         return render(request, "contratlocation_new.html",
                                {'location':    location,
-                                'assurances': Assurance.find_all(),
+                                'assurances': mdl.assurance.find_all(),
                                 'nav':       'list_batiment',
                                 'form': form})
 
-    # if request.POST.get('prev', None) == 'fb':
-    #     return render(request, "batiment_form.html",
-    #                   {'batiment': batiment})
-    #
-    # lnk = None
-    # if request.POST.get('return_lnk'):
-    #     lnk = request.POST.get('return_lnk')
-    #
-    # if lnk:
-    #     return redirect(lnk)
-    # else:
-    #     return redirect('/listeBatiments/')
+
 
 
 def prolongation(request):
     id_location = request.GET['id_location']
     type_prolongation = request.GET['type_prolongation']
-    location = get_object_or_404(ContratLocation, pk=id_location)
+    location = get_object_or_404(mdl.contrat_location.ContratLocation, pk=id_location)
     # response = []
     if location:
         date_trav = location.date_fin
@@ -182,16 +196,16 @@ def prolongation(request):
     # return HttpResponse(simplejson.dumps(response))
     return render(request, "contratlocation_update.html",
                   {'location':    location,
-                   'assurances': Assurance.find_all(), })
+                   'assurances': mdl.assurance.find_all(), })
 
 
 def contrat_location_form(request):
-    nouvelle_location = ContratLocation()
+    nouvelle_location = mdl.contrat_location.ContratLocation()
     auj = date.today()
     nouvelle_location.date_debut = auj.strftime("%d/%m/%Y")
     return render(request, "contratlocation_form.html", {
-                            'assurances': Assurance.find_all(),
-                            'batiments': Batiment.find_all(),
+                            'assurances': mdl.assurance.find_all(),
+                            'batiments': mdl.batiment.find_all(),
                             'location': nouvelle_location,
                             'form': None})
 
@@ -200,9 +214,9 @@ def search(request):
     date_fin = request.GET.get('date_fin_filtre_location', None)
     if date_fin:
         date_fin = datetime.strptime(date_fin, '%d/%m/%Y')
-        locations = ContratLocation.search(date_fin)
+        locations = mdl.contrat_location.search(date_fin)
     else:
-        locations = ContratLocation.find_all()
+        locations = mdl.contrat_location.find_all()
     return render(request, "contratlocation_list.html",
                            {'locations': locations,
                             'date_fin_filtre_location': date_fin})

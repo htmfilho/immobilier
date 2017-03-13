@@ -1,35 +1,59 @@
-from main.models import Societe, Personne
+##############################################################################
+#
+#    Immobilier it's an application
+#    designed to manage the core business of property management, buildings,
+#    rental agreement and so on.
+#
+#    Copyright (C) 2016-2017 Verpoorten Leïla
+#
+#    This program is free software: you can redistribute it and/or modify
+#    it under the terms of the GNU General Public License as published by
+#    the Free Software Foundation, either version 3 of the License, or
+#    (at your option) any later version.
+#
+#    This program is distributed in the hope that it will be useful,
+#    but WITHOUT ANY WARRANTY; without even the implied warranty of
+#    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#    GNU General Public License for more details.
+#
+#    A copy of this license - GNU General Public License - is available
+#    at the root of the source code of this program.  If not,
+#    see http://www.gnu.org/licenses/.
+#
+##############################################################################
+from main.models import *
 from django.shortcuts import render, get_object_or_404
 from datetime import datetime
 from main.forms import PersonneForm
+from main import models as mdl
 
 
 def edit(request, personne_id):
     if personne_id:
-        personne = Personne.find_personne(personne_id)
+        personne = mdl.personne.find_personne(personne_id)
     else:
-        personne = Personne()
+        personne = mdl.personne.Personne()
     return render(request, "personne_form.html",
                   {'personne': personne,
-                   'societes': Societe.find_all()})
+                   'societes': mdl.societe.find_all()})
 
 
 def create(request):
     return render(request, "personne_form.html",
-                  {'personne': Personne(),
-                   'societes': Societe.find_all()})
+                  {'personne': mdl.personne.Personne(),
+                   'societes': mdl.societe.find_all()})
 
 
 def list(request):
     return render(request, "personne_list.html",
-                  {'personnes': Personne.find_all()})
+                  {'personnes': mdl.personne.find_all()})
 
 
 def search(request):
     nom = request.GET.get('nom')
     prenom = request.GET.get('prenom')
 
-    query = Personne.find_all()
+    query = mdl.personne.find_all()
 
     if nom:
         query = query.filter(nom__icontains=nom)
@@ -45,9 +69,9 @@ def search(request):
 def update(request):
     form = PersonneForm(data=request.POST)
     if request.POST['personne_id'] and not request.POST['personne_id'] == 'None':
-        personne = get_object_or_404(Personne, pk=request.POST['personne_id'])
+        personne = get_object_or_404(mdl.personne.Personne, pk=request.POST['personne_id'])
     else:
-        personne = Personne()
+        personne = mdl.personne.Personne()
 
     personne.nom = request.POST['nom']
     personne.prenom = request.POST['prenom']
@@ -60,7 +84,7 @@ def update(request):
     personne.societe = None
     if request.POST.get('societe', None):
         if request.POST['societe'] != '':
-            societe = Societe.find_by_id(int(request.POST['societe']))
+            societe = mdl.societe.find_by_id(int(request.POST['societe']))
             personne.societe = societe
 
     personne.lieu_naissance = request.POST['lieu_naissance']
@@ -80,9 +104,9 @@ def update(request):
     if form.is_valid():
         personne.save()
         return render(request, "personne_list.html",
-                      {'personnes': Personne.find_all()})
+                      {'personnes': mdl.personne.find_all()})
     else:
         return render(request, "personne_form.html",
                       {'personne': personne,
                        'form': form,
-                       'societes': Societe.find_all()})
+                       'societes': mdl.societe.find_all()})

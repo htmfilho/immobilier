@@ -21,25 +21,6 @@
 #    see http://www.gnu.org/licenses/.
 #
 ##############################################################################
-from django.http import *
-from main.models import *
-from main.models import alerte as Alerte
-from main.models import assurance as Assurance
-from main.models import locataire as Locataire
-from main.models import personne as Personne
-from main.models import proprietaire as Proprietaire
-from main.models import localite as Localite
-from main.models import suivi_loyer as SuiviLoyer
-from main.models import frais_maintenance as FraisMaintenance
-from main.models import financement_location as FinancementLocation
-from main.models import contrat_location as ContratLocation
-from main.models import contrat_gestion as ContratGestion
-
-def create(request):
-    print('create assurance')
-    data = request.POST
-    new_assurance = Assurance()
-    new_assurance.nom = data['nom']
-    new_assurance.description = data['description']
-    new_assurance.save()
-    return HttpResponse('')
+from main.models import personne,alerte,assurance, banque,batiment,contrat_gestion,contrat_location, \
+financement_location,fonction,frais_maintenance, honoraire,localite, locataire, modele_document, pays,photo, \
+professionnel, proprietaire, societe,suivi_loyer, type_societe

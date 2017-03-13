@@ -202,7 +202,8 @@
                             <td><a href="{% url 'gestion-prepare-update-all' c.pk %}?prev=fb"
                                    title="Pour modifier un contrat de gestion"><span class="glyphicon glyphicon-pencil" aria-hidden="true"></span></a>
                                 <a href="{% url 'contratgestion-delete' c.id %}"
-                                   title="Pour supprimer un contrat de gestion"><span class="glyphicon glyphicon-remove" aria-hidden="true"></span></a></td>
+                                   title="Pour supprimer un contrat de gestion"
+                                   onclick="return confirm('Sûr de vouloir supprimer?')"><span class="glyphicon glyphicon-remove" aria-hidden="true"></span></a></td>
                           </tr>
                         {% endfor %}
                         <tr><td colspan="3"></td></tr>
@@ -242,7 +243,12 @@
                       <td>{{ f.date_realisation | default_if_none:''|date:"j/m/Y" }}</td>
                         <td><input type="checkbox" {%if f.contrat_location %}checked{%endif%} readonly></td>
                       <td><a href="{% url 'fraismaintenance-prepare-update' f.pk %}" title="Pour modifier un frais"><span class="glyphicon glyphicon-pencil" aria-hidden="true"></span></a>
-                          <a href="{% url 'fraismaintenance-delete' f.id %}" title="Pour supprimer un frais"><span class="glyphicon glyphicon-remove" aria-hidden="true"></span></a></td>
+                          <a href="{% url 'fraismaintenance-delete' f.id %}"
+                             title="Pour supprimer un frais"
+                             onclick="return confirm('Sûr de vouloir supprimer?')">
+                              <span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
+                          </a>
+                      </td>
                     </tr>
                   {% endfor %}
                   </table>

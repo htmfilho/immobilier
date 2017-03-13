@@ -21,9 +21,10 @@
 #    see http://www.gnu.org/licenses/.
 #
 ##############################################################################
-
 from django.http import *
-from main.models import Fonction
+from main.models import *
+
+from main import models as mdl
 
 
 def create(request):
@@ -31,7 +32,7 @@ def create(request):
     print(request.POST['nom'])
     print(request.GET['nom'])
     data = request.POST
-    new_fonction = Fonction()
+    new_fonction = mdl.fonction.Fonction()
     new_fonction.nom_fonction = data['nom']
     new_fonction.save()
     return HttpResponse(new_fonction, mimetype="application/json")

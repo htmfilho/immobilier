@@ -23,3 +23,8 @@ body {
 margin-right:15px;*/
 width:75%;;
 }
+
+input:required {
+  background-color: #c4e3f3;
+}
+

@@ -1,3 +1,4 @@
+
 ##############################################################################
 #
 #    Immobilier it's an application
@@ -21,25 +22,28 @@
 #    see http://www.gnu.org/licenses/.
 #
 ##############################################################################
-from django.http import *
-from main.models import *
-from main.models import alerte as Alerte
-from main.models import assurance as Assurance
-from main.models import locataire as Locataire
-from main.models import personne as Personne
-from main.models import proprietaire as Proprietaire
-from main.models import localite as Localite
-from main.models import suivi_loyer as SuiviLoyer
-from main.models import frais_maintenance as FraisMaintenance
-from main.models import financement_location as FinancementLocation
-from main.models import contrat_location as ContratLocation
-from main.models import contrat_gestion as ContratGestion
+from django.db import models
+from django.contrib import admin
 
-def create(request):
-    print('create assurance')
-    data = request.POST
-    new_assurance = Assurance()
-    new_assurance.nom = data['nom']
-    new_assurance.description = data['description']
-    new_assurance.save()
-    return HttpResponse('')
+
+class Fonction(models.Model):
+    nom_fonction = models.CharField(max_length=100, blank=False, null=False)
+
+
+    def __str__(self):
+        return str(self.nom_fonction)
+
+
+def create():
+    return Fonction()
+
+
+def find_all():
+    return Fonction.objects.all().order_by('nom_fonction')
+
+
+def find_by_nom(nom):
+    l = Fonction.objects.filter(nom_fonction__iexact=nom)
+    if l.exists():
+        return l[0]
+    return None

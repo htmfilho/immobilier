@@ -1,23 +1,47 @@
-from main.models import Batiment, Proprietaire, Personne
+##############################################################################
+#
+#    Immobilier it's an application
+#    designed to manage the core business of property management, buildings,
+#    rental agreement and so on.
+#
+#    Copyright (C) 2016-2017 Verpoorten Leïla
+#
+#    This program is free software: you can redistribute it and/or modify
+#    it under the terms of the GNU General Public License as published by
+#    the Free Software Foundation, either version 3 of the License, or
+#    (at your option) any later version.
+#
+#    This program is distributed in the hope that it will be useful,
+#    but WITHOUT ANY WARRANTY; without even the implied warranty of
+#    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#    GNU General Public License for more details.
+#
+#    A copy of this license - GNU General Public License - is available
+#    at the root of the source code of this program.  If not,
+#    see http://www.gnu.org/licenses/.
+#
+##############################################################################
+from main.models import *
 
 from django.shortcuts import render, get_object_or_404
 from datetime import datetime
 from django.shortcuts import redirect
+from main import models as mdl
 
 
 def liste_proprietaires(request):
-    proprietaires = Proprietaire.objects.all()
+    proprietaires = mdl.proprietaire.find_all()
     return render(request, 'listeProprietaires.html', {'proprietaires': proprietaires})
 
 
 def proprietaire(request, proprietaire_id):
-    proprietaire = Proprietaire.find_proprietaire(proprietaire_id)
+    a_proprietaire = mdl.proprietaire.find_proprietaire(proprietaire_id)
     return render(request, "proprietaire_form.html",
-                  {'proprietaire': proprietaire,
+                  {'proprietaire': a_proprietaire,
                    'action': 'update',
-                   'personnes': Personne.objects.all(),
+                   'personnes': mdl.personne.find_all(),
                    'prev': request.GET.get('prev'),
-                   'personne': proprietaire.proprietaire})
+                   'personne': a_proprietaire.proprietaire})
 
 
 def add_proprietaire(request, batiment_id):
@@ -29,18 +53,18 @@ def add_proprietaire(request, batiment_id):
     if batiment_id:
         prev = "fb"
 
-    batiment = get_object_or_404(Batiment, pk=batiment_id)
-    proprietaire = Proprietaire()
+    batiment = get_object_or_404(mdl.batiment.Batiment, pk=batiment_id)
+    proprietaire = mdl.proprietaire.Proprietaire()
     proprietaire.batiment = batiment
     return render(request, "proprietaire_form.html",
                   {'proprietaire': proprietaire,
                    'action':       'add',
-                   'personnes':    Personne.objects.all(),
+                   'personnes':    mdl.personne.find_all(),
                    "prev": prev})
 
 
 def update_proprietaire(request, proprietaire_id):
-    proprietaire = Proprietaire.find_proprietaire(proprietaire_id)
+    proprietaire = mdl.proprietaire.find_proprietaire(proprietaire_id)
     return render(request, "proprietaire_form.html",
                   {'proprietaire':         proprietaire,
                    'action':               'update'})
@@ -48,7 +72,7 @@ def update_proprietaire(request, proprietaire_id):
 
 def delete_proprietaire_batiment(request, proprietaire_id):
     print('delete_proprietaire_batiment')
-    proprietaire = Proprietaire.find_proprietaire(proprietaire_id)
+    proprietaire = mdl.proprietaire.find_proprietaire(proprietaire_id)
     batiment = proprietaire.batiment
     proprietaire.delete()
 
@@ -56,7 +80,7 @@ def delete_proprietaire_batiment(request, proprietaire_id):
 
 
 def delete_proprietaire(request, proprietaire_id):
-    proprietaire = Proprietaire.find_proprietaire(proprietaire_id)
+    proprietaire = mdl.proprietaire.find_proprietaire(proprietaire_id)
     batiment = proprietaire.batiment
     proprietaire.delete()
     print(request)
@@ -79,19 +103,19 @@ def proprietaire_update_save(request):
     print('previous:', previous)
 
     if 'update' == request.POST.get('action', None):
-        proprietaire = get_object_or_404(Proprietaire, pk=request.POST['id'])
+        proprietaire = get_object_or_404(mdl.proprietaire.Proprietaire, pk=request.POST['id'])
     if 'add' == request.POST.get('action', None):
-        proprietaire = Proprietaire()
+        proprietaire = mdl.proprietaire.Proprietaire()
 
     if request.POST['date_debut']:
         proprietaire.date_debut = datetime.strptime(request.POST['date_debut'], '%d/%m/%Y')
     if request.POST['date_fin']:
         proprietaire.date_fin = datetime.strptime(request.POST['date_fin'], '%d/%m/%Y')
 
-    personne = get_object_or_404(Personne, pk=request.POST['proprietaire'])
+    personne = get_object_or_404(mdl.personne.Personne, pk=request.POST['proprietaire'])
     proprietaire.proprietaire = personne
     if 'add' == request.POST.get('action', None):
-        batiment = get_object_or_404(Batiment, pk=request.POST['batiment_id'])
+        batiment = get_object_or_404(mdl.batiment.Batiment, pk=request.POST['batiment_id'])
         proprietaire.batiment = batiment
     if not proprietaire.date_debut is None and not proprietaire.date_fin is None:
         if proprietaire.date_debut > proprietaire.date_fin:
@@ -121,11 +145,11 @@ def redirections(request, batiment):
 
 
 def proprietaire_create_for_batiment(request, batiment_id):
-    batiment = get_object_or_404(Batiment, pk=batiment_id)
-    proprietaire = Proprietaire()
+    batiment = get_object_or_404(mdl.batiment.Batiment, pk=batiment_id)
+    proprietaire = mdl.proprietaire.Proprietaire()
     if batiment:
         proprietaire.batiment = batiment
-    personnes = Personne.objects.all()
+    personnes = mdl.personne.find_all()
 
     return render(request, "proprietaire_form.html",
                   {'proprietaire':         proprietaire,
@@ -135,14 +159,14 @@ def proprietaire_create_for_batiment(request, batiment_id):
 
 def personne_create(request):
     print('personne_create')
-    proprietaire = get_object_or_404(Proprietaire, pk=request.POST['proprietaire_id_pers'])
-    personne = Personne()
+    proprietaire = get_object_or_404(mdl.proprietaire.Proprietaire, pk=request.POST['proprietaire_id_pers'])
+    personne = mdl.personne.Personne()
     personne.nom = request.POST['nom']
     personne.prenom = request.POST['prenom']
     personne.save()
     print(personne)
     proprietaire.personne = personne
-    personnes = Personne.objects.filter()
+    personnes = mdl.personne.find_all()
 
     return render(request, "proprietaire_form.html",
                   {'proprietaire': proprietaire,

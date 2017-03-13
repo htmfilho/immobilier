@@ -1,7 +1,30 @@
+##############################################################################
+#
+#    Immobilier it's an application
+#    designed to manage the core business of property management, buildings,
+#    rental agreement and so on.
+#
+#    Copyright (C) 2016-2017 Verpoorten Leïla
+#
+#    This program is free software: you can redistribute it and/or modify
+#    it under the terms of the GNU General Public License as published by
+#    the Free Software Foundation, either version 3 of the License, or
+#    (at your option) any later version.
+#
+#    This program is distributed in the hope that it will be useful,
+#    but WITHOUT ANY WARRANTY; without even the implied warranty of
+#    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#    GNU General Public License for more details.
+#
+#    A copy of this license - GNU General Public License - is available
+#    at the root of the source code of this program.  If not,
+#    see http://www.gnu.org/licenses/.
+#
+##############################################################################
 from PyPDF2.pdf import RectangleObject
 from reportlab.pdfgen import canvas
 from django.contrib.auth.decorators import login_required
-from main.models import *
+from main import models as mdl
 from django.core.urlresolvers import reverse
 from django.http import HttpResponseRedirect
 from django.shortcuts import render, get_object_or_404
@@ -27,22 +50,33 @@ from reportlab.lib.pagesizes import A4 as A4
 from reportlab.platypus.doctemplate import PageTemplate, BaseDocTemplate, NextPageTemplate
 from reportlab.platypus.tableofcontents import TableOfContents
 from reportlab.platypus.frames import Frame
-
+import datetime
+from main.models import alerte as Alerte
+from main.models import assurance as Assurance
+from main.models import locataire as Locataire
+from main.models import personne as Personne
+from main.models import proprietaire as Proprietaire
+from main.models import localite as Localite
+from main.models import suivi_loyer as SuiviLoyer
+from main.models import frais_maintenance as FraisMaintenance
+from main.models import financement_location as FinancementLocation
+from main.models import contrat_location as ContratLocation
+from main.models import contrat_gestion as ContratGestion
 
 class ContratGestionList(ListView):
-    model = ContratGestion
+    model = mdl.contrat_gestion
 
 
 class ContratGestionDetail(DetailView):
-    model = ContratGestion
+    model = mdl.contrat_gestion
 
 
 class FraisMaintenanceList(ListView):
-    model = FraisMaintenance
+    model = mdl.frais_maintenance
 
 
 class FraisMaintenanceDetail(DetailView):
-    model = FraisMaintenance
+    model = mdl.frais_maintenance
 
 
 def merge_pdf4(request):
@@ -119,14 +153,14 @@ def dashboard(request):
 
 
 def home(request):
-    suivis = SuiviLoyer.find_suivis_a_verifier_proche()
-    suivis_recus = SuiviLoyer.find_suivis_by_etat_suivi(timezone.now(), 'PAYE')
-    suivis_recus = SuiviLoyer.find_mes_suivis_by_etat_suivi(timezone.now(), 'PAYE')
-    suivis_non_paye = SuiviLoyer.find_suivis_by_pas_etat_suivi(timezone.now(), 'PAYE')
+    suivis = mdl.suivi_loyer.find_suivis_a_verifier_proche()
+    suivis_recus = mdl.suivi_loyer.find_suivis_by_etat_suivi(timezone.now(), 'PAYE')
+    suivis_recus = mdl.suivi_loyer.find_mes_suivis_by_etat_suivi(timezone.now(), 'PAYE')
+    suivis_non_paye = mdl.suivi_loyer.find_suivis_by_pas_etat_suivi(timezone.now(), 'PAYE')
     montant_recu = 0
     montant_attendu = 0
     mois_en_cours = str(datetime.datetime.now().month) + "/" + str(datetime.datetime.now().year)
-    mes_frais = FraisMaintenance.find_my_frais()
+    mes_frais = mdl.frais_maintenance.find_my_frais()
     tot_depenses = 0
     for f in mes_frais:
         if f.montant:
@@ -138,17 +172,17 @@ def home(request):
         if s.charges_percu:
             tot_recettes = tot_recettes + s.charges_percu
     return render(request, 'myhome.html',
-                  {'alertes':         Alerte.find_by_etat('A_VERIFIER'),
-                   'batiments':       Batiment.find_my_batiments(),
-                   'contrats':        ContratGestion.find_my_contrats(),
-                   'honoraires':      Honoraire.find_honoraires_by_etat_today('A_VERIFIER'),
+                  {'alertes':         mdl.alerte.find_by_etat('A_VERIFIER'),
+                   'batiments':       mdl.batiment.find_my_batiments(),
+                   'contrats':        mdl.contrat_gestion.find_my_contrats(),
+                   'honoraires':      mdl.honoraire.find_honoraires_by_etat_today('A_VERIFIER'),
                    'suivis':          suivis,
                    'previous':        request.POST.get('previous', None),
                    'suivis_recus':    suivis_recus,
                    'montant_recu':    montant_recu,
                    'montant_attendu': montant_attendu,
                    'suivis_non_paye': suivis_non_paye,
-                   'locataires':      Locataire.find_my_locataires(),
+                   'locataires':      mdl.locataire.find_my_locataires(),
                    'mois_en_cours':   mois_en_cours,
                    'mes_frais':       mes_frais,
                    'tot_depenses':    tot_depenses,
@@ -156,19 +190,19 @@ def home(request):
 
 
 def listeBatiments(request):
-    batiments = Batiment.objects.all()
+    batiments = mdl.batiment.find_all()
     return render(request, 'listeBatiments.html', {'batiments': batiments, 
-                                                   'proprietaires': Proprietaire.find_distinct_proprietaires()})
+                                                   'proprietaires': mdl.proprietaire.find_distinct_proprietaires()})
 
 
 def listeBatiments_filtrer(request, personne_id):
     print('listeBatiments_filtrer')
     personne = None
     if personne_id is None:
-        batiments = Batiment.objects.all()
+        batiments = mdl.batiment.find_all()
     else:
-        personne = Personne.objects.get(id=personne_id)
-        batiments = personne.batiments
+        personne = mdl.personne.find_personne(personne_id)
+        batiments = mdl.personne.batiments
 
     return render(request, 'listeBatiments.html', {'batiments': batiments,
                                                    'filtre': personne})
@@ -176,27 +210,20 @@ def listeBatiments_filtrer(request, personne_id):
 
 @login_required
 def listePersonnes(request):
-    personnes = Personne.objects.all()
+    personnes = mdl.personne.find_all()
     return render(request, 'listePersonnes.html', {'personnes': personnes})
 
 
 @login_required
 def listeComplete(request):
-    batiments = Batiment.objects.all()
-    contrats_location = ContratLocation.objects.all()
+    batiments = mdl.batiment.find_all()
+    contrats_location = mdl.contrat_location.find_all()
     return render(request, 'listeComplete.html', {'batiments': batiments})
-
-
-def alertes4(request):
-    batiment = Batiment.objects.get(nom='batiment 5b')
-    proprietaires = Proprietaire.objects.filter(batiment=batiment)
-
-    return render(request, 'main/alertes4.html', {'batiment': batiment, 'proprietaires': proprietaires})
 
 
 @login_required
 def personne(request, personne_id):
-    personne = Personne.find_personne(personne_id)
+    personne = mdl.personne.find_personne(personne_id)
     return render(request, "personne_form.html",
                   {'personne':         personne,
                    'societes': Societe.find_all()})
@@ -207,7 +234,7 @@ def update_personne(request):
     print(request.POST.get('action', None))
     if 'add' == request.POST.get('action', None) or 'modify' == request.POST.get('action', None):
         print(request.POST['id'])
-        personne = get_object_or_404(Personne, pk=request.POST['id'])
+        personne = get_object_or_404(mdl.personne.Personne, pk=request.POST['id'])
         personne.nom = request.POST['nom']
         personne.prenom = request.POST['prenom']
 
@@ -222,54 +249,55 @@ def xlsRead(request):
 
 
 class FraisMaintenanceCreate(CreateView):
-    model = FraisMaintenance
+    model = mdl.frais_maintenance
     form_class = FraisMaintenanceForm
 
 
 class FraisMaintenanceUpdate(UpdateView):
-    model = FraisMaintenance
+    model = mdl.frais_maintenance
     form_class = FraisMaintenanceForm
 
 
 class FraisMaintenanceDelete(DeleteView):
-    model = FraisMaintenance
+    model = mdl.frais_maintenance
     success_url = reverse_lazy('fraismaintenance-list'),
 
 
 class PersonneDelete(DeleteView):
-    model = Personne
+    print('qsdfqsf')
+    model = mdl.personne
     success_url = "../../../personnes"
 
 
 class BatimentList(ListView):
-    model = Batiment
+    model = mdl.batiment
 
 
 class BatimentCreate(CreateView):
-    model = Batiment
+    model = mdl.batiment
     form_class = BatimentForm
 
 
 class BatimentUpdate(UpdateView):
-    model = Batiment
+    model = mdl.batiment
     form_class = BatimentForm
 
 
 class BatimentDelete(DeleteView):
-    model = Batiment
+    model = mdl.batiment
     success_url = "../../../batiments"
 
 
 class ProprietaireList(ListView):
-    model = Proprietaire
+    model = mdl.proprietaire
 
 
 class ProprietaireDetail(DetailView):
-    model = Proprietaire
+    model = mdl.proprietaire
 
 
 class ProprietaireCreate(CreateView):
-    model = Proprietaire
+    model = mdl.proprietaire
     form_class = ProprietaireForm
 
     def form_valid(self, form):
@@ -280,12 +308,12 @@ class ProprietaireCreate(CreateView):
 
 
 class ProprietaireCreateForBatiment(CreateView):
-    model = Proprietaire
+    model = mdl.proprietaire
     form_class = ProprietaireForm
 
     def get_initial(self):
         initial_data = super(ProprietaireCreateForBatiment, self).get_initial()
-        course = get_object_or_404(Batiment, pk=self.kwargs['pk'])
+        course = get_object_or_404(mdl.batiment.Batiment, pk=self.kwargs['pk'])
         if course:
             initial_data['batiment'] = course
         # if self.form_class == TransferFormFrom:
@@ -301,7 +329,7 @@ class ProprietaireCreateForBatiment(CreateView):
         return initial_data
     # def get_form(self, form_class):
     #     form = super(ProprietaireCreateForBatiment, self).get_form(form_class)
-    #     course = get_object_or_404(Batiment, pk=self.kwargs['pk'])
+    #     course = get_object_or_404(mdl.batiment.Batiment, pk=self.kwargs['pk'])
     #
     #     form.instance.batiment = course
     #     print (course)
@@ -322,7 +350,7 @@ class ProprietaireCreateForBatiment(CreateView):
     #     print (kwargs)
     #     if 'pk' in kwargs:
     #         print(self.kwargs['pk'])
-    #         batiment = Batiment.objects.get(pk=self.kwargs['pk'])
+    #         batiment = mdl.batiment.objects.get(pk=self.kwargs['pk'])
     #         instance = Proprietaire(batiment=batiment)
     #         kwargs.update({'instance': instance})
     #     else:
@@ -337,7 +365,7 @@ class ProprietaireCreateForBatiment(CreateView):
     #
     # def dispatch(self, request, *args, **kwargs):
     #     print('displath')
-    #     self.batiment = Batiment.objects.get(pk=self.kwargs['pk'])
+    #     self.batiment = mdl.batiment.objects.get(pk=self.kwargs['pk'])
     #     print (self.batiment)
     #
     #     return super(ProprietaireCreateForBatiment, self).dispatch(request, *args, **kwargs)
@@ -350,52 +378,52 @@ class ProprietaireCreateForBatiment(CreateView):
 
     #
     # form_class = ProprietaireForm
-    # batiment = Batiment.objects.get(pk=1)
+    # batiment = mdl.batiment.objects.get(pk=1)
     # form_class.batiment = batiment
     # # fields = ['batiment']
     #
     # def form_valid(self, form):
     #     print('form_valid')
-    #     form.instance.batiment = Batiment.objects.get(pk=self.kwargs['class'])
+    #     form.instance.batiment = mdl.batiment.objects.get(pk=self.kwargs['class'])
     #     # event = Event.objects.get(pk=self.kwargs['class'])
     #     return super(ProprietaireCreateForBatiment, self).form_valid(form)
 
 
 class ProprietaireUpdate(UpdateView):
-    model = Proprietaire
+    model = mdl.proprietaire
     form_class = ProprietaireForm
 
 
 class ProprietaireDelete(DeleteView):
-    model = Proprietaire
+    model = mdl.proprietaire
     success_url = "../../../proprietaires"
 
 
 class SocieteList(ListView):
-    model = Societe
+    model = mdl.societe
 
 
 class SocieteDetail(DetailView):
-    model = Societe
+    model = mdl.societe
 
 
 class SocieteCreate(CreateView):
-    model = Societe
+    model = mdl.societe
     form_class = SocieteForm
 
 
 class SocieteUpdate(UpdateView):
-    model = Societe
+    model = mdl.societe
     form_class = SocieteForm
 
 
 class SocieteDelete(DeleteView):
-    model = Societe
+    model = mdl.societe
     success_url = "../../../societes"
 
 
 class HonoraireDelete(DeleteView):
-    model = Honoraire
+    model = mdl.honoraire
     success_url = "../../../honoraires"
 
 PAGE_SIZE = A4
@@ -1250,3 +1278,8 @@ def merge_pdf_stack(request):
     output.close()
 
     return render(request, "test.html")
+
+def personne_delete(request, id):
+    mdl.personne.delete_personne(int(id))
+    return HttpResponseRedirect(reverse('personne_search'))
+

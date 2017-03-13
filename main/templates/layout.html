@@ -82,6 +82,14 @@
                     }
 
             );
+            $('#tbl_data_honoraires').DataTable({
+                        "columnDefs": [ {
+                            "targets": 'no-sort',
+                            "orderable": false,
+                        } ]
+                    }
+
+            );
             $('#message_info').fadeOut(5000);
             //document.querySelector('input[list="localites_nom"]').addEventListener('input', onInput);
 

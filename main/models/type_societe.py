@@ -21,25 +21,12 @@
 #    see http://www.gnu.org/licenses/.
 #
 ##############################################################################
-from django.http import *
-from main.models import *
-from main.models import alerte as Alerte
-from main.models import assurance as Assurance
-from main.models import locataire as Locataire
-from main.models import personne as Personne
-from main.models import proprietaire as Proprietaire
-from main.models import localite as Localite
-from main.models import suivi_loyer as SuiviLoyer
-from main.models import frais_maintenance as FraisMaintenance
-from main.models import financement_location as FinancementLocation
-from main.models import contrat_location as ContratLocation
-from main.models import contrat_gestion as ContratGestion
+from django.db import models
+from django.contrib import admin
 
-def create(request):
-    print('create assurance')
-    data = request.POST
-    new_assurance = Assurance()
-    new_assurance.nom = data['nom']
-    new_assurance.description = data['description']
-    new_assurance.save()
-    return HttpResponse('')
+
+class TypeSociete(models.Model):
+    type = models.CharField(max_length=50, blank=False, null=False)
+
+    def __str__(self):
+        return self.type

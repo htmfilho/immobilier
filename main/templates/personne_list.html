@@ -86,7 +86,9 @@
                   {% endif %}
               </td>
               <td>
-                <a href="{% url 'personne-delete' personne.pk %}" title="Pour supprimer une personne"><span class="glyphicon glyphicon-remove" aria-hidden="true"></span></a>
+                <a href="{% url 'personne-delete-2' personne.id %}"
+                   title="Pour supprimer une personne"
+                   onclick="return confirm('Sûr de vouloir supprimer?')"><span class="glyphicon glyphicon-remove" aria-hidden="true"></span></a>
               </td>
 
           </tr>

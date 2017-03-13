@@ -1,21 +1,43 @@
+##############################################################################
+#
+#    Immobilier it's an application
+#    designed to manage the core business of property management, buildings,
+#    rental agreement and so on.
+#
+#    Copyright (C) 2016-2017 Verpoorten Leïla
+#
+#    This program is free software: you can redistribute it and/or modify
+#    it under the terms of the GNU General Public License as published by
+#    the Free Software Foundation, either version 3 of the License, or
+#    (at your option) any later version.
+#
+#    This program is distributed in the hope that it will be useful,
+#    but WITHOUT ANY WARRANTY; without even the implied warranty of
+#    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#    GNU General Public License for more details.
+#
+#    A copy of this license - GNU General Public License - is available
+#    at the root of the source code of this program.  If not,
+#    see http://www.gnu.org/licenses/.
+#
+##############################################################################
 from main.models import *
 from django.shortcuts import render, get_object_or_404, redirect
 from main.forms import ContratGestionForm
 from datetime import datetime
-from django.shortcuts import render_to_response
-from django.template import RequestContext
 from main.views_utils import get_key
+from main import models as mdl
 
 
 def new(request):
-    contrat = ContratGestion()
-    personne_gestionnaire = Personne.find_gestionnaire_default()
+    contrat = mdl.contrat_gestion.ContratGestion()
+    personne_gestionnaire = mdl.personne.find_gestionnaire_default()
     if personne_gestionnaire:
         contrat.gestionnaire = personne_gestionnaire
-    batiments = Batiment.objects.all()
+    batiments = mdl.batiment.find_all()
     return render(request, "contratgestion_update.html",
                   {'contrat':   contrat,
-                   'personnes': Personne.find_all(),
+                   'personnes': mdl.personne.find_all(),
                    'action':   'new',
                    'prev':      'fb',
                    'batiments': batiments})
@@ -25,27 +47,28 @@ def create(request, batiment_id):
     """
     ok - 1
     """
-    batiment = get_object_or_404(Batiment, pk=batiment_id)
-    contrat = ContratGestion()
+    batiment = mdl.batiment.find_batiment(batiment_id)
+    contrat = mdl.contrat_gestion.ContratGestion()
     contrat.batiment = batiment
     # Par défaut Sté comme gestionnaire
 
-    personne_gestionnaire = Personne.find_gestionnaire_default()
+    personne_gestionnaire = mdl.personne.find_gestionnaire_default()
     if personne_gestionnaire:
         contrat.gestionnaire = personne_gestionnaire
 
     return render(request, "contratgestion_update.html",
                   {'contrat':   contrat,
-                   'personnes': Personne.find_all(),
+                   'personnes': mdl.personne.find_all(),
                    'action':   'new',
-                   'batiments': Batiment.find_all(),
+                   'batiments': mdl.batiment.find_all(),
                    'prev':      'fb'})
 
 
 def prepare_update(request, id):
-    contrat = ContratGestion.objects.get(pk=id)
+
+    contrat = mdl.contrat_gestion.find_by_id(id)
     personnes = []
-    personne_gestionnaire = Personne.find_gestionnaire_default()
+    personne_gestionnaire = mdl.personne.find_gestionnaire_default()
     personnes.append(personne_gestionnaire)
     return render(request, "contratgestion_update.html",
                   {'contrat':   contrat,
@@ -66,20 +89,20 @@ def update(request):
     batiment_id = get_key(request.POST.get('batiment_id', None))
     print('action : ', request.POST.get('action', None))
     if request.POST.get('action', None) == 'new':
-        gestion = ContratGestion()
-        batiment = get_object_or_404(Batiment, pk=batiment_id)
+        gestion = mdl.contrat_gestion.ContratGestion()
+        batiment = get_object_or_404(mdl.batiment.Batiment, pk=batiment_id)
         gestion.batiment = batiment
     else:
         if request.POST.get('id', None) != '':
-            gestion = get_object_or_404(ContratGestion, pk=request.POST.get('id', None))
-            batiment = get_object_or_404(Batiment, pk=batiment_id)
+            gestion = get_object_or_404(mdl.contrat_gestion.ContratGestion, pk=request.POST.get('id', None))
+            batiment = get_object_or_404(mdl.batiment.Batiment, pk=batiment_id)
             gestion.batiment = batiment
     if gestion is None:
-        gestion = ContratGestion()
-        batiment = get_object_or_404(Batiment, pk=batiment_id)
+        gestion = mdl.contrat_gestion.ContratGestion()
+        batiment = get_object_or_404(mdl.batiment.Batiment, pk=batiment_id)
         gestion.batiment = batiment
     if request.POST.get('gestionnaire', None):
-        personne = get_object_or_404(Personne, pk=request.POST.get('gestionnaire', None))
+        personne = get_object_or_404(mdl.personne.Personne, pk=request.POST.get('gestionnaire', None))
         gestion.gestionnaire = personne
     if request.POST.get('montant_mensuel', None):
         gestion.montant_mensuel = request.POST.get('montant_mensuel')
@@ -127,7 +150,7 @@ def update(request):
     else:
         print('form invalid')
         personnes = []
-        personne_gestionnaire = Personne.find_gestionnaire_default()
+        personne_gestionnaire = mdl.personne.find_gestionnaire_default()
         personnes.append(personne_gestionnaire)
         return render(request, "contratgestion_update.html",
                       {'contrat': gestion,
@@ -135,24 +158,24 @@ def update(request):
                        'message': 'Invalide',
                        'form': form,
                        'personnes': personnes,
-                       'batiments': Batiment.find_all()})
+                       'batiments': mdl.batiment.find_all()})
         # return render_to_response("contratgestion_update.html",
         #                           {'contrat': gestion,
         #                            'action': 'update',
         #                            'message': 'Invalide',
         #                            'form': form,
         #                            'personnes': personnes,
-        #                            'batiments': Batiment.objects.all()}, context_instance=RequestContext(request))
+        #                            'batiments': mdl.batiment.objects.all()}, context_instance=RequestContext(request))
 
 
 def list(request):
-    contrats = ContratGestion.objects.all()
+    contrats = mdl.contrat_gestion.find_all()
     return render(request, "contratgestion_list.html",
                            {'contrats': contrats})
 
 
 def delete(request, contrat_gestion_id):
-    contrat_gestion = get_object_or_404(ContratGestion, pk=contrat_gestion_id)
+    contrat_gestion = get_object_or_404(mdl.contrat_gestion.ContratGestion, pk=contrat_gestion_id)
     batiment = contrat_gestion.batiment
     if contrat_gestion:
         contrat_gestion.delete()

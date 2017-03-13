@@ -1,34 +1,58 @@
+##############################################################################
+#
+#    Immobilier it's an application
+#    designed to manage the core business of property management, buildings,
+#    rental agreement and so on.
+#
+#    Copyright (C) 2016-2017 Verpoorten Leïla
+#
+#    This program is free software: you can redistribute it and/or modify
+#    it under the terms of the GNU General Public License as published by
+#    the Free Software Foundation, either version 3 of the License, or
+#    (at your option) any later version.
+#
+#    This program is distributed in the hope that it will be useful,
+#    but WITHOUT ANY WARRANTY; without even the implied warranty of
+#    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#    GNU General Public License for more details.
+#
+#    A copy of this license - GNU General Public License - is available
+#    at the root of the source code of this program.  If not,
+#    see http://www.gnu.org/licenses/.
+#
+##############################################################################
 from main.models import *
 from django.shortcuts import render, get_object_or_404
 from main.forms import BatimentForm
+from main import models as mdl
 
 
 def create(request):
-    batiment = Batiment()
+    batiment = mdl.batiment.Batiment()
     return render(request, "batiment_form.html",
                   {'batiment':         batiment,
-                   'localites':    Localite.find_all()})
+                   'localites':    mdl.localite.find_all()})
 
 
 def batiment_form(request, batiment_id):
-    batiment = Batiment.find_batiment(batiment_id)
+    batiment = mdl.batiment.find_batiment(batiment_id)
 
     return render(request, "batiment_form.html",
                   {'batiment':     batiment,
-                   'assurances':   Assurance.find_all(),
-                   'localites':    Localite.find_all()})
+                   'assurances':   mdl.assurance.find_all(),
+                   'localites':    mdl.localite.find_all()})
 
 
 def update(request):
-
-    batiment = Batiment()
+    batiment = mdl.batiment.Batiment()
     message_info = None
+    form = None
     if 'add' == request.POST.get('action') or 'modify' == request.POST.get('action'):
         form = BatimentForm(data=request.POST)
         if request.POST.get('id') and not request.POST['id'] == 'None':
-            batiment = get_object_or_404(Batiment, pk=request.POST['id'])
+            batiment = get_object_or_404(mdl.batiment.Batiment, pk=request.POST['id'])
         else:
-            batiment = Batiment()
+            batiment = mdl.batiment.Batiment()
         batiment.rue = request.POST['rue']
         if request.POST['numero'] and request.POST['numero'] != '':
             batiment.numero = request.POST['numero']
@@ -43,7 +67,7 @@ def update(request):
                 and request.POST['localite_nom'] and request.POST['localite_nom'] != '':
             print(request.POST['localite_cp'])
             print(request.POST['localite_nom'])
-            localites = Localite.search(request.POST['localite_cp'], request.POST['localite_nom'])
+            localites = mdl.localite.search(request.POST['localite_cp'], request.POST['localite_nom'])
             if not localites.exists():
                 localite = Localite()
                 localite.localite = request.POST['localite_nom']
@@ -74,22 +98,23 @@ def update(request):
 
     return render(request, "batiment_form.html",
                   {'batiment':     batiment,
-                   'localites':    Localite.find_all(),
+                   'localites':    mdl.localite.find_all(),
                    'message_info': message_info,
-                   'form':form})
+                   'form': form})
 
 
 def search(request):
     proprietaire = request.GET.get('proprietaire', None)
-    batiments = Batiment.search(proprietaire)
+    batiments = mdl.batiment.search(proprietaire)
     return render(request, 'listeBatiments.html', {'batiments': batiments,
-                                                   'proprietaires': Proprietaire.find_distinct_proprietaires()})
+                                                   'proprietaires': mdl.proprietaire.find_distinct_proprietaires()})
 
 def delete(request, batiment_id):
-    print('delete',batiment_id)
+    print('delete', batiment_id)
     if batiment_id:
-        batiment = get_object_or_404(Batiment, pk=batiment_id)
+        batiment = get_object_or_404(mdl.batiment.Batiment, pk=batiment_id)
         if batiment:
             batiment.delete()
 
     return search(request)
+

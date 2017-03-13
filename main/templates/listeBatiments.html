@@ -109,7 +109,9 @@
                 </td>
                 <td>
                     <a href="{% url 'batiment-delete' batiment.pk%}"
-                       title="Pour supprimer un batiment" onclick="return confirm('Sûre?')"><span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
+                       title="Pour supprimer un batiment"
+                       onclick="return confirm('Sûr de vouloir supprimer?  Toutes les informations liées à ce local seront supprimées également (propriétaires, location,...)')">
+                        <span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
                     </a>
                 </td>
             </tr>

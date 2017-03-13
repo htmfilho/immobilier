@@ -21,8 +21,7 @@
 #    see http://www.gnu.org/licenses/.
 #
 ##############################################################################
-
-from main.models import Honoraire
+from main.models import *
 from django.core.urlresolvers import reverse
 from django.http import HttpResponseRedirect
 from django.shortcuts import render, get_object_or_404, redirect
@@ -30,15 +29,16 @@ from django.utils import timezone
 from dateutil.relativedelta import relativedelta
 from datetime import datetime
 from main.forms import HonoraireForm
+from main import models as mdl
 
 
 def list(request):
     date_limite = timezone.now() - relativedelta(days=15)
-    honoraires = Honoraire.find_by_batiment_etat_date(None, 'A_VERIFIER', date_limite)
-    batiments = Honoraire.find_all_batiments()
+    honoraires = mdl.honoraire.find_by_batiment_etat_date(None, 'A_VERIFIER', date_limite)
+    batiments = mdl.honoraire.find_all_batiments()
     return render(request, "honoraire_list.html",
                   {'honoraires':  honoraires,
-                   'batiments':   batiments  ,
+                   'batiments':   batiments,
                    'date_limite': date_limite,
                    'etat':        'A_VERIFIER',
                    'batiment':    None})
@@ -62,8 +62,8 @@ def search(request):
         date_limite = datetime.strptime(request.GET.get('date_limite'), '%d/%m/%Y')
 
     return render(request, "honoraire_list.html",
-                  {'honoraires':   Honoraire.find_by_batiment_etat_date(batiment_id, etat_query, date_limite),
-                   'batiments':    Honoraire.find_all_batiments(),
+                  {'honoraires':   mdl.honoraire.find_by_batiment_etat_date(batiment_id, etat_query, date_limite),
+                   'batiments':    mdl.honoraire.find_all_batiments(),
                    'date_limite':  date_limite,
                    'etat':         etat,
                    'batiment':     batiment_id})
@@ -72,10 +72,9 @@ def search(request):
 def update(request):
     next_page = request.POST.get('next', None)
     form = HonoraireForm(data=request.POST)
-    honoraire = None
     if 'bt_cancel' not in request.POST:
         if request.POST['honoraire_id'] and not request.POST['honoraire_id'] == 'None':
-            honoraire = get_object_or_404(Honoraire, pk=request.POST['honoraire_id'])
+            honoraire = get_object_or_404(mdl.honoraire.Honoraire, pk=request.POST['honoraire_id'])
         else:
             honoraire = Honoraire()
 
@@ -92,7 +91,7 @@ def update(request):
             if next_page:
                 return redirect(next_page)
             else:
-                return render(request, "honoraire_list.html", {'honoraires': Honoraire.find_all()})
+                return render(request, "honoraire_list.html", {'honoraires': mdl.honoraire.find_all()})
         else:
             return render(request, "honoraire_form.html", {'honoraire': honoraire, 'form': form})
     else:
@@ -102,7 +101,7 @@ def update(request):
 def honoraire_form(request, honoraire_id):
     next = request.META.get('HTTP_REFERER', '/')
     form = HonoraireForm(data=request.POST)
-    a_honoraire = get_object_or_404(Honoraire, pk=honoraire_id)
+    a_honoraire = get_object_or_404(mdl.honoraire.Honoraire, pk=honoraire_id)
     return render(request, "honoraire_form.html",
                   {'honoraire': a_honoraire,
                    'form': form,
