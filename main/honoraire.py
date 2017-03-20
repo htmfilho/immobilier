@@ -21,7 +21,6 @@
 #    see http://www.gnu.org/licenses/.
 #
 ##############################################################################
-from main.models import *
 from django.core.urlresolvers import reverse
 from django.http import HttpResponseRedirect
 from django.shortcuts import render, get_object_or_404, redirect
@@ -76,7 +75,7 @@ def update(request):
         if request.POST['honoraire_id'] and not request.POST['honoraire_id'] == 'None':
             honoraire = get_object_or_404(mdl.honoraire.Honoraire, pk=request.POST['honoraire_id'])
         else:
-            honoraire = Honoraire()
+            honoraire = mdl.honoraire.Honoraire()
 
         honoraire.etat = request.POST['etat']
         if request.POST['date_paiement']:

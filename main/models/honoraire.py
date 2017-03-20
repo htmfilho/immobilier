@@ -25,9 +25,7 @@ from django.db import models
 from django.contrib import admin
 from django.utils import timezone
 from dateutil.relativedelta import relativedelta
-import datetime
 from main.models import contrat_gestion as ContratGestion
-
 
 
 class HonoraireAdmin(admin.ModelAdmin):
@@ -45,7 +43,6 @@ class Honoraire(models.Model):
     date_paiement = models.DateField(auto_now=False, auto_now_add=False, blank=True, null=True,
                                      verbose_name=u"Date paiement")
     etat = models.CharField(max_length=10, choices=ETAT_HONORAIRE, default='A_VERIFIER', verbose_name=u"Etat")
-
 
 
     def __str__(self):
@@ -78,6 +75,7 @@ def find_by_batiment_etat_date(batiment_id, etat, date_limite_inf):
         queryset = queryset.filter(date_paiement__gte=date_limite_inf)
 
     return queryset
+
 
 def find_all_batiments():
     batiments = []

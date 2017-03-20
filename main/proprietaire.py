@@ -21,8 +21,6 @@
 #    see http://www.gnu.org/licenses/.
 #
 ##############################################################################
-from main.models import *
-
 from django.shortcuts import render, get_object_or_404
 from datetime import datetime
 from django.shortcuts import redirect
@@ -101,7 +99,7 @@ def delete_proprietaire(request, proprietaire_id):
 def proprietaire_update_save(request):
     previous = request.POST['previous']
     print('previous:', previous)
-
+    proprietaire = None
     if 'update' == request.POST.get('action', None):
         proprietaire = get_object_or_404(mdl.proprietaire.Proprietaire, pk=request.POST['id'])
     if 'add' == request.POST.get('action', None):

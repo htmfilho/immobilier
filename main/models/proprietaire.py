@@ -23,6 +23,7 @@
 ##############################################################################
 from django.db import models
 from django.contrib import admin
+from main.models import batiment as Batiment
 
 
 class Proprietaire(models.Model):
@@ -34,7 +35,6 @@ class Proprietaire(models.Model):
     @property
     def batiments(self):
         return Batiment.objects.filter(proprietaire=self)
-
 
 
     def __str__(self):
@@ -50,7 +50,6 @@ class Proprietaire(models.Model):
 
     class Meta:
         unique_together = (("proprietaire", "batiment"),)
-
 
 
 def find_proprietaire(id):
@@ -79,6 +78,7 @@ def find_distinct_proprietaires():
             liste.append(result)
             liste_personne.append(result.proprietaire)
     return liste
+
 
 def find_by_batiment(a_batiment):
     return Proprietaire.objects.filter(batiment=a_batiment)

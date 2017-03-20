@@ -22,7 +22,7 @@
 #
 ##############################################################################
 from django.db import models
-from django.contrib import admin
+from main.models import professionnel as Professionnel
 from main.models import personne as Personne
 from main.models import proprietaire as Proprietaire
 

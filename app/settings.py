@@ -40,6 +40,8 @@ INSTALLED_APPS = (
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'ckeditor',
+    'templated_docs',
     'main',
 )
 
@@ -121,3 +123,27 @@ MEDIA_URL = '/photos/'
 MEDIA_ROOT = '/photos/'
 
 LOGO_URL = os.path.join(BASE_DIR, "main/static/images/logo_ci.png")
+
+CKEDITOR_CONFIGS = {
+    'default': {
+        'toolbar': 'Custom',
+        'toolbar_Custom': [
+            {'name': 'basicstyles', 'items': ['Bold', 'Italic', 'Underline', 'Strike', '-', 'RemoveFormat']},
+            {'name': 'links', 'items': ['Link']},
+            {'name': 'styles', 'items': ['Styles', 'Format', 'Font', 'FontSize', 'Source']},
+            {'name': 'colors', 'items': ['TextColor', 'BGColor']},
+            '/',
+            {'name': 'insert', 'items': ['Table']},
+            {'name': 'paragraph',
+             'items': ['NumberedList', 'BulletedList', '-', 'Outdent', 'Indent', '-', 'Blockquote', 'CreateDiv', '-',
+                       'JustifyLeft', 'JustifyCenter', 'JustifyRight', 'JustifyBlock']},
+            {'name': 'forms',
+             'items': ['Form', 'Checkbox', 'Radio', 'TextField', 'Textarea', 'Select', 'Button', 'ImageButton',
+                       'HiddenField']},
+            {'name': 'about', 'items': ['About']},
+        ],
+    },
+}
+
+# TEMPLATED_DOCS_LIBREOFFICE_PATH = '/usr/share/libreoffice/program'
+TEMPLATED_DOCS_LIBREOFFICE_PATH = '/usr/lib/libreoffice/program'

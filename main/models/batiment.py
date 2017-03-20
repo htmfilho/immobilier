@@ -22,14 +22,7 @@
 #
 ##############################################################################
 from django.db import models
-from django.utils import timezone
-
-from dateutil.relativedelta import relativedelta
-from django.core.urlresolvers import reverse
-from django.db.models import Q
 from django.db.models import Sum
-import datetime
-import calendar
 from django.contrib import admin
 from main.exportUtils import export_xls_batiment
 from main.pdfUtils import pdf_batiment
@@ -38,7 +31,7 @@ from main.models import proprietaire as Proprietaire
 from main.models import contrat_location as ContratLocation
 from main.models import locataire as Locataire
 from main.models import frais_maintenance as FraisMaintenance
-
+from main.models import suivi_loyer as SuiviLoyer
 from main.models import contrat_gestion as ContratGestion
 
 

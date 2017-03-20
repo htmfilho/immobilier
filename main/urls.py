@@ -178,6 +178,9 @@ urlpatterns = [
     url(r'^location/search/$', contratlocation.search, name='location_search'),
     url(r'^fraismaintenance/contrat/new/([0-9]+)/$', frais.contrat_new, name='fraismaintenance-new-contrat'),
 
+    url(r'^test/lettre/$', views.lettre_form, name='lettre'),
+    url(r'^test/lettre_create/$', views.lettre_create, name='lettre_create'),
+
 
 
 ]

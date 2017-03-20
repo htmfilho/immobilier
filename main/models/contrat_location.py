@@ -27,6 +27,7 @@ from main.models import locataire as Locataire
 from main.models import financement_location as FinancementLocation
 from main.models import frais_maintenance as FraisMaintenance
 from main.models import suivi_loyer as SuiviLoyer
+from main.models import alerte as Alerte
 from dateutil.relativedelta import relativedelta
 
 

@@ -1,4 +1,3 @@
-
 ##############################################################################
 #
 #    Immobilier it's an application
@@ -23,12 +22,10 @@
 #
 ##############################################################################
 from django.db import models
-from django.contrib import admin
 
 
 class Fonction(models.Model):
     nom_fonction = models.CharField(max_length=100, blank=False, null=False)
-
 
     def __str__(self):
         return str(self.nom_fonction)

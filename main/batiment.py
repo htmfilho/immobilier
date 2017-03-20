@@ -21,7 +21,6 @@
 #    see http://www.gnu.org/licenses/.
 #
 ##############################################################################
-from main.models import *
 from django.shortcuts import render, get_object_or_404
 from main.forms import BatimentForm
 from main import models as mdl
@@ -69,7 +68,7 @@ def update(request):
             print(request.POST['localite_nom'])
             localites = mdl.localite.search(request.POST['localite_cp'], request.POST['localite_nom'])
             if not localites.exists():
-                localite = Localite()
+                localite = mdl.localite.Localite()
                 localite.localite = request.POST['localite_nom']
                 localite.code_postal = request.POST['localite_cp']
                 localite.save()

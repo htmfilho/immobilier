@@ -22,21 +22,11 @@
 #
 ##############################################################################
 from django.db import models
-from django.utils import timezone
 
-from dateutil.relativedelta import relativedelta
-from django.core.urlresolvers import reverse
-from django.db.models import Q
-from django.db.models import Sum
-import datetime
-import calendar
-from django.contrib import admin
 
 class Assurance(models.Model):
     nom = models.CharField(max_length=100)
     description = models.TextField(blank=True, null=True)
-
-
 
     def __str__(self):
         return self.nom

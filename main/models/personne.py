@@ -25,8 +25,10 @@ from django.db import models
 from django.contrib import admin
 from main.models import proprietaire as Proprietaire
 from main.models import pays as Pays
+from main.models import locataire as Locataire
 from main.models import fonction as Fonction
 from main.models import professionnel as Professionnel
+from main.models import contrat_gestion as ContratGestion
 
 
 class PersonneAdmin(admin.ModelAdmin):

@@ -27,6 +27,8 @@ from main.models import *
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Submit
 from main import views_utils
+from main import models as mdl
+
 
 class LoginForm(forms.Form):
     username = forms.CharField()
@@ -36,7 +38,7 @@ class LoginForm(forms.Form):
 def get_pays_choix():
     choices_tuple = []
 
-    list_pays = Pays.objects.all()
+    list_pays = mdl.pays.Pays.objects.all()
     # list_pays = Personne.objects.values('pays_naissance').distinct()
     # list_pays = Personne.objects.all().distinct('pays_naissance')
     # list_pays = Personne.objects.order_by('pays_naissance').values_list('pays_naissance', flat=True).distinct())
@@ -193,15 +195,16 @@ class FileForm(forms.Form):
     file = forms.FileField()
 
 
-class ContratGestionForm(forms.Form):
-    batiment_id = forms.ChoiceField(widget=forms.Select(attrs={'class': 'selector'}))
+class ContratGestionForm(ModelForm):
+    #batiment_id = forms.ChoiceField(widget=forms.Select(attrs={'class': 'selector'}))
     # batiments=[]
     # for x in Batiment.objects.all():
     #     batiments.append(x.id)
 
     # batiments =  [(x.id) for x in Batiment.objects.all()]
     # print(batiments)
-    # batiment_id = forms.ModelChoiceField(queryset=Batiment.objects.all())
+    batiment_id = forms.ModelChoiceField(queryset=mdl.batiment.find_all())
+    #batiment_id = forms.ChoiceField(choices=NPCGuild.CATEGORIES)
     date_debut = forms.DateField(required=True, input_formats=[views_utils.DATE_SHORT_FORMAT],
                                  widget=forms.DateInput(format=views_utils.DATE_SHORT_FORMAT))
     date_fin = forms.DateField(required=False, input_formats=[views_utils.DATE_SHORT_FORMAT],
@@ -214,10 +217,15 @@ class ContratGestionForm(forms.Form):
 
     def __init__(self, *args, **kwargs):
         super(ContratGestionForm, self).__init__(*args, ** kwargs)
-        self.fields["batiment_id"].queryset = Batiment.find_all()
+        for f in self.fields:
+            print('f',f)
+        #self.fields["batiment_id"].queryset = mdl.batiment.find_all()
+
 
     def clean(self):
+        print('clean ContratGestionForm')
         cleaned_data = super(ContratGestionForm, self).clean()
+        print(cleaned_data.get('date_debut'))
         if cleaned_data.get('date_debut') and cleaned_data.get('date_fin'):
             if cleaned_data.get('date_debut') > cleaned_data.get('date_fin'):
                 self.errors['date_debut'] = 'Dates erronées'
@@ -236,3 +244,34 @@ class SuiviForm(forms.Form):
 
     def __init__(self, *args, **kwargs):
         super(SuiviForm, self).__init__(*args, ** kwargs)
+
+
+class LettreForm(forms.Form):
+    FORMAT_CHOICES = (
+        ('pdf', 'PDF'),
+        ('docx', 'MS Word'),
+        ('html', 'HTML'),
+    )
+
+    sujet = forms.CharField()
+    format = forms.ChoiceField(choices=FORMAT_CHOICES)
+    fichier_modele = forms.CharField()
+    titre = forms.CharField()
+
+    #
+    # def __init__(self, modele_document=None, *args, **kwargs):
+    #     print('init')
+    #     super(LettreForm, self).__init__(*args, ** kwargs)
+    #     print('if')
+    #     if modele_document:
+    #         # self.fields['sujet'].initial = modele_document.sujet
+    #         # self.fields['format'].initial = "docx"
+    #         # self.fields['fichier_modele'].initial = modele_document.fichier_modele
+    #         pass
+
+
+    def clean(self):
+        cleaned_data = super(LettreForm, self).clean()
+
+        return cleaned_data
+

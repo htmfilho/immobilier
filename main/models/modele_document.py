@@ -22,15 +22,22 @@
 #
 ##############################################################################
 from django.db import models
-from django.contrib import admin
+from ckeditor.fields import RichTextField
 
 
 class ModeleDocument(models.Model):
     # TYPE_DOCUMENT = (
         # ('LETTRE_INDEXATION', 'Lettre indexation'),
     # )
-    type_document = models.CharField(max_length=50)
-    contenu = models.TextField()
+    reference = models.CharField(max_length=50, blank=True, null=True)
+    type_document = models.CharField(max_length=50, blank=True, null=True)
+    contenu = RichTextField()
+    sujet = models.CharField(max_length=255, blank=True, null=True)
+    fichier_modele = models.CharField(max_length=255, blank=True, null=True)
 
     def __str__(self):
         return self.type_document
+
+
+def find_by_reference(a_reference):
+    return ModeleDocument.objects.get(reference=a_reference)

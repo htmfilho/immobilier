@@ -1,13 +1,12 @@
 __author__ = 'verpoorten'
 
 from io import BytesIO
-from io import StringIO
 from reportlab.pdfgen import canvas
 from django.http import HttpResponse
 
 from reportlab.lib.enums import TA_JUSTIFY
 from reportlab.lib.pagesizes import letter
-from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, Image, PageBreak
+from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, PageBreak
 from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
 from reportlab.lib.units import mm
 

@@ -21,25 +21,15 @@
 #    see http://www.gnu.org/licenses/.
 #
 ##############################################################################
-from main.models import *
 from django.shortcuts import render, get_object_or_404
 from django.core.urlresolvers import reverse
 from django.http import HttpResponseRedirect
-from main.models import alerte as Alerte
-from main.models import assurance as Assurance
-from main.models import locataire as Locataire
-from main.models import personne as Personne
-from main.models import proprietaire as Proprietaire
-from main.models import localite as Localite
-from main.models import suivi_loyer as SuiviLoyer
-from main.models import frais_maintenance as FraisMaintenance
-from main.models import financement_location as FinancementLocation
-from main.models import contrat_location as ContratLocation
-from main.models import contrat_gestion as ContratGestion
+from main import models as mdl
+
 
 def societe_liste(request):
     print('societe_liste')
-    return render(request, 'liste_societes.html', {'societes': Societe.find_all()})
+    return render(request, 'liste_societes.html', {'societes': mdl.societe.find_all()})
 
 
 def update(request):
@@ -50,7 +40,7 @@ def update(request):
     if societe_id:
         societe = get_object_or_404(mdl.societe.Societe, pk=societe_id)
     else:
-        societe = Societe()
+        societe = mdl.societe.Societe()
 
     societe.nom = request.POST['nom']
     societe.description = request.POST['description']
@@ -65,7 +55,7 @@ def update(request):
     print(request.POST['localite'])
     if request.POST['localite']:
         if request.POST['localite'] != '':
-            societe.localite = Localite.find_by_id(int(request.POST['localite']))
+            societe.localite = mdl.localite.find_by_id(int(request.POST['localite']))
 
     societe.save()
     return HttpResponseRedirect(reverse('home'))
@@ -75,7 +65,7 @@ def edit(request, societe_id):
     if societe_id:
         societe = get_object_or_404(mdl.societe.Societe, pk=societe_id)
     else:
-        societe = Societe()
+        societe = mdl.societe.Societe()
     return render(request, "societe_form.html",
                   {'societe': societe,
-                   'localites': Localite.find_all()})
+                   'localites': mdl.localite.find_all()})

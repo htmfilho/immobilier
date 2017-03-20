@@ -21,12 +21,10 @@
 #    see http://www.gnu.org/licenses/.
 #
 ##############################################################################
-from main.models import *
 from django.shortcuts import render, redirect
 from datetime import datetime
-from main.forms import FinancementLocationForm
-
 from main import models as mdl
+
 
 def new(request, location_id):
     location = mdl.contrat_location.find_by_id(location_id)
@@ -57,7 +55,6 @@ def create(request):
         previous = request.POST.get('previous', None)
         return redirect(previous)
     else:
-        form = FinancementLocationForm(data=request.POST)
         prev = request.POST.get('prev', None)
         location = mdl.contrat_location.find_by_id(request.POST['id'])
         # todo : récupérer le nouveau financement, adapter l'ancien et sauver le tout en bd

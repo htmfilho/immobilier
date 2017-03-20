@@ -21,8 +21,8 @@
 #    see http://www.gnu.org/licenses/.
 #
 ##############################################################################
-from main.models import*
 from django.http import HttpResponseRedirect
+from django.core.urlresolvers import reverse
 from django.shortcuts import render, get_object_or_404, redirect
 from datetime import date
 from datetime import datetime
@@ -151,7 +151,7 @@ def test(request):
     #     location.renonciation = None
     location.remarque = request.POST['remarque']
     if request.POST.get('nom_assurance_other'):
-        assurance = Assurance()
+        assurance = mdl.assurance.Assurance()
         assurance.nom = request.POST.get('nom_assurance_other')
         assurance.save()
         location.assurance = assurance

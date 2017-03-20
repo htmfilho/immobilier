@@ -21,7 +21,6 @@
 #    see http://www.gnu.org/licenses/.
 #
 ##############################################################################
-from main.models import *
 from django.shortcuts import render, get_object_or_404, redirect
 from main.forms import ContratGestionForm
 from datetime import datetime
@@ -86,7 +85,10 @@ def update(request):
     gestion = None
     personne = None
 
-    batiment_id = get_key(request.POST.get('batiment_id', None))
+    print(form['batiment_id'].value())
+
+    batiment_id = mdl.batiment.Batiment(form['batiment_id'].value()).id
+    #batiment_id = get_key(request.POST.get('batiment_id', None))
     print('action : ', request.POST.get('action', None))
     if request.POST.get('action', None) == 'new':
         gestion = mdl.contrat_gestion.ContratGestion()

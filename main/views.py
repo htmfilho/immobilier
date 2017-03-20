@@ -31,7 +31,7 @@ from django.shortcuts import render, get_object_or_404
 from django.utils import timezone
 from django.views.generic import *
 from django.core.urlresolvers import reverse_lazy
-from main.forms import PersonneForm, BatimentForm, ProprietaireForm, FraisMaintenanceForm, SocieteForm, FileForm
+from main.forms import BatimentForm, ProprietaireForm, FraisMaintenanceForm, SocieteForm, FileForm, LettreForm
 
 from io import BytesIO
 from django.http import HttpResponse
@@ -51,17 +51,13 @@ from reportlab.platypus.doctemplate import PageTemplate, BaseDocTemplate, NextPa
 from reportlab.platypus.tableofcontents import TableOfContents
 from reportlab.platypus.frames import Frame
 import datetime
-from main.models import alerte as Alerte
-from main.models import assurance as Assurance
-from main.models import locataire as Locataire
 from main.models import personne as Personne
-from main.models import proprietaire as Proprietaire
-from main.models import localite as Localite
-from main.models import suivi_loyer as SuiviLoyer
-from main.models import frais_maintenance as FraisMaintenance
-from main.models import financement_location as FinancementLocation
-from main.models import contrat_location as ContratLocation
-from main.models import contrat_gestion as ContratGestion
+from main.models import societe as Societe
+
+from templated_docs import fill_template
+from templated_docs.http import FileResponse
+
+
 
 class ContratGestionList(ListView):
     model = mdl.contrat_gestion
@@ -226,11 +222,11 @@ def personne(request, personne_id):
     personne = mdl.personne.find_personne(personne_id)
     return render(request, "personne_form.html",
                   {'personne':         personne,
-                   'societes': Societe.find_all()})
+                   'societes': mdl.societe.find_all()})
 
 
 def update_personne(request):
-    personne = Personne()
+    personne = mdl.personne.Personne()
     print(request.POST.get('action', None))
     if 'add' == request.POST.get('action', None) or 'modify' == request.POST.get('action', None):
         print(request.POST['id'])
@@ -241,7 +237,7 @@ def update_personne(request):
         personne.save()
     return render(request, "personne_form.html",
                   {'personne': personne,
-                   'societes': Societe.find_all()})
+                   'societes': mdl.societe.find_all()})
 
 
 def xlsRead(request):
@@ -626,14 +622,14 @@ def get_image2(path):
     height = height - (BOTTOM_MARGIN + TOP_MARGIN)
     Im = Image(path)
 
-    if(xsize > ysize):  #deal with cases were xsize is bigger than ysize
+    if xsize > ysize:  #deal with cases were xsize is bigger than ysize
         if xsize > width:
             nxsize = width - 12
             nysize = int(ysize*(nxsize/xsize))  #make ysize
             xsize = nxsize
             ysize = nysize
 
-            return Image(path, width=nxsize, height=(nysize))
+            return Image(path, width=nxsize, height=nysize)
     else:  #deal with cases where ysize is bigger than xsize
         if ysize > height:
             nysize = height - 12
@@ -642,7 +638,7 @@ def get_image2(path):
             xsize = int(nxsize)
             ysize = int(nysize)
 
-            return Image(path, width=nxsize, height=(nysize))
+            return Image(path, width=nxsize, height=nysize)
     return Image(path)
 
 
@@ -812,7 +808,7 @@ class MyDocTemplateMerge(SimpleDocTemplate):
          if flowable.__class__.__name__ == 'Paragraph':
              text = flowable.getPlainText()
              style = flowable.style.name
-             print('style',style)
+             print('style', style)
              if style == 'normal':
                  self.notify('TOCEntry', (0, text, self.page))
 
@@ -849,18 +845,11 @@ def merge_pdf3(request):
                             bottomMargin=18)
 
     content = []
-
-    # to
-
-
-    # fin toc
-    # merge
     print('merge_pdf')
-
 
     if not pdfs or len(pdfs) < 2:
         exit("Please enter at least two pdfs for merging!")
-    no_page=1
+    no_page = 1
     manual_toc = True
     if manual_toc:
         print('manual_toc')
@@ -869,30 +858,28 @@ def merge_pdf3(request):
         for fname in pdfs:
             input = PdfFileReader(open(fname, 'rb'))
             number_of_page = input.getNumPages()
-            if cpt >0:
+            if cpt > 0:
                 lien = '<link href="http://uclouvain.be/index4.html" color="blue">is a link to</link>'
             else:
-                #lien = '<link href="#%s" color="red">is a link to</link>'% fname
-                lien = '<link destination="#%s" color="red">is a link to</link>'% fname
-                lien = '<link href="#%s" color="red">is a link to</link>'% fname
-                #lien ="kk"
+                # lien = '<link href="#%s" color="red">is a link to</link>'% fname
+                lien = '<link destination="#%s" color="red">is a link to</link>' % fname
+                lien = '<link href="#%s" color="red">is a link to</link>' % fname
+                # lien ="kk"
 
             content.append(Paragraph('''
                                     <para>
                                         %s       %s-%s %s
                                     </para>
-                                    ''' % (fname,no_page, no_page + number_of_page,lien), ParagraphStyle('normal')))
+                                    ''' % (fname, no_page, no_page + number_of_page, lien), ParagraphStyle('normal')))
 
-            #content.append(lien)
+            # content.append(lien)
             ancre = '<a name="%s"></a>' % fname
             content.append(Paragraph('''
                                         %s
                                     ''' % ancre, ParagraphStyle('normal')))
-            cpt = cpt +1
-
+            cpt = cpt + 1
 
     doc.build(content)
-
 
     merger = PdfFileMerger(buffer)
 
@@ -942,7 +929,7 @@ def merge_pdf3(request):
                                         <para>
                                             %s
                                         </para>
-                                        ''' % ('tesrrrrrrrrrrrr t'), ParagraphStyle('normal')) )
+                                        ''' % 'tesrrrrrrrrrrrr t', ParagraphStyle('normal')) )
     doc.build(content)
     return render(request, "test.html")
 
@@ -1042,7 +1029,6 @@ class MyDocTemplate(BaseDocTemplate):
                  self.notify('TOCEntry', (1, text, self.page))
 
 
-
 def pagecat(request):
     print('pagecat')
     pdf1 = "pdf1.pdf"
@@ -1064,7 +1050,6 @@ def pagecat(request):
         fontSize=14,
         leading=16)
 
-
     h2 = ParagraphStyle(name='Heading2',
         fontSize=12,
         leading=14)
@@ -1081,17 +1066,17 @@ def pagecat(request):
         cpt = 0
         Story.append(Paragraph('<b>Table of contents</b>', centered))
         for fname in pdfs:
-            Story.append(Paragraph('<includePdfPages filename="%s" pages="1" outlineText="crasher"/>' % fname,h1))
+            Story.append(Paragraph('<includePdfPages filename="%s" pages="1" outlineText="crasher"/>' % fname, h1))
 
-            Story.append(Paragraph('%s' % (fname), h2))
-            cpt = cpt +1
+            Story.append(Paragraph('%s' % fname, h2))
+            cpt = cpt + 1
     doc = MyDocTemplate('mintoc.pdf')
 
     doc.multiBuild(Story)
     return render(request, "test.html")
 
 
-def static_title(canvas,doc):
+def static_title(canvas, doc):
     canvas.saveState()
     canvas.drawImage('logo-oditorium-whitebg.jpg', doc.width-2.5*inch, doc.height, width=4*inch, preserveAspectRatio=True)
     canvas.setFont('Times-Roman', 48)
@@ -1101,36 +1086,36 @@ def static_title(canvas,doc):
     canvas.restoreState()
 
 
-def static_back(canvas,doc):
+def static_back(canvas, doc):
     canvas.saveState()
-    canvas.drawImage('logo-oditorium-whitebg.jpg',doc.width-2.5*inch, doc.height, width=4*inch, preserveAspectRatio=True)
-    canvas.setFont('Times-Roman',48)
+    canvas.drawImage('logo-oditorium-whitebg.jpg', doc.width-2.5*inch, doc.height, width=4*inch, preserveAspectRatio=True)
+    canvas.setFont('Times-Roman', 48)
     canvas.drawString(inch, doc.height - 1*inch, "TITLE")
-    canvas.setFont('Times-Roman',9)
+    canvas.setFont('Times-Roman', 9)
     canvas.drawString(inch, 0.75 * inch, "Title - Page %d" % doc.page)
     canvas.restoreState()
 
 
-def static_1col(canvas,doc):
+def static_1col(canvas, doc):
     canvas.saveState()
     canvas.drawImage('logo-oditorium-whitebg.jpg',
                      doc.width-2.5*inch, doc.height, width=4*inch,
                      preserveAspectRatio=True)
-    canvas.setFont('Times-Roman',48)
+    canvas.setFont('Times-Roman', 48)
     canvas.drawString(inch, doc.height - 1*inch, "TITLE")
-    canvas.setFont('Times-Roman',9)
+    canvas.setFont('Times-Roman', 9)
     canvas.drawString(inch, 0.75 * inch, "Title - Page %d" % doc.page)
     canvas.restoreState()
 
 
-def static_2col(canvas,doc):
+def static_2col(canvas, doc):
     canvas.saveState()
     canvas.drawImage('logo-oditorium-whitebg.jpg',
                      doc.width-2.5*inch, doc.height, width=4*inch,
                      preserveAspectRatio=True)
-    canvas.setFont('Times-Roman',48)
+    canvas.setFont('Times-Roman', 48)
     canvas.drawString(inch, doc.height - 1*inch, "TITLE")
-    canvas.setFont('Times-Roman',9)
+    canvas.setFont('Times-Roman', 9)
     canvas.drawString(inch, 0.75 * inch, "Title - Page %d" % doc.page)
     canvas.restoreState()
 
@@ -1144,18 +1129,17 @@ def pagecat2(request):
     frame2_2col = Frame(doc.leftMargin+doc.width/2+6, doc.bottomMargin, doc.width/2-6, doc.height, id='col2')
 
     doc.addPageTemplates([
-    PageTemplate(id='Title', frames=frame_title, onPage=static_title),
-    PageTemplate(id='Back', frames=frame_back, onPage=static_back),
-    PageTemplate(id='OneCol', frames=frame_1col, onPage=static_1col),
-    PageTemplate(id='TwoCol', frames=[frame1_2col, frame2_2col], onPage=static_2col),
+        PageTemplate(id='Title', frames=frame_title, onPage=static_title),
+        PageTemplate(id='Back', frames=frame_back, onPage=static_back),
+        PageTemplate(id='OneCol', frames=frame_1col, onPage=static_1col),
+        PageTemplate(id='TwoCol', frames=[frame1_2col, frame2_2col], onPage=static_2col),
     ])
-    story = []
-    story.append(Paragraph('<b>Table of contents</b>', ParagraphStyle('normal')))
-    story.append(NextPageTemplate('TwoCol'))
-    story.append(PageBreak())
-    story.append('<includePdfPages filename="pdf1.pdf" pages="1,2,3"/>')
+    story = [Paragraph('<b>Table of contents</b>', ParagraphStyle('normal')),
+             NextPageTemplate('TwoCol'),
+             PageBreak(),
+             '<includePdfPages filename="pdf1.pdf" pages="1,2,3"/>',
+             NextPageTemplate('TwoCol')]
 
-    story.append(NextPageTemplate('TwoCol'))
     doc.build(story)
     return render(request, "test.html")
 
@@ -1231,7 +1215,7 @@ def merge_pdf_stack(request):
     pdf1 = "pdf1.pdf"
     pdf2 = "pdf2.pdf"
 
-    pdfs=[pdf1, pdf2]
+    pdfs = [pdf1, pdf2]
 
     buffer = BytesIO()
 
@@ -1279,7 +1263,43 @@ def merge_pdf_stack(request):
 
     return render(request, "test.html")
 
+
 def personne_delete(request, id):
     mdl.personne.delete_personne(int(id))
     return HttpResponseRedirect(reverse('personne_search'))
+
+def lettre_form(request):
+    modele = mdl.modele_document.find_by_reference('LETTRE_INDEXATION')
+    if request.method == 'POST':
+        pass
+    else:
+        form = LettreForm(initial={'sujet': modele.sujet , 'format':"docx", 'fichier_modele': modele.fichier_modele, 'titre':'Monsieur'})
+
+
+
+
+    # form = LettreForm(request.POST or None)
+    return render(request, "lettre.html",{'form': form})
+
+def lettre_create(request):
+    print('lettre_view')
+    if request.method=='POST':
+        form = LettreForm(request.POST or None)
+    else:
+        form = LettreForm()
+    print(form.errors)
+    if form.is_valid():
+        print('form valid')
+        doctype = form.cleaned_data['format']
+        filename = fill_template(
+            'documents/lettre.odt', form.cleaned_data,
+            output_format=doctype)
+        visible_filename = 'invoice.{}'.format(doctype)
+
+        return FileResponse(filename, visible_filename)
+    else:
+        print('form invalid')
+        print(form.errors)
+        return render(request, 'documents/lettre.html', {'form': form})
+
 

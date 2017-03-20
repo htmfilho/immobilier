@@ -22,7 +22,6 @@
 #
 ##############################################################################
 from django.shortcuts import render
-from main.models import *
 from main import models as mdl
 
 

@@ -23,6 +23,8 @@
 ##############################################################################
 from django.db import models
 from django.contrib import admin
+from main.models import professionnel as Professionnel
+
 
 class SocieteAdmin(admin.ModelAdmin):
     search_fields = ['nom']
@@ -53,7 +55,6 @@ class Societe(models.Model):
         for ll in l:
             print(ll)
         return l
-
 
 
     def personnel(self):

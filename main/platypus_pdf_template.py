@@ -17,13 +17,12 @@ from reportlab.platypus.tableofcontents import TableOfContents
 from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
 
 from reportlab.lib.units import inch
-from reportlab.graphics import renderPDF
 
 from pdfrw import PdfReader
 from pdfrw.buildxobj import pagexobj
 from pdfrw.toreportlab import makerl
 from reportlab.lib.pagesizes import A4
-PAGE_WIDTH,PAGE_HEIGHT = A4
+PAGE_WIDTH, PAGE_HEIGHT = A4
 
 
 class MyTemplate(PageTemplate):
@@ -40,7 +39,7 @@ class MyTemplate(PageTemplate):
             )]
         PageTemplate.__init__(self, name, frames)
         # use first page as template
-        print('pdf_template_filename',pdf_template_filename)
+        print('pdf_template_filename', pdf_template_filename)
         page = PdfReader(pdf_template_filename).pages[0]
         self.page_template = pagexobj(page)
         # Scale it to fill the complete page
@@ -55,6 +54,7 @@ class MyTemplate(PageTemplate):
         canvas.doForm(rl_obj)
         canvas.restoreState()
 
+
 class MyDocTemplate(BaseDocTemplate):
     """Used to apply heading to table of contents."""
 
@@ -68,16 +68,18 @@ class MyDocTemplate(BaseDocTemplate):
                 self.canv.bookmarkPage(key)
                 self.notify('TOCEntry', [1, text, self.page, key])
 
+
 def create_toc():
     print('createtoc')
     """Creates the table of contents"""
     table_of_contents = TableOfContents()
     table_of_contents.dotsMinLevel = 0
-    header1 = ParagraphStyle(name = 'Heading1', fontSize = 16, leading = 16)
-    header2 = ParagraphStyle(name = 'Heading2', fontSize = 14, leading = 14)
-    table_of_contents.levelStyles = [header1, header2]
+    header1 = ParagraphStyle(name='Heading1', fontSize=16, leading=16)
+    header2 = ParagraphStyle(name='Heading2', fontSize=14, leading=14)
+    table_of_contents.levelStyles=[header1, header2]
 
     return [table_of_contents, PageBreak()]
+
 
 def create_pdf(filename, pdf_template_filename):
     """Create the pdf, with all the contents"""
@@ -85,11 +87,10 @@ def create_pdf(filename, pdf_template_filename):
     pdf_report = open(filename, "wb")
     print('k')
     document = MyDocTemplate(pdf_report)
-    templates = [MyTemplate(pdf_template_filename, name='background') ]
+    templates = [MyTemplate(pdf_template_filename, name='background')]
     # pdf_template_filename2='chat.pdf'
     # templates = [MyTemplate(pdf_template_filename, name='background'),MyTemplate(pdf_template_filename2, name='background2') ]
     document.addPageTemplates(templates)
-
 
     styles = getSampleStyleSheet()
     elements = [NextPageTemplate('background')]
@@ -98,9 +99,8 @@ def create_pdf(filename, pdf_template_filename):
     # Dummy content (hello world x 200)
     for i in range(2):
         page = PdfReader("chat.pdf").pages[0]
-        t = pagexobj(page)
-        #canvas.saveState()
-        #rl_obj = makerl(canvas, self.page_template)
+        # canvas.saveState()
+        # rl_obj = makerl(canvas, self.page_template)
         # canvas.scale(self.page_xscale, self.page_yscale)
         # canvas.doForm(rl_obj)
         # canvas.restoreState()
@@ -119,4 +119,4 @@ if __name__ == '__main__':
         print('ici3')
         create_pdf(output, template)
     except ValueError:
-        print ("Usage: %s <output> <template>" % (sys.argv[0]))
+        print("Usage: %s <output> <template>" % (sys.argv[0]))

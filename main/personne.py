@@ -21,7 +21,6 @@
 #    see http://www.gnu.org/licenses/.
 #
 ##############################################################################
-from main.models import *
 from django.shortcuts import render, get_object_or_404
 from datetime import datetime
 from main.forms import PersonneForm

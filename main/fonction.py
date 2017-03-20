@@ -21,9 +21,7 @@
 #    see http://www.gnu.org/licenses/.
 #
 ##############################################################################
-from django.http import *
-from main.models import *
-
+from django.http import HttpResponse
 from main import models as mdl
 
 

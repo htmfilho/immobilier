@@ -22,7 +22,6 @@
 #
 ##############################################################################
 from django.shortcuts import redirect
-from main.models import *
 from django.shortcuts import render, get_object_or_404
 from main.views_utils import get_key
 from main import models as mdl
@@ -148,7 +147,7 @@ def personne_create(request):
         location = get_object_or_404(mdl.contrat_location.ContratLocation, pk=location_id)
         locataire.contrat_location = location
 
-    personne = Personne(nom=request.POST.get('nom', None), prenom=request.POST.get('prenom', None))
+    personne = mdl.personne.Personne(nom=request.POST.get('nom', None), prenom=request.POST.get('prenom', None))
     personne.save()
     locataire.personne = personne
     personnes = mdl.personne.find_all()

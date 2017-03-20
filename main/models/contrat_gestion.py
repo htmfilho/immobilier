@@ -22,8 +22,11 @@
 #
 ##############################################################################
 from django.db import models
-from django.contrib import admin
+from main.models import alerte as Alerte
 from main.models import personne as Personne
+from main.models import honoraire as Honoraire
+from dateutil.relativedelta import relativedelta
+from main import models as mdl
 
 
 class ContratGestion(models.Model):
@@ -34,7 +37,6 @@ class ContratGestion(models.Model):
     montant_mensuel = models.DecimalField(max_digits=6, decimal_places=2, blank=True, null=True)
 
 
-
     def __str__(self):
         return self.gestionnaire.nom + ", " + self.gestionnaire.prenom + str(self.batiment)
 
@@ -43,7 +45,7 @@ class ContratGestion(models.Model):
         c = super(ContratGestion, self).save(*args, **kwargs)
 
         if self.date_fin:
-            alert = Alerte(description='Attention fin contrat location dans 4 mois',
+            alert = mdl.alerte.Alerte(description='Attention fin contrat location dans 4 mois',
                            date_alerte=self.date_fin - relativedelta(months=4), etat='A_VERIFIER', contrat_gestion=self)
             alert.save()
         if self.date_debut and self.date_fin:
@@ -51,7 +53,7 @@ class ContratGestion(models.Model):
             date_f = self.date_debut + relativedelta(months=1)
             i = 0
             while date_f <= self.date_fin:
-                honoraire = Honoraire(etat='A_VERIFIER', contrat_gestion=self, date_paiement=date_d)
+                honoraire = mdl.honoraire.Honoraire(etat='A_VERIFIER', contrat_gestion=self, date_paiement=date_d)
                 honoraire.save()
                 date_d = date_d + relativedelta(months=1)
                 date_f = date_f + relativedelta(months=1)
@@ -85,6 +87,7 @@ def search(batiment, date_debut, date_fin):
     if batiment or date_debut or date_fin:
         out = queryset
     return out
+
 
 def find_by_batiment(a_batiment):
     return ContratGestion.objects.filter(batiment=a_batiment)
