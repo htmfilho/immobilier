@@ -161,7 +161,7 @@ def test(request):
     location.charges_base = request.POST['charges_base']
     if request.POST['date_debut']:
         location.date_debut = datetime.strptime(request.POST['date_debut'], '%d/%m/%Y')
-        locations_en_cours = mdl.contrat_location.find_by_batiment_location(batiment,location.date_debut )
+        locations_en_cours = mdl.contrat_location.find_by_batiment_location(batiment, location.date_debut)
         if locations_en_cours:
             location.date_fin = None
             location.renonciation = None
@@ -192,8 +192,6 @@ def test(request):
                                 'form': form})
 
 
-
-
 def prolongation(request):
     id_location = request.GET['id_location']
     type_prolongation = request.GET['type_prolongation']
@@ -222,10 +220,10 @@ def contrat_location_form(request):
     auj = date.today()
     nouvelle_location.date_debut = auj.strftime("%d/%m/%Y")
     return render(request, "contratlocation_form.html", {
-                            'assurances': mdl.assurance.find_all(),
-                            'batiments': mdl.batiment.find_all(),
-                            'location': nouvelle_location,
-                            'form': None})
+        'assurances': mdl.assurance.find_all(),
+        'batiments': mdl.batiment.find_all(),
+        'location': nouvelle_location,
+        'form': None})
 
 
 def search(request):

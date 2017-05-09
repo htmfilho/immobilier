@@ -42,8 +42,10 @@ class FinancementLocation(models.Model):
             return chaine
         return ""
 
+
 def find_by_location(une_location):
     return FinancementLocation.objects.filter(contrat_location=une_location)
+
 
 def create(date_debut, date_fin, loyer_base):
     return FinancementLocation(date_debut=date_debut, date_fin=date_fin, loyer=loyer_base)

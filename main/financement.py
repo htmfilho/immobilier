@@ -27,6 +27,7 @@ from main import models as mdl
 
 
 def new(request, location_id):
+    print('new')
     location = mdl.contrat_location.find_by_id(location_id)
 
     # Trouver le dernier financement
@@ -51,6 +52,7 @@ def new(request, location_id):
 
 
 def create(request):
+
     if request.POST.get('cancel_financement_loc_new', None):
         previous = request.POST.get('previous', None)
         return redirect(previous)

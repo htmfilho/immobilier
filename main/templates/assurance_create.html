@@ -3,40 +3,36 @@
          tabindex="-1" role="dialog" >
         <div class="modal-dialog" role="document">
             <div class="modal-content">
-                    <div class="modal-header">
-                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"
-                                id="bt_pnl_create_assurance"><span aria-hidden="true">&times;</span></button>
-                        <h4 class="modal-title" id="uploadScroresLabel">
-                            <label id="lbl_description_label">Nouvelle compagnie d'assurance</label>
-                        </h4>
-                    </div>
-                    <div class="modal-body" id="pnl_create_assurance_body">
-                        <form method="post"
-                              action="{% url 'assurance_create' %}">
-                            {% csrf_token %}
-                        <label>Nom</label>
-                        <br>
-                        <input type="text" id="txt_nom_assurance_other"  name="nom_assurance_other">
-                        <br>
-                        <br>
-                        <label>Description</label>
-                        <br>
-                        <input type="text" id="txt_description_assurance_other"  name="description_assurance_other">
-                            <div class="modal-footer">
-                                <button type="button" class="btn btn-default" data-dismiss="modal"
-                                        id="bt_cancel_create_assurance">Annuler</button>
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"
+                            id="bt_pnl_create_assurance"><span aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title" id="uploadScroresLabel">
+                        <label id="lbl_description_label">Nouvelle compagnie d'assurance</label>
+                    </h4>
+                </div>
+                <div class="modal-body" id="pnl_create_assurance_body">
+                    <form method="post"
+                          action="{% url 'assurance_create' %}">
+                        {% csrf_token %}
+                    <label>Nom</label>
+                    <br>
+                    <input type="text" id="txt_nom_assurance_other"  name="nom_assurance_other">
+                    <br>
+                    <br>
+                    <label>Description</label>
+                    <br>
+                    <input type="text" id="txt_description_assurance_other"  name="description_assurance_other">
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-default" data-dismiss="modal"
+                                    id="bt_cancel_create_assurance">Annuler</button>
 
-                                <input type="submit" class="btn btn-primary" value="Ok"
-                                       data-dismiss="modal"
-                                       id="bt_save_new_assurance"/>
+                            <input type="submit" class="btn btn-primary" value="Ok"
+                                   data-dismiss="modal"
+                                   id="bt_save_new_assurance"/>
 
-                            </div>
-                        </form>
-
-                    </div>
-
-
-
+                        </div>
+                    </form>
+                </div>
             </div>
         </div>
     </div>

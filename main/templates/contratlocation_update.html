@@ -112,7 +112,7 @@
 
       <ul class="nav nav-tabs">
         <li class="active"><a data-toggle="tab" href="#locataires">Locataires</a></li>
-          <li><a data-toggle="tab" href="#suivis">Suivis</a></li>
+          <li><a data-toggle="tab" href="#suivis">Suivis ({{location.suivis |length }})</a></li>
           <li><a data-toggle="tab" href="#frais">Frais ({{location.liste_frais |length }})</a></li>
           <li><a data-toggle="tab" href="#financement">Historique financements</a></li>
       </ul>
@@ -208,7 +208,7 @@
           {% endfor%}
           </table>
             <br>
-            <a class="btn pull-right" href="{% url 'fraismaintenance-new-contrat' location.id %}" title="Pour ajouter une nouvelle dépense">
+            <a class="btn btn-default pull-right" href="{% url 'fraismaintenance-new-contrat' location.id %}" title="Pour ajouter une nouvelle dépense">
     <span class="glyphicon glyphicon-plus" aria-hidden="true"> Ajout frais</span></a>
             </div>
                 <div id="financement" class="tab-pane fade">

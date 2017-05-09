@@ -57,12 +57,10 @@ class ContratLocation(models.Model):
 
     @property
     def locataires(self):
-
         return Locataire.find_by_contrat_location(self)
 
     @property
     def financement_courant(self):
-
         list = FinancementLocation.find_by_location(self).order_by('date_fin')
         for f in list:
             return f
@@ -107,6 +105,16 @@ class ContratLocation(models.Model):
     def liste_frais(self):
         return FraisMaintenance.find_by_contrat_location(self)
 
+    def suivis(self):
+        financements = self.financements()
+        suivis_liste = []
+        for f in financements:
+            sui = SuiviLoyer.\
+                SuiviLoyer.objects.filter(financement_location=f)
+            if sui.exists():
+                suivis_liste.extend(sui)
+        return suivis_liste
+
     class Meta:
         ordering = ['date_debut']
 
@@ -117,17 +125,6 @@ def find_by_id(id):
 
 def find_all():
     return ContratLocation.objects.all()
-
-
-def suivis(self):
-    financements = self.financements()
-    suivis_liste = []
-    for f in financements:
-
-        sui = SuiviLoyer.objects.filter(financement_location=f)
-        if sui.exists():
-            suivis_liste.extend(sui)
-    return suivis_liste
 
 
 def search(date_fin):
@@ -169,10 +166,10 @@ def update_suivi_alerte(date_debut, location, financement_location, date_fin, ty
     while date_f <= date_fin:
         print('creation nouveau suivi')
         suivi = SuiviLoyer.SuiviLoyer(etat_suivi='A_VERIFIER',
-                           date_paiement=date_d,
-                           remarque=None,
-                           loyer_percu=0,
-                           charges_percu=0)
+                                      date_paiement=date_d,
+                                      remarque=None,
+                                      loyer_percu=0,
+                                      charges_percu=0)
         suivi.financement_location = financement_location
         suivi.type_suivi = type_suivi
         suivi.save()
@@ -181,11 +178,13 @@ def update_suivi_alerte(date_debut, location, financement_location, date_fin, ty
         i = i + 1
     if date_fin:
         alert = Alerte.Alerte(description='Attention fin contrat location dans 4 mois',
-                       date_alerte=location.date_fin - relativedelta(months=4),
-                       etat='A_VERIFIER',
-                       contrat_location=location)
+                              date_alerte=location.date_fin - relativedelta(months=4),
+                              etat='A_VERIFIER',
+                              contrat_location=location)
         alert.save()
 
 
 def find_by_batiment_location(un_batiment, une_date_debut):
-    return ContratLocation.objects.filter(batiment=un_batiment, date_debut__lte=une_date_debut, date_fin__gte=une_date_debut)
+    return ContratLocation.objects.filter(batiment=un_batiment,
+                                          date_debut__lte=une_date_debut,
+                                          date_fin__gte=une_date_debut)

@@ -10,7 +10,7 @@
       <input type="hidden" value="{{ action|default_if_none:'' }}" name="action" >
       <input type="hidden" value="{{ contrat.id | default_if_none:'' }}" name="id" >
       <div class="form-group">
-          <label for="slt_batiment_id">Batimentcccccc</label>
+          <label for="slt_batiment_id">Batiment</label>
           <select class="form-control" id="slt_batiment_id"  name="batiment_id">
             <option>-</option>
           {% for b in batiments %}
