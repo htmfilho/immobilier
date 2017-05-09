@@ -54,17 +54,20 @@
       </nav>
 
       <div class="container" id="container_main">
-
+      <br>
+          {% block breadcrumbarea %}
+              <ol class="breadcrumb">
+                  <li><a href="{% url 'home' %}" id="lnk_home_osis"><span class="glyphicon glyphicon-home"
+                                                                          aria-hidden="true"></span></a></li>
+                  {% block breadcrumb %}
+                  {% endblock %}
+              </ol>
+          {% endblock %}
 <br/>
         {% block content %}
         {% endblock %}
       </div>
-
-      <nav class="navbar navbar-default navbar-fixed-bottom">
-        <div class="container containerci">
-
-        </div>
-      </nav>
+      <br>
 
       <script src="{% static "js/jquery-2.1.4.min.js" %}"></script>
       <script src="{% static "js/bootstrap.min.js" %}"></script>
@@ -142,6 +145,16 @@
             language: "fr"
         });
         $("#date_debut_location").datepicker({
+            autoclose: true,
+            orientation: "bottom auto",
+            language: "fr"
+        });
+        $("#date_debut_gestion").datepicker({
+            autoclose: true,
+            orientation: "bottom auto",
+            language: "fr"
+        });
+        $("#date_fin_gestion").datepicker({
             autoclose: true,
             orientation: "bottom auto",
             language: "fr"

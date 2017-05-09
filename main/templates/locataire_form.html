@@ -1,5 +1,12 @@
 {% extends "layout.html" %}
 {% block breadcrumb %}
+{% if locataire.contrat_location %}
+    {% if locataire.contrat_location.batiment %}
+    <li><a href="{% url 'batiment' locataire.contrat_location.batiment.id  %}">Batiment</a></a></li>
+    {% endif %}
+    <li><a href="{% url 'location-prepare-update-all' locataire.contrat_location.id  %}">Location</a></li>
+{% endif %}
+<li class="active">Locataire</li>
 
 {% endblock %}
 {% block content %}
@@ -36,7 +43,7 @@
 
         </div>
         <div class="col-md-4">
-          <label>Civilite</label>
+          <label>Civilité</label>
           <select class="form-control" name="civilite" >
             ('NON_PRECISE','-'),
             ('MADAME','Madame'),
@@ -70,9 +77,13 @@
               {%endif%}
           </select>
         </div>
-        <div class="col-md-3">
+        <div class="col-md-2">
           <label>Principal</label><br>
           <input type="checkbox" name="principal" {%if  locataire.principal  == True %}checked{%else%}''{%endif%}>
+        </div>
+        <div class="col-md-1">
+          <label>Actif</label><br>
+          <input type="checkbox" name="actif" {%if  locataire.actif  == True %}checked{%else%}''{%endif%}>
         </div>
         <div class="col-md-1">
           {% if not locataire.id %}
@@ -81,6 +92,7 @@
           {% endif %}
         </div>
       </div>
+    <br>
       <div class="row">
         <div class="col-md-8">
           <label>Location</label>
@@ -117,6 +129,7 @@
         <div class="col-md-3">
         </div>
       </div>
+    <br>
       <div class="row">
         <div class="col-md-8">
           <label>Infos complementaires</label>
@@ -170,10 +183,8 @@
               </div>
           {% endif %}
           <div class="pull-right">
-            <input type="submit" value="OK">
-              {% if locataire.contrat_location %}
-            <input type="submit" value="Cancel" name="bt_cancel">
-              {% endif %}
+            <input type="submit" value="Enregistrer" class="btn btn-primary">
+
           </div>
         </span>
 

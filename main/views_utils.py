@@ -24,8 +24,6 @@
 DATE_SHORT_FORMAT = "%d/%m/%Y"
 
 def get_key(id):
-    print('get_key')
-    print(id)
     if  id is None or id == "" or id == "-" or id == "None":
         return None
     return int(id)

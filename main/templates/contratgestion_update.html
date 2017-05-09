@@ -1,6 +1,9 @@
 {% extends "layout.html" %}
 {% load staticfiles %}
 {% block breadcrumb %}
+    {% if contrat.batiment %}
+        <li><a href="{% url 'batiment' contrat.batiment.id  %}">Batiment</a></a></li>
+    {% endif %}
   <li class="active">Contrat gestion</li>
 {% endblock %}
 {% block content %}
@@ -12,7 +15,7 @@
       <div class="form-group">
           <label for="slt_batiment_id">Batiment</label>
           <select class="form-control" id="slt_batiment_id"  name="batiment_id">
-            <option>-</option>
+            <option value="-">-</option>
           {% for b in batiments %}
               {% if contrat.batiment.id == b.id %}
                 <option value="{{ b.id }}" selected>{{ b }}</option>
@@ -40,7 +43,7 @@
       </div>
       <br>
       <div class="row">
-        <div class="col-md-4">
+        <div class="col-md-3">
           <label for="txt_montant_mensuel">Montant mensuel</label>
           <input class="form-control"
                  value="{{ contrat.montant_mensuel| default_if_none:'' }}"
@@ -48,16 +51,16 @@
                  id="txt_montant_mensuel">
           {% if form.montant_mensuel.errors%}<span class="erreur_formulaire">{{form.montant_mensuel.errors}}</span>{%endif%}
         </div>
-        <div class="col-md-4">
+        <div class="col-md-2">
         <label for="date_debut">Date début</label>
-        <input class="form-control" id="date_debut" value="{%if contrat.date_debut%}{{contrat.date_debut|date:"j/m/Y" }}{%endif%}"
+        <input class="form-control" id="date_debut_gestion" value="{%if contrat.date_debut%}{{contrat.date_debut|date:"j/m/Y" }}{%endif%}"
                name="date_debut">
           {% if form.date_debut.errors%}<span class="erreur_formulaire">{{form.date_debut.errors}}</span>{%endif%}
       </div>
 
-      <div class="col-md-4">
+      <div class="col-md-2">
         <label for="date_fin">Date fin</label>
-        <input class="form-control" id="date_fin" value="{%if contrat.date_fin%}{{contrat.date_fin|date:"j/m/Y"}}{%endif%}"
+        <input class="form-control" id="date_fin_gestion" value="{%if contrat.date_fin%}{{contrat.date_fin|date:"j/m/Y"}}{%endif%}"
                name="date_fin">
           {% if form.date_fin.errors%}<span class="erreur_formulaire">{{form.date_fin.errors}}</span>{%endif%}
       </div>
@@ -70,8 +73,8 @@
 
     </form>
     {%if message%}
-    <br>
-      <div class="alert alert-danger" role="alert">{{message}}</div>
+        <br>
+        <div class="alert alert-danger" role="alert">{{message}}</div>
     {%endif%}
 
 {% endblock %}

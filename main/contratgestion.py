@@ -72,6 +72,7 @@ def prepare_update(request, id):
     return render(request, "contratgestion_update.html",
                   {'contrat':   contrat,
                    'action':   'update',
+                   'batiments': mdl.batiment.find_all(),
                    'personnes': personnes})
 
 

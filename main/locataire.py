@@ -25,6 +25,8 @@ from django.shortcuts import redirect
 from django.shortcuts import render, get_object_or_404
 from main.views_utils import get_key
 from main import models as mdl
+from django.http import HttpResponseRedirect
+from django.core.urlresolvers import reverse
 
 
 LOCATAIRE_FORM_HTML = "locataire_form.html"
@@ -88,52 +90,52 @@ def new_without_known_location(request):
 
 
 def add(request):
-    print('locataire add')
-    if 'bt_cancel' not in request.POST:
-        print(request.POST)
-        locataire_id = get_key(request.POST.get('locataire_id', None))
-
-        if locataire_id:
-            locataire = get_object_or_404(mdl.locataire.Locataire, pk=locataire_id)
-        else:
-            locataire =  mdl.locataire.Locataire()
-        location_id = request.POST.get('location_id', None)
-        print(location_id)
-        location = None
-        if location_id:
-            location = get_object_or_404(mdl.contrat_location.ContratLocation, pk=location_id)
+    locataire_id = get_key(request.POST.get('locataire_id', None))
+    location_id = request.POST.get('location_id', None)
+    personne_id = get_key(request.POST.get('personne_id',None))
 
 
-        locataire.contrat_location = location
-        personne_id = get_key(request.POST.get('personne_id',None))
-        if personne_id:
-            personne = get_object_or_404(mdl.personne.Personne, pk=personne_id)
-            locataire.personne = personne
 
-        locataire.principal = False
-        if request.POST.get('principal', None) and request.POST['principal'] == 'on':
-            locataire.principal = True
-        locataire.civilite = request.POST['civilite']
-        locataire.infos_complement = request.POST['infos_complement']
-        societe = None
-        if request.POST['societe']:
-            societe = get_object_or_404(mdl.societe.Societe, pk=request.POST['societe'])
-        locataire.societe = societe
-        locataire.tva = request.POST['tva']
-        fonction_locataire = None
-        if request.POST['profession']:
-            fonction_locataire = mdl.fonction.find_by_nom(request.POST['profession'])
-            if fonction_locataire is None:
-                fonction_locataire = mdl.fonction.Fonction()
-                fonction_locataire.nom_fonction = request.POST['profession']
-                fonction_locataire.save()
+    locataire = populate_locataire(locataire_id, location_id, personne_id, request)
+    locataire.save()
 
-        locataire.profession = fonction_locataire
-        locataire.contrat_location = location
-        locataire.save()
-        return render(request, "contratlocation_update.html", {'location': location})
+    action = request.POST.get('action', None)
+    if action=="update":
+        return render(request, "contratlocation_update.html", {'location': locataire.contrat_location})
     else:
-        return redirect(request.POST.get('next'), None)
+        return HttpResponseRedirect(reverse('home'))
+
+
+def populate_locataire(locataire_id, location_id, personne_id, request):
+    locataire = get_locataire(locataire_id)
+    location = get_location(location_id)
+    locataire.contrat_location = location
+    if personne_id:
+        personne = get_object_or_404(mdl.personne.Personne, pk=personne_id)
+        locataire.personne = personne
+    locataire.principal = False
+    if request.POST.get('principal', None) and request.POST['principal'] == 'on':
+        locataire.principal = True
+    locataire.actif = False
+    if request.POST.get('actif', None) and request.POST['actif'] == 'on':
+        locataire.actif = True
+    locataire.civilite = request.POST['civilite']
+    locataire.infos_complement = request.POST['infos_complement']
+    societe = None
+    if request.POST['societe']:
+        societe = get_object_or_404(mdl.societe.Societe, pk=request.POST['societe'])
+    locataire.societe = societe
+    locataire.tva = request.POST['tva']
+    fonction_locataire = None
+    if request.POST['profession']:
+        fonction_locataire = mdl.fonction.find_by_nom(request.POST['profession'])
+        if fonction_locataire is None:
+            fonction_locataire = mdl.fonction.Fonction()
+            fonction_locataire.nom_fonction = request.POST['profession']
+            fonction_locataire.save()
+    locataire.profession = fonction_locataire
+    locataire.contrat_location = location
+    return locataire
 
 
 def delete(request, locataire_id):
@@ -170,3 +172,14 @@ def list(request):
                   {'locataires': mdl.locataire.find_all(),
                    'personnes': mdl.personne.find_all()})
 
+def get_locataire(locataire_id):
+    if locataire_id:
+        return get_object_or_404(mdl.locataire.Locataire, pk=locataire_id)
+    else:
+        return mdl.locataire.Locataire()
+
+def get_location(location_id):
+    if location_id:
+        return get_object_or_404(mdl.contrat_location.ContratLocation, pk=location_id)
+
+    return None

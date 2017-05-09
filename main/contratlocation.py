@@ -64,7 +64,7 @@ def update(request):
             # Les financements seront adaptés via le save
             location.save_prolongation(int(request.POST.get('type_prolongation')))
         else:
-            location.save_new()
+            location.save()
 
         return redirect(previous)
 
