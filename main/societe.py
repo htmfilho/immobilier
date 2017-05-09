@@ -69,3 +69,12 @@ def edit(request, societe_id):
     return render(request, "societe_form.html",
                   {'societe': societe,
                    'localites': mdl.localite.find_all()})
+
+
+def create(request):
+    id_personne = request.POST.get('id_pers', None)
+    societe = mdl.societe.Locataire(nom=request.POST.get('nom_societe', None))
+    societe.save()
+    if id_personne:
+        personne = get_object_or_404(mdl.personne.Personne, pk=id_personne)
+    return HttpResponseRedirect(reverse('personne-edit', args=(personne.id, )))

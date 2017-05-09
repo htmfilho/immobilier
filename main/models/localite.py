@@ -22,25 +22,14 @@
 #
 ##############################################################################
 from django.db import models
-from django.utils import timezone
 
-from dateutil.relativedelta import relativedelta
-from django.core.urlresolvers import reverse
-from django.db.models import Q
-from django.db.models import Sum
-import datetime
-import calendar
-from django.contrib import admin
 
 class Localite(models.Model):
     code_postal = models.CharField(max_length=10, blank=False, null=False)
     localite = models.CharField(max_length=150, blank=False, null=False)
 
-
-
     def __str__(self):
         return self.code_postal + " " + self.localite
-
 
     class Meta:
         ordering = ['localite']
@@ -48,6 +37,7 @@ class Localite(models.Model):
 
 def autocomplete_search_fields():
     return 'localite', 'code_postal'
+
 
 def find_all():
     return Localite.objects.all()
@@ -62,6 +52,7 @@ def search(un_code_postal, une_localite):
     queryset = Localite.objects
     if un_code_postal:
         queryset = queryset.filter(code_postal=un_code_postal)
+
     if une_localite:
         queryset = queryset.filter(localite__iexact=une_localite)
 

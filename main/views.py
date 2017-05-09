@@ -1,4 +1,4 @@
-##############################################################################
+#############################################################################
 #
 #    Immobilier it's an application
 #    designed to manage the core business of property management, buildings,
@@ -31,7 +31,7 @@ from django.shortcuts import render, get_object_or_404
 from django.utils import timezone
 from django.views.generic import *
 from django.core.urlresolvers import reverse_lazy
-from main.forms import BatimentForm, ProprietaireForm, FraisMaintenanceForm, SocieteForm, FileForm, LettreForm
+from main.forms import BatimentForm, ProprietaireForm, FraisMaintenanceForm, SocieteForm, FileForm, LettreForm, LigneForm
 
 from io import BytesIO
 from django.http import HttpResponse
@@ -56,7 +56,7 @@ from main.models import societe as Societe
 
 from templated_docs import fill_template
 from templated_docs.http import FileResponse
-
+from django.forms import formset_factory
 
 
 class ContratGestionList(ListView):
@@ -119,7 +119,6 @@ def merge_pdf4(request):
     cur = 1
     cur_prev = 0
     for fname in pdfs:
-        print('for')
         input = PdfFileReader(open(fname, 'rb'))
 
         number_of_page = input.getNumPages()
@@ -260,7 +259,6 @@ class FraisMaintenanceDelete(DeleteView):
 
 
 class PersonneDelete(DeleteView):
-    print('qsdfqsf')
     model = mdl.personne
     success_url = "../../../personnes"
 
@@ -820,7 +818,7 @@ class MyDocTemplate(SimpleDocTemplate):
         SimpleDocTemplate.__init__(self, *args, **kwargs)
 
     def afterFlowable(self, flowable):
-         "Registers TOC entries."
+         '''Registers TOC entries.'''
          if flowable.__class__.__name__ == 'Paragraph':
              text = flowable.getPlainText()
              style = flowable.style.name
@@ -894,15 +892,15 @@ def merge_pdf3(request):
 
         number_of_page = input.getNumPages()
         lien = "lnk2_" + str(no_page)
-        lien=fname
+        lien = fname
         # ancre = '<a name="%s"></a>' % fname
         # content.append(Paragraph('''
         #
         #                             %s
         #
         #                         ''' % (ancre), ParagraphStyle('normal')) )
-        merger.append(input,bookmark=lien, import_bookmarks=False)
-        merger._bookmarkName=lien
+        merger.append(input, bookmark=lien, import_bookmarks=False)
+        merger._bookmarkName = lien
 
         # if cpt==0:
         #     merger.append(input,bookmark=lien, import_bookmarks=False)
@@ -914,11 +912,9 @@ def merge_pdf3(request):
         #     merger.append(input,bookmark=lien, import_bookmarks=False)
         #     sub = merger.addBookmark("SUBBOOKMARK",doc_length,parent)
 
-
-        num_page=num_page+1
+        num_page = num_page+1
         no_page = no_page + number_of_page
-        cpt=cpt+1
-
+        cpt = cpt+1
 
     output = open("output.pdf", "wb")
 
@@ -929,13 +925,14 @@ def merge_pdf3(request):
                                         <para>
                                             %s
                                         </para>
-                                        ''' % 'tesrrrrrrrrrrrr t', ParagraphStyle('normal')) )
+                                        ''' % 'tesrrrrrrrrrrrr t', ParagraphStyle('normal')))
     doc.build(content)
     return render(request, "test.html")
 
+
 class DocTemplateWithTOC(SimpleDocTemplate):
 
-    def __init__(self, indexedFlowable, filename, firstPageNumber = 1, **kw ):
+    def __init__(self, indexedFlowable, filename, firstPageNumber=1, **kw):
         """toc is the TableOfContents object
         indexedFlowale is a dictionnary with flowables as key and a dictionnary as value.
             the sub-dictionnary have two key:
@@ -955,7 +952,7 @@ class DocTemplateWithTOC(SimpleDocTemplate):
 
     def afterFlowable(self, flowable):
         if flowable in self._indexedFlowable:
-            self._toc.append((self._indexedFlowable[flowable]["level"],self._indexedFlowable[flowable]["text"], self.page + self._firstPageNumber - 1))
+            self._toc.append((self._indexedFlowable[flowable]["level"], self._indexedFlowable[flowable]["text"], self.page + self._firstPageNumber - 1))
         try:
             if flowable.getPart() != "":
                 self._part = flowable.getPart()
@@ -979,7 +976,7 @@ class DocTemplateWithTOC(SimpleDocTemplate):
         self._tocStory.append(Spacer(cm, 2*cm))
 
 def mainPageFrame(canvas, doc):
-    "The page frame used for all PDF documents."
+    '''The page frame used for all PDF documents.'''
 
     canvas.saveState()
 
@@ -1019,7 +1016,7 @@ class MyDocTemplate(BaseDocTemplate):
 # with appropriate data.
 
      def afterFlowable(self, flowable):
-         "Registers TOC entries."
+         '''Registers TOC entries.'''
          if flowable.__class__.__name__ == 'Paragraph':
              text = flowable.getPlainText()
              style = flowable.style.name
@@ -1273,26 +1270,79 @@ def lettre_form(request):
     if request.method == 'POST':
         pass
     else:
-        form = LettreForm(initial={'sujet': modele.sujet , 'format':"docx", 'fichier_modele': modele.fichier_modele, 'titre':'Monsieur'})
+        ArticleFormSet = formset_factory(LigneForm, extra=2)
+        formset = ArticleFormSet(initial=[{'test': 'Django is now open source',},
+                                          {'test': 'Django is now open source2',}])
+
+        form = LettreForm(initial={'sujet': modele.sujet , 'format':"docx", 'fichier_modele': modele.fichier_modele,
+                                   'titre':'Monsieur',
+                                   'tableSet': formset})
+
 
 
 
 
     # form = LettreForm(request.POST or None)
-    return render(request, "lettre.html",{'form': form})
+    return render(request, "lettre.html",{'form': form, 'formset':formset})
 
 def lettre_create(request):
     print('lettre_view')
+    formset = None
     if request.method=='POST':
         form = LettreForm(request.POST or None)
+        print(form)
+        formset = LigneForm(request.POST or None)
+        ArticleFormSet = formset_factory(LigneForm, extra=2)
+        formset = ArticleFormSet(initial=[{'test': 'Django is now open source', },
+                                          {'test': 'Django is now open source2', }])
     else:
         form = LettreForm()
+
     print(form.errors)
+    if formset.is_valid():
+        print('formset valid')
+    else:
+        print('formset invalid')
     if form.is_valid():
         print('form valid')
+
         doctype = form.cleaned_data['format']
+        data = form.cleaned_data
+        lignes=[]
+        ligne1 = LigneTest()
+        ligne1.col1 = "col1"
+        ligne1.col2 = "col2"
+
+        ligne2 = LigneTest()
+        ligne2.col1 = "col12"
+        ligne2.col2 = "col22"
+
+        lignes.append(ligne1)
+        lignes.append(ligne2)
+        #lignes = [["ii","oo"],["ii2","oo2"]]
+        data.update({'lignes': lignes})
+        data.update({'l1': 'l1'})
+        data.update({'l2': 'l2'})
+        data.update({'html': '<table><tr><td>sss</td><td>ksdf</td></tr></table>'})
+
+        ArticleFormSet = formset_factory(LigneForm, extra=2)
+        formset = ArticleFormSet(initial=[{'test': 'Django is now open source', },
+                                          {'test': 'Django is now open source2', }])
+        data.update({'formset':formset})
+
+        data.update({'dateJour': timezone.now()})
+        personne = mdl.personne.find_personne(1)
+        data.update({'nom': personne.nom})
+        data.update({'prenom': personne.prenom})
+        bat = mdl.batiment.find_batiment(1)
+        data.update({'adresse': bat.adresse_rue})
+        data.update({'localite': bat.adresse_localite})
+        personne_gestionnaire = mdl.personne.find_gestionnaire_default()
+        data.update({'gestionnaire_nom': personne_gestionnaire.nom})
+        data.update({'gestionnaire_prenom': personne_gestionnaire.prenom})
+
         filename = fill_template(
-            'documents/lettre.odt', form.cleaned_data,
+            'documents/lettre.odt', data,
             output_format=doctype)
         visible_filename = 'invoice.{}'.format(doctype)
 
@@ -1300,6 +1350,15 @@ def lettre_create(request):
     else:
         print('form invalid')
         print(form.errors)
-        return render(request, 'documents/lettre.html', {'form': form})
+        return render(request, 'documents/lettre.html', {'form': form, 'formset': formset})
 
+
+class LigneTest:
+
+    def __init__(self):
+        self.col1 = "Ferrari"
+        self.col2 = "Ferrari"
+
+    def ligne_complete(self):
+        return "{0} {1}".format(self.col1, self.col2)
 

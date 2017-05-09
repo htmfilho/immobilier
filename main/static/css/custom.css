@@ -28,3 +28,13 @@ input:required {
   background-color: #c4e3f3;
 }
 
+.required {
+  background-color: #c4e3f3;
+}
+.new {
+  background-color: #dff0d8;
+  margin: 15px;
+
+}
+
+

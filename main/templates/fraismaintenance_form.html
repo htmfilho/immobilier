@@ -48,7 +48,7 @@
     <label>Entrepreneur</label>
     <select class="form-control" name="entrepreneur">
       <option value="">-</option>
-      {% for entrepreneur in entrepreneurs%}
+      {% for entrepreneur in entrepreneurs %}
             <option value="{{entrepreneur.id}}" {%if frais.entrepreneur.id == entrepreneur.id%}selected{%endif%}>{{entrepreneur}}</option>
       {%endfor%}
     </select>
@@ -60,7 +60,7 @@
 <div class="row">
   <div class="col-md-12">
     <label>Description</label>
-    <textarea class="form-control" name="description" required="true" cols="4" rows="4" >{%if frais.description %}{{ frais.description }}{%endif%}</textarea>
+    <textarea class="form-control required" name="description" required="true" cols="4" rows="4" >{%if frais.description %}{{ frais.description }}{%endif%}</textarea>
   </div>
 </div>
 <div class="row">
@@ -85,11 +85,9 @@
   <div class="col-md-11">
   </div>
   <div class="col-md-1">
-    <input type="submit" value="ok" id="bt_fraismaintenance_save"/>
+    <input type="submit" value="enregistrer" id="bt_fraismaintenance_save"/>
   </div>
 </div>
-
-
 </form>
 
 {% endblock %}

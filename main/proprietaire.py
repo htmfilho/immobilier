@@ -37,7 +37,7 @@ def proprietaire(request, proprietaire_id):
     return render(request, "proprietaire_form.html",
                   {'proprietaire': a_proprietaire,
                    'action': 'update',
-                   'personnes': mdl.personne.find_all(),
+                   'personnes': get_personnes_possible(a_proprietaire.batiment),
                    'prev': request.GET.get('prev'),
                    'personne': a_proprietaire.proprietaire})
 
@@ -57,7 +57,7 @@ def add_proprietaire(request, batiment_id):
     return render(request, "proprietaire_form.html",
                   {'proprietaire': proprietaire,
                    'action':       'add',
-                   'personnes':    mdl.personne.find_all(),
+                   'personnes':    get_personnes_possible(batiment),
                    "prev": prev})
 
 
@@ -100,34 +100,58 @@ def proprietaire_update_save(request):
     previous = request.POST['previous']
     print('previous:', previous)
     proprietaire = None
-    if 'update' == request.POST.get('action', None):
+    action =  request.POST.get('action', None)
+    if 'update' == action:
         proprietaire = get_object_or_404(mdl.proprietaire.Proprietaire, pk=request.POST['id'])
-    if 'add' == request.POST.get('action', None):
+    if 'add' == action:
         proprietaire = mdl.proprietaire.Proprietaire()
+        batiment = get_object_or_404(mdl.batiment.Batiment, pk=request.POST['batiment_id'])
+        proprietaire.batiment = batiment
 
     if request.POST['date_debut']:
         proprietaire.date_debut = datetime.strptime(request.POST['date_debut'], '%d/%m/%Y')
     if request.POST['date_fin']:
         proprietaire.date_fin = datetime.strptime(request.POST['date_fin'], '%d/%m/%Y')
 
-    personne = get_object_or_404(mdl.personne.Personne, pk=request.POST['proprietaire'])
+
+    if request.POST['proprietaire']=='-':
+        valide=True
+        if request.POST['nouveau_nom'] and request.POST['nouveau_prenom']:
+            personne_deja_existante = mdl.personne.find_personne_by_nom_prenom(request.POST['nouveau_nom'],request.POST['nouveau_prenom'])
+            if personne_deja_existante:
+                valide = False
+                message = 'Une personne existe déjà avec ces noms/prénoms : {} {}'.format(request.POST['nouveau_nom'],request.POST['nouveau_prenom'])
+            else:
+                personne = mdl.personne.Personne(nom=request.POST['nouveau_nom'],
+                                                 prenom=request.POST['nouveau_prenom'])
+                personne.save()
+        else:
+            message='Il faut sélectionner un propriétaire ou créer une nouvelle personne'
+            valide = False
+
+        if not valide:
+            return render(request, "proprietaire_form.html",
+                          {'proprietaire': proprietaire,
+                           'action': action,
+                           'personnes': get_personnes_possible(proprietaire.batiment),
+                           'previous': previous,
+                           'message': message})
+    else:
+        personne = get_object_or_404(mdl.personne.Personne, pk=request.POST['proprietaire'])
+
     proprietaire.proprietaire = personne
-    if 'add' == request.POST.get('action', None):
-        batiment = get_object_or_404(mdl.batiment.Batiment, pk=request.POST['batiment_id'])
-        proprietaire.batiment = batiment
+
     if not proprietaire.date_debut is None and not proprietaire.date_fin is None:
         if proprietaire.date_debut > proprietaire.date_fin:
             return render(request, "proprietaire_form.html",
                           {'proprietaire': proprietaire,
+                           'action': action,
+                           'personnes': get_personnes_possible(proprietaire.batiment),
+                           'previous': previous,
                            'message': 'La date de début doit être < à la date de fin'})
     proprietaire.save()
-    # if 'add' == request.POST.get('action', None):
-    #     batiments = Batiment.objects.all()
-    #     return render(request, 'listeBatiments.html', {'batiments': batiments})
-    if previous:
-        # return HttpResponseRedirect(previous)
-        print('ici', previous)
 
+    if previous:
         return redirect(previous)
     if not request.POST['prev'] is None:
         return redirections(request, proprietaire.batiment)
@@ -156,16 +180,24 @@ def proprietaire_create_for_batiment(request, batiment_id):
 
 
 def personne_create(request):
-    print('personne_create')
     proprietaire = get_object_or_404(mdl.proprietaire.Proprietaire, pk=request.POST['proprietaire_id_pers'])
     personne = mdl.personne.Personne()
     personne.nom = request.POST['nom']
     personne.prenom = request.POST['prenom']
     personne.save()
-    print(personne)
     proprietaire.personne = personne
     personnes = mdl.personne.find_all()
 
     return render(request, "proprietaire_form.html",
                   {'proprietaire': proprietaire,
                    'personnes': personnes})
+
+
+def get_personnes_possible(batiment):
+    personnes_non_encore_proprietaire = []
+    personnes = mdl.personne.find_all()
+    for p in personnes:
+        proprietaires= mdl.proprietaire.search(p, batiment)
+        if not proprietaires.exists():
+            personnes_non_encore_proprietaire.append(p)
+    return personnes_non_encore_proprietaire

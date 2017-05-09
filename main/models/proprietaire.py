@@ -86,3 +86,14 @@ def find_by_batiment(a_batiment):
 
 def find_by_personne(personne):
     return Proprietaire.objects.filter(proprietaire=personne)
+
+
+def search(une_personne=None, un_batiment=None):
+    queryset = Proprietaire.objects
+
+    if une_personne:
+        queryset = queryset.filter(proprietaire=une_personne)
+
+    if un_batiment:
+        queryset = queryset.filter(batiment=un_batiment)
+    return queryset

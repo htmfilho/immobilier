@@ -39,6 +39,7 @@ class BatimentAdmin(admin.ModelAdmin):
     search_fields = ['localite']
     actions = [export_xls_batiment, pdf_batiment]
 
+
 class Batiment(models.Model):
     description = models.TextField(blank=True, null=True)
     rue = models.CharField(max_length=200, blank=True, null=True)
@@ -51,9 +52,6 @@ class Batiment(models.Model):
 
     class Meta:
         ordering = ['localite', 'rue']
-
-
-
 
     def __str__(self):
         desc = ""
@@ -103,7 +101,7 @@ class Batiment(models.Model):
         return ContratLocation.find_by_batiment_date_debut_gte(self, self.location_actuelle.date_fin)
 
     def contrats_location_previous(self):
-        return ContratLocation.find_by_batiment_date_fin_lte(self,self.location_actuelle.date_debut)
+        return ContratLocation.find_by_batiment_date_fin_lte(self, self.location_actuelle.date_debut)
 
     def contrat_location_next(self):
         list_c = ContratLocation.find_by_batiment_date_debut_gte(self, date_debut__gte=self.location_actuelle.date_fin)
@@ -155,7 +153,7 @@ class Batiment(models.Model):
 
     @property
     def location_actuelle(self):
-        locations =  ContratLocation.find_by_batiment_dates(self)
+        locations = ContratLocation.find_by_batiment_dates(self)
         l = None
         if locations:
             l = locations.first()
@@ -206,6 +204,7 @@ class Batiment(models.Model):
 def autocomplete_search_fields():
     return 'localite'
 
+
 def find_all():
     return Batiment.objects.all()
 
@@ -219,6 +218,7 @@ def find_my_batiments():
     if personne:
         return Proprietaire.find_batiment_by_personne(personne)
     return None
+
 
 def search(proprietaire=None):
     if proprietaire and proprietaire != "":

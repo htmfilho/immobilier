@@ -71,7 +71,8 @@ class ContratLocation(models.Model):
     def financements(self):
         return FinancementLocation.find_by_location(self)
 
-    def save_new(self,  *args, **kwargs):
+    def save(self,  *args, **kwargs):
+        print('save_contrat_location')
         df = (self.date_debut + relativedelta(years=1))-relativedelta(days=1)
         self.date_fin = df
         self.renonciation = (self.date_debut + relativedelta(years=1))-relativedelta(days=10)
@@ -166,8 +167,8 @@ def update_suivi_alerte(date_debut, location, financement_location, date_fin, ty
     date_f = date_debut + relativedelta(months=1)
     i = 0
     while date_f <= date_fin:
-        print(' creation nouveau suivi')
-        suivi = SuiviLoyer(etat_suivi='A_VERIFIER',
+        print('creation nouveau suivi')
+        suivi = SuiviLoyer.SuiviLoyer(etat_suivi='A_VERIFIER',
                            date_paiement=date_d,
                            remarque=None,
                            loyer_percu=0,
@@ -179,9 +180,12 @@ def update_suivi_alerte(date_debut, location, financement_location, date_fin, ty
         date_f = date_f + relativedelta(months=1)
         i = i + 1
     if date_fin:
-        alert = Alerte(description='Attention fin contrat location dans 4 mois',
+        alert = Alerte.Alerte(description='Attention fin contrat location dans 4 mois',
                        date_alerte=location.date_fin - relativedelta(months=4),
                        etat='A_VERIFIER',
                        contrat_location=location)
         alert.save()
 
+
+def find_by_batiment_location(un_batiment, une_date_debut):
+    return ContratLocation.objects.filter(batiment=un_batiment, date_debut__lte=une_date_debut, date_fin__gte=une_date_debut)

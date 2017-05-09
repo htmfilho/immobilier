@@ -30,7 +30,6 @@ class SocieteAdmin(admin.ModelAdmin):
     search_fields = ['nom']
     list_filter = ('localite',)
 
-
 class Societe(models.Model):
     TYPE_SOCIETE = (
         ('NON_PRECISE', '-'),
@@ -56,9 +55,9 @@ class Societe(models.Model):
             print(ll)
         return l
 
-
+    @property
     def personnel(self):
-        return Professionnel.find_by_societe(self)
+        return Professionnel.find_by_societe(self).order_by('personne')
 
     def __str__(self):
         ch = self.nom

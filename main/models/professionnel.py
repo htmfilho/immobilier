@@ -25,19 +25,21 @@ from django.db import models
 from django.contrib import admin
 
 
+class ProfessionnelAdmin(admin.ModelAdmin):
+    search_fields = ['societe', 'personne']
+    list_display = ('personne', 'societe', 'fonction')
+    list_filter = ('societe', 'fonction')
+
 
 class Professionnel(models.Model):
     personne = models.ForeignKey('Personne', blank=True, null=True)
     societe = models.ForeignKey('Societe', blank=True, null=True)
     fonction = models.ForeignKey('Fonction', blank=True, null=True)
+    actif = models.BooleanField(default=False)
 
     @staticmethod
     def find_all():
         return Professionnel.objects.all().order_by('societe')
-
-
-
-
 
     def __str__(self):
         ch = ""
@@ -71,12 +73,13 @@ def search(personne=None, societe=None, fonction=None):
         out = queryset
     return out
 
+
 def create():
     return Professionnel()
 
 
 def find_by_societe(une_societe):
-    return Professionnel.search(None, une_societe, None)
+    return search(None, une_societe, None)
 
 
 def find_all():

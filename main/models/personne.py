@@ -119,7 +119,9 @@ class Personne(models.Model):
         unique_together = (("nom", "prenom"),)
 
     def save(self,  *args, **kwargs):
+
         p = super(Personne, self).save(*args, **kwargs)
+        print(self.id)
         if Pays.find_by_pays(self.pays_naissance):
             pass
         else:
@@ -133,14 +135,14 @@ class Personne(models.Model):
                 fonction = Fonction.create()
                 fonction.nom_fonction = self.profession
                 fonction.save()
-
-        professionnels = Professionnel.search(self, self.societe, fonction)
-        if not professionnels.exists():
-            professionnel = Professionnel.create()
-            professionnel.personne = self
-            professionnel.societe = self.societe
-            professionnel.fonction = fonction
-            professionnel.save()
+        if fonction:
+            professionnels = Professionnel.search(self, self.societe, fonction)
+            if not professionnels.exists():
+                professionnel = Professionnel.create()
+                professionnel.personne = self
+                professionnel.societe = self.societe
+                professionnel.fonction = fonction
+                professionnel.save()
 
         return p
 
@@ -163,9 +165,12 @@ def find_gestionnaire_default():
 
 
 def delete_personne(id):
-    print('delete_personne')
     personne = find_personne(id)
     if personne:
         if personne != find_gestionnaire_default():
             personne.delete()
     return None
+
+
+def find_personne_by_nom_prenom(un_nom, un_prenom):
+    return Personne.objects.filter(nom__iexact=un_nom, prenom__iexact=un_prenom)

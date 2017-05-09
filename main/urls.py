@@ -126,6 +126,7 @@ urlpatterns = [
     url(r'^societe/delete/(?P<pk>[0-9]+)/$', views.SocieteDelete.as_view(), name='societe-delete'),
     url(r'^societes/$', views.SocieteList.as_view(), name='societe_list'),
     url(r'^societe/(?P<pk>[0-9]+)/$', views.SocieteDetail.as_view(), name='societe'),
+    url(r'^societe/create/personne/$', societe.create, name='personne-create-societe'),
     # url(r'^batiment5/(?P<pk>\d+)/$', BatimentDetailView.as_view(), batiment_info)
     url(r'^alertes/$', alertes.list, name='alerte_list'),
     url(r'^alertes/update/([0-9]+)/$', alertes.update, name='alerte-update'),

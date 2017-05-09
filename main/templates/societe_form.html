@@ -4,67 +4,73 @@
 {% endblock %}
 {% block content %}
 
-  <form method="post" action="{% url 'societe_update' %}">
-    {% csrf_token %}
-    <input type="hidden" value="{{ societe.id }}" name="societe_id"/>
-    <div class="row">
-      <div class="col-md-6">
-          <label>Nom</label>
-          <input class="form-control" name="nom" id="txt_nom" value="{{ societe.nom| default_if_none:'' }}" >
-      </div>
-    </div>
-    <div class="row">
-      <div class="col-md-12">
-          <label>Description</label>
-          <input class="form-control" name="description" id="txt_description" value="{{ societe.description| default_if_none:'' }}" >
-      </div>
-    </div>
-    <div class="row">
-      <div class="col-md-8">
-          <label>Rue</label>
-          <input class="form-control" name="rue" value="{{ societe.rue| default_if_none:'' }}" >
-      </div>
+    <form method="post" action="{% url 'societe_update' %}">
+        {% csrf_token %}
+        <input type="hidden" value="{{ societe.id }}" name="societe_id"/>
 
-      <div class="col-md-2">
-          <label>Numero</label>
-          <input class="form-control"
-                 name="numero"
-                 value="{{ societe.numero| default_if_none:'' }}" >
-      </div>
-      <div class="col-md-2">
-          <label>boite</label>
-          <input class="form-control" name="boite" value="{{ societe.boite| default_if_none:'' }}" >
-      </div>
-    </div>
-    <div class="row">
-      <div class="col-md-6">
-          <label>Lieu dit</label>
-          <input class="form-control" name="lieu_dit" value="{{ societe.lieu_dit| default_if_none:'' }}" >
-      </div>
-      <div class="col-md-6">
-        <label>Localité</label>
-        <select name="localite" class="form-control">
-          <option value="">-</option>
-          {%for l in localites%}
-          <option value="{{l.id}}" {%if l.id = societe.localite.id%}selected{%endif%}>{{l}}</option>
-          {%endfor %}
-        </select>
-      </div>
-    </div>
-      {%if societe.personnel%}
-      <br>
-       <label>Personnel</label>
-      <table class="table table-condensed">
-    {% for p in societe.personnel %}
-          <tr><td><a href="{% url 'personne-edit' p.personne.id %}" title="Pour modifier une personne">{{p.personne.nom}} {{p.personne.prenom}}</a></td><td>{{p.fonction}}</td></tr>
+        <div class="row">
+            <div class="col-md-6">
+                <label>Nom</label>
+                <input class="form-control" name="nom" id="txt_nom" value="{{ societe.nom| default_if_none:'' }}">
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-12">
+                <label>Description</label>
+                <input class="form-control" name="description" id="txt_description"
+                       value="{{ societe.description| default_if_none:'' }}">
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-8">
+                <label>Rue</label>
+                <input class="form-control" name="rue" value="{{ societe.rue| default_if_none:'' }}">
+            </div>
 
-      <br>
-    {%endfor%}
-          </table>
-      {%endif%}
+            <div class="col-md-2">
+                <label>Numéro</label>
+                <input class="form-control"
+                       name="numero"
+                       value="{{ societe.numero| default_if_none:'' }}">
+            </div>
+            <div class="col-md-2">
+                <label>Boite</label>
+                <input class="form-control" name="boite" value="{{ societe.boite| default_if_none:'' }}">
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-6">
+                <label>Lieu dit</label>
+                <input class="form-control" name="lieu_dit" value="{{ societe.lieu_dit| default_if_none:'' }}">
+            </div>
+            <div class="col-md-6">
+                <label>Localité</label>
+                <select name="localite" class="form-control">
+                    <option value="">-</option>
+                    {% for l in localites %}
+                        <option value="{{ l.id }}"
+                                {% if societe.localite and l.id == societe.localite.id %}selected{% endif %}>{{ l }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+        </div>
+        {% if societe.personnel %}
+            <br>
+            <label>Personnel</label>
+            <table class="table table-condensed">
+                {% for p in societe.personnel %}
+                    <tr>
+                        <td><a href="{% url 'personne-edit' p.personne.id %}"
+                               title="Pour modifier une personne">{{ p.personne.nom }} {{ p.personne.prenom }}</a></td>
+                        <td>{{ p.fonction| default_if_none:''}}</td>
+                    </tr>
+                    <br>
+                {% endfor %}
+            </table>
+        {% endif %}
 
-    <input type="submit" class="btn btn-primary pull-right" value="OK">
+        <input type="submit" class="btn btn-primary pull-right" value="OK">
 
 
-  </form>
+    </form>
 {% endblock %}

@@ -47,7 +47,9 @@
                 </li>
             </ul>
           </div>
-            <span id="message_info" class="alert-info" style="margin-top:-50px;border-color:#9acfea">{{message_info}}</span>
+            {% if message_info %}
+                <span id="message_info" class="alert-info" style="margin-top:-50px;border-color:#9acfea">{{message_info}}</span>
+            {% endif %}
         </div>
       </nav>
 
@@ -69,7 +71,8 @@
       <script src="{% static "js/custom.js" %}"></script>
       <script src="{% static "js/location.js" %}"></script>
       <script src="https://cdn.datatables.net/1.10.12/js/jquery.dataTables.min.js"></script>
-
+      <script src="{% static 'js/bootstrap-datepicker.min.js' %}"></script>
+      <script src="{% static 'js/locales/bootstrap-datepicker.fr.js' %}"></script>
       {% block script %}
       <script>
         $(document).ready(function() {
@@ -100,6 +103,51 @@
             if(applyTo) { applyTo.addEventListener('input', onInput2);}
 
         } );
+
+
+        $("#btn_ajout_societe").click(function(event) {
+            $('#pnl_nouvelle_societe').css('visibility', 'visible');
+            $('#pnl_nouvelle_societe').css('display', 'block');
+            $('#slt_societes').prop('selectedIndex',0);
+
+        });
+
+        $("#btn_ajout_personne").click(function(event) {
+            $('#pnl_nouveau_personne').css('visibility', 'visible');
+            $('#pnl_nouveau_personne').css('display', 'block');
+        });
+
+        $("#slt_societes").change(function() {
+            $('#pnl_nouvelle_societe').css('visibility', 'hidden');
+            $('#pnl_nouvelle_societe').css('display', 'none');
+        });
+        $("#proprietaire_date_debut").datepicker({
+            autoclose: true,
+            orientation: "bottom auto",
+            language: "fr"
+        });
+        $("#proprietaire_date_fin").datepicker({
+            autoclose: true,
+            orientation: "bottom auto",
+            language: "fr"
+        });
+        $("#txt_date_naissance").datepicker({
+            autoclose: true,
+            orientation: "bottom auto",
+            language: "fr"
+        });
+        $("#txt_date_realisation").datepicker({
+            autoclose: true,
+            orientation: "bottom auto",
+            language: "fr"
+        });
+        $("#date_debut_location").datepicker({
+            autoclose: true,
+            orientation: "bottom auto",
+            language: "fr"
+        });
+
+
     </script>
       {% endblock %}
     </body>

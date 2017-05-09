@@ -21,8 +21,6 @@
 * at the root of the source code of this program.  If not,
 * see http://www.gnu.org/licenses/.
 {% endcomment %}
-
-
   <li class="active">Location</li>
 {% endblock %}
 {% block content %}
@@ -39,7 +37,7 @@
         <select class="form-control" id="slt_batiment_id"  name="batiment_id" >
             <option>-</option>
           {% for b in batiments %}
-              {% if location.batiment == b.id %}
+              {% if location.batiment.id == b.id %}
                 <option value="{{ b.id }}" selected>{{ b }}</option>
               {%else%}
                 <option value="{{ b.id }}">{{ b }}</option>
@@ -50,12 +48,19 @@
 
       </div>
       <div class="row">
-        <div class="col-md-4">
-        <label for="date_debut">Date début</label>
-        <input class="form-control"
-               id="date_debut"
-               value="{%if location.date_debut%}{{location.date_debut|date:"j/m/Y"}}{%endif%}" name="date_debut">
-          <font class="erreur_formulaire">{{ form.date_debut.errors }}</font>
+        <div class="col-md-2">
+            <label for="date_debut">Date début</label>
+            <input class="form-control"
+                   id="date_debut_location"
+                   value="{%if location.date_debut%}{{location.date_debut|date:"j/m/Y"}}{%endif%}" name="date_debut">
+              <font class="erreur_formulaire">{{ form.date_debut.errors }}</font>
+        </div>
+        <div class="col-md-10">
+            {% if message_contrat_location %}
+                <label></label>
+                <br>
+                <span class="alert alert-warning" style="margin-top:-50px;border-color:#9acfea">{{message_contrat_location}}</span>
+            {% endif %}
         </div>
       </div>
       <br>
@@ -106,7 +111,7 @@
         </div>
       </div>
       <br>
-      <input type="submit" class="btn btn-primary" value="Ok" />
+      <input type="submit" class="btn btn-primary" value="Enregistrer" />
       <input type="hidden" id="return_lnk" name="return_lnk" value="{{ request.META.HTTP_REFERER }}">
 
     </form>

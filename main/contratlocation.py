@@ -123,6 +123,7 @@ def confirm_delete(request):
 
 
 def test(request):
+    print('test')
     """
     ok - 1
     """
@@ -134,12 +135,7 @@ def test(request):
 
     location = mdl.contrat_location.ContratLocation()
     location.batiment = batiment
-    if request.POST['date_debut']:
-        location.date_debut = datetime.strptime(request.POST['date_debut'], '%d/%m/%Y')
-        location.date_fin = location.date_debut + relativedelta(years=1)
-        location.renonciation = location.date_debut + relativedelta(days=355)
-    else:
-        location.date_debut = None
+
     # if request.POST.get('date_fin'):
     #     location.date_fin = datetime.strptime(request.POST['date_fin'], '%d/%m/%Y')
     # else:
@@ -163,14 +159,35 @@ def test(request):
 
     location.loyer_base = request.POST['loyer_base']
     location.charges_base = request.POST['charges_base']
+    if request.POST['date_debut']:
+        location.date_debut = datetime.strptime(request.POST['date_debut'], '%d/%m/%Y')
+        locations_en_cours = mdl.contrat_location.find_by_batiment_location(batiment,location.date_debut )
+        if locations_en_cours:
+            location.date_fin = None
+            location.renonciation = None
+            location_courante = locations_en_cours.first()
+            return render(request, "contratlocation_form.html",
+                          {'location': location,
+                           'assurances': mdl.assurance.find_all(),
+                           'nav': 'list_batiment',
+                           'batiments': mdl.batiment.find_all(),
+                           'message_contrat_location': 'Une location est déjà en cours à cette période {} au {}'.format(location_courante.date_debut.strftime('%d/%m/%Y'),
+                                                                                                                       location_courante.date_fin.strftime('%d/%m/%Y')),
+                           'form': form})
+        else:
+            location.date_fin = location.date_debut + relativedelta(years=1)
+            location.renonciation = location.date_debut + relativedelta(days=355)
+    else:
+        location.date_debut = None
 
     if form.is_valid():
-        location.save_new()
+        location.save()
         return HttpResponseRedirect(reverse('batiment', args=(location.batiment.id, )))
     else:
-        return render(request, "contratlocation_new.html",
+        return render(request, "contratlocation_form.html",
                                {'location':    location,
                                 'assurances': mdl.assurance.find_all(),
+                                'batiments': mdl.batiment.find_all(),
                                 'nav':       'list_batiment',
                                 'form': form})
 
@@ -200,6 +217,7 @@ def prolongation(request):
 
 
 def contrat_location_form(request):
+    print('contrat_location_form')
     nouvelle_location = mdl.contrat_location.ContratLocation()
     auj = date.today()
     nouvelle_location.date_debut = auj.strftime("%d/%m/%Y")

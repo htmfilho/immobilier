@@ -63,6 +63,7 @@ def prepare_update(request, id):
 
 
 def update(request):
+    print('frais update')
     batiment_id = get_key(request.POST.get('batiment_id', None))
     if request.POST.get('action', None) == 'new':
         frais = mdl.frais_maintenance.FraisMaintenance()

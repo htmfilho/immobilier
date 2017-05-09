@@ -35,6 +35,7 @@ def locataire_form(request, id):
     next = request.META.get('HTTP_REFERER', '/')
     return render(request, LOCATAIRE_FORM_HTML,
                   {'locataire': locataire,
+                   'personne': locataire.personne,
                    'action':    'update',
                    'personnes': mdl.personne.find_all(),
                    'societes': mdl.societe.find_all(),
@@ -59,6 +60,8 @@ def new(request, location_id):
                    'location': location,
                    'personnes': get_personnes_non_locataires(location),
                    'societes': mdl.societe.find_all(),
+                   'action': 'update',
+                   'personnes': mdl.personne.find_all(),
                    'fonctions': mdl.fonction.find_all(), })
 
 
@@ -85,6 +88,7 @@ def new_without_known_location(request):
 
 
 def add(request):
+    print('locataire add')
     if 'bt_cancel' not in request.POST:
         print(request.POST)
         locataire_id = get_key(request.POST.get('locataire_id', None))
@@ -94,7 +98,8 @@ def add(request):
         else:
             locataire =  mdl.locataire.Locataire()
         location_id = request.POST.get('location_id', None)
-
+        print(location_id)
+        location = None
         if location_id:
             location = get_object_or_404(mdl.contrat_location.ContratLocation, pk=location_id)
 

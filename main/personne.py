@@ -27,13 +27,16 @@ from main.forms import PersonneForm
 from main import models as mdl
 
 
-def edit(request, personne_id):
-    if personne_id:
-        personne = mdl.personne.find_personne(personne_id)
+def get_personne(personne_id):
+    if personne_id and not personne_id == 'None':
+        return get_object_or_404(mdl.personne.Personne, pk=personne_id)
     else:
-        personne = mdl.personne.Personne()
+        return mdl.personne.Personne()
+
+
+def edit(request, personne_id):
     return render(request, "personne_form.html",
-                  {'personne': personne,
+                  {'personne': get_personne(personne_id),
                    'societes': mdl.societe.find_all()})
 
 
@@ -66,11 +69,9 @@ def search(request):
 
 
 def update(request):
+    print('update')
     form = PersonneForm(data=request.POST)
-    if request.POST['personne_id'] and not request.POST['personne_id'] == 'None':
-        personne = get_object_or_404(mdl.personne.Personne, pk=request.POST['personne_id'])
-    else:
-        personne = mdl.personne.Personne()
+    personne = get_personne(request.POST['personne_id'])
 
     personne.nom = request.POST['nom']
     personne.prenom = request.POST['prenom']
@@ -81,10 +82,13 @@ def update(request):
 
     personne.profession = request.POST['profession']
     personne.societe = None
-    if request.POST.get('societe', None):
-        if request.POST['societe'] != '':
-            societe = mdl.societe.find_by_id(int(request.POST['societe']))
-            personne.societe = societe
+    if request.POST['societe'] == '-':
+        societe = mdl.societe.Societe(nom=request.POST.get('nom_nouvelle_societe', None),
+                                      description=request.POST.get('description_nouvelle_societe', None))
+        societe.save()
+    else:
+        societe = mdl.societe.find_by_id(int(request.POST['societe']))
+    personne.societe = societe
 
     personne.lieu_naissance = request.POST['lieu_naissance']
     personne.pays_naissance = request.POST['pays_naissance']
@@ -100,6 +104,8 @@ def update(request):
             personne.date_naissance = request.POST['date_naissance']
     else:
         personne.date_naissance = None
+
+
     if form.is_valid():
         personne.save()
         return render(request, "personne_list.html",
@@ -109,3 +115,4 @@ def update(request):
                       {'personne': personne,
                        'form': form,
                        'societes': mdl.societe.find_all()})
+

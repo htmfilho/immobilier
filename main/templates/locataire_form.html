@@ -5,7 +5,7 @@
 {% block content %}
 <ul class="nav nav-tabs">
     <li class="active"><a data-toggle="tab" href="#info_locataire">Info locataire</a></li>
-    {% if locataire.contrat_location %}
+    {% if locataire.contrat_location and locataire.personne%}
         <li><a data-toggle="tab" href="#info_contact">Info contact</a></li>
     {% endif %}
 </ul>
@@ -23,13 +23,6 @@
       <div class="row">
         <div class="col-md-4">
           <label>Personne</label>
-          {% if action == 'update'%}
-          <br>
-          {{locataire.personne}}
-            <input type="hidden" value="{{ locataire.personne.id }}" name="personne_id"/>
-          <br>
-          <br>
-          {%else%}
           <select class="form-control" name="personne_id" >
             <option value="">-</option>
             {% for p in personnes %}
@@ -40,7 +33,7 @@
                 {% endif %}
             {% endfor %}
           </select>
-            {% endif %}
+
         </div>
         <div class="col-md-4">
           <label>Civilite</label>
@@ -227,7 +220,7 @@
                 </div>
                 <br>
                 <div class="modal-footer">
-                    <input type="submit" value="ok"/>
+                    <input type="submit" value="Enregistrer" class="btn btn-primary"/>
                     <button type="button" class="btn btn-default" data-dismiss="modal">Annuler</button>
                 </div>
           </form>

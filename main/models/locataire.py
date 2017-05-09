@@ -26,6 +26,7 @@ from main.models import professionnel as Professionnel
 from main.models import personne as Personne
 from main.models import proprietaire as Proprietaire
 
+
 class Locataire(models.Model):
     CIVILITE = (
         ('NON_PRECISE', '-'),
@@ -59,11 +60,10 @@ class Locataire(models.Model):
         unique_together = (("personne", "contrat_location"),)
 
     def save(self,  *args, **kwargs):
-
         c = super(Locataire, self).save(*args, **kwargs)
         professionnels = Professionnel.search(self.personne, self.societe, self.profession)
         if not professionnels.exists():
-            professionnel = Professionnel()
+            professionnel = Professionnel.Professionnel()
             professionnel.personne = self.personne
             professionnel.societe = self.societe
             professionnel.fonction = self.profession
@@ -83,6 +83,7 @@ def find_my_locataires():
 
 def find_by_contrat_location(contrat):
     return Locataire.objects.filter(contrat_location=contrat)
+
 
 def find_all():
     return Locataire.objects.all()

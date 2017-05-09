@@ -29,6 +29,8 @@ from crispy_forms.layout import Submit
 from main import views_utils
 from main import models as mdl
 
+from django.forms import formset_factory
+
 
 class LoginForm(forms.Form):
     username = forms.CharField()
@@ -57,17 +59,26 @@ def get_pays_choix():
 
 class PersonneForm(forms.Form):
     # fonctionnepays_naissance = forms.ChoiceField(choices=get_pays_choix())
-    class Meta:
-        model = personne.Personne
-        fields = ['nom', 'prenom', 'email', 'profession', 'date_naissance', 'lieu_naissance', 'pays_naissance',
-                  'num_identite', 'telephone', 'gsm', 'societe']
-        autocomplete_fields = ('prenom', 'profession', 'lieu_naissance', 'pays_naissance')
+    nom = forms.CharField(required=True)
+    prenom = forms.CharField(required=True)
+    num_identite = forms.CharField(required=False)
+    email = forms.EmailField(required=False)
 
-    def num_identite(self):
+    # class Meta:
+        # model = personne.Personne
+        # fields = ['nom', 'prenom', 'email', 'profession', 'date_naissance', 'lieu_naissance', 'pays_naissance',
+        #           'num_identite', 'telephone', 'gsm', 'societe']
+        #autocomplete_fields = ('prenom', 'profession', 'lieu_naissance', 'pays_naissance')
+
+
+    def clean(self):
+        print('clean personneform')
+        cleaned_data = super(PersonneForm, self).clean()
         if self.cleaned_data['num_identite'] == "":
             return None
         else:
             return self.cleaned_data['num_identite']
+        return cleaned_data
 
     def __init__(self, *args, **kwargs):
         super(PersonneForm, self).__init__(*args, ** kwargs)
@@ -75,14 +86,24 @@ class PersonneForm(forms.Form):
 
 class BatimentForm(forms.Form):
     superficie = forms.DecimalField(required=False, max_digits=8, decimal_places=3, localize=True)
+    numero = forms.IntegerField()
 
     def __init__(self, *args, **kwargs):
         super(BatimentForm, self).__init__(*args, ** kwargs)
 
     def clean(self):
+        print('clean')
         cleaned_data = super(BatimentForm, self).clean()
         if cleaned_data.get('superficie') and cleaned_data.get('superficie') < 0:
             self.errors['superficie'] = 'Si une superficie est encodée elle doit être > à 0'
+        # print(cleaned_data.get('numero'))
+        # if cleaned_data.get('numero'):
+        #     print('kkkqdesfq')
+        #     try:
+        #         int(cleaned_data.get('numero'))
+        #     except ValueError:
+        #         self.errors['numero'] = 'Le numéro doit être numérique'
+
 
 
 class ProprietaireForm(forms.ModelForm):
@@ -108,6 +129,7 @@ class FraisMaintenanceForm(forms.Form):
     date_realisation = forms.DateField(required=False, input_formats=[views_utils.DATE_SHORT_FORMAT],
                                        widget=forms.DateInput(format=views_utils.DATE_SHORT_FORMAT))
     montant = forms.DecimalField(required=True, max_digits=8, decimal_places=2, localize=True)
+    description = forms.CharField(required=True)
 
     def __init__(self, *args, **kwargs):
         super(FraisMaintenanceForm, self).__init__(*args, ** kwargs)
@@ -245,6 +267,10 @@ class SuiviForm(forms.Form):
     def __init__(self, *args, **kwargs):
         super(SuiviForm, self).__init__(*args, ** kwargs)
 
+class LigneForm(forms.Form):
+
+    test = forms.CharField(required=False)
+
 
 class LettreForm(forms.Form):
     FORMAT_CHOICES = (
@@ -257,6 +283,14 @@ class LettreForm(forms.Form):
     format = forms.ChoiceField(choices=FORMAT_CHOICES)
     fichier_modele = forms.CharField()
     titre = forms.CharField()
+
+
+
+    # def __init__(self, modele_document=None, *args, **kwargs):
+    #
+    #     super(LettreForm, self).__init__(*args, ** kwargs)
+    #
+
 
     #
     # def __init__(self, modele_document=None, *args, **kwargs):
@@ -274,4 +308,7 @@ class LettreForm(forms.Form):
         cleaned_data = super(LettreForm, self).clean()
 
         return cleaned_data
+
+
+
 

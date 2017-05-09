@@ -1,127 +1,176 @@
 {% extends "layout.html" %}
 {% block breadcrumb %}
-  <li><a href="{% url 'listeProprietaires' %}">Les propriétaires</a></li>
-  <li class="active">Propriétaire</li>
+    <li><a href="{% url 'listeProprietaires' %}">Les propriétaires</a></li>
+    <li class="active">Propriétaire</li>
 {% endblock %}
 {% block content %}
 
-<ul class="nav nav-tabs">
-  <li class="active"><a data-toggle="tab" href="#info_proprietaire">Info Propriétaire</a></li>
-  <li><a data-toggle="tab" href="#info_contact">Info contact</a></li>
-</ul>
+    <ul class="nav nav-tabs">
+        <li class="active"><a data-toggle="tab" href="#info_proprietaire">Info Propriétaire</a></li>
+        {% if action != 'add' %}
+            <li><a data-toggle="tab" href="#info_contact">Info contact</a></li>
+        {% endif %}
+    </ul>
 
-<div class="tab-content">
-  <br>
-    <div id="info_proprietaire" class="tab-pane fade in active">
-      <div id="ff">
-        <form method="post" action="{% url 'proprietaire-update-save' %}" id ="proprietaire_form">
-          <input type="hidden" id="previous" name="previous" value="{{request.META.HTTP_REFERER }}"/>
-          <input type="hidden" id="action" name="action" value="{{action}}"/>
-          <input type="hidden" id="id" name="id" value="{{proprietaire.id}}"/>
-          <input type="hidden" id="prev" name="prev" value="{{prev}}"/>
-          {% csrf_token %}
-          <div class="row">
-            <div class="col-md-12">
-              <label for="proprietaire">Propriétaire</label>
-              {% if action == 'update'%}
-              <input  class="form-control" type="text" value="{{ proprietaire.proprietaire }}" readonly="readonly" />
-                <input  class="form-control" type="hidden" value="{{ proprietaire.proprietaire.id }}" readonly="readonly" id="proprietaire" name="proprietaire"/>
-              {%endif%}
-              {% if action == 'add'%}
-                <select id="proprietaire" name="proprietaire"  class="form-control">
-                  <option value="" >-</option>
-                  {%for p in personnes%}
-                      {%if p == proprietaire.proprietaire %}
-                        <option value="{{p.id}}" selected>{{p}}</option>
-                      {%else%}
-                        <option value="{{p.id}}" >{{p}}</option>
-                      {%endif%}
-                  {%endfor%}
-                </select>
-              {%endif%}
+    <div class="tab-content">
+        <br>
+
+        <div id="info_proprietaire" class="tab-pane fade in active">
+            <div id="ff">
+                <form method="post" action="{% url 'proprietaire-update-save' %}" id="proprietaire_form">
+                    <input type="hidden" id="previous" name="previous" value="{{ request.META.HTTP_REFERER }}"/>
+                    <input type="hidden" id="action" name="action" value="{{ action }}"/>
+                    <input type="hidden" id="id" name="id" value="{{ proprietaire.id }}"/>
+                    <input type="hidden" id="prev" name="prev" value="{{ prev }}"/>
+                    {% csrf_token %}
+                    <div class="row">
+                        <div class="col-md-5">
+                            <label for="proprietaire">Propriétaire</label>
+                            {% if action == 'update' %}
+                                <input class="form-control" type="text" value="{{ proprietaire.proprietaire }}"
+                                       readonly="readonly"/>
+                                <input class="form-control" type="hidden" value="{{ proprietaire.proprietaire.id }}"
+                                       readonly="readonly" id="proprietaire" name="proprietaire"/>
+                            {% endif %}
+                            {% if action == 'add' %}
+                                <select id="proprietaire" name="proprietaire" class="form-control">
+                                    <option value="-">-</option>
+                                    {% for p in personnes %}
+                                        {% if p == proprietaire.proprietaire %}
+                                            <option value="{{ p.id }}" selected>{{ p }}</option>
+                                        {% else %}
+                                            <option value="{{ p.id }}">{{ p }}</option>
+                                        {% endif %}
+                                    {% endfor %}
+                                </select>
+
+
+                            {% endif %}
+                        </div>
+                        <div class="col-md-1">
+                            {% if action == 'add' %}
+                                <label> </label>
+                                <input class="btn btn-default" type="button"
+                                       value="+"
+                                       title="Pour ajouter une personne" id="btn_ajout_personne"/>
+                            {% endif %}
+                        </div>
+
+                    </div>
+                    {% if action == 'add' %}
+                    <div class="row"  id="pnl_nouveau_personne"
+                         style="visibility:hidden;display:none">
+                        <div class="col-md-3">
+                            <div id="pnl_nouveau_nom">
+                                <label for="proprietaire">Nouvelle personne nom</label>
+                                <input class="form-control" type="text" value="" name="nouveau_nom"/>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div id="pnl_nouveau_prenom" >
+                                <label for="proprietaire">Nouvelle personne prénom</label>
+                                <input class="form-control" type="text" value="" name="nouveau_prenom"/>
+                            </div>
+                        </div>
+                    </div>
+                    {% endif %}
+                    <br>
+
+                    <div class="row">
+                        <div class="col-md-12">
+                            <label for="batiment_id">Batiment</label><br>
+                            {{ proprietaire.batiment }}
+                            <input type="hidden" id="batiment_id" name="batiment_id"
+                                   value="{{ proprietaire.batiment.id }}"/>
+                        </div>
+                    </div>
+                    <br>
+
+                    <div class="row">
+                        <div class="col-md-3">
+                            <label>Date début</label>
+                            <input class="form-control" type="text"
+                                   value="{% if proprietaire.date_debut %}{{ proprietaire.date_debut|date:"j/m/Y" }}{% endif %}"
+                                   id="proprietaire_date_debut" name="date_debut" />
+                        </div>
+                        <div class="col-md-3">
+                            <label>Date fin</label>
+                            <input class="form-control" type="date"
+                                   value="{% if proprietaire.date_fin %}{{ proprietaire.date_fin|date:"j/m/Y" }}{% endif %}"
+                                   id="proprietaire_date_fin" name="date_fin"/>
+                        </div>
+                        <div class="col-md-6">
+                        </div>
+                    </div>
+                    <br>
+                    <div class="row">
+                        <div class="col-md-1">
+                            <button type="submit" class="btn btn-primary"
+                                    title="Sauvegarder"><span class="glyphicon glyphicon-floppy-disk"
+                                                              aria-hidden="true"></span>
+                                Ok
+                            </button>
+                        </div>
+                        <div class="col-md-10">
+                        </div>
+                        <div class="col-md-1">
+                        </div>
+                    </div>
+                </form>
             </div>
-          </div>
-          <br>
-          <div class="row">
-            <div class="col-md-12">
-              <label for="batiment_id">Batiment</label><br>
-              {{ proprietaire.batiment }}
-              <input type="hidden" id="batiment_id" name="batiment_id" value="{{proprietaire.batiment.id}}"/>
-            </div>
-          </div>
-          <br>
-          <div class="row">
-            <div class="col-md-4">
-              <label>Date début</label>
-              <input class="form-control" type="text" value="{%if proprietaire.date_debut%}{{ proprietaire.date_debut|date:"j/m/Y" }}{%endif%}" id="date_debut" name="date_debut"/>
-            </div>
-            <div class="col-md-4">
-              <label>Date fin</label>
-              <input class="form-control" type="date" value="{%if proprietaire.date_fin%}{{ proprietaire.date_fin|date:"j/m/Y" }}{% endif %}" id="date_fin" name="date_fin"/>
-            </div>
-            <div class="col-md-4">
-            </div>
-          </div>
-          <br>
-          <div class="row">
-            <div class="col-md-1">
-                <button type="submit" class="btn btn-primary"
-                    title="Sauvegarder"><span class="glyphicon glyphicon-floppy-disk" aria-hidden="true"></span>
-                    Ok</button>
-            </div>
-            <div class="col-md-10">
-            </div>
-            <div class="col-md-1">
-            </div>
-          </div>
-        </form>
-      </div>
+        </div>
+        <div id="info_contact" class="tab-pane fade ">
+            {% include 'personne_sub_form.html' %}
+        </div>
     </div>
-    <div id="info_contact" class="tab-pane fade ">
-      {% include 'personne_sub_form.html'%}
+
+    {% if message %}
+        <br>
+        <div class="alert alert-danger" role="alert" id="message">{{ message }}</div>
+
+    {% endif %}
+    <!-- Ajout personne modal -->
+    <div class="modal fade" id="ajoutPersonneModal" tabindex="-1" role="dialog" aria-labelledby="submissionScoresLabel">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                            aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title" id="submissionScoresLabel">Ajout Personne</h4>
+                </div>
+                <div class="modal-body">
+                    <form method="post" enctype="multipart/form-data" action="{% url 'personne-create-proprietaire' %}">
+                        {% csrf_token %}
+                        <input type="hidden" value="{{ proprietaire.id }}" name="proprietaire_id_pers"/>
+
+                        <div class="row">
+                            <div class="col-md-6">
+                                <label for="nom" class="control-label">Nom</label>
+                                <input class="form-control" id="nom" placeholder="Nom" name="nom"
+                                       style="text-transform:uppercase">
+                            </div>
+                            <div class="col-md-6">
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <label for="prenom" class="control-label">Prénom</label>
+                                <input class="form-control" id="prenom" placeholder="Prenom" name="prenom"
+                                       style="text-transform:uppercase">
+                            </div>
+                            <div class="col-md-6">
+                            </div>
+                        </div>
+                </div>
+                <div class="modal-footer">
+                    <input type="submit" value="ok"/>
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Annuler</button>
+                </div>
+                </form>
+            </div>
+        </div>
     </div>
-</div>
-
-  {%if message%}
-  <br>
-    <div class="alert alert-danger" role="alert" id="message">{{message}}</div>
-
-  {%endif%}
-  <!-- Ajout personne modal -->
-  <div class="modal fade" id="ajoutPersonneModal" tabindex="-1" role="dialog" aria-labelledby="submissionScoresLabel">
-      <div class="modal-dialog" role="document">
-          <div class="modal-content">
-              <div class="modal-header">
-                  <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                  <h4 class="modal-title" id="submissionScoresLabel">Ajout Personne</h4>
-              </div>
-              <div class="modal-body">
-              <form  method="post" enctype="multipart/form-data" action="{% url 'personne-create-proprietaire' %}">
-                {% csrf_token %}
-                <input type="hidden" value="{{ proprietaire.id}}" name="proprietaire_id_pers"/>
-                <div class="row">
-                  <div class="col-md-6">
-                    <label for="nom" class="control-label">Nom</label>
-                    <input class="form-control" id="nom" placeholder="Nom" name="nom" style="text-transform:uppercase">
-                  </div>
-                  <div class="col-md-6">
-                  </div>
-                </div>
-                  <div class="row">
-                    <div class="col-md-6">
-                    <label for="prenom"  class="control-label">Prénom</label>
-                    <input class="form-control" id="prenom" placeholder="Prenom" name="prenom" style="text-transform:uppercase">
-                  </div>
-                  <div class="col-md-6">
-                  </div>
-                </div>
-              </div>
-              <div class="modal-footer">
-                  <input type="submit" value="ok"/>
-                  <button type="button" class="btn btn-default" data-dismiss="modal">Annuler</button>
-              </div>
-            </form>
-          </div>
-      </div>
-  </div>
 {% endblock %}
+
+
+

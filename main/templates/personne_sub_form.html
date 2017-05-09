@@ -1,34 +1,35 @@
   <form method="post" action="{% url 'personne-update' %}">
     {% csrf_token %}
-    <input type="hidden" id="previous" name="previous" value="{{request.META.HTTP_REFERER }}"/>
-    <input type="hidden" value="{{ personne.id }}" name="personne_id"/>
-    {{form.errors}}
+    <input type="hidden" id="previous" name="previous" value="{{request.META.HTTP_REFERER }}">
+    <input type="hidden" value="{{ personne.id }}" name="personne_id">
     <div class="row">
       <div class="col-md-6">
           <label>Nom</label>
-          <input class="form-control" name="nom" id="txt_nom" value="{{ personne.nom| default_if_none:'' }}" required>
+          <input class="form-control required" name="nom" id="txt_nom" value="{{ personne.nom| default_if_none:'' }}">
+          <font class="erreur_formulaire">{{ form.nom.errors|striptags }}</font>
       </div>
       <div class="col-md-6">
           <label>Prénom</label>
-          <input class="form-control" name="prenom" id="txt_prenom" value="{{ personne.prenom| default_if_none:'' }}" required>
+          <input class="form-control required" name="prenom" id="txt_prenom" value="{{ personne.prenom| default_if_none:'' }}">
+          <font class="erreur_formulaire">{{ form.prenom.errors|striptags }}</font>
       </div>
     </div>
     <br>
     <div class="row">
       <div class="col-md-6">
           <label>Email</label>
-          <input class="form-control" name="email" value="{{ personne.email| default_if_none:'' }}" ><font style="color:red">{{ form.email.errors }}</font>
+          <input class="form-control" name="email" value="{{ personne.email| default_if_none:'' }}" >
+          <font class="erreur_formulaire">{{ form.email.errors|striptags }}</font>
       </div>
       <div class="col-md-6">
         <label>Type personne</label>
           <select class="form-control" name="type_personne" value="{{ personne.personne_type| default_if_none:'' }}" >
-            <option value="NON_PRECISE" >Non précisé</option>
+            <option value="NON_PRECISE">Non précisé</option>
             <option value="LOCATAIRE" {% if personne.personne_type == 'LOCATAIRE' %}selected{%endif%}>Locataire</option>
-            <option value="PROFESSIONNEL"  {% if personne.personne_type == 'PROFESSIONNEL' %}selected{%endif%}>Professionnel</option>
-            <option value="ANCIEN_LOCATAIRE"  {% if personne.personne_type == 'ANCIEN_LOCATAIRE' %}selected{%endif%}>Ancien locataire</option>
-            <option value="ANCIEN_PROPRIETAIRE"  {% if personne.personne_type == 'ANCIEN_PROPRIETAIRE' %}selected{%endif%}>Ancien propriétaire</option>
+            <option value="PROFESSIONNEL" {% if personne.personne_type == 'PROFESSIONNEL' %}selected{%endif%}>Professionnel</option>
+            <option value="ANCIEN_LOCATAIRE" {% if personne.personne_type == 'ANCIEN_LOCATAIRE' %}selected{%endif%}>Ancien locataire</option>
+            <option value="ANCIEN_PROPRIETAIRE" {% if personne.personne_type == 'ANCIEN_PROPRIETAIRE' %}selected{%endif%}>Ancien propriétaire</option>
           </select>
-
       </div>
     </div>
     <br>
@@ -50,16 +51,36 @@
           <label>Profession</label>
           <input class="form-control" name="profession" value="{{ personne.profession| default_if_none:'' }}" >
       </div>
-      <div class="col-md-6">
+      <div class="col-md-5">
         <label>Société</label>
-        <select name="societe" class="form-control">
-          <option value="">-</option>
+        <select name="societe" class="form-control" id="slt_societes">
+          <option value="-">-</option>
           {%for s in societes%}
           <option value="{{s.id}}" {%if s.id == personne.societe.id%}selected{%endif%}>{{s}}</option>
           {%endfor %}
         </select>
         <span style="color:red">{{ form.societe.errors }}</span>
       </div>
+      <div class="col-md-1">
+          <button type="button" class="btn btn-warning" id="btn_ajout_societe">
+              <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
+          </button>
+      </div>
+    </div>
+    <div id="pnl_nouvelle_societe" class="new" style="visibility:hidden;display:none">
+      <br>
+      <label><u>Nouvelle societé</u></label>
+      <div class="row">
+          <div class="col-md-6">
+              <label>Nom</label>
+              <input class="form-control" type="text" value="" name="nom_nouvelle_societe" maxlength="100"/>
+          </div>
+          <div class="col-md-6">
+              <label>Description</label>
+              <textarea class="form-control" type="text" value="" name="description_nouvelle_societe"></textarea>
+          </div>
+      </div>
+      <br>
     </div>
     <br>
     <div class="row">
@@ -76,9 +97,9 @@
     </div>
     <br>
     <div class="row">
-      <div class="col-md-4">
+      <div class="col-md-2">
         <label>Date naissance</label>
-        <input class="form-control" name="date_naissance"
+        <input class="form-control" name="date_naissance" id="txt_date_naissance"
                value="{{ personne.date_naissance|date:"j/m/Y"| default_if_none:'' }}">
         <font style="color:red">{{ form.date_naissance.errors }}</font>
       </div>
@@ -90,13 +111,51 @@
         <label>Pays naissance</label>
         <input class="form-control" name="pays_naissance" value="{{ personne.pays_naissance| default_if_none:'' }}" >
       </div>
+      <div class="col-md-3">
+      </div>
     </div>
     <br>
     <div class="row">
       <div class="col-md-11">
       </div>
       <div class="col-md-1">
-        <input type="submit" value="OK">
+        <input type="submit" value="Enregistrer" class="btn btn-primary" title="Enregistrer">
       </div>
     </div>
   </form>
+
+
+  <!-- Ajout societe modal -->
+  <div class="modal fade" id="ajoutSocieteModal" tabindex="-1" role="dialog">
+      <div class="modal-dialog" role="document">
+          <div class="modal-content">
+              <div class="modal-header">
+                  <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                  <h4 class="modal-title" >Ajout société</h4>
+              </div>
+              <div class="modal-body">
+                  <form method="post"
+                        enctype="multipart/form-data"
+                        action="{% url 'personne-create-societe' %}">
+                      {% csrf_token %}
+                      <input type="hidden" value="{{ personne.id}}" name="id_pers"/>
+
+                      <div class="row">
+                          <div class="col-md-6">
+                              <label for="nom" class="control-label">Nom</label>
+                              <input class="form-control" id="nom_societe" placeholder="Nom" name="nom_societe" style="text-transform:uppercase" required>
+                          </div>
+                          <div class="col-md-6">
+                          </div>
+                      </div>
+
+                      <br>
+                      <div class="modal-footer">
+                          <input type="submit" value="Enregistrer" class="btn btn-primary"/>
+                          <button type="button" class="btn btn-default" data-dismiss="modal">Annuler</button>
+                      </div>
+                  </form>
+              </div>
+          </div>
+      </div>
+  </div>
