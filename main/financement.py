@@ -91,7 +91,7 @@ def create(request):
         suivis_existant = mdl.suivi_loyer.find(financement_courant, nouveau_financement.date_debut, 'A_VERIFIER')
         for s in suivis_existant:
             s.financement_location = nouveau_financement
-            s.remarque = 'Nouveau financement'
+            s.remarque = 'Indexé'
             s.save()
         if prev == 'fl':
             return render(request, "contratlocation_update.html",
