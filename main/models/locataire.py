@@ -45,6 +45,7 @@ class Locataire(models.Model):
     profession = models.ForeignKey('Fonction', blank=True, null=True)
     civilite = models.CharField(max_length=15, choices=CIVILITE, default='NON_PRECISE')
     # personne_garante     = models.ForeignKey('Personne', blank=True, null=True)
+    actif = models.BooleanField(default=True)
 
     def __str__(self):
         return self.personne.nom + ", " + self.personne.prenom

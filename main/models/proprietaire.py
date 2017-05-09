@@ -31,6 +31,7 @@ class Proprietaire(models.Model):
     batiment = models.ForeignKey('Batiment')
     date_debut = models.DateField(auto_now=False, blank=True, null=True, auto_now_add=False, verbose_name=u"Date début")
     date_fin = models.DateField(auto_now=False, blank=True, null=True, auto_now_add=False)
+    actif = models.BooleanField(default=True)
 
     @property
     def batiments(self):
