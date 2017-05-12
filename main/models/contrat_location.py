@@ -69,8 +69,11 @@ class ContratLocation(models.Model):
     def financements(self):
         return FinancementLocation.find_by_location(self)
 
+    @property
+    def dernier_versement(self):
+        return SuiviLoyer.find_dernier_paye(self)
+
     def save(self,  *args, **kwargs):
-        print('save_contrat_location')
         df = (self.date_debut + relativedelta(years=1))-relativedelta(days=1)
         self.date_fin = df
         self.renonciation = (self.date_debut + relativedelta(years=1))-relativedelta(days=10)

@@ -3,16 +3,20 @@
     <input type="hidden" id="previous" name="previous" value="{{request.META.HTTP_REFERER }}">
     <input type="hidden" value="{{ personne.id }}" name="personne_id">
     <div class="row">
-      <div class="col-md-6">
+      <div class="col-md-4">
           <label>Nom</label>
           <input class="form-control required" name="nom" id="txt_nom" value="{{ personne.nom| default_if_none:'' }}">
           <font class="erreur_formulaire">{{ form.nom.errors|striptags }}</font>
       </div>
-      <div class="col-md-6">
+      <div class="col-md-4">
           <label>Prénom</label>
           <input class="form-control required" name="prenom" id="txt_prenom" value="{{ personne.prenom| default_if_none:'' }}">
           <font class="erreur_formulaire">{{ form.prenom.errors|striptags }}</font>
       </div>
+      <div class="col-md-4">
+          <label>Prénom2</label>
+          <input class="form-control" name="prenom2" id="txt_prenom2" value="{{ personne.prenom2| default_if_none:'' }}">
+       </div>
     </div>
     <br>
     <div class="row">
@@ -27,6 +31,7 @@
             <option value="NON_PRECISE">Non précisé</option>
             <option value="LOCATAIRE" {% if personne.personne_type == 'LOCATAIRE' %}selected{%endif%}>Locataire</option>
             <option value="PROFESSIONNEL" {% if personne.personne_type == 'PROFESSIONNEL' %}selected{%endif%}>Professionnel</option>
+            <option value="PROPRIETAIRE" {% if personne.personne_type == 'PROPRIETAIRE' %}selected{%endif%}>Propriétaire</option>
             <option value="ANCIEN_LOCATAIRE" {% if personne.personne_type == 'ANCIEN_LOCATAIRE' %}selected{%endif%}>Ancien locataire</option>
             <option value="ANCIEN_PROPRIETAIRE" {% if personne.personne_type == 'ANCIEN_PROPRIETAIRE' %}selected{%endif%}>Ancien propriétaire</option>
           </select>

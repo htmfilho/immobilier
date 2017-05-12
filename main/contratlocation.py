@@ -105,7 +105,7 @@ def contrat_location_for_batiment(request, batiment_id):
 def list(request):
     date_fin = timezone.now()
     locations = mdl.contrat_location.search(date_fin)
-    return render(request, "contratlocation_list.html",
+    return render(request, "location/contratlocation_list.html",
                            {'locations': locations,
                             'date_fin_filtre_location': date_fin})
 
@@ -233,6 +233,6 @@ def search(request):
         locations = mdl.contrat_location.search(date_fin)
     else:
         locations = mdl.contrat_location.find_all()
-    return render(request, "contratlocation_list.html",
+    return render(request, "location/contratlocation_list.html",
                            {'locations': locations,
                             'date_fin_filtre_location': date_fin})

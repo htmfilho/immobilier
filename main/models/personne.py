@@ -33,7 +33,7 @@ from main.models import contrat_gestion as ContratGestion
 
 class PersonneAdmin(admin.ModelAdmin):
     search_fields = ['nom']
-    list_filter = ('nom', 'prenom',)
+    list_filter = ('nom', 'prenom','prenom2')
 
 
 class Personne(models.Model):
@@ -48,6 +48,7 @@ class Personne(models.Model):
     )
     nom = models.CharField(max_length=100)
     prenom = models.CharField(max_length=100)
+    prenom2 = models.CharField(max_length=100, blank=True, null=True)
     # societe        = models.CharField(max_length=100, blank=True, null=True)
     email = models.EmailField(blank=True, null=True)
     profession = models.CharField(max_length=100, blank=True, null=True)
@@ -116,7 +117,7 @@ class Personne(models.Model):
 
     class Meta:
         ordering = ['nom', 'prenom']
-        unique_together = (("nom", "prenom"),)
+        unique_together = (("nom", "prenom", "prenom2"),)
 
     def save(self,  *args, **kwargs):
 
@@ -172,5 +173,5 @@ def delete_personne(id):
     return None
 
 
-def find_personne_by_nom_prenom(un_nom, un_prenom):
-    return Personne.objects.filter(nom__iexact=un_nom, prenom__iexact=un_prenom)
+def find_personne_by_nom_prenom(un_nom, un_prenom, un_prenom2):
+    return Personne.objects.filter(nom__iexact=un_nom, prenom__iexact=un_prenom, prenom2__iexact=un_prenom2)

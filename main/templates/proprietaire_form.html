@@ -62,14 +62,20 @@
                          style="visibility:hidden;display:none">
                         <div class="col-md-3">
                             <div id="pnl_nouveau_nom">
-                                <label for="proprietaire">Nouvelle personne nom</label>
+                                <label>Nouvelle personne nom</label>
                                 <input class="form-control" type="text" value="" name="nouveau_nom"/>
                             </div>
                         </div>
                         <div class="col-md-3">
                             <div id="pnl_nouveau_prenom" >
-                                <label for="proprietaire">Nouvelle personne prénom</label>
+                                <label>Nouvelle personne prénom</label>
                                 <input class="form-control" type="text" value="" name="nouveau_prenom"/>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div id="pnl_nouveau_prenom2" >
+                                <label >Nouvelle personne prénom2</label>
+                                <input class="form-control" type="text" value="" name="nouveau_prenom2"/>
                             </div>
                         </div>
                     </div>
@@ -120,7 +126,7 @@
             </div>
         </div>
         <div id="info_contact" class="tab-pane fade ">
-            {% include 'personne_sub_form.html' %}
+            {% include 'personne/personne_sub_form.html' %}
         </div>
     </div>
 

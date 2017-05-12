@@ -186,7 +186,7 @@ def home(request):
 
 def listeBatiments(request):
     batiments = mdl.batiment.find_all()
-    return render(request, 'listeBatiments.html', {'batiments': batiments, 
+    return render(request, 'batiment/listeBatiments.html', {'batiments': batiments,
                                                    'proprietaires': mdl.proprietaire.find_distinct_proprietaires()})
 
 
@@ -199,7 +199,7 @@ def listeBatiments_filtrer(request, personne_id):
         personne = mdl.personne.find_personne(personne_id)
         batiments = mdl.personne.batiments
 
-    return render(request, 'listeBatiments.html', {'batiments': batiments,
+    return render(request, 'batiment/listeBatiments.html', {'batiments': batiments,
                                                    'filtre': personne})
 
 

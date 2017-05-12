@@ -117,7 +117,7 @@ def proprietaire_update_save(request):
     if request.POST['proprietaire']=='-':
         valide=True
         if request.POST['nouveau_nom'] and request.POST['nouveau_prenom']:
-            personne_deja_existante = mdl.personne.find_personne_by_nom_prenom(request.POST['nouveau_nom'],request.POST['nouveau_prenom'])
+            personne_deja_existante = mdl.personne.find_personne_by_nom_prenom(request.POST['nouveau_nom'],request.POST['nouveau_prenom'],request.POST['nouveau_prenom2'])
             if personne_deja_existante:
                 valide = False
                 message = 'Une personne existe déjà avec ces noms/prénoms : {} {}'.format(request.POST['nouveau_nom'],request.POST['nouveau_prenom'])

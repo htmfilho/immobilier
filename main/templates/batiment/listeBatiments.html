@@ -1,57 +1,17 @@
 {% extends "layout.html" %}
 {% load staticfiles %}
-{% block breadcrumb %}
 
-{% endblock %}
 {% block content %}
+<div class="row">
+    <div class="col-md-8">
 
-{% if filtre%}
-<a href="{% url 'listeBatiments' %}">Voir tous les batiments</a>
-{%endif%}
-    <!-- Filtre -->
-
-    <div class="row">
-        <div class="col-md-8">
-            <div class="panel panel-info">
-                <div class="panel-heading">Filtre</div>
-                <div class="panel-body">
-
-                <form method="get"
-                      action="{% url 'batiment_search'%}" >
-                    <div class="row">
-                        <div class="col-md-4">
-                            <label>Propriétaires</label>
-                            <select id="slt_proprietaire"
-                                    name="proprietaire">
-                                <option value="">-</option>
-                                {% for p in proprietaires %}
-                                    <option value="{{p.id}}">{{p.proprietaire}}</option>
-                                {% endfor %}
-                            </select>
-                        </div>
-                        <div class="col-md-4">
-
-                        </div>
-                        <div class="col-md-4">
-                            <label class="invisible">&nbsp;</label>
-                            <div class="btnbtn-as-block"><input type="submit" value="OK" name="btn"></div>
-                        </div>
-                    </div>
-                </form>
-
-
-
-        </div>
-            </div>
-        </div>
-        <div class="col-md-4">
-            <a href="{% url 'batiment-create' %}"
-               title="Pour créer un nouveau batiment"
-               class="btn pull-right"><span class="glyphicon glyphicon-plus" aria-hidden="true"></span></a>
-        </div>
     </div>
-
-    <!-- fin Filtre -->
+    <div class="col-md-4">
+        <a href="{% url 'batiment-create' %}"
+           title="Pour créer un nouveau batiment"
+           class="btn btn-default pull-right"><span class="glyphicon glyphicon-plus" aria-hidden="true"></span></a>
+    </div>
+</div>
 <br>
 <div class="panel panel-default">
   <div class="panel-body">
@@ -62,7 +22,7 @@
                 <tr>
                     <th>Bien</th>
                     <th>Localité</th>
-                    <th>Proprio(s)</th>
+                    <th>Proprio(s)s</th>
                     <th class="no-sort">Locataires</th>
                     <th class="no-sort">Location</th>
                     <th class="no-sort"></th>

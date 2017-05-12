@@ -29,7 +29,12 @@ from dateutil.relativedelta import relativedelta
 import datetime
 import calendar
 from main.models import batiment as Batiment
-
+ETAT = (
+    ('A_VERIFIER', 'A vérifier'),
+    ('IMPAYE', 'Impayé'),
+    ('EN_RETARD', 'En retard'),
+    ('PAYE', 'Payé')
+)
 
 class SuiviLoyerAdmin(admin.ModelAdmin):
     list_display = ('loyer_percu', 'etat_suivi', 'financement_location')
@@ -38,14 +43,6 @@ class SuiviLoyerAdmin(admin.ModelAdmin):
 
 
 class SuiviLoyer(models.Model):
-
-    ETAT = (
-        ('A_VERIFIER', 'A vérifier'),
-        ('IMPAYE', 'Impayé'),
-        ('EN_RETARD', 'En retard'),
-        ('PAYE', 'Payé')
-    )
-
     financement_location = models.ForeignKey('FinancementLocation')
     date_paiement = models.DateField(auto_now=False, auto_now_add=False)
     etat_suivi = models.CharField(max_length=10, choices=ETAT, default='A_VERIFIER')
@@ -141,3 +138,14 @@ def find(financement_courant, date_debut, etat):
     return SuiviLoyer.objects.filter(financement_location=financement_courant,
                                      date_paiement__gte=date_debut,
                                      etat_suivi=etat)
+
+def find_dernier_paye(un_contrat_location):
+    print('find_dernier_paye')
+    print(un_contrat_location)
+    resul = SuiviLoyer.objects.filter(financement_location__contrat_location=un_contrat_location,
+                                      date_paiement_reel__isnull=False,
+                                      etat_suivi='PAYE').order_by('-date_paiement_reel')
+    for r in resul:
+        print('for')
+        print(r.date_paiement_reel)
+    return resul.first()

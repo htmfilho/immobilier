@@ -47,7 +47,7 @@ def create(request):
 
 
 def list(request):
-    return render(request, "personne_list.html",
+    return render(request, "personne/personne_list.html",
                   {'personnes': mdl.personne.find_all()})
 
 
@@ -62,7 +62,7 @@ def search(request):
     if prenom:
         query = query.filter(prenom__icontains=prenom)
 
-    return render(request, "personne_list.html",
+    return render(request, "personne/personne_list.html",
                   {'nom': nom,
                    'prenom': prenom,
                    'personnes': query})
@@ -75,6 +75,7 @@ def update(request):
 
     personne.nom = request.POST['nom']
     personne.prenom = request.POST['prenom']
+    personne.prenom2 = request.POST['prenom2']
     personne.email = request.POST['email']
     personne.personne_type = 'NON_PRECISE'
     if request.POST['type_personne']:
@@ -108,7 +109,7 @@ def update(request):
 
     if form.is_valid():
         personne.save()
-        return render(request, "personne_list.html",
+        return render(request, "personne/personne_list.html",
                       {'personnes': mdl.personne.find_all()})
     else:
         return render(request, "personne_form.html",

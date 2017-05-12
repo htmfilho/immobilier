@@ -105,7 +105,7 @@ def update(request):
 def search(request):
     proprietaire = request.GET.get('proprietaire', None)
     batiments = mdl.batiment.search(proprietaire)
-    return render(request, 'listeBatiments.html', {'batiments': batiments,
+    return render(request, 'batiment/listeBatiments.html', {'batiments': batiments,
                                                    'proprietaires': mdl.proprietaire.find_distinct_proprietaires()})
 
 def delete(request, batiment_id):
