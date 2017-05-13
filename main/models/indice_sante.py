@@ -21,6 +21,24 @@
 #    see http://www.gnu.org/licenses/.
 #
 ##############################################################################
-from main.models import personne,alerte,assurance, banque,batiment,contrat_gestion,contrat_location, \
-financement_location,fonction,frais_maintenance, honoraire,localite, locataire, modele_document, pays,photo, \
-professionnel, proprietaire, societe,suivi_loyer, type_societe, indice_sante
+from django.db import models
+from django.contrib import admin
+from django.utils import timezone
+from dateutil.relativedelta import relativedelta
+
+
+class IndiceSanteAdmin(admin.ModelAdmin):
+    list_filter = ('annee_base','date_calcul')
+
+
+class IndiceSante(models.Model):
+
+    date_calcul = models.DateField(auto_now=False, auto_now_add=False)
+    annee_base = models.IntegerField()
+    indice = models.DecimalField(max_digits=6, decimal_places=2, default=0, blank=False, null=False)
+
+    def __str__(self):
+        return self.date_calcul + " " + str(self.annee_base) + str(self.indice)
+
+
+

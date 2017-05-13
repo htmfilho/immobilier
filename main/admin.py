@@ -24,7 +24,7 @@
 from django.contrib import admin
 from main.models import personne, assurance, banque, batiment, financement_location, locataire, contrat_location\
     , contrat_gestion, frais_maintenance, suivi_loyer, professionnel, proprietaire, modele_document, photo, societe\
-    , alerte, pays, localite, honoraire, fonction, type_societe
+    , alerte, pays, localite, honoraire, fonction, type_societe, indice_sante
 
 
 admin.site.register(personne.Personne, personne.PersonneAdmin)
@@ -48,3 +48,4 @@ admin.site.register(honoraire.Honoraire, honoraire.HonoraireAdmin)
 admin.site.register(fonction.Fonction)
 admin.site.register(professionnel.Professionnel, professionnel.ProfessionnelAdmin)
 admin.site.register(type_societe.TypeSociete)
+admin.site.register(indice_sante.IndiceSante, indice_sante.IndiceSanteAdmin)
