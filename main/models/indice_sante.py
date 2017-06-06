@@ -21,6 +21,7 @@
 #    see http://www.gnu.org/licenses/.
 #
 ##############################################################################
+import datetime
 from django.db import models
 from django.contrib import admin
 from django.utils import timezone
@@ -32,13 +33,18 @@ class IndiceSanteAdmin(admin.ModelAdmin):
 
 
 class IndiceSante(models.Model):
-
     date_calcul = models.DateField(auto_now=False, auto_now_add=False)
     annee_base = models.IntegerField()
     indice = models.DecimalField(max_digits=6, decimal_places=2, default=0, blank=False, null=False)
+
+    class Meta:
+        unique_together = ('date_calcul', 'annee_base',)
+
 
     def __str__(self):
         return self.date_calcul + " " + str(self.annee_base) + str(self.indice)
 
 
-
+def find_by_date(date_ref):
+    date_reference = datetime.datetime( date_ref.year, date_ref.month , 1 )
+    return IndiceSante.objects.filter(date_calcul=date_reference).first()

@@ -22,7 +22,7 @@
 * see http://www.gnu.org/licenses/.
 {% endcomment %}
 
-
+    {% if  location.batiment %}<li><a href="{% url 'batiment' location.batiment.id %}">Batiment</a></li>{% endif %}
   <li class="active">Location</li>
 {% endblock %}
 {% block content %}
@@ -97,7 +97,13 @@
              value="{{ location.remarque| default_if_none:'' }}"
              name="remarque">
       <br>
-      <input type="submit" class="btn btn-primary pull-right" value="Ok" />
+
+
+        <button type="submit" class="btn btn-primary pull-right" title="Sauvegarder">
+            <span class="glyphicon glyphicon-floppy-disk" aria-hidden="true"> Enregistrer</span>
+        </button>
+
+
       <input type="hidden" id="return_lnk" name="return_lnk" value="{{ request.META.HTTP_REFERER }}"/>
 
     </form>

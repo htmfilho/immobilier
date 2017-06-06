@@ -5,20 +5,12 @@
 {% block content %}
 <div class="panel panel-default">
   <div class="panel-body">
-      <div class="row">
-          <div class="col-md-8">
 
-          </div>
-          <div class="col-md-4">
-              <p align="right">
-                  <a href="{% url 'personne-create' %}"
-                     title="Pour ajouter une nouvelle personne"
-                          class="btn btn-default"><span class="glyphicon glyphicon-plus" aria-hidden="true"></span></a>
-              </p>
-          </div>
-      </div>
+      <a href="{% url 'personne-create' %}"
+         title="Pour ajouter une nouvelle personne"
+              class="btn btn-default pull-right"><span class="glyphicon glyphicon-plus" aria-hidden="true"> Ajouter</span></a>
 
-      <br>
+      <br> <br>
       <table class="table table-striped table-hover display"
              id="tbl_data">
           <thead>
@@ -47,7 +39,7 @@
               <td>
                   {{ personne.prenom2| default_if_none:'' }}
               </td>
-              <td>{{personne.get_personne_type_display}}</td>
+              <td>{{personne.type}}</td>
               <td>
                 {% if personne.email %}
                   {{ personne.email }}
@@ -62,8 +54,8 @@
                   {{ personne.telephone }}
                   {% endif %}
               </td>
-              <td>{% if personne.profession %}
-                  {{ personne.profession }}
+              <td>{% if personne.fonction %}
+                  {{ personne.fonction.nom_fonction }}
                   {% endif %}
               </td>
               <td>{% if personne.societe %}

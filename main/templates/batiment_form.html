@@ -1,4 +1,5 @@
 {% extends "layout.html" %}
+{% load l10n %}
 {% block breadcrumb %}
   <li class="active">Batiment</li>
 {% endblock %}
@@ -90,9 +91,11 @@
      <label class="control-label">Description</label>
      <textarea class="form-control" name="description" cols="4" rows="4" >{{ batiment.description | default_if_none:'' }}</textarea>
      <br>
-     <input type="submit" class="btn btn-primary pull-right"
-            title="Enregistrer les infos propres au batiment"
-            value="Enregistrer">
+
+    <button type="submit" class="btn btn-primary pull-right" title="Sauvegarder">
+        <span class="glyphicon glyphicon-floppy-disk" aria-hidden="true"> Enregistrer</span>
+    </button>
+
      <br>
       <br>
       {% if batiment.id %}

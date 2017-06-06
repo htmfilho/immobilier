@@ -31,7 +31,8 @@ from django.shortcuts import render, get_object_or_404
 from django.utils import timezone
 from django.views.generic import *
 from django.core.urlresolvers import reverse_lazy
-from main.forms import BatimentForm, ProprietaireForm, FraisMaintenanceForm, SocieteForm, FileForm, LettreForm, LigneForm
+from main.forms import BatimentForm, ProprietaireForm, FraisMaintenanceForm, SocieteForm, FileForm, LettreForm, \
+    LigneForm
 
 from io import BytesIO
 from django.http import HttpResponse
@@ -51,8 +52,6 @@ from reportlab.platypus.doctemplate import PageTemplate, BaseDocTemplate, NextPa
 from reportlab.platypus.tableofcontents import TableOfContents
 from reportlab.platypus.frames import Frame
 import datetime
-from main.models import personne as Personne
-from main.models import societe as Societe
 
 from templated_docs import fill_template
 from templated_docs.http import FileResponse
@@ -156,16 +155,7 @@ def home(request):
     montant_attendu = 0
     mois_en_cours = str(datetime.datetime.now().month) + "/" + str(datetime.datetime.now().year)
     mes_frais = mdl.frais_maintenance.find_my_frais()
-    tot_depenses = 0
-    for f in mes_frais:
-        if f.montant:
-            tot_depenses += f.montant
-    tot_recettes = 0
-    for s in suivis_recus:
-        if s.loyer_percu:
-            tot_recettes = tot_recettes + s.loyer_percu
-        if s.charges_percu:
-            tot_recettes = tot_recettes + s.charges_percu
+
     return render(request, 'myhome.html',
                   {'alertes':         mdl.alerte.find_by_etat('A_VERIFIER'),
                    'batiments':       mdl.batiment.find_my_batiments(),
@@ -180,14 +170,34 @@ def home(request):
                    'locataires':      mdl.locataire.find_my_locataires(),
                    'mois_en_cours':   mois_en_cours,
                    'mes_frais':       mes_frais,
-                   'tot_depenses':    tot_depenses,
-                   'tot_recettes':    tot_recettes})
+                   'tot_depenses':    get_total_depenses(mes_frais),
+                   'tot_recettes':    get_total_recettes(suivis_recus)})
+
+
+def get_total_depenses(mes_frais):
+    tot_depenses = 0
+    for f in mes_frais:
+        if f.montant:
+            tot_depenses += f.montant
+    return tot_depenses
+
+
+def get_total_recettes(suivis_recus):
+    tot_recettes = 0
+    if suivis_recus:
+        for s in suivis_recus:
+            if s.loyer_percu:
+                tot_recettes = tot_recettes + s.loyer_percu
+            if s.charges_percu:
+                tot_recettes = tot_recettes + s.charges_percu
+    return tot_recettes
 
 
 def listeBatiments(request):
     batiments = mdl.batiment.find_all()
-    return render(request, 'batiment/listeBatiments.html', {'batiments': batiments,
-                                                   'proprietaires': mdl.proprietaire.find_distinct_proprietaires()})
+    return render(request, 'batiment/listeBatiments.html',
+                  {'batiments': batiments,
+                   'proprietaires': mdl.proprietaire.find_distinct_proprietaires()})
 
 
 def listeBatiments_filtrer(request, personne_id):
@@ -199,8 +209,7 @@ def listeBatiments_filtrer(request, personne_id):
         personne = mdl.personne.find_personne(personne_id)
         batiments = mdl.personne.batiments
 
-    return render(request, 'batiment/listeBatiments.html', {'batiments': batiments,
-                                                   'filtre': personne})
+    return render(request, 'batiment/listeBatiments.html', {'batiments': batiments, 'filtre': personne})
 
 
 @login_required
@@ -818,7 +827,7 @@ class MyDocTemplate(SimpleDocTemplate):
         SimpleDocTemplate.__init__(self, *args, **kwargs)
 
     def afterFlowable(self, flowable):
-         '''Registers TOC entries.'''
+         """Registers TOC entries."""
          if flowable.__class__.__name__ == 'Paragraph':
              text = flowable.getPlainText()
              style = flowable.style.name
@@ -850,7 +859,6 @@ def merge_pdf3(request):
     no_page = 1
     manual_toc = True
     if manual_toc:
-        print('manual_toc')
         cpt = 0
 
         for fname in pdfs:
@@ -862,7 +870,6 @@ def merge_pdf3(request):
                 # lien = '<link href="#%s" color="red">is a link to</link>'% fname
                 lien = '<link destination="#%s" color="red">is a link to</link>' % fname
                 lien = '<link href="#%s" color="red">is a link to</link>' % fname
-                # lien ="kk"
 
             content.append(Paragraph('''
                                     <para>
@@ -972,11 +979,12 @@ class DocTemplateWithTOC(SimpleDocTemplate):
         entryStyle.spaceBefore = 8
         self._tocStory.append(PageBreak())
         self._tocStory.append(Spacer(cm, 1*cm))
-        self._tocStory.append(Paragraph( _("Table of contents"), headerStyle))
+        self._tocStory.append(Paragraph(_("Table of contents"), headerStyle))
         self._tocStory.append(Spacer(cm, 2*cm))
 
+
 def mainPageFrame(canvas, doc):
-    '''The page frame used for all PDF documents.'''
+    """The page frame used for all PDF documents."""
 
     canvas.saveState()
 
@@ -986,7 +994,7 @@ def mainPageFrame(canvas, doc):
     if pageNumber > 1:
         canvas.setFont('Times-Roman', 12)
         canvas.drawString(4 * inch, cm, "%d" % pageNumber)
-        if hasattr(canvas, 'headerLine'): # hackish
+        if hasattr(canvas, 'headerLine'):  # hackish
             headerline = ' \xc2\x8d '.join(canvas.headerLine)
             canvas.drawString(2*cm, A4[1]-1.75*cm, headerline)
 
@@ -996,13 +1004,13 @@ def mainPageFrame(canvas, doc):
 
     canvas.restoreState()
 
+
 class MyDocTemplate(BaseDocTemplate):
      def __init__(self, filename, **kw):
         frame1 = Frame(2.5*cm, 2.5*cm, 15*cm, 25*cm, id='F1')
         self.allowSplitting = 0
         BaseDocTemplate.__init__(self, filename, **kw)
         self.addPageTemplates(PageTemplate('normal', [frame1], mainPageFrame))
-
 
 
 # Entries to the table of contents can be done either manually by
@@ -1016,7 +1024,7 @@ class MyDocTemplate(BaseDocTemplate):
 # with appropriate data.
 
      def afterFlowable(self, flowable):
-         '''Registers TOC entries.'''
+         """Registers TOC entries."""
          if flowable.__class__.__name__ == 'Paragraph':
              text = flowable.getPlainText()
              style = flowable.style.name
@@ -1037,10 +1045,10 @@ def pagecat(request):
     Story = []
 
     centered = ParagraphStyle(name='centered',
-        fontSize=30,
-        leading=16,
-        alignment=1,
-        spaceAfter=20)
+                              fontSize=30,
+                              leading=16,
+                              alignment=1,
+                              spaceAfter=20)
 
     h1 = ParagraphStyle(
         name='Heading1',
@@ -1048,8 +1056,8 @@ def pagecat(request):
         leading=16)
 
     h2 = ParagraphStyle(name='Heading2',
-        fontSize=12,
-        leading=14)
+                        fontSize=12,
+                        leading=14)
 
     toc = TableOfContents()
     toc.levelStyles = [
@@ -1205,7 +1213,7 @@ class NumberedCanvas(canvas.Canvas):
     def draw_page_number(self, page_count):
         self.setFont("Helvetica", 7)
         self.drawRightString(200*mm, 20*mm,
-            "Page %d of %d" % (self._pageNumber, page_count))
+                             "Page %d of %d" % (self._pageNumber, page_count))
 
 
 def merge_pdf_stack(request):
@@ -1265,30 +1273,29 @@ def personne_delete(request, id):
     mdl.personne.delete_personne(int(id))
     return HttpResponseRedirect(reverse('personne_search'))
 
+
 def lettre_form(request):
     modele = mdl.modele_document.find_by_reference('LETTRE_INDEXATION')
+    form = None
+    formset = None
     if request.method == 'POST':
         pass
     else:
         ArticleFormSet = formset_factory(LigneForm, extra=2)
-        formset = ArticleFormSet(initial=[{'test': 'Django is now open source',},
-                                          {'test': 'Django is now open source2',}])
+        formset = ArticleFormSet(initial=[{'test': 'Django is now open source', },
+                                          {'test': 'Django is now open source2', }])
 
-        form = LettreForm(initial={'sujet': modele.sujet , 'format':"docx", 'fichier_modele': modele.fichier_modele,
-                                   'titre':'Monsieur',
+        form = LettreForm(initial={'sujet': modele.sujet, 'format': "docx", 'fichier_modele': modele.fichier_modele,
+                                   'titre': 'Monsieur',
                                    'tableSet': formset})
-
-
-
-
-
     # form = LettreForm(request.POST or None)
-    return render(request, "lettre.html",{'form': form, 'formset':formset})
+    return render(request, "lettre.html", {'form': form, 'formset': formset})
+
 
 def lettre_create(request):
     print('lettre_view')
     formset = None
-    if request.method=='POST':
+    if request.method == 'POST':
         form = LettreForm(request.POST or None)
         print(form)
         formset = LigneForm(request.POST or None)
@@ -1308,7 +1315,7 @@ def lettre_create(request):
 
         doctype = form.cleaned_data['format']
         data = form.cleaned_data
-        lignes=[]
+        lignes = []
         ligne1 = LigneTest()
         ligne1.col1 = "col1"
         ligne1.col2 = "col2"
@@ -1319,7 +1326,7 @@ def lettre_create(request):
 
         lignes.append(ligne1)
         lignes.append(ligne2)
-        #lignes = [["ii","oo"],["ii2","oo2"]]
+        #  lignes = [["ii","oo"],["ii2","oo2"]]
         data.update({'lignes': lignes})
         data.update({'l1': 'l1'})
         data.update({'l2': 'l2'})
@@ -1328,7 +1335,7 @@ def lettre_create(request):
         ArticleFormSet = formset_factory(LigneForm, extra=2)
         formset = ArticleFormSet(initial=[{'test': 'Django is now open source', },
                                           {'test': 'Django is now open source2', }])
-        data.update({'formset':formset})
+        data.update({'formset': formset})
 
         data.update({'dateJour': timezone.now()})
         personne = mdl.personne.find_personne(1)

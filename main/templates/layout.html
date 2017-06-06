@@ -26,7 +26,6 @@
         <div class="container">
           <!-- Brand and toggle get grouped for better mobile display -->
           <div class="navbar-header">
-
             <a class="navbar-brand" href="{% url 'home' %}"><img src="{% static 'images/logo.jpg' %}" style="margin-top: -10px;height:60px;"></a>
           </div>
 
@@ -76,10 +75,18 @@
       <script src="https://cdn.datatables.net/1.10.12/js/jquery.dataTables.min.js"></script>
       <script src="{% static 'js/bootstrap-datepicker.min.js' %}"></script>
       <script src="{% static 'js/locales/bootstrap-datepicker.fr.js' %}"></script>
+      <script src="{% static "js/customComboBox.js" %}"></script>
       {% block script %}
       <script>
         $(document).ready(function() {
-            $('#tbl_data').DataTable();
+
+
+            $('#tbl_data').dataTable( {
+                "language": {
+                    "url": "/static/i18n/French.json"
+                }
+            } );
+
             $('#tbl_data_batiments').DataTable({
                         "columnDefs": [ {
                             "targets": 'no-sort',
@@ -105,19 +112,76 @@
             applyTo = document.querySelector('input[list="localites"]');
             if(applyTo) { applyTo.addEventListener('input', onInput2);}
 
+            $(".select_updatable").customComboBox({
+
+                tipText : "Entrez la nouvelle valeur",
+
+                tipClass : "mytipclass",
+
+                allowed : /[A-Za-z0-9\$\.\s]/,
+
+                notallowed : /[\<\>]/,
+
+                index : 'last',
+
+                isEditing : function(el, status, value) {
+                    if (typeof window.console!='object') { return; }
+                    console.info('Editing status changed to (', status, ') on ', el, ' combo box and the selected value is "', value, '"');
+                },
+                onKeyDown : function(el, character, fulltext) {
+                    if (typeof window.console!='object') { return; }
+                    console.info('The character (', character, ') was just typed into ', el, ' combo box and the complete text is now "', fulltext, '"');
+                },
+                onDelete : function(el, fulltext) {
+                    if (typeof window.console!='object') { return; }
+                    console.info('A character was deleted from ', el, ' combo box and the complete text is now "', fulltext, '"');
+                }
+            });
+
+            $("form p").find('input').on('click',function(e) {
+                var sel = $(e.currentTarget).prev('select');
+                var name = sel.attr('name').toUpperCase();
+                var val = sel.find('option:selected').val();
+                $("#result").text(name+" combo box value is " + val);
+            });
+
+
         } );
 
 
         $("#btn_ajout_societe").click(function(event) {
-            $('#pnl_nouvelle_societe').css('visibility', 'visible');
-            $('#pnl_nouvelle_societe').css('display', 'block');
-            $('#slt_societes').prop('selectedIndex',0);
+            if ($('#btn_ajout_societe').prop('checked')) {
+                $('#pnl_nouvelle_societe').css('visibility', 'visible');
+                $('#pnl_nouvelle_societe').css('display', 'block');
+                $('#slt_societes').prop('selectedIndex',-1);
+                $('#slt_societes').val('-');
+            }else{
+                $('#pnl_nouvelle_societe').css('visibility', 'hidden');
+                $('#pnl_nouvelle_societe').css('display', 'none');
+                $('#txt_nom_nouvelle_societe').val('');
+                $('#txt_description_nouvelle_societe').val('');
+            }
 
         });
 
         $("#btn_ajout_personne").click(function(event) {
-            $('#pnl_nouveau_personne').css('visibility', 'visible');
-            $('#pnl_nouveau_personne').css('display', 'block');
+
+            if ($('#btn_ajout_personne').prop('checked')) {
+                $('#proprietaire').prop('disabled', true);
+                $('#proprietaire').prop('selectedIndex', -1);
+                $('#proprietaire').val('-');
+                $('#pnl_nouveau_personne').css('visibility', 'visible');
+                $('#pnl_nouveau_personne').css('display', 'block');
+            }else {
+                $('#proprietaire').prop('disabled', false);
+                $('#pnl_nouveau_personne').css('visibility', 'hidden');
+                $('#pnl_nouveau_personne').css('display', 'none');
+
+                $('#txt_nouveau_nom').val('');
+                $('#txt_nouveau_prenom').val('');
+                $('#txt_nouveau_prenom2').val('');
+            }
+
         });
 
         $("#slt_societes").change(function() {
@@ -159,9 +223,58 @@
             orientation: "bottom auto",
             language: "fr"
         });
+        $("#date_debut_financement").datepicker({
+            autoclose: true,
+            orientation: "bottom auto",
+            language: "fr"
+        });
+        $("#date_fin_financement").datepicker({
+            autoclose: true,
+            orientation: "bottom auto",
+            language: "fr"
+        });
+        $("#date_paiement_reel").datepicker({
+            autoclose: true,
+            orientation: "bottom auto",
+            language: "fr"
+        });
 
 
+
+        $("#date_paiement_reel").dblclick(function(event) {
+            $("#date_paiement_reel" ).datepicker({dateFormat:"dd/mm/yy"}).datepicker("setDate",new Date());
+        });
+
+        $("#chb_new_entrepreneur").click(function(event) {
+            if ($('#chb_new_entrepreneur').prop('checked')) {
+                $('#pnl_new_entrepreneur').css('visibility', 'visible');
+                $('#pnl_new_entrepreneur').css('display', 'block');
+                $('#slt_entrepreneur').prop('disabled', true);
+                $('#slt_entrepreneur').prop('disabled', true);
+                $('#slt_entrepreneur').prop('selectedIndex',-1);
+
+            }else{
+                $('#pnl_new_entrepreneur').css('visibility', 'hidden');
+                $('#pnl_new_entrepreneur').css('display', 'none');
+                $('#slt_entrepreneur').prop('disabled', false);
+            }
+        });
     </script>
+          <style type="text/css">
+              .mytipclass {
+                  font-style:italic;
+                  color:red;
+              }
+              select {
+                  width:250px;
+                  padding: 2px;
+                  margin-top: 5px;
+                  border:1px solid #999
+              }
+              p {
+                  padding: 10px;
+              }
+          </style>
       {% endblock %}
     </body>
 </html>

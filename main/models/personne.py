@@ -33,7 +33,7 @@ from main.models import contrat_gestion as ContratGestion
 
 class PersonneAdmin(admin.ModelAdmin):
     search_fields = ['nom']
-    list_filter = ('nom', 'prenom','prenom2')
+    list_filter = ('nom', 'prenom', 'prenom2')
 
 
 class Personne(models.Model):
@@ -54,13 +54,15 @@ class Personne(models.Model):
     profession = models.CharField(max_length=100, blank=True, null=True)
     date_naissance = models.DateField(auto_now=False, blank=True, null=True, auto_now_add=False)
     lieu_naissance = models.CharField(max_length=100, blank=True, null=True)
-    pays_naissance = models.CharField(max_length=100, blank=True, null=True)
+    pays_naissance = models.ForeignKey('Pays', blank=True, null=True)
     num_identite = models.CharField(max_length=100, blank=True, null=True, unique=False)
     telephone = models.CharField(max_length=30, blank=True, null=True)
     gsm = models.CharField(max_length=30, blank=True, null=True)
     societe = models.ForeignKey('Societe', blank=True, null=True)
     num_compte_banque = models.CharField(max_length=30, blank=True, null=True)
-    personne_type = models.CharField(max_length=20, choices=TYPE_PERSONNE, default='NON_PRECISE', blank=True, null=True)
+    personne_type = models.CharField(max_length=20, choices=TYPE_PERSONNE, default='NON_PRECISE', blank=True, null=True)# a enlever
+    fonction = models.ForeignKey('Fonction', blank=True, null=True)
+
 
     def __init__(self,  *args, **kwargs):
         super(Personne, self).__init__(*args, **kwargs)
@@ -86,11 +88,11 @@ class Personne(models.Model):
     def type(self):
         type_personne = ""
         cpt = 0
-        proprietaire_list = Proprietaire.objects.filter(proprietaire=self)
+        proprietaire_list = Proprietaire.find_by_personne(self)
         if proprietaire_list.exists():
-            type_personne = "proriétaire"
+            type_personne = "propriétaire"
             cpt = cpt + 1
-        locataire_list = Locataire.objects.filter(personne=self)
+        locataire_list = Locataire.find_by_personne(self)
         if locataire_list.exists():
             if cpt > 0:
                 type_personne = type_personne + ", "
@@ -120,7 +122,6 @@ class Personne(models.Model):
         unique_together = (("nom", "prenom", "prenom2"),)
 
     def save(self,  *args, **kwargs):
-
         p = super(Personne, self).save(*args, **kwargs)
         print(self.id)
         if Pays.find_by_pays(self.pays_naissance):
@@ -144,6 +145,7 @@ class Personne(models.Model):
                 professionnel.societe = self.societe
                 professionnel.fonction = fonction
                 professionnel.save()
+        self.fonction = fonction
 
         return p
 

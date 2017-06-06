@@ -15,7 +15,7 @@
                         <form method="get" action="{% url 'honoraires-search'%}">
                             <div class="row">
                                 <div class="col-md-3">
-                                    <label>Batiment</label>
+                                    <label>Batiment{{ batiment }}</label>
                                     <select class="form-control" name="batiment_id" >
                                         {%if batiment %}
                                             <option value="TOUS" >Tous</option>
@@ -32,7 +32,7 @@
                                     </select>
                                 </div>
                                 <div class="col-md-3">
-                                    <label for="etat">Etat</label>
+                                    <label for="etat">Etat{{ etat }}</label>
                                     <select class="form-control"  name="etat" id ="etat">
                                         {% if etat == 'A_VERIFIER' %}
                                             <option value="A_VERIFIER" selected>A vérifier</option>
@@ -65,7 +65,7 @@
                                     <label >Date limite inférieure</label>
                                     <input class="form-control"
                                            id="txt_date_limite"
-                                           value="{%if date_limite%}{{ date_limite|date:"j/m/Y" }}{%endif%}"  name="date_limite"/>
+                                           value="{% if date_limite %}{{ date_limite|date:"j/m/Y" }}{%endif%}" name="date_limite"/>
                                     <span class="erreur_formulaire" id="spn_date_limite"></span>
                                 </div>
                                 <div class="col-md-3">

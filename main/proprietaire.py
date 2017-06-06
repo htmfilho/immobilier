@@ -39,6 +39,8 @@ def proprietaire(request, proprietaire_id):
                    'action': 'update',
                    'personnes': get_personnes_possible(a_proprietaire.batiment),
                    'prev': request.GET.get('prev'),
+                   'societes': mdl.societe.find_all_with_name(),
+                   'fonctions': mdl.fonction.find_all(),
                    'personne': a_proprietaire.proprietaire})
 
 
@@ -114,13 +116,16 @@ def proprietaire_update_save(request):
         proprietaire.date_fin = datetime.strptime(request.POST['date_fin'], '%d/%m/%Y')
 
 
-    if request.POST['proprietaire']=='-':
+    if request.POST.get('proprietaire') is None or request.POST.get('proprietaire') == '-':
         valide=True
         if request.POST['nouveau_nom'] and request.POST['nouveau_prenom']:
-            personne_deja_existante = mdl.personne.find_personne_by_nom_prenom(request.POST['nouveau_nom'],request.POST['nouveau_prenom'],request.POST['nouveau_prenom2'])
+            personne_deja_existante = mdl.personne.find_personne_by_nom_prenom(request.POST['nouveau_nom'],
+                                                                               request.POST['nouveau_prenom'],
+                                                                               request.POST['nouveau_prenom2'])
             if personne_deja_existante:
                 valide = False
-                message = 'Une personne existe déjà avec ces noms/prénoms : {} {}'.format(request.POST['nouveau_nom'],request.POST['nouveau_prenom'])
+                message = 'Une personne existe déjà avec ces noms/prénoms : {} {}'.format(request.POST['nouveau_nom'],
+                                                                                          request.POST['nouveau_prenom'])
             else:
                 personne = mdl.personne.Personne(nom=request.POST['nouveau_nom'],
                                                  prenom=request.POST['nouveau_prenom'])
@@ -137,7 +142,7 @@ def proprietaire_update_save(request):
                            'previous': previous,
                            'message': message})
     else:
-        personne = get_object_or_404(mdl.personne.Personne, pk=request.POST['proprietaire'])
+        personne = get_object_or_404(mdl.personne.Personne, pk=request.POST.get('proprietaire',None))
 
     proprietaire.proprietaire = personne
 
@@ -150,7 +155,7 @@ def proprietaire_update_save(request):
                            'previous': previous,
                            'message': 'La date de début doit être < à la date de fin'})
     proprietaire.save()
-
+    print(previous)
     if previous:
         return redirect(previous)
     if not request.POST['prev'] is None:

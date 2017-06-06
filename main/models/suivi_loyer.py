@@ -36,6 +36,7 @@ ETAT = (
     ('PAYE', 'Payé')
 )
 
+
 class SuiviLoyerAdmin(admin.ModelAdmin):
     list_display = ('loyer_percu', 'etat_suivi', 'financement_location')
     fieldsets = ((None, {'fields': ('loyer_percu', 'etat_suivi', 'financement_location')}),)
@@ -113,9 +114,11 @@ def find_mes_suivis_by_etat_suivi(date_ref, etat_suivi):
     mes_batiment = Batiment.find_my_batiments()
     start_date = datetime.datetime(date_ref.year, date_ref.month, 1)
     end_date = datetime.datetime(date_ref.year, date_ref.month, calendar.mdays[date_ref.month])
-    return SuiviLoyer.objects.filter(date_paiement__lte=end_date, date_paiement__gte=start_date,
-                                     etat_suivi=etat_suivi,
-                                     financement_location__contrat_location__batiment__in=mes_batiment)
+    if mes_batiment:
+        return SuiviLoyer.objects.filter(date_paiement__lte=end_date, date_paiement__gte=start_date,
+                                         etat_suivi=etat_suivi,
+                                         financement_location__contrat_location__batiment__in=mes_batiment)
+    return None
 
 
 def find_suivis_by_pas_etat_suivi(date_ref, etat_suivi):
@@ -138,6 +141,7 @@ def find(financement_courant, date_debut, etat):
     return SuiviLoyer.objects.filter(financement_location=financement_courant,
                                      date_paiement__gte=date_debut,
                                      etat_suivi=etat)
+
 
 def find_dernier_paye(un_contrat_location):
     print('find_dernier_paye')

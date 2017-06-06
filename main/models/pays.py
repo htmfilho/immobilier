@@ -26,13 +26,22 @@ from django.contrib import admin
 
 
 class Pays(models.Model):
-    pays = models.CharField(max_length=50)
+    nom = models.CharField(max_length=50)
+
+
+def find_by_id(un_id):
+    return Pays.objects.get(pk=un_id)
 
 
 def find_by_pays(un_pays):
     return Pays.objects.filter(pays=un_pays)
 
 
-def create(nom):
-    p = Pays(pays=nom)
+def create(un_nom):
+    p = Pays(nom=un_nom)
     return p
+
+
+def find_all():
+    return Pays.objects.all().order_by('nom')
+

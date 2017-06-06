@@ -25,6 +25,7 @@ from django.shortcuts import render, get_object_or_404
 from datetime import datetime
 from main.forms import PersonneForm
 from main import models as mdl
+from main.views_utils import get_key
 
 
 def get_personne(personne_id):
@@ -37,13 +38,16 @@ def get_personne(personne_id):
 def edit(request, personne_id):
     return render(request, "personne_form.html",
                   {'personne': get_personne(personne_id),
-                   'societes': mdl.societe.find_all()})
+                   'fonctions': mdl.fonction.find_all(),
+                   'societes': mdl.societe.find_all(),
+                   'pays': mdl.pays.find_all()})
 
 
 def create(request):
     return render(request, "personne_form.html",
                   {'personne': mdl.personne.Personne(),
-                   'societes': mdl.societe.find_all()})
+                   'societes': mdl.societe.find_all(),
+                   'pays': mdl.pays.find_all()})
 
 
 def list(request):
@@ -69,30 +73,29 @@ def search(request):
 
 
 def update(request):
-    print('update')
     form = PersonneForm(data=request.POST)
-    personne = get_personne(request.POST['personne_id'])
+    personne = get_personne(request.POST.get('personne_id', None))
 
     personne.nom = request.POST['nom']
     personne.prenom = request.POST['prenom']
     personne.prenom2 = request.POST['prenom2']
     personne.email = request.POST['email']
     personne.personne_type = 'NON_PRECISE'
-    if request.POST['type_personne']:
-        personne.personne_type = request.POST['type_personne']
 
-    personne.profession = request.POST['profession']
-    personne.societe = None
-    if request.POST['societe'] == '-':
-        societe = mdl.societe.Societe(nom=request.POST.get('nom_nouvelle_societe', None),
-                                      description=request.POST.get('description_nouvelle_societe', None))
-        societe.save()
+    fonction = get_fonction(request)
+    personne.fonction = fonction
+    if fonction:
+        personne.profession = fonction.nom_fonction
     else:
-        societe = mdl.societe.find_by_id(int(request.POST['societe']))
-    personne.societe = societe
+        personne.profession = None
+
+    personne.societe = get_societe(request)
 
     personne.lieu_naissance = request.POST['lieu_naissance']
-    personne.pays_naissance = request.POST['pays_naissance']
+    pays_naissance_id = request.POST.get('pays_naissance', None)
+    print(pays_naissance_id)
+    if pays_naissance_id:
+        personne.pays_naissance = mdl.pays.find_by_id(pays_naissance_id)
     personne.num_identite = request.POST['num_identite']
     personne.num_compte_banque = request.POST['num_compte_banque']
 
@@ -106,7 +109,6 @@ def update(request):
     else:
         personne.date_naissance = None
 
-
     if form.is_valid():
         personne.save()
         return render(request, "personne/personne_list.html",
@@ -116,4 +118,31 @@ def update(request):
                       {'personne': personne,
                        'form': form,
                        'societes': mdl.societe.find_all()})
+
+
+def get_societe(request):
+    societe = None
+    if request.POST['societe'] == '-':
+        societe = mdl.societe.Societe(nom=request.POST.get('nom_nouvelle_societe', None),
+                                      description=request.POST.get('description_nouvelle_societe', None))
+        societe.save()
+        return societe
+    else:
+        return mdl.societe.find_by_id(int(request.POST['societe']))
+
+
+def get_fonction(request):
+    fonction_id = get_key(request.POST['profession'])
+    fonction = None
+    if fonction_id:
+        fonction = mdl.fonction.find_by_id(fonction_id)
+    else:
+        nouvelle_fonction = request.POST.get('profession', None)
+        if nouvelle_fonction and len(nouvelle_fonction) > 0:
+            fonction_existante = mdl.fonction.find_by_nom(nouvelle_fonction)
+            if fonction_existante is None:
+                fonction = mdl.fonction.Fonction(nom_fonction=nouvelle_fonction)
+                fonction.save()
+    return fonction
+
 

@@ -65,16 +65,17 @@
           {% if form.date_fin.errors%}<span class="erreur_formulaire">{{form.date_fin.errors}}</span>{%endif%}
       </div>
       </div>
+        {%if message%}
+            <br>
+            <div class="alert alert-danger" role="alert">{{message}}</div>
+        {%endif%}
 
-      <br>
-        <button type="submit" class="btn btn-primary" id="bt_contrat_gestion_updater"
-                title="Sauvegarder"><span class="glyphicon glyphicon-floppy-disk" aria-hidden="true"></span>
+        <button type="submit" class="btn btn-primary pull-right" id="bt_contrat_gestion_updater"
+                title="Sauvegarder"><span class="glyphicon glyphicon-floppy-disk" aria-hidden="true"> Enregistrer</span>
         </button>
+        <br>
 
     </form>
-    {%if message%}
-        <br>
-        <div class="alert alert-danger" role="alert">{{message}}</div>
-    {%endif%}
+
 
 {% endblock %}

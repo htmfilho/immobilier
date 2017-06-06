@@ -26,15 +26,10 @@
           <font class="erreur_formulaire">{{ form.email.errors|striptags }}</font>
       </div>
       <div class="col-md-6">
-        <label>Type personne</label>
-          <select class="form-control" name="type_personne" value="{{ personne.personne_type| default_if_none:'' }}" >
-            <option value="NON_PRECISE">Non précisé</option>
-            <option value="LOCATAIRE" {% if personne.personne_type == 'LOCATAIRE' %}selected{%endif%}>Locataire</option>
-            <option value="PROFESSIONNEL" {% if personne.personne_type == 'PROFESSIONNEL' %}selected{%endif%}>Professionnel</option>
-            <option value="PROPRIETAIRE" {% if personne.personne_type == 'PROPRIETAIRE' %}selected{%endif%}>Propriétaire</option>
-            <option value="ANCIEN_LOCATAIRE" {% if personne.personne_type == 'ANCIEN_LOCATAIRE' %}selected{%endif%}>Ancien locataire</option>
-            <option value="ANCIEN_PROPRIETAIRE" {% if personne.personne_type == 'ANCIEN_PROPRIETAIRE' %}selected{%endif%}>Ancien propriétaire</option>
-          </select>
+        {% if personne.id %}
+            <label>Type personne</label><br>
+            {{ personne.type }}
+        {% endif %}
       </div>
     </div>
     <br>
@@ -54,35 +49,38 @@
     <div class="row">
       <div class="col-md-6">
           <label>Profession</label>
-          <input class="form-control" name="profession" value="{{ personne.profession| default_if_none:'' }}" >
+
+          <select name="profession" class="form-control select_updatable" >
+              <option value="-">-</option>
+              {% for f in fonctions %}
+                  <option value="{{f.id}}" {%if f.id == personne.fonction.id%}selected{%endif%}>{{f}}</option>
+              {%endfor %}
+          </select>
       </div>
       <div class="col-md-5">
         <label>Société</label>
         <select name="societe" class="form-control" id="slt_societes">
           <option value="-">-</option>
-          {%for s in societes%}
+          {% for s in societes %}
           <option value="{{s.id}}" {%if s.id == personne.societe.id%}selected{%endif%}>{{s}}</option>
           {%endfor %}
         </select>
         <span style="color:red">{{ form.societe.errors }}</span>
       </div>
       <div class="col-md-1">
-          <button type="button" class="btn btn-warning" id="btn_ajout_societe">
-              <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
-          </button>
+          <input type="checkbox" id="btn_ajout_societe">
       </div>
     </div>
-    <div id="pnl_nouvelle_societe" class="new" style="visibility:hidden;display:none">
-      <br>
-      <label><u>Nouvelle societé</u></label>
-      <div class="row">
+    <div id="pnl_nouvelle_societe" class="new" style="visibility:hidden;display:none;margin:15px;">
+
+      <div class="row" style="margin:15px;">
           <div class="col-md-6">
-              <label>Nom</label>
-              <input class="form-control" type="text" value="" name="nom_nouvelle_societe" maxlength="100"/>
+              <label>Nom nouvelle societé</label>
+              <input class="form-control required" type="text" value="" name="nom_nouvelle_societe" maxlength="100" id="txt_nom_nouvelle_societe"/>
           </div>
           <div class="col-md-6">
-              <label>Description</label>
-              <textarea class="form-control" type="text" value="" name="description_nouvelle_societe"></textarea>
+              <label>Description nouvelle societé</label>
+              <textarea class="form-control" type="text" value="" name="description_nouvelle_societe" id="txt_description_nouvelle_societe"></textarea>
           </div>
       </div>
       <br>
@@ -114,19 +112,22 @@
       </div>
       <div class="col-md-4">
         <label>Pays naissance</label>
-        <input class="form-control" name="pays_naissance" value="{{ personne.pays_naissance| default_if_none:'' }}" >
+          <select class="form-control" name="pays_naissance">
+              <option>-</option>
+              {% for p in pays %}
+                  <option value="{{ p.id }}" {% if p.id == personne.pays_naissance.id %}selected{% endif %}>{{ p.nom }}</option>
+              {% endfor %}
+          </select>
       </div>
       <div class="col-md-3">
       </div>
     </div>
     <br>
-    <div class="row">
-      <div class="col-md-11">
-      </div>
-      <div class="col-md-1">
-        <input type="submit" value="Enregistrer" class="btn btn-primary" title="Enregistrer">
-      </div>
-    </div>
+  <button type="submit" class="btn btn-primary pull-right" title="Sauvegarder">
+      <span class="glyphicon glyphicon-floppy-disk" aria-hidden="true"> Enregistrer</span>
+  </button>
+
+
   </form>
 
 

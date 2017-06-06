@@ -88,3 +88,7 @@ def find_by_contrat_location(contrat):
 
 def find_all():
     return Locataire.objects.all()
+
+
+def find_by_personne(une_personne):
+    return Locataire.objects.filter(personne=une_personne)

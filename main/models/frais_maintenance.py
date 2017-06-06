@@ -58,13 +58,14 @@ def find_my_frais():
     batiments = Batiment.find_my_batiments()
     frais = []
     n = timezone.now()
-    for b in batiments:
-        frais_liste = find_by_batiment(b.id)
-        for f in frais_liste:
-            if f.contrat_location is None and f.date_realisation is not None \
-                    and (f.date_realisation.month == n.month and f.date_realisation.year == n.year):
-                if f not in frais:
-                    frais.append(f)
+    if batiments:
+        for b in batiments:
+            frais_liste = find_by_batiment(b.id)
+            for f in frais_liste:
+                if f.contrat_location is None and f.date_realisation is not None \
+                        and (f.date_realisation.month == n.month and f.date_realisation.year == n.year):
+                    if f not in frais:
+                        frais.append(f)
     return frais
 
 

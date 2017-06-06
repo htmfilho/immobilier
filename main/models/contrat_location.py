@@ -21,12 +21,14 @@
 #    see http://www.gnu.org/licenses/.
 #
 ##############################################################################
+import datetime
 from django.db import models
 from django.utils import timezone
 from main.models import locataire as Locataire
 from main.models import financement_location as FinancementLocation
 from main.models import frais_maintenance as FraisMaintenance
 from main.models import suivi_loyer as SuiviLoyer
+from main.models import indice_sante as IndiceSante
 from main.models import alerte as Alerte
 from dateutil.relativedelta import relativedelta
 
@@ -41,7 +43,7 @@ class ContratLocation(models.Model):
     assurance = models.ForeignKey('Assurance', blank=True, null=True)
     loyer_base = models.DecimalField(max_digits=6, decimal_places=2, default=0, blank=False, null=False)
     charges_base = models.DecimalField(max_digits=6, decimal_places=2, default=0)
-    # index_base  = models.DecimalField(max_digits=5, decimal_places=2, default=0)
+    indice_sante_base = models.ForeignKey('IndiceSante', default=None, blank=True, null=True)
 
     def __str__(self):
         desc = ""
@@ -77,10 +79,26 @@ class ContratLocation(models.Model):
         df = (self.date_debut + relativedelta(years=1))-relativedelta(days=1)
         self.date_fin = df
         self.renonciation = (self.date_debut + relativedelta(years=1))-relativedelta(days=10)
+        un_indice_sante = None
+        if self.date_debut < datetime.datetime(1981, 1, 1):
+            pass
+        else:
+            if self.date_debut < datetime.datetime(1983, 1, 1):
+                pass
+            else:
+                one_mon_timedelta = datetime.timedelta(days=1 * 365/12)
+                if self.date_debut < datetime.datetime(1994, 2, 1):
+                    date_ref = self.date_debut - one_mon_timedelta
+                    un_indice_sante = IndiceSante.find_by_date(date_ref)
+                else:
+                    date_ref = self.date_debut - one_mon_timedelta
+                    un_indice_sante = IndiceSante.find_by_date(date_ref)
+
+        self.indice_sante_base = un_indice_sante
 
         c = super(ContratLocation, self).save(*args, **kwargs)
 
-        b = FinancementLocation.create(self.date_debut, self.date_fin, self.loyer_base)
+        b = FinancementLocation.create(self.date_debut, self.date_fin, self.loyer_base, self.indice_sante_base)
         b.contrat_location = self
         b.save()
         update_suivi_alerte(self.date_debut, self, b, self.date_debut + relativedelta(years=1), 'LOCATION')
@@ -108,6 +126,13 @@ class ContratLocation(models.Model):
     def liste_frais(self):
         return FraisMaintenance.find_by_contrat_location(self)
 
+    def total_frais(self):
+        tot = 0
+        for f in FraisMaintenance.find_by_contrat_location(self):
+            if f.montant:
+                tot += f.montant
+        return tot
+
     def suivis(self):
         financements = self.financements()
         suivis_liste = []
@@ -117,6 +142,18 @@ class ContratLocation(models.Model):
             if sui.exists():
                 suivis_liste.extend(sui)
         return suivis_liste
+
+    def tot_suivis_paye(self):
+        financements = self.financements()
+        tot = 0
+        for f in financements:
+            sui = SuiviLoyer. \
+                SuiviLoyer.objects.filter(financement_location=f, etat_suivi='PAYE')
+            if sui.exists():
+                for s in sui:
+                    tot += s.financement_location.loyer
+
+        return tot
 
     class Meta:
         ordering = ['date_debut']

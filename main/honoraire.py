@@ -60,12 +60,15 @@ def search(request):
             and not request.GET.get('date_limite') == '':
         date_limite = datetime.strptime(request.GET.get('date_limite'), '%d/%m/%Y')
 
+    batiment_selected = batiment_id
+    if batiment_selected is None:
+        batiment_selected="TOUS"
     return render(request, "honoraire_list.html",
                   {'honoraires':   mdl.honoraire.find_by_batiment_etat_date(batiment_id, etat_query, date_limite),
                    'batiments':    mdl.honoraire.find_all_batiments(),
                    'date_limite':  date_limite,
                    'etat':         etat,
-                   'batiment':     batiment_id})
+                   'batiment':     batiment_selected})
 
 
 def update(request):

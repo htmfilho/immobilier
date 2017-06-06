@@ -35,7 +35,7 @@ class Professionnel(models.Model):
     personne = models.ForeignKey('Personne', blank=True, null=True)
     societe = models.ForeignKey('Societe', blank=True, null=True)
     fonction = models.ForeignKey('Fonction', blank=True, null=True)
-    actif = models.BooleanField(default=False)
+    actif = models.BooleanField(default=True)
 
     @staticmethod
     def find_all():

@@ -181,12 +181,15 @@ $("#date_debut").blur(function() {
 
     $("#bt_honoraire_search").click(function() {
         $("#spn_date_limite").html();
-        if(isDate($("#txt_date_limite").val())){
-            return true;
-        }else{
-            $("#spn_date_limite").html('Date invalide');
-            return false;
+        if ($("#txt_date_limite").val() != '') {
+            if (isDate($("#txt_date_limite").val())) {
+                return true;
+            } else {
+                $("#spn_date_limite").html('Date invalide');
+                return false;
+            }
         }
+        return true;
     });
     $("#bt_fraismaintenance_save").click(function() {
         $("#spn_date_realisation").html();

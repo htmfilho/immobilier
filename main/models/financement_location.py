@@ -22,6 +22,7 @@
 #
 ##############################################################################
 from django.db import models
+from main.models import indice_sante as IndiceSante
 
 
 class FinancementLocation(models.Model):
@@ -31,6 +32,7 @@ class FinancementLocation(models.Model):
     loyer = models.DecimalField(max_digits=6, decimal_places=2, default=0)
     charges = models.DecimalField(max_digits=6, decimal_places=2, default=0)
     index = models.DecimalField(max_digits=5, decimal_places=2, default=0)
+    indice_sante = models.ForeignKey('IndiceSante', default=None, blank=True, null=True)
 
     def __str__(self):
         chaine = str(self.loyer) + "/" + str(self.charges)
@@ -47,5 +49,5 @@ def find_by_location(une_location):
     return FinancementLocation.objects.filter(contrat_location=une_location)
 
 
-def create(date_debut, date_fin, loyer_base):
-    return FinancementLocation(date_debut=date_debut, date_fin=date_fin, loyer=loyer_base)
+def create(date_debut, date_fin, loyer_base, un_indice_sante):
+    return FinancementLocation(date_debut=date_debut, date_fin=date_fin, loyer=loyer_base, indice_sante=un_indice_sante)

@@ -30,6 +30,7 @@ class SocieteAdmin(admin.ModelAdmin):
     search_fields = ['nom']
     list_filter = ('localite',)
 
+
 class Societe(models.Model):
     TYPE_SOCIETE = (
         ('NON_PRECISE', '-'),
@@ -72,3 +73,7 @@ def find_all():
 
 def find_by_id(id):
     return Societe.objects.get(pk=id)
+
+
+def find_all_with_name():
+    return Societe.objects.filter(nom__isnull=False).order_by('nom')

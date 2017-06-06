@@ -2,6 +2,7 @@
 {% load staticfiles %}
 {% load order %}
 {% block breadcrumb %}
+    {% if  frais.batiment %}<li><a href="{% url 'batiment' frais.batiment.id %}">Batiment</a></li>{% endif %}
 {% if prev == 'fl' %}
   <li><a href="{% url 'fraismaintenance_list' %}">Liste frais</a></li>
 {% endif %}
@@ -46,16 +47,50 @@
 <div class="row">
   <div class="col-md-6">
     <label>Entrepreneur</label>
-    <select class="form-control" name="entrepreneur">
+    <select class="form-control" name="entrepreneur" id="slt_entrepreneur">
       <option value="">-</option>
       {% for entrepreneur in entrepreneurs %}
             <option value="{{entrepreneur.id}}" {%if frais.entrepreneur.id == entrepreneur.id%}selected{%endif%}>{{entrepreneur}}</option>
       {%endfor%}
     </select>
-
   </div>
-  <div class="col-md-6">
+  <div class="col-md-5">
+      <input type="checkbox"  id="chb_new_entrepreneur" /><label>Ajouter un nouvel entrepreneur</label>
   </div>
+</div>
+<div id="pnl_new_entrepreneur" style="visibility:hidden;display:none;background-color: #BAEEBA;margin:15px">
+    <br>
+    <div class="row" style="margin:15px" >
+        <div class="col-md-4">
+            <label>Personne</label>
+            <select name="new_personne"  id="slt_person" class="form-control select_updatable">
+                <option value="-" >-</option>
+                {%for p in personnes%}
+                    <option value="{{p.id}}" >{{p}}</option>
+                {%endfor%}
+            </select>
+            <span>(Si nouvelle personne séparé les nom prenoms d'un espace)</span>
+        </div>
+        <div class="col-md-4">
+            <label>Société</label>
+            <select name="new_societe"  id="slt_societe" class="form-control select_updatable">
+                <option value="-" >-</option>
+                {%for s in societes%}
+                    <option value="{{s.id}}" >{{s}}</option>
+                {%endfor%}
+            </select>
+        </div>
+        <div class="col-md-4">
+            <label>Fonction</label>
+            <select name="new_fonction"  id="slt_fonction" class="form-control select_updatable">
+                <option value="-" >-</option>
+                {%for f in fonctions%}
+                    <option value="{{f.id}}">{{f}}</option>
+                {%endfor%}
+            </select>
+        </div>
+    </div>
+<br>
 </div>
 <div class="row">
   <div class="col-md-12">

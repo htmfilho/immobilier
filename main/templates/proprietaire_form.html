@@ -1,6 +1,7 @@
 {% extends "layout.html" %}
 {% block breadcrumb %}
-    <li><a href="{% url 'listeProprietaires' %}">Les propriétaires</a></li>
+    <!--<li><a href="{% url 'listeProprietaires' %}">Les propriétaires</a></li>-->
+    {% if proprietaire.batiment  %}<li><a href="{% url 'batiment' proprietaire.batiment.id %}">Batiment</a></li>{% endif %}
     <li class="active">Propriétaire</li>
 {% endblock %}
 {% block content %}
@@ -33,7 +34,7 @@
                                        readonly="readonly" id="proprietaire" name="proprietaire"/>
                             {% endif %}
                             {% if action == 'add' %}
-                                <select id="proprietaire" name="proprietaire" class="form-control">
+                                <select id="proprietaire" name="proprietaire" class="form-control" >
                                     <option value="-">-</option>
                                     {% for p in personnes %}
                                         {% if p == proprietaire.proprietaire %}
@@ -43,42 +44,42 @@
                                         {% endif %}
                                     {% endfor %}
                                 </select>
-
-
                             {% endif %}
                         </div>
-                        <div class="col-md-1">
+                        <div class="col-md-5">
                             {% if action == 'add' %}
-                                <label> </label>
-                                <input class="btn btn-default" type="button"
-                                       value="+"
-                                       title="Pour ajouter une personne" id="btn_ajout_personne"/>
+                                <br>
+                                <input type="checkbox" id="btn_ajout_personne">
+                                <label>Ajouter une nouvelle personne</label>
                             {% endif %}
                         </div>
 
                     </div>
                     {% if action == 'add' %}
-                    <div class="row"  id="pnl_nouveau_personne"
-                         style="visibility:hidden;display:none">
-                        <div class="col-md-3">
-                            <div id="pnl_nouveau_nom">
-                                <label>Nouvelle personne nom</label>
-                                <input class="form-control" type="text" value="" name="nouveau_nom"/>
+                        <div style="visibility:hidden;display:none;margin:15px;background-color: #c0d4e8"
+                             id="pnl_nouveau_personne">
+                            <div class="row" style="margin:15px;">
+                                <div class="col-md-3">
+                                    <div id="pnl_nouveau_nom">
+                                        <label>Nouvelle personne nom</label>
+                                        <input class="form-control" type="text" value="" name="nouveau_nom" id="txt_nouveau_nom"/>
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <div id="pnl_nouveau_prenom" >
+                                        <label>Nouvelle personne prénom</label>
+                                        <input class="form-control" type="text" value="" name="nouveau_prenom" id="txt_nouveau_prenom"/>
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <div id="pnl_nouveau_prenom2" >
+                                        <label >Nouvelle personne prénom2</label>
+                                        <input class="form-control" type="text" value="" name="nouveau_prenom2" id="txt_nouveau_prenom2"/>
+                                    </div>
+                                </div>
                             </div>
+                        <br>
                         </div>
-                        <div class="col-md-3">
-                            <div id="pnl_nouveau_prenom" >
-                                <label>Nouvelle personne prénom</label>
-                                <input class="form-control" type="text" value="" name="nouveau_prenom"/>
-                            </div>
-                        </div>
-                        <div class="col-md-3">
-                            <div id="pnl_nouveau_prenom2" >
-                                <label >Nouvelle personne prénom2</label>
-                                <input class="form-control" type="text" value="" name="nouveau_prenom2"/>
-                            </div>
-                        </div>
-                    </div>
                     {% endif %}
                     <br>
 
@@ -109,19 +110,13 @@
                         </div>
                     </div>
                     <br>
-                    <div class="row">
-                        <div class="col-md-1">
-                            <button type="submit" class="btn btn-primary"
-                                    title="Sauvegarder"><span class="glyphicon glyphicon-floppy-disk"
-                                                              aria-hidden="true"></span>
-                                Ok
-                            </button>
-                        </div>
-                        <div class="col-md-10">
-                        </div>
-                        <div class="col-md-1">
-                        </div>
-                    </div>
+
+                    <button type="submit" class="btn btn-primary pull-right"
+                            title="Sauvegarder"><span class="glyphicon glyphicon-floppy-disk"
+                                                      aria-hidden="true"> Enregistrer</span>
+
+                    </button>
+
                 </form>
             </div>
         </div>
@@ -169,7 +164,9 @@
                         </div>
                 </div>
                 <div class="modal-footer">
-                    <input type="submit" value="ok"/>
+                    <button type="submit" class="btn btn-primary pull-right" title="Sauvegarder">
+                        <span class="glyphicon glyphicon-floppy-disk" aria-hidden="true"> Enregistrer</span>
+                    </button>
                     <button type="button" class="btn btn-default" data-dismiss="modal">Annuler</button>
                 </div>
                 </form>

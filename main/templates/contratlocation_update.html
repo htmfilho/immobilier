@@ -55,15 +55,16 @@
         </div>
       </div>
 <br>
-      <div class="row">
-<div class="col-md-3">
-        <label>Date renonciation</label>
-        <input class="form-control"
-               id="renonciation"
-               value="{%if location.renonciation%}{{location.renonciation|date:"j/m/Y"}}{%endif%}"
-               name="renonciation"
-               readonly>
-  </div>
+
+        <div class="row">
+            <div class="col-md-3">
+                <label>Date renonciation</label>
+                <input class="form-control"
+                       id="renonciation"
+                       value="{% if location.renonciation %}{{ location.renonciation|date:"j/m/Y"}}{% endif %}"
+                       name="renonciation"
+                       readonly>
+            </div>
         </div>
 <br>
         <label for="remarque">Remarque</label>
@@ -82,7 +83,13 @@
         <input class="form-control" id="charges_base" value="{{location.charges_base}}" name="charges_base" readonly>
         {% if form.charges_base.errors %}<font class="erreur_formulaire">{{form.charges_base.errors}}</font>{%endif%}
       </div>
-      <div class="col-md-6">
+      <div class="col-md-2">
+          <label>Index de base</label>
+          <input class="form-control" id="index_base" value="{{location.indice_sante_base.indice}}" name="indice_sante_base" readonly>
+          {% if form.indice_sante_base.errors %}<font class="erreur_formulaire">{{form.indice_sante_base.errors}}</font>{%endif%}
+      </div>
+
+      <div class="col-md-4">
         <label>Assurance</label>
         <select class="form-control" name="assurance"  class="form-control">
           <option value="-">-</option>
@@ -106,8 +113,8 @@
       <div class="col-md-1">
 
     <button type="submit" class="btn btn-primary"
-        title="Enregistrer les données relatives à la location"><span class="glyphicon glyphicon-floppy-disk" aria-hidden="true"></span>
-    Ok</button>
+        title="Enregistrer les données relatives à la location"><span class="glyphicon glyphicon-floppy-disk" aria-hidden="true"> Enregistrer</span>
+    </button>
       </div>
     </div>
     </form>
@@ -117,6 +124,7 @@
           <li><a data-toggle="tab" href="#suivis">Suivis ({{location.suivis |length }})</a></li>
           <li><a data-toggle="tab" href="#frais">Frais ({{location.liste_frais |length }})</a></li>
           <li><a data-toggle="tab" href="#financement">Historique financements</a></li>
+          <li><a data-toggle="tab" href="#comptabilite"><span style="color:{% if location.tot_suivis_paye <  location.total_frais%}red;{% else %}green;{% endif %}">Comptabilité</span></a></li>
       </ul>
     <div class="tab-content">
 
@@ -222,22 +230,39 @@
                 <th>Date fin</th>
                 <th>Loyer</th>
                 <th>Charges</th>
-                <th>Index</th>
+                <th>Indice santé</th>
             </thead>
               <tbody>
             {% for financement in location.financements %}
             <tr>
-              <td>{{ financement.date_debut|date:"j/m/Y" }}</td>
-              <td>{{ financement.date_fin|date:"j/m/Y" }}</td>
+              <td>{{ financement.date_debut|date:"d/m/Y" }}</td>
+              <td>{{ financement.date_fin|date:"d/m/Y" }}</td>
               <td>{{ financement.loyer }}</td>
               <td>{{ financement.charges }}</td>
-              <td>{{ financement.index }}</td>
+              <td>{{ financement.indice_sante.indice }}</td>
             </tr>
             {% endfor%}
             <tr style="text-align:right">
-              <td colspan="5"><a href="{% url 'financement-new' location.pk %}?prev=fl" title="Pour ajouter un nouveau financement"><span class="glyphicon glyphicon-plus" aria-hidden="true"></span></a></td>
+              <td colspan="5"><a href="{% url 'financement-new' location.pk %}?prev=fl"
+                                 title="Pour ajouter un nouveau financement"
+                                 ><span class="glyphicon glyphicon-plus" aria-hidden="true"></span></a></td>
             </tr>
               </tbody>
+            </table>
+        </div>
+        <div id="comptabilite" class="tab-pane fade">
+            <br>
+            <table class="table">
+                <thead>
+                    <th>Frais ({{ location.liste_frais|length }})</th>
+                    <th>Revenus</th>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>{{ location.total_frais }}</td>
+                        <td>{{ location.tot_suivis_paye }}</td>
+                    </tr>
+                </tbody>
             </table>
         </div>
         </div>

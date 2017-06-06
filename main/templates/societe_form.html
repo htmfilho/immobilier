@@ -14,6 +14,7 @@
                 <input class="form-control" name="nom" id="txt_nom" value="{{ societe.nom| default_if_none:'' }}">
             </div>
         </div>
+        <br>
         <div class="row">
             <div class="col-md-12">
                 <label>Description</label>
@@ -21,6 +22,7 @@
                        value="{{ societe.description| default_if_none:'' }}">
             </div>
         </div>
+        <br>
         <div class="row">
             <div class="col-md-8">
                 <label>Rue</label>
@@ -38,11 +40,8 @@
                 <input class="form-control" name="boite" value="{{ societe.boite| default_if_none:'' }}">
             </div>
         </div>
+        <br>
         <div class="row">
-            <div class="col-md-6">
-                <label>Lieu dit</label>
-                <input class="form-control" name="lieu_dit" value="{{ societe.lieu_dit| default_if_none:'' }}">
-            </div>
             <div class="col-md-6">
                 <label>Localité</label>
                 <select name="localite" class="form-control">
@@ -53,24 +52,31 @@
                     {% endfor %}
                 </select>
             </div>
+            <div class="col-md-6">
+                <label>Lieu dit</label>
+                <input class="form-control" name="lieu_dit" value="{{ societe.lieu_dit| default_if_none:'' }}">
+            </div>
         </div>
         {% if societe.personnel %}
             <br>
             <label>Personnel</label>
             <table class="table table-condensed">
+                <tbody>
                 {% for p in societe.personnel %}
                     <tr>
                         <td><a href="{% url 'personne-edit' p.personne.id %}"
                                title="Pour modifier une personne">{{ p.personne.nom }} {{ p.personne.prenom }}</a></td>
                         <td>{{ p.fonction| default_if_none:''}}</td>
+                        <td><input type="checkbox"  {% if p.actif %}checked{% else %}dd{% endif %} readonly></td>
                     </tr>
-                    <br>
                 {% endfor %}
+                </tbody>
             </table>
         {% endif %}
 
-        <input type="submit" class="btn btn-primary pull-right" value="OK">
-
+        <button type="submit" class="btn btn-primary pull-right" title="Sauvegarder">
+            <span class="glyphicon glyphicon-floppy-disk" aria-hidden="true"> Enregistrer</span>
+        </button>
 
     </form>
 {% endblock %}

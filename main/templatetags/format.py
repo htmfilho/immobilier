@@ -21,33 +21,19 @@
 #    see http://www.gnu.org/licenses/.
 #
 ##############################################################################
-from django.db import models
+from django import template
+from django.template.defaultfilters import date
+from django.utils.translation import ugettext_lazy as _
 
 
-class Fonction(models.Model):
-    nom_fonction = models.CharField(max_length=100, blank=False, null=False)
-
-    def __str__(self):
-        return str(self.nom_fonction)
+register = template.Library()
 
 
-def create():
-    return Fonction()
+@register.filter
+def date_in_form_format(value):
+    pattern = "d/m/Y"
 
-
-def find_all():
-    return Fonction.objects.all().order_by('nom_fonction')
-
-
-def find_by_nom(nom):
-    l = Fonction.objects.filter(nom_fonction__iexact=nom)
-    if l.exists():
-        return l[0]
-    return None
-
-
-def find_by_id(id):
-    try:
-        return Fonction.objects.get(pk=id)
-    except:
-        return None
+    if type(value).__name__ == 'str':
+        return value
+    else:
+        return date(value, pattern)
