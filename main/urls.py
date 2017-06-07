@@ -22,7 +22,7 @@
 #
 ##############################################################################
 from . import views, batiment, proprietaire, suivis, alertes, contratlocation, financement, locataire, contratgestion, \
-    frais, honoraire, personne, tests, test3, assurance, fonction, societe, pays
+    frais, honoraire, personne, tests, test3, assurance, fonction, societe, pays, fonction, societe
 from django.conf.urls import url
 from django.contrib.auth.views import login, logout
 
@@ -181,7 +181,9 @@ urlpatterns = [
     url(r'^test/lettre/$', views.lettre_form, name='lettre'),
     url(r'^test/lettre_create/$', views.lettre_create, name='lettre_create'),
     url(r'^pays_create/$', pays.create, name='pays_create'),
+    url(r'^fonction_create/$', fonction.create, name='fonction_create'),
 
+    url(r'^societe_create/$', societe.create_new, name='societe_create'),
 
 
 ]

@@ -29,6 +29,7 @@ from main.forms import SuiviForm
 from django.shortcuts import redirect
 from main import models as mdl
 
+
 def suivis_search(request):
     date_debut = request.GET['date_debut']
     date_fin = request.GET['date_fin']
@@ -46,7 +47,7 @@ def suivis_search(request):
 def list_suivis(request, date_debut, date_fin, etat):
     if etat is None:
         etat = 'TOUS'
-    return render(request, "suivis.html",
+    return render(request, "suivi/suivis.html",
                   {'date_debut': date_debut,
                    'date_fin':    date_fin,
                    'etat':        etat,
@@ -55,7 +56,7 @@ def list_suivis(request, date_debut, date_fin, etat):
 
 def suivis(request):
     date_fin = timezone.now() - relativedelta(days=1)
-    return render(request, "suivis.html",
+    return render(request, "suivi/suivis.html",
                   {'date_debut':       None,
                    'date_fin':         date_fin,
                    'suivis':           mdl.suivi_loyer.find_suivis(None, date_fin, None)
@@ -70,7 +71,7 @@ def refresh_suivis(request):
     if etat == "TOUS":
         etat = None
     # print(date_debut.strftime('%Y-%m-%d'))
-    return render(request, "suivis.html",
+    return render(request, "suivi/suivis.html",
                   {'date_debut':       date_debut,
                    'date_fin':         date_fin,
                    'suivis':           mdl.suivi_loyer.find_suivis(date_debut, date_fin, etat)
@@ -95,7 +96,7 @@ def suivis_update(request):
         etat = None
     # print(date_debut.strftime('%Y-%m-%d'))
 
-    return render(request, "suivis.html",
+    return render(request, "suivi/suivis.html",
                   {'date_debut':       date_debut,
                    'date_fin':         date_fin,
                    'suivis':           mdl.suivi_loyer.find_suivis(date_debut, date_fin, etat)
@@ -116,7 +117,7 @@ def suivis_updatel(request, suivi_id):
         date_fin = datetime.strptime(date_fin, '%d/%m/%Y')
 
     # etat = request.GET['etat']
-    return render(request, "suivi_form.html",
+    return render(request, "suivi/suivi_form.html",
                   {'suivi':      suivi,
                    'date_debut': date_debut,
                    'date_fin':   date_fin,
@@ -170,7 +171,7 @@ def update_suivi(request):
                                datetime.strptime(request.POST['date_fin'], '%d/%m/%Y'), etat)
     else:
         print('form is invalid')
-        return render(request, "suivi_form.html",
+        return render(request, "suivi/suivi_form.html",
                       {'suivi':      suivi,
                        'form': form})
 

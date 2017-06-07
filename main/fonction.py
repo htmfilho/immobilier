@@ -23,14 +23,37 @@
 ##############################################################################
 from django.http import HttpResponse
 from main import models as mdl
+from django.http import HttpResponse
+from rest_framework import serializers
+from rest_framework.renderers import JSONRenderer
 
 
-def create(request):
-    print('create fonction')
-    print(request.POST['nom'])
-    print(request.GET['nom'])
+class JSONResponse(HttpResponse):
+    def __init__(self, data, **kwargs):
+        content = JSONRenderer().render(data)
+        kwargs['content_type'] = 'application/json'
+        super(JSONResponse, self).__init__(content, **kwargs)
+
+
+def create_old(request):
     data = request.POST
     new_fonction = mdl.fonction.Fonction()
     new_fonction.nom_fonction = data['nom']
     new_fonction.save()
     return HttpResponse(new_fonction, mimetype="application/json")
+
+
+def create(request):
+    print('create fonction')
+    new_assurance = mdl.fonction.Fonction()
+    new_assurance.nom_fonction = request.GET.get('nom', None)
+    new_assurance.save()
+    print(new_assurance.id)
+    serializer = FonctionSerializer(mdl.fonction.find_all(), many=True)
+    return JSONResponse(serializer.data)
+
+class FonctionSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = mdl.fonction.Fonction
+        fields = '__all__'

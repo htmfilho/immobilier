@@ -106,7 +106,7 @@ def populate_personne(request):
 def populate_profession(fonction):
     if fonction:
         return fonction.nom_fonction
-    return  None
+    return None
 
 
 def populate_date(request_value):
@@ -121,11 +121,11 @@ def populate_date(request_value):
 def populate_pays_naissance(request):
     pays_naissance_id = get_key(request.POST.get('pays_naissance', None))
     if pays_naissance_id:
-        return  mdl.pays.find_by_id(int(pays_naissance_id))
+        return mdl.pays.find_by_id(int(pays_naissance_id))
     return None
 
+
 def get_societe(request):
-    societe = None
     if request.POST['societe'] == '-':
         societe = mdl.societe.Societe(nom=request.POST.get('nom_nouvelle_societe', None),
                                       description=request.POST.get('description_nouvelle_societe', None))
@@ -137,16 +137,16 @@ def get_societe(request):
 
 def get_fonction(request):
     fonction_id = get_key(request.POST['profession'])
-    fonction = None
+
     if fonction_id:
-        fonction = mdl.fonction.find_by_id(fonction_id)
+        return mdl.fonction.find_by_id(fonction_id)
     else:
         nouvelle_fonction = request.POST.get('profession', None)
-        if nouvelle_fonction and len(nouvelle_fonction) > 0:
+        if nouvelle_fonction and len(nouvelle_fonction) > 2:
             fonction_existante = mdl.fonction.find_by_nom(nouvelle_fonction)
             if fonction_existante is None:
                 fonction = mdl.fonction.Fonction(nom_fonction=nouvelle_fonction)
-                fonction.save()
-    return fonction
+                return fonction.save()
+    return None
 
 

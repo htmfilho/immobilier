@@ -25,10 +25,25 @@ from django.shortcuts import render, get_object_or_404
 from django.core.urlresolvers import reverse
 from django.http import HttpResponseRedirect
 from main import models as mdl
+from django.http import HttpResponse
+from rest_framework import serializers
+from rest_framework.renderers import JSONRenderer
+
+class JSONResponse(HttpResponse):
+    def __init__(self, data, **kwargs):
+        content = JSONRenderer().render(data)
+        kwargs['content_type'] = 'application/json'
+        super(JSONResponse, self).__init__(content, **kwargs)
+
+
+class SocieteSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = mdl.societe.Societe
+        fields = '__all__'
 
 
 def societe_liste(request):
-    print('societe_liste')
     return render(request, 'liste_societes.html', {'societes': mdl.societe.find_all()})
 
 
@@ -78,3 +93,30 @@ def create(request):
     if id_personne:
         personne = get_object_or_404(mdl.personne.Personne, pk=id_personne)
     return HttpResponseRedirect(reverse('personne-edit', args=(personne.id, )))
+
+
+def create_new(request):
+    nouvelle_societe = populate_societe(request)
+    nouvelle_societe.save()
+
+    serializer = SocieteSerializer(mdl.societe.find_all(), many=True)
+    return JSONResponse(serializer.data)
+
+
+def populate_societe(request):
+    nouvelle_societe = mdl.societe.Societe()
+    nouvelle_societe.nom = request.GET.get('nom', None)
+    nouvelle_societe.description = request.GET.get('description', None)
+    nouvelle_societe.rue = request.GET.get('rue', None)
+    try:
+        nouvelle_societe.numero = int(request.GET.get('numero', None))
+    except:
+        nouvelle_societe.numero = None
+    nouvelle_societe.boite = request.GET.get('boite', None)
+    localite_nom = request.GET.get('localite', None)
+    localite_cp = request.GET.get('localite_cp', None)
+    nouvelle_societe.localite = None
+    if localite_nom and localite_cp:
+        nouvelle_societe.localite = mdl.localite.search(localite_cp, localite_nom)
+    return nouvelle_societe
+

@@ -32,6 +32,7 @@
       {% if form.date_paiement_reel.errors%}<span class="erreur_formulaire">{{form.date_paiement_reel.errors}}</span>{%endif%}
     </div>
   </div>
+    <br>
   <div class="row">
     <div class="col-md-4">
       <label for="etat_suivi">Etat suivi</label>
@@ -67,12 +68,19 @@
     </div>
 
   </div>
+<br>
   <div class="row">
     <div class="col-md-4">
       <label>Loyer percu</label>
       <input type="number" class="form-control"
              id="txt_loyer_percu"
-             value="{{suivi.loyer_percu}}" name="loyer_percu"> (<span id="spn_loyer_percu">Loyer attendu : {{suivi.financement_location.loyer}}</span>)
+             value="{{suivi.loyer_percu}}" name="loyer_percu"> (
+        <span id="spn_loyer_percu">Loyer attendu :
+            {{suivi.financement_location.loyer}}
+        </span>)
+        <br>
+        <span style="font-size: smaller;color:grey;">(Double clic => loyer percu = montant attendu et etat = 'payé'"</span>
+        <input type="hidden" value="{{suivi.financement_location.loyer}}" id="hdn_loyer_attendu">
     </div>
     <div class="col-md-6">
       {% if suivi.financement_location.charges > 0 %}
@@ -81,7 +89,7 @@
       {% endif %}
     </div>
   </div>
-
+<br>
   <div class="row">
     <div class="col-md-12">
       <label>Remarque</label>

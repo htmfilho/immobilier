@@ -47,28 +47,48 @@
     </div>
     <br>
     <div class="row">
-      <div class="col-md-6">
-          <label>Profession</label>
-
-          <select name="profession" class="form-control select_updatable" >
+      <div class="col-md-5">
+          <label>Fonction</label>
+          <select name="profession" class="form-control" id="slt_fonction">
               <option value="-">-</option>
               {% for f in fonctions %}
                   <option value="{{f.id}}" {%if f.id == personne.fonction.id%}selected{%endif%}>{{f}}</option>
               {%endfor %}
           </select>
+
+      </div>
+      <div class="col-md-1">
+          <label>&nbsp;</label>
+          <br>
+          <button type="button"
+                  id="bt_fonction_other"
+                  class="btn btn-link"
+                  title="Ajouter une nouvelle fonction"
+                  data-toggle="modal" data-target="#pnl_create_fonction_personne">
+              <span class="fa fa-plus-square-o fa-2x" aria-hidden="true"></span>
+          </button>
       </div>
       <div class="col-md-5">
         <label>Société</label>
         <select name="societe" class="form-control" id="slt_societes">
           <option value="-">-</option>
           {% for s in societes %}
-          <option value="{{s.id}}" {%if s.id == personne.societe.id%}selected{%endif%}>{{s}}</option>
+            <option value="{{s.id}}" {%if s.id == personne.societe.id%}selected{%endif%}>{{s}}</option>
           {%endfor %}
         </select>
         <span style="color:red">{{ form.societe.errors }}</span>
       </div>
       <div class="col-md-1">
-          <input type="checkbox" id="btn_ajout_societe">
+          <label>&nbsp;</label>
+          <br>
+          <input type="checkbox" id="btn_ajout_societe" style="visibility:hidden;display:none;">
+          <button type="button"
+                  class="btn btn-link"
+                  id="bt_societe_other"
+                  title="Ajouter une nouvelle societe"
+                  data-toggle="modal" data-target="#pnl_create_societe_personne">
+              <i class="fa fa-plus-square-o fa-2x" aria-hidden="true"></i>
+          </button>
       </div>
     </div>
     <div id="pnl_nouvelle_societe" class="new" style="visibility:hidden;display:none;margin:15px;">
@@ -120,12 +140,13 @@
           </select>
       </div>
       <div class="col-md-2">
+          <br>
           <button type="button"
                   id="bt_pays_other"
-                  class="btn btn-default"
+                  class="btn btn-link"
                   title="Ajouter un nouveau pays"
                   data-toggle="modal" data-target="#pnl_create_pays">
-              <span class="glyphicon glyphicon-&add" aria-hidden="true" >+</span>
+              <span class="fa fa-plus-square-o fa-2x" aria-hidden="true" ></span>
           </button>
       </div>
     </div>

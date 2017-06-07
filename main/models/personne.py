@@ -60,9 +60,8 @@ class Personne(models.Model):
     gsm = models.CharField(max_length=30, blank=True, null=True)
     societe = models.ForeignKey('Societe', blank=True, null=True)
     num_compte_banque = models.CharField(max_length=30, blank=True, null=True)
-    personne_type = models.CharField(max_length=20, choices=TYPE_PERSONNE, default='NON_PRECISE', blank=True, null=True)# a enlever
+    personne_type = models.CharField(max_length=20, choices=TYPE_PERSONNE, default='NON_PRECISE', blank=True, null=True)  # a enlever
     fonction = models.ForeignKey('Fonction', blank=True, null=True)
-
 
     def __init__(self,  *args, **kwargs):
         super(Personne, self).__init__(*args, **kwargs)
@@ -174,14 +173,12 @@ def find_personne_by_nom_prenom(un_nom, un_prenom, un_prenom2):
 
 
 def search(nom, prenom):
-    nom = request.GET.get('nom')
-    prenom = request.GET.get('prenom')
 
-    query = mdl.personne.find_all()
+    query = find_all()
 
     if nom:
         query = query.filter(nom__icontains=nom)
     if prenom:
         query = query.filter(prenom__icontains=prenom)
 
-    return query
+    return query.order_by('nom', 'prenom')

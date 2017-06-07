@@ -21,7 +21,6 @@
 #    see http://www.gnu.org/licenses/.
 #
 ##############################################################################
-from django.shortcuts import redirect
 from django.shortcuts import render, get_object_or_404
 from main.views_utils import get_key
 from main import models as mdl
@@ -29,7 +28,7 @@ from django.http import HttpResponseRedirect
 from django.core.urlresolvers import reverse
 
 
-LOCATAIRE_FORM_HTML = "locataire_form.html"
+LOCATAIRE_FORM_HTML = "locataire/locataire_form.html"
 
 
 def locataire_form(request, id):
@@ -92,15 +91,13 @@ def new_without_known_location(request):
 def add(request):
     locataire_id = get_key(request.POST.get('locataire_id', None))
     location_id = request.POST.get('location_id', None)
-    personne_id = get_key(request.POST.get('personne_id',None))
-
-
+    personne_id = get_key(request.POST.get('personne_id', None))
 
     locataire = populate_locataire(locataire_id, location_id, personne_id, request)
     locataire.save()
 
     action = request.POST.get('action', None)
-    if action=="update":
+    if action == "update":
         return render(request, "contratlocation_update.html", {'location': locataire.contrat_location})
     else:
         return HttpResponseRedirect(reverse('home'))
@@ -126,13 +123,15 @@ def populate_locataire(locataire_id, location_id, personne_id, request):
         societe = get_object_or_404(mdl.societe.Societe, pk=request.POST['societe'])
     locataire.societe = societe
     locataire.tva = request.POST['tva']
-    fonction_locataire = None
+
     if request.POST['profession']:
-        fonction_locataire = mdl.fonction.find_by_nom(request.POST['profession'])
-        if fonction_locataire is None:
-            fonction_locataire = mdl.fonction.Fonction()
-            fonction_locataire.nom_fonction = request.POST['profession']
-            fonction_locataire.save()
+        try:
+
+            id_fonction = int(request.POST['profession'])
+            fonction_locataire = mdl.fonction.find_by_id(id_fonction)
+        except:
+            fonction_locataire = None
+
     locataire.profession = fonction_locataire
     locataire.contrat_location = location
     return locataire
@@ -172,11 +171,13 @@ def list(request):
                   {'locataires': mdl.locataire.find_all(),
                    'personnes': mdl.personne.find_all()})
 
+
 def get_locataire(locataire_id):
     if locataire_id:
         return get_object_or_404(mdl.locataire.Locataire, pk=locataire_id)
     else:
         return mdl.locataire.Locataire()
+
 
 def get_location(location_id):
     if location_id:

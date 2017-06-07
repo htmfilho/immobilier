@@ -1,0 +1,94 @@
+
+
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"
+                        id="bt_pnl_create_societe"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title" id="uploadScroresLabel">
+                    <label id="lbl_description_label">Nouvelle societe</label>
+                </h4>
+            </div>
+            <div class="modal-body" id="pnl_create_societe_body">
+
+                <form method="get"
+                      action="{% url 'societe_create' %}">
+                    {% csrf_token %}
+                    <label>Nom</label>
+                    <br>
+                    <input type="text"
+                           id="txt_nom_societe"
+                           name="nom" maxlength="100">
+                    <br>
+                    <label>Description</label>
+                    <br>
+                    <textarea id="txt_description_societe" name="description" cols="50" rows="5"></textarea>
+                    <br>
+                    <label>Rue</label>
+                    <br>
+                    <input type="text"
+                           id="txt_rue"
+                           name="rue" maxlength="200">
+                    <br>
+                    <label>Numéro</label>
+                    <br>
+                    <input type="text"
+                           id="txt_numero_societe"
+                           name="numero">
+                    <br>
+                    <label>Boite</label>
+                    <br>
+                    <input type="text"
+                           id="txt_boite_societe"
+                           name="boite" maxlength="100">
+                    <br>
+                    <label>Lieu-dit</label>
+                    <br>
+                    <input type="text"
+                           id="txt_lieu_dit_societe"
+                           name="lieu_dit" maxlength="200">
+                    <br>
+                    <label>Code postal</label>
+                    <br>
+                    <input list="localites" type="text" id="txt_localite_cp_societe"
+                           class="form-control" name="localite_cp"
+                           value="{{ batiment.localite.code_postal| default_if_none:''}}" maxlength="10">
+                    <datalist id="localites">
+                        {% for l in localites %}
+                            <option value="{{ l.code_postal }}" data-id="{{ l.id }}">{{ l.code_postal }}</option>
+                        {% endfor %}
+                    </datalist>
+                    <br>
+                    <label class="control-label">Localité</label>
+                    <br>
+                    <input list="localites_nom" type="text" id="txt_localite_societe"
+                           class="form-control" name="localite_societe_other"
+                           vmaxlength="150">
+                    <datalist id="localites_nom">
+                        {% for l in localites %}
+                            <option value="{{ l.localite }}" data-id="{{ l.id }}">{{ l.localite }}</option>
+                        {% endfor %}
+                    </datalist>
+                    <br>
+                    <label>Type</label>
+                    <br>
+                    <select id="slt_type">
+                        <option value="NON_PRECISE">-</option>
+                        <option value="ASSURANCE">Assurance</option>
+                        <option value="BANQUE">Banque</option>
+                        <option value="NOTAIRE">Notaire</option>
+                    </select>
+
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal"
+                                id="bt_cancel_create_societe">Annuler
+                        </button>
+
+                        <input type="submit" class="btn btn-primary" value="Ok"
+                               data-dismiss="modal"
+                               id="bt_save_new_societe_new"/>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>

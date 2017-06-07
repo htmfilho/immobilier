@@ -1,0 +1,222 @@
+{% extends "layout.html" %}
+{% block breadcrumb %}
+{% if locataire.contrat_location %}
+    {% if locataire.contrat_location.batiment %}
+    <li><a href="{% url 'batiment' locataire.contrat_location.batiment.id  %}">Batiment</a></a></li>
+    {% endif %}
+    <li><a href="{% url 'location-prepare-update-all' locataire.contrat_location.id  %}">Location</a></li>
+{% endif %}
+<li class="active">Locataire</li>
+
+{% endblock %}
+{% block content %}
+<ul class="nav nav-tabs">
+    <li class="active"><a data-toggle="tab" href="#info_locataire">Info locataire</a></li>
+    {% if locataire.contrat_location and locataire.personne%}
+        <li><a data-toggle="tab" href="#info_contact">Info contact</a></li>
+    {% endif %}
+</ul>
+
+<div class="tab-content">
+    <div id="info_locataire" class="tab-pane fade in active">
+<div class="panel panel-default">
+  <div class="panel-body">
+      <form method="post" action="{% url 'locataire-add' %}">
+          {% csrf_token %}
+          <input type="hidden" id="previous" name="previous" value="{{ request.META.HTTP_REFERER }}"/>
+          <input type="hidden" value="{{ action }}" name="action"/>
+          <input type="hidden" value="{{ locataire.id }}" name="locataire_id"/>
+          <input type="hidden" value="{{ locataire.contrat_location.id }}" name="location_id"/>
+
+          <div class="row">
+              <div class="col-md-4">
+                  <label>Personne</label>
+                  <select class="form-control" name="personne_id">
+                      <option value="">-</option>
+                      {% for p in personnes %}
+                          {% if locataire.personne.id == p.id %}
+                              <option value="{{ p.id }}" selected>{{ p }}</option>
+                          {% else %}
+                              <option value="{{ p.id }}">{{ p }}</option>
+                          {% endif %}
+                      {% endfor %}
+                  </select>
+
+              </div>
+              <div class="col-md-4">
+                  <label>Civilité</label>
+                  <select class="form-control" name="civilite">
+                      ('NON_PRECISE','-'),
+                      ('MADAME','Madame'),
+                      ('MONSIEUR','Monsieur'),
+                      ('MAITRE','Maitre'),
+                      ('','Docteur'),
+                      {% if locataire.civilite == 'NON_PRECISE' %}
+                          <option value="NON_PRECISE" selected>-</option>
+                      {% else %}
+                          <option value="NON_PRECISE">-</option>
+                      {% endif %}
+                      {% if locataire.civilite == 'MADAME' %}
+                          <option value="MADAME" selected>Madame</option>
+                      {% else %}
+                          <option value="MADAME">Madame</option>
+                      {% endif %}
+                      {% if locataire.civilite == 'MONSIEUR' %}
+                          <option value="MONSIEUR" selected>Monsieur</option>
+                      {% else %}
+                          <option value="MONSIEUR">Monsieur</option>
+                      {% endif %}
+                      {% if locataire.civilite == 'MAITRE' %}
+                          <option value="MAITRE" selected>Maitre</option>
+                      {% else %}
+                          <option value="MAITRE">Maitre</option>
+                      {% endif %}
+                      {% if locataire.civilite == 'DOCTEUR' %}
+                          <option value="DOCTEUR" selected>Docteur</option>
+                      {% else %}
+                          <option value="DOCTEUR">Docteur</option>
+                      {% endif %}
+                  </select>
+              </div>
+              <div class="col-md-2">
+                  <label>Principal</label><br>
+                  <input type="checkbox" name="principal"
+                         {% if  locataire.principal  == True %}checked{% else %}''{% endif %}>
+              </div>
+              <div class="col-md-1">
+                  <label>Actif</label><br>
+                  <input type="checkbox" name="actif" {% if  locataire.actif  == True %}checked{% else %}''{% endif %}>
+              </div>
+              <div class="col-md-1">
+                  {% if not locataire.id %}
+                      <label class="invisible">&nbsp;</label>
+                      <button type="button"
+                              id="btn_locataire_ajout_personne"
+                              class="btn btn-warning"
+                              data-toggle="modal"
+                              data-target="#ajoutPersonneModal"><span class="glyphicon glyphicon-plus"
+                                                                      aria-hidden="true"></span></button>
+                  {% endif %}
+              </div>
+          </div>
+          <br>
+
+          <div class="row">
+              <div class="col-md-8">
+                  <label>Location</label>
+                  {% if action == 'update' %}
+                      <br>
+                      {{ locataire.contrat_location.batiment| default_if_none:'' }}
+                      <br>
+                      du {{ locataire.contrat_location.date_debut|date:"j/m/Y" }} au
+                      {{ locataire.contrat_location.date_fin|date:"j/m/Y" }}
+
+                      <br>
+                      <br>
+                  {% else %}
+                      {% if locations %}
+                          <div class="row">
+                              <div class="col-md-6">
+                                  <select name="location_id">
+                                      <option>-</option>
+                                      {% for location in locations %}
+                                          <option value="{{ location.id }}">{{ location }}</option>
+                                      {% endfor %}
+                                  </select>
+                              </div>
+                              <div class="col-md-6">
+                              </div>
+                          </div>
+                      {% else %}
+                          <input class="form-control"
+                                 value="{{ locataire.contrat_location.batiment| default_if_none:'' }}">
+                          <input class="form-control"
+                                 value="{{ locataire.contrat_location.date_debut|date:"j/m/Y" }} au
+                                         {{ locataire.contrat_location.date_fin|date:"j/m/Y" }}"
+                                 name="contrat_location">
+                      {% endif %}
+
+                  {% endif %}
+              </div>
+              <div class="col-md-3">
+              </div>
+          </div>
+          <br>
+
+          <div class="row">
+              <div class="col-md-8">
+                  <label>Infos complementaires</label>
+                  <input class="form-control" value="{{ locataire.infos_complement| default_if_none:'' }}"
+                         name="infos_complement">
+              </div>
+              <div class="col-md-3">
+              </div>
+          </div>
+          <br>
+
+          <div class="row">
+              <div class="col-md-3">
+                  <label>Societé occupant les lieux</label>
+                  <select name="societe" class="form-control" id="slt_societes_locataire">
+                      <option value="">-</option>
+                      {% for societe in societes %}
+                          <option value="{{ societe.id }}"
+                                  {% if societe.id == locataire.societe.id %}selected{% endif %}>{{ societe }}</option>
+                      {% endfor %}
+                  </select>
+              </div>
+              <div class="col-md-1">
+                  <br>
+                  <button type="button"
+                          class="btn btn-link"
+                          id="bt_societe_other"
+                          title="Ajouter une nouvelle societe"
+                          data-toggle="modal" data-target="#pnl_create_societe_locataire">
+                      <i class="fa fa-plus-square-o fa-2x" aria-hidden="true"></i>
+                  </button>
+              </div>
+              <div class="col-md-4">
+                  <label>TVA</label>
+                  <input class="form-control" value="{{ locataire.tva| default_if_none:'' }}" name="tva">
+              </div>
+              <div class="col-md-3">
+                  <label>Fonction exercée dans les lieux</label>
+                  <select name="profession" class="form-control" id="slt_fonction_locataire">
+                      <option value="-">-</option>
+                      {% for f in fonctions %}
+                          <option value="{{ f.id }}"
+                                  {% if f.id == locataire.profession.id %}selected{% endif %}>{{ f }}</option>
+                      {% endfor %}
+                  </select>
+              </div>
+
+              <div class="col-md-1">
+                  <label>&nbsp;</label>
+                  <br>
+                  <button type="button"
+                          id="bt_locataire_fonction_other"
+                          class="btn btn-link"
+                          title="Ajouter une nouvelle fonction"
+                          data-toggle="modal" data-target="#pnl_create_fonction_locataire">
+                      <span class="fa fa-plus-square-o fa-2x" aria-hidden="true"></span>
+                  </button>
+              </div>
+          </div>
+
+          <button type="submit" class="btn btn-primary pull-right" title="Sauvegarder">
+              <span class="glyphicon glyphicon-floppy-disk" aria-hidden="true"> Enregistrer</span>
+          </button>
+      </form>
+
+</div>
+</div>
+    </div>
+    <div id="info_contact" class="tab-pane fade ">
+      {% include 'personne/personne_sub_form.html' %}
+    </div>
+</div>
+
+{% include "personne/personne_create.html" %}
+{% include "societe/societe_create_locataire.html" %}
+{% include "fonction/fonction_create_locataire.html" %}
+{% endblock %}
