@@ -19,7 +19,7 @@
             <td data-order="{{ alerte.date_alerte|date:"Y-m-d" | default_if_none:'' }}">{{ alerte.date_alerte|date:"d/m/Y" | default_if_none:'' }}</td>
             <td>{% if alerte.contrat_gestion%}{{ alerte.contrat_gestion }}{%endif%}</td>
             <td>{% if alerte.contrat_location%}{{alerte.contrat_location.batiment}}, {{ alerte.contrat_location.date_debut|date:"j/m/Y" }}-{{ alerte.contrat_location.date_fin|date:"j/m/Y" }}{%endif%}</td>
-            <td>{{ alerte.etat| default_if_none:'' }}</td>
+            <td>{{ alerte.get_etat_display| default_if_none:'' }}</td>
             <td>
                 <a href="{% url 'alerte-update' alerte.pk %}" title="Passe à l'état vérifier"><img src="{% static 'images/glyphicons-153-check.png' %}"/></a>
             </td>
