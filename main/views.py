@@ -228,7 +228,7 @@ def listeComplete(request):
 @login_required
 def personne(request, personne_id):
     personne = mdl.personne.find_personne(personne_id)
-    return render(request, "personne_form.html",
+    return render(request, "personne/personne_form.html",
                   {'personne':         personne,
                    'societes': mdl.societe.find_all()})
 
@@ -243,7 +243,7 @@ def update_personne(request):
         personne.prenom = request.POST['prenom']
 
         personne.save()
-    return render(request, "personne_form.html",
+    return render(request, "personne/personne_form.html",
                   {'personne': personne,
                    'societes': mdl.societe.find_all()})
 

@@ -21,31 +21,32 @@
 #    see http://www.gnu.org/licenses/.
 #
 ##############################################################################
-from django.db import models
-from django.contrib import admin
+from main import models as mdl
+from django.http import HttpResponse
+from rest_framework import serializers
+from rest_framework.renderers import JSONRenderer
 
 
-class Pays(models.Model):
-    nom = models.CharField(max_length=50)
-
-    def __str__(self):
-        return self.nom
-
-
-def find_by_id(un_id):
-
-    return Pays.objects.get(pk=un_id)
+class JSONResponse(HttpResponse):
+    def __init__(self, data, **kwargs):
+        content = JSONRenderer().render(data)
+        kwargs['content_type'] = 'application/json'
+        super(JSONResponse, self).__init__(content, **kwargs)
 
 
-def find_by_pays(un_pays):
-    return Pays.objects.filter(pays=un_pays)
+def create(request):
+    print('create pays')
+    nouveau_pays = mdl.pays.Pays()
+    nouveau_pays.nom = request.GET.get('nom', None)
+
+    nouveau_pays.save()
+    print(nouveau_pays.id)
+    serializer = PaysSerializer(mdl.pays.find_all(), many=True)
+    return JSONResponse(serializer.data)
 
 
-def create(un_nom):
-    p = Pays(nom=un_nom)
-    return p
+class PaysSerializer(serializers.ModelSerializer):
 
-
-def find_all():
-    return Pays.objects.all().order_by('nom')
-
+    class Meta:
+        model = mdl.pays.Pays
+        fields = '__all__'

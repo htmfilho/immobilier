@@ -209,6 +209,11 @@ class Batiment(models.Model):
             return True
         return None
 
+    @property
+    def en_gestion(self):
+        if ContratGestion.find_by_batiment(self).exists():
+            return True
+        return False
 
 def autocomplete_search_fields():
     return 'localite'

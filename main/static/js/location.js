@@ -81,10 +81,6 @@ $("#date_debut").blur(function() {
         var description = $("#txt_description_assurance_other").val();
         var name = $("#txt_nom_assurance_other").val();
 
-        var data = new FormData();
-        data.append('description', description);
-        data.append('nom', name);
-        var loc = location.href;
         var url = "{% url 'assurance_create' %}";
         url = "http://127.0.0.1:8000/assurance_create/";
         $.ajax({

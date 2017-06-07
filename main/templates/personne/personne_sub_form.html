@@ -112,14 +112,21 @@
       </div>
       <div class="col-md-4">
         <label>Pays naissance</label>
-          <select class="form-control" name="pays_naissance">
+          <select class="form-control" name="pays_naissance" id="slt_pays">
               <option>-</option>
               {% for p in pays %}
                   <option value="{{ p.id }}" {% if p.id == personne.pays_naissance.id %}selected{% endif %}>{{ p.nom }}</option>
               {% endfor %}
           </select>
       </div>
-      <div class="col-md-3">
+      <div class="col-md-2">
+          <button type="button"
+                  id="bt_pays_other"
+                  class="btn btn-default"
+                  title="Ajouter un nouveau pays"
+                  data-toggle="modal" data-target="#pnl_create_pays">
+              <span class="glyphicon glyphicon-&add" aria-hidden="true" >+</span>
+          </button>
       </div>
     </div>
     <br>
@@ -165,3 +172,5 @@
           </div>
       </div>
   </div>
+
+  {% include "personne/pays_create.html" %}

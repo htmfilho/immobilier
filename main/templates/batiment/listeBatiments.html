@@ -21,6 +21,7 @@
                 <thead>
                 <tr>
                     <th>Bien</th>
+                    <th>En gestion</th>
                     <th>Localité</th>
                     <th>Proprio(s)s</th>
                     <th class="no-sort">Locataires</th>
@@ -35,6 +36,7 @@
                             <a href="{% url 'batiment' batiment.pk %}" title="Pour modifier un batiment">
                                 {{ batiment.adresse_rue | default_if_none:''}}</a>
                         </td>
+                        <td><input type="checkbox" {% if batiment.en_gestion %}checked{% endif %} readonly ></td>
                         <td><a href="{% url 'batiment' batiment.pk %}" title="Pour modifier un batiment">
                             {{ batiment.adresse_localite | default_if_none:''}}</a></td>
                         <td>

@@ -123,13 +123,7 @@ class Personne(models.Model):
 
     def save(self,  *args, **kwargs):
         p = super(Personne, self).save(*args, **kwargs)
-        print(self.id)
-        if Pays.find_by_pays(self.pays_naissance):
-            pass
-        else:
-            if self.pays_naissance:
-                pays = Pays.create(self.pays_naissance)
-                pays.save()
+
         fonction = None
         if self.profession:
             fonction = Fonction.find_by_nom(self.profession)
@@ -177,3 +171,17 @@ def delete_personne(id):
 
 def find_personne_by_nom_prenom(un_nom, un_prenom, un_prenom2):
     return Personne.objects.filter(nom__iexact=un_nom, prenom__iexact=un_prenom, prenom2__iexact=un_prenom2)
+
+
+def search(nom, prenom):
+    nom = request.GET.get('nom')
+    prenom = request.GET.get('prenom')
+
+    query = mdl.personne.find_all()
+
+    if nom:
+        query = query.filter(nom__icontains=nom)
+    if prenom:
+        query = query.filter(prenom__icontains=prenom)
+
+    return query
