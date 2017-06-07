@@ -11,17 +11,20 @@
                     </h4>
                 </div>
                 <div class="modal-body" id="pnl_create_assurance_body">
-                    <form method="post"
+                    <form method="get"
                           action="{% url 'assurance_create' %}">
                         {% csrf_token %}
                     <label>Nom</label>
                     <br>
-                    <input type="text" id="txt_nom_assurance_other"  name="nom_assurance_other">
+                    <input type="text"
+                           id="txt_nom_assurance_other"
+                           name="nom_assurance_other" maxlength="100">
                     <br>
                     <br>
                     <label>Description</label>
                     <br>
-                    <input type="text" id="txt_description_assurance_other"  name="description_assurance_other">
+                    <textarea id="txt_description_assurance_other"  name="description_assurance_other" cols="50" rows="5"></textarea>
+
                         <div class="modal-footer">
                             <button type="button" class="btn btn-default" data-dismiss="modal"
                                     id="bt_cancel_create_assurance">Annuler</button>

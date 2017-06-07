@@ -88,7 +88,14 @@
       "nom": "Verpoorten"
     }
   },
-
+  {
+    "model": "main.personne",
+    "pk": 12,
+    "fields": {
+      "prenom": "Inconnu",
+      "nom": "Inconnu"
+    }
+  },
         {       "model": "main.localite","pk": 1, "fields": { "code_postal" :"5000", "localite": "Beez"}}
   ,     {       "model": "main.localite","pk": 2, "fields": { "code_postal" :"5000", "localite": "Namur"}}
   ,     {       "model": "main.localite","pk": 3, "fields": { "code_postal" :"5001", "localite": "Belgrade"}}
@@ -688,6 +695,15 @@
         "fonction": "2"
       }
     },
+  {
+    "model": "main.professionnel",
+
+    "fields": {
+
+      "personne": "12",
+
+    }
+  },
   {"model":"main.indicesante","fields":{ "date_calcul": "2016-04-01", "annee_base": 1988 ,"indice":171.51}},
   {"model":"main.indicesante","fields":{ "date_calcul": "2016-05-01", "annee_base": 1988 ,"indice":171.91}},
   {"model":"main.indicesante","fields":{ "date_calcul": "2016-06-01", "annee_base": 1988 ,"indice":171.86}},

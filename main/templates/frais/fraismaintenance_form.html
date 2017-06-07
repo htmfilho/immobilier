@@ -54,8 +54,9 @@
       {%endfor%}
     </select>
   </div>
+
   <div class="col-md-5">
-      <input type="checkbox"  id="chb_new_entrepreneur" /><label>Ajouter un nouvel entrepreneur</label>
+      <input type="checkbox"  id="chb_new_entrepreneur" name="new_entrepreneur"/><label>Ajouter un nouvel entrepreneur</label>
   </div>
 </div>
 <div id="pnl_new_entrepreneur" style="visibility:hidden;display:none;background-color: #BAEEBA;margin:15px">
@@ -64,7 +65,7 @@
         <div class="col-md-4">
             <label>Personne</label>
             <select name="new_personne"  id="slt_person" class="form-control select_updatable">
-                <option value="-" >-</option>
+                <option value="-" ></option>
                 {%for p in personnes%}
                     <option value="{{p.id}}" >{{p}}</option>
                 {%endfor%}
@@ -116,13 +117,11 @@
   <div class="col-md-6">
   </div>
 </div>
-<div class="row">
-  <div class="col-md-11">
-  </div>
-  <div class="col-md-1">
-    <input type="submit" value="enregistrer" id="bt_fraismaintenance_save"/>
-  </div>
-</div>
+
+      <button ype="submit" class="btn btn-primary pull-right"  id="bt_fraismaintenance_save">
+          <span class="glyphicon glyphicon-floppy-disk" aria-hidden="true"> Enregistrer</span>
+      </button>
+
 </form>
 
 {% endblock %}

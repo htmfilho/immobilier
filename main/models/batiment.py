@@ -200,6 +200,15 @@ class Batiment(models.Model):
 
         return 0
 
+    @property
+    def location_en_cours(self):
+        locations = ContratLocation.find_by_batiment_dates(self)
+        print(locations)
+        if locations:
+
+            return True
+        return None
+
 
 def autocomplete_search_fields():
     return 'localite'

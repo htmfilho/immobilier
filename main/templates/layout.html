@@ -99,7 +99,10 @@
                         "columnDefs": [ {
                             "targets": 'no-sort',
                             "orderable": false,
-                        } ]
+                        } ],
+                        "language": {
+                            "url": "/static/i18n/French.json"
+                        }
                     }
 
             );
@@ -208,7 +211,7 @@
             orientation: "bottom auto",
             language: "fr"
         });
-        $("#date_debut_location").datepicker({
+        $("#update_date_debut_location").datepicker({
             autoclose: true,
             orientation: "bottom auto",
             language: "fr"
@@ -238,6 +241,18 @@
             orientation: "bottom auto",
             language: "fr"
         });
+        $("#form_date_debut_location").datepicker({
+            autoclose: true,
+            orientation: "bottom auto",
+            language: "fr"
+        });
+        $("#new_date_debut").datepicker({
+            autoclose: true,
+            orientation: "bottom auto",
+            language: "fr"
+        });
+
+
 
 
 
@@ -251,7 +266,7 @@
                 $('#pnl_new_entrepreneur').css('display', 'block');
                 $('#slt_entrepreneur').prop('disabled', true);
                 $('#slt_entrepreneur').prop('disabled', true);
-                $('#slt_entrepreneur').prop('selectedIndex',-1);
+                $('#slt_entrepreneur').prop('selectedIndex',0);
 
             }else{
                 $('#pnl_new_entrepreneur').css('visibility', 'hidden');

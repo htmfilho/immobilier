@@ -73,12 +73,14 @@ $("#date_debut").blur(function() {
     }
 
     $("#bt_save_new_assurance").click(function(event) {
-        event.preventDefault();
+        //event.preventDefault();
         var target = $(event.target);
         var id = target.attr("id");
+
         var form = target.form;
         var description = $("#txt_description_assurance_other").val();
         var name = $("#txt_nom_assurance_other").val();
+
         var data = new FormData();
         data.append('description', description);
         data.append('nom', name);
@@ -86,18 +88,30 @@ $("#date_debut").blur(function() {
         var url = "{% url 'assurance_create' %}";
         url = "http://127.0.0.1:8000/assurance_create/";
         $.ajax({
-            url: url,
-            type: 'POST',
-            data : data,
-            processData: false,
-            contentType: false,
-            complete: function(xhr, statusText){
-                if(xhr.status=='0'){
-                    //problem occured
+            url: '/assurance_create?nom='+name+'&description='+description,
 
-                }else{
-                    $('#slt_assurances').append('<option val="1" selected>'+name+'</option>');
+        }).then(function (data) {
+            if (data.length > 0) {
+                var max_id = -1;
+                var nom= "";
+                var description="";
+                $.each(data, function (key, value) {
+                    var id = value.id;
+                    if (id > max_id){
+                        max_id=id;
+                        nom = value.nom;
+                        description = value.description;
+                    }
+                });
+                if(max_id > 0){
+                    $("#slt_assurances").append(new Option(nom + '-' + description,max_id));
                 }
+
+                $('#slt_assurances').find('option').each(function() {
+                    if($(this).val()==max_id){
+                        $(this).prop('selected',true);
+                    }
+                });
 
             }
 

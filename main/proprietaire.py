@@ -102,7 +102,7 @@ def proprietaire_update_save(request):
     previous = request.POST['previous']
     print('previous:', previous)
     proprietaire = None
-    action =  request.POST.get('action', None)
+    action = request.POST.get('action', None)
     if 'update' == action:
         proprietaire = get_object_or_404(mdl.proprietaire.Proprietaire, pk=request.POST['id'])
     if 'add' == action:
@@ -115,9 +115,8 @@ def proprietaire_update_save(request):
     if request.POST['date_fin']:
         proprietaire.date_fin = datetime.strptime(request.POST['date_fin'], '%d/%m/%Y')
 
-
     if request.POST.get('proprietaire') is None or request.POST.get('proprietaire') == '-':
-        valide=True
+        valide = True
         if request.POST['nouveau_nom'] and request.POST['nouveau_prenom']:
             personne_deja_existante = mdl.personne.find_personne_by_nom_prenom(request.POST['nouveau_nom'],
                                                                                request.POST['nouveau_prenom'],
@@ -131,7 +130,7 @@ def proprietaire_update_save(request):
                                                  prenom=request.POST['nouveau_prenom'])
                 personne.save()
         else:
-            message='Il faut sélectionner un propriétaire ou créer une nouvelle personne'
+            message = 'Il faut sélectionner un propriétaire ou créer une nouvelle personne'
             valide = False
 
         if not valide:
@@ -142,11 +141,11 @@ def proprietaire_update_save(request):
                            'previous': previous,
                            'message': message})
     else:
-        personne = get_object_or_404(mdl.personne.Personne, pk=request.POST.get('proprietaire',None))
+        personne = get_object_or_404(mdl.personne.Personne, pk=request.POST.get('proprietaire', None))
 
     proprietaire.proprietaire = personne
 
-    if not proprietaire.date_debut is None and not proprietaire.date_fin is None:
+    if proprietaire.date_debut and  proprietaire.date_fin:
         if proprietaire.date_debut > proprietaire.date_fin:
             return render(request, "proprietaire_form.html",
                           {'proprietaire': proprietaire,
@@ -202,7 +201,7 @@ def get_personnes_possible(batiment):
     personnes_non_encore_proprietaire = []
     personnes = mdl.personne.find_all()
     for p in personnes:
-        proprietaires= mdl.proprietaire.search(p, batiment)
+        proprietaires = mdl.proprietaire.search(p, batiment)
         if not proprietaires.exists():
             personnes_non_encore_proprietaire.append(p)
     return personnes_non_encore_proprietaire

@@ -47,8 +47,10 @@ class FraisMaintenance(models.Model):
         return ch
 
 
-def find_by_batiment(batiment_id):
-    a_batiment = Batiment.find_batiment(batiment_id)
+def find_by_batiment(a_batiment):
+    # print('find_by_batiment')
+    # print(batiment_id)
+    # a_batiment = Batiment.find_batiment(batiment_id)
     if a_batiment:
         return FraisMaintenance.objects.filter(batiment=a_batiment)
     return None

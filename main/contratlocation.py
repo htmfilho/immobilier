@@ -41,6 +41,7 @@ def prepare_update(request, location_id):
 
 
 def update(request):
+    print('update')
     previous = request.POST.get('previous', None)
     id = request.POST.get('id', None)
     form = ContratLocationForm(data=request.POST)
@@ -96,7 +97,7 @@ def contrat_location_for_batiment(request, batiment_id):
         nouvelle_location.date_debut = auj.strftime("%d/%m/%Y")
 
         # le financement sera crée automatiquement
-    return render(request, "contratlocation_new.html",
+    return render(request, "location/contratlocation_new.html",
                            {'location': nouvelle_location,
                             'assurances': mdl.assurance.find_all(),
                             'nav': 'list_batiment'})
@@ -166,7 +167,7 @@ def test(request):
             location.date_fin = None
             location.renonciation = None
             location_courante = locations_en_cours.first()
-            return render(request, "contratlocation_form.html",
+            return render(request, "location/contratlocation_form.html",
                           {'location': location,
                            'assurances': mdl.assurance.find_all(),
                            'nav': 'list_batiment',
@@ -184,7 +185,7 @@ def test(request):
         location.save()
         return HttpResponseRedirect(reverse('batiment', args=(location.batiment.id, )))
     else:
-        return render(request, "contratlocation_form.html",
+        return render(request, "location/contratlocation_form.html",
                                {'location':    location,
                                 'assurances': mdl.assurance.find_all(),
                                 'batiments': mdl.batiment.find_all(),
@@ -219,7 +220,7 @@ def contrat_location_form(request):
     nouvelle_location = mdl.contrat_location.ContratLocation()
     auj = date.today()
     nouvelle_location.date_debut = auj.strftime("%d/%m/%Y")
-    return render(request, "contratlocation_form.html", {
+    return render(request, "location/contratlocation_form.html", {
         'assurances': mdl.assurance.find_all(),
         'batiments': mdl.batiment.find_all(),
         'location': nouvelle_location,

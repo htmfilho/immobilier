@@ -33,14 +33,14 @@ from main import models as mdl
 
 def list(request):
     date_limite = timezone.now() - relativedelta(days=15)
-    honoraires = mdl.honoraire.find_by_batiment_etat_date(None, 'A_VERIFIER', date_limite)
-    batiments = mdl.honoraire.find_all_batiments()
-    return render(request, "honoraire_list.html",
-                  {'honoraires':  honoraires,
-                   'batiments':   batiments,
+    date_limite_sup = timezone.now() + relativedelta(days=15)
+    return render(request, "honoraire/honoraire_list.html",
+                  {'honoraires':  mdl.honoraire.find_by_batiment_etat_date(None, 'A_VERIFIER', date_limite, date_limite_sup),
+                   'batiments':   mdl.honoraire.find_all_batiments(),
                    'date_limite': date_limite,
-                   'etat':        'A_VERIFIER',
-                   'batiment':    None})
+                   'date_limite_sup': date_limite_sup,
+                   'etat': 'A_VERIFIER',
+                   'batiment': None})
 
 
 def search(request):
@@ -54,21 +54,31 @@ def search(request):
         etat = request.GET['etat']
     if not request.GET['etat'] is None and not request.GET['etat'] == 'TOUS':
         etat_query = request.GET['etat']
-    date_limite = None
-
-    if not request.GET.get('date_limite') is None and not request.GET.get('date_limite') == 'None' \
-            and not request.GET.get('date_limite') == '':
-        date_limite = datetime.strptime(request.GET.get('date_limite'), '%d/%m/%Y')
+    date_limite = get_date(request, 'date_limite')
+    date_limite_sup = get_date(request, 'date_limite_sup')
 
     batiment_selected = batiment_id
     if batiment_selected is None:
         batiment_selected="TOUS"
-    return render(request, "honoraire_list.html",
-                  {'honoraires':   mdl.honoraire.find_by_batiment_etat_date(batiment_id, etat_query, date_limite),
-                   'batiments':    mdl.honoraire.find_all_batiments(),
-                   'date_limite':  date_limite,
-                   'etat':         etat,
-                   'batiment':     batiment_selected})
+    return render(request, "honoraire/honoraire_list.html",
+                  {'honoraires': mdl.honoraire.find_by_batiment_etat_date(batiment_id,
+                                                                          etat_query,
+                                                                          date_limite,
+                                                                          date_limite_sup),
+                   'batiments': mdl.honoraire.find_all_batiments(),
+                   'date_limite': date_limite,
+                   'date_limite_sup': date_limite_sup,
+                   'etat': etat,
+                   'batiment': batiment_selected})
+
+
+def get_date(request, nom_parametre):
+    date_limite = None
+
+    if not request.GET.get(nom_parametre) is None and not request.GET.get(nom_parametre) == 'None' \
+            and not request.GET.get(nom_parametre) == '':
+        date_limite = datetime.strptime(request.GET.get(nom_parametre), '%d/%m/%Y')
+    return date_limite
 
 
 def update(request):
@@ -93,9 +103,9 @@ def update(request):
             if next_page:
                 return redirect(next_page)
             else:
-                return render(request, "honoraire_list.html", {'honoraires': mdl.honoraire.find_all()})
+                return render(request, "honoraire/honoraire_list.html", {'honoraires': mdl.honoraire.find_all()})
         else:
-            return render(request, "honoraire_form.html", {'honoraire': honoraire, 'form': form})
+            return render(request, "honoraire/honoraire_form.html", {'honoraire': honoraire, 'form': form})
     else:
         return HttpResponseRedirect(reverse('home'))
 
@@ -104,7 +114,7 @@ def honoraire_form(request, honoraire_id):
     next = request.META.get('HTTP_REFERER', '/')
     form = HonoraireForm(data=request.POST)
     a_honoraire = get_object_or_404(mdl.honoraire.Honoraire, pk=honoraire_id)
-    return render(request, "honoraire_form.html",
+    return render(request, "honoraire/honoraire_form.html",
                   {'honoraire': a_honoraire,
                    'form': form,
                    'next': next})

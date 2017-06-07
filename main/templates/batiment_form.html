@@ -101,9 +101,9 @@
       {% if batiment.id %}
           <ul class="nav nav-tabs">
             <li class="active"><a data-toggle="tab" href="#proprietaires">Propriétaires</a></li>
-            <li><a data-toggle="tab" href="#location">Location</a></li>
+            <li><a data-toggle="tab" href="#location" style="{% if batiment.location_en_cours %}color:green;{% else %}color:red;{% endif %}">Location</a></li>
             <li><a data-toggle="tab" href="#gestion">Gestion</a></li>
-            <li><a data-toggle="tab" href="#frais">Frais</a></li>
+            <li><a data-toggle="tab" href="#frais">Frais (du contrat de location actuel)</a></li>
           </ul>
           <div class="tab-content">
               <div id="proprietaires" class="tab-pane fade in active">

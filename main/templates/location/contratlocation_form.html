@@ -29,7 +29,6 @@
   <div class="panel-body">
     <form method="post" action="{% url 'add-location-for-batiment' %}">
       {% csrf_token %}
-      {{form.errors}}
       <input type="hidden" id="previous" name="previous" value="{{request.META.HTTP_REFERER }}"/>
       <input type="hidden" id="prev" name="prev" value="{{prev}}"/>
       <input type="hidden" name="batiment" value="{{location.batiment}}"/>
@@ -39,7 +38,7 @@
             <option>-</option>
           {% for b in batiments %}
               {% if location.batiment.id == b.id %}
-                <option value="{{ b.id }}" selected>{{ b }}</option>
+                <option value="{{ b.id }}" selected >{{ b }}</option>
               {%else%}
                 <option value="{{ b.id }}">{{ b }}</option>
               {% endif %}
@@ -51,9 +50,11 @@
       <div class="row">
         <div class="col-md-2">
             <label for="date_debut">Date début</label>
-            <input class="form-control"
-                   id="date_debut_location"
-                   value="{%if location.date_debut%}{{location.date_debut|date:"j/m/Y"}}{%endif%}" name="date_debut">
+            <input class="form-control required"
+                   id="form_date_debut_location"
+                   required
+                   value="{%if location.date_debut%}{{location.date_debut|date:"j/m/Y"}}{%endif%}"
+                   name="date_debut">
               <font class="erreur_formulaire">{{ form.date_debut.errors }}</font>
         </div>
         <div class="col-md-10">
@@ -90,10 +91,15 @@
       <div class="row">
         <div class="col-md-8">
           <label>Assurance</label>
-          <select class="form-control" name="assurance"  class="form-control" id="slt_assurances">
+          <select class="form-control" name="assurance" class="form-control" id="slt_assurances">
             <option value="">-</option>
             {%for a in assurances%}
-                <option value="{{a.id}}">{{a.name}}</option>
+                <option value="{{a.id}}"
+                        {% if location.assurance and location.assurance.id == a.id%}
+                            selected
+                        {% endif %}>
+                    {{a.nom}} - {{ a.description }}
+                </option>
             {%endfor%}
           </select>
           <font class="erreur_formulaire">{{ form.assurance.errors }}</font>

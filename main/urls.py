@@ -76,8 +76,7 @@ urlpatterns = [
     url(r'^fraismaintenance/create/([0-9]+)/$', frais.create, name='fraismaintenance-create'),
     url(r'^fraismaintenance/prepare/update/([0-9]+)/$', frais.prepare_update, name='fraismaintenance-prepare-update'),
     url(r'^fraismaintenance/update/$', frais.update, name='fraismaintenance-update'),
-    url(r'^fraismaintenance/delete/(?P<pk>[0-9]+)/$', views.FraisMaintenanceDelete.as_view(),
-        name='fraismaintenance-delete'),
+    url(r'^fraismaintenance/delete/([0-9]+)/$', frais.delete_frais, name='fraismaintenance-delete'),
     url(r'^fraismaintenance/(?P<pk>[0-9]+)/$', views.FraisMaintenanceDetail.as_view(), name='fraismaintenance_detail'),
 
     url(r'^personne/create/$', personne.create, name='personne-create'),

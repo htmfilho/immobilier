@@ -21,7 +21,7 @@
         <div class="col-md-3">
         <label for="date_debut_location">Date début</label>
         <input class="form-control"
-               id="date_debut_location"
+               id="update_date_debut_location"
                value="{%if location.date_debut%}{{location.date_debut|date:"j/m/Y"}}{%endif%}" name="date_debut"
                readonly>
        {% if form.date_debut.errors%}<font class="erreur_formulaire">{{form.date_debut.errors}}</font>{%endif%}
@@ -110,15 +110,13 @@
           <font class="erreur_formulaire">{{form.errors}}</font>
         {%endif%}
       </div>
-      <div class="col-md-1">
-
-    <button type="submit" class="btn btn-primary"
-        title="Enregistrer les données relatives à la location"><span class="glyphicon glyphicon-floppy-disk" aria-hidden="true"> Enregistrer</span>
-    </button>
-      </div>
     </div>
+        <button type="submit" class="btn btn-primary pull-right"
+                title="Enregistrer les données relatives à la location">
+            <span class="glyphicon glyphicon-floppy-disk" aria-hidden="true"> Enregistrer</span>
+        </button>
     </form>
-
+  <br>
       <ul class="nav nav-tabs">
         <li class="active"><a data-toggle="tab" href="#locataires">Locataires</a></li>
           <li><a data-toggle="tab" href="#suivis">Suivis ({{location.suivis |length }})</a></li>
@@ -153,7 +151,6 @@
                     <span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
                   </a>
               </td>
-
 
             </tr>
             {% endfor%}

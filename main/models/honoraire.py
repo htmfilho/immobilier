@@ -62,7 +62,7 @@ def find_all():
     return Honoraire.objects.all()
 
 
-def find_by_batiment_etat_date(batiment_id, etat, date_limite_inf):
+def find_by_batiment_etat_date(batiment_id, etat, date_limite_inf, date_limite_sup):
     queryset = Honoraire.objects
 
     if batiment_id:
@@ -73,6 +73,9 @@ def find_by_batiment_etat_date(batiment_id, etat, date_limite_inf):
 
     if date_limite_inf:
         queryset = queryset.filter(date_paiement__gte=date_limite_inf)
+
+    if date_limite_sup:
+        queryset = queryset.filter(date_paiement__lte=date_limite_sup)
 
     return queryset
 

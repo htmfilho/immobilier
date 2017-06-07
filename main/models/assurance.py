@@ -36,4 +36,4 @@ class Assurance(models.Model):
 
 
 def find_all():
-    return Assurance.objects.all()
+    return Assurance.objects.all().order_by('nom')

@@ -21,15 +21,32 @@
 #    see http://www.gnu.org/licenses/.
 #
 ##############################################################################
+from django.contrib.auth.decorators import login_required
 from main import models as mdl
 from django.http import HttpResponse
+from rest_framework import serializers
+from rest_framework.renderers import JSONRenderer
 
 
+class JSONResponse(HttpResponse):
+    def __init__(self, data, **kwargs):
+        content = JSONRenderer().render(data)
+        kwargs['content_type'] = 'application/json'
+        super(JSONResponse, self).__init__(content, **kwargs)
+
+
+@login_required
 def create(request):
-    print('create assurance')
-    data = request.POST
     new_assurance = mdl.assurance.Assurance()
-    new_assurance.nom = data['nom']
-    new_assurance.description = data['description']
+    new_assurance.nom = request.GET.get('nom', None)
+    new_assurance.description = request.GET.get('description', None)
     new_assurance.save()
-    return HttpResponse('')
+    serializer = AssuranceSerializer(mdl.assurance.find_all(), many=True)
+    return JSONResponse(serializer.data)
+
+
+class AssuranceSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = mdl.assurance.Assurance
+        fields = '__all__'

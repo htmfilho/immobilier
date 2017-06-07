@@ -33,7 +33,7 @@ def new(request):
     frais = mdl.frais_maintenance.FraisMaintenance()
     previous = request.POST.get('previous', None)
 
-    return render(request, "fraismaintenance_form.html",
+    return render(request, "frais/fraismaintenance_form.html",
                   {'frais':     frais,
                    'personnes': mdl.personne.find_all(),
                    'action':   'new',
@@ -51,7 +51,7 @@ def create(request, batiment_id):
     frais = mdl.frais_maintenance.FraisMaintenance()
     frais.batiment = batiment
 
-    return render(request, "fraismaintenance_form.html",
+    return render(request, "frais/fraismaintenance_form.html",
                   {'frais':     frais,
                    'personnes': mdl.personne.find_all(),
                    'action':   'new',
@@ -62,8 +62,9 @@ def create(request, batiment_id):
 
 
 def prepare_update(request, id):
+    print('prepare_update')
     frais = mdl.frais_maintenance.find_by_id(id)
-    return render(request, "fraismaintenance_form.html",
+    return render(request, "frais/fraismaintenance_form.html",
                   {'frais':  frais,
                    'action': 'update',
                    'entrepreneurs': mdl.professionnel.find_all()})
@@ -83,17 +84,22 @@ def update(request):
         frais.batiment = batiment
     frais.contrat_location = None
     if request.POST.get('contrat_location') == 'on':
+
         cl = frais.batiment.location_actuelle
 
         if cl:
             frais.contrat_location = cl
 
-
-    entrepreneur = get_key(request.POST.get('entrepreneur', None))
-    if entrepreneur:
-        professionnel = get_object_or_404(mdl.professionnel.Professionnel, pk=entrepreneur)
-    else:
+    professionnel = None
+    if request.POST.get('new_entrepreneur') == 'on':
         professionnel = nouveau_professionnel(request)
+    else:
+        entrepreneur = get_key(request.POST.get('entrepreneur', None))
+        if entrepreneur:
+            professionnel = get_object_or_404(mdl.professionnel.Professionnel, pk=entrepreneur)
+
+    print(professionnel)
+
     frais.entrepreneur = professionnel
     # if request.POST.get('societe', None):
     #     frais.societe = request.POST['societe']
@@ -114,12 +120,16 @@ def update(request):
     else:
         frais.date_realisation = None
     form = FraisMaintenanceForm(data=request.POST)
+
     if form.is_valid():
+        print('valid')
         frais.save()
+        print(frais.id)
         previous = request.POST.get('previous', None)
         return redirect(previous)
     else:
-        return render(request, "fraismaintenance_form.html", {
+        print('invalid')
+        return render(request, "frais/fraismaintenance_form.html", {
             'frais': frais,
             'form': form,
             'action': 'update',
@@ -128,6 +138,7 @@ def update(request):
 
 def nouveau_professionnel(request):
     # nouvelle entrepreneur
+
     personne = get_personne(request)
     societe = get_societe(request)
     fonction = get_fonction(request)
@@ -166,6 +177,7 @@ def get_societe(request):
 
 def get_personne(request):
     if is_new_value(request.POST.get('new_personne', None)):
+        print('personne_ne')
         personne_new_value = request.POST.get('new_personne', None)
 
         if personne_new_value:
@@ -197,13 +209,14 @@ def delete(request, id):
 
 
 def contrat_new(request, contrat_location_id):
+    print('contrat_new')
     frais = mdl.frais_maintenance.FraisMaintenance()
     previous = request.POST.get('previous', None)
     location = get_object_or_404(mdl.contrat_location.ContratLocation, pk=contrat_location_id)
     if location:
         frais.contrat_location = location
         frais.batiment = location.batiment
-    return render(request, "fraismaintenance_form.html",
+    return render(request, "frais/fraismaintenance_form.html",
                   {'frais':             frais,
                    'personnes':         mdl.personne.find_all(),
                    'action':            'new',
@@ -222,3 +235,11 @@ def is_new_value(id):
             return False
         except:
             return True
+
+def delete_frais(request, id):
+    frais = mdl.frais_maintenance.find_by_id(id)
+    batiment = frais.batiment
+    if frais:
+        frais.delete()
+
+    return render(request, "batiment_form.html", {'batiment': batiment})
