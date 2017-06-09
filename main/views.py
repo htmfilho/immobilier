@@ -154,11 +154,11 @@ def home(request):
     montant_recu = 0
     montant_attendu = 0
     mois_en_cours = str(datetime.datetime.now().month) + "/" + str(datetime.datetime.now().year)
-    mes_frais = mdl.frais_maintenance.find_my_frais()
+    mes_frais = mdl.frais_maintenance.find_mes_frais_du_mois()
 
     return render(request, 'myhome.html',
                   {'alertes':         mdl.alerte.find_by_etat('A_VERIFIER'),
-                   'batiments':       mdl.batiment.find_my_batiments(),
+                   'batiments':       mdl.batiment.find_batiments_gestionnaire(),
                    'contrats':        mdl.contrat_gestion.find_my_contrats(),
                    'honoraires':      mdl.honoraire.find_honoraires_by_etat_today('A_VERIFIER'),
                    'suivis':          suivis,
@@ -199,25 +199,6 @@ def listeBatiments(request):
                   {'batiments': batiments,
                    'proprietaires': mdl.proprietaire.find_distinct_proprietaires()})
 
-
-def listeBatiments_filtrer(request, personne_id):
-    print('listeBatiments_filtrer')
-    personne = None
-    if personne_id is None:
-        batiments = mdl.batiment.find_all()
-    else:
-        personne = mdl.personne.find_personne(personne_id)
-        batiments = mdl.personne.batiments
-
-    return render(request, 'batiment/listeBatiments.html', {'batiments': batiments, 'filtre': personne})
-
-
-@login_required
-def listePersonnes(request):
-    personnes = mdl.personne.find_all()
-    return render(request, 'listePersonnes.html', {'personnes': personnes})
-
-
 @login_required
 def listeComplete(request):
     batiments = mdl.batiment.find_all()
@@ -229,7 +210,7 @@ def listeComplete(request):
 def personne(request, personne_id):
     personne = mdl.personne.find_personne(personne_id)
     return render(request, "personne/personne_form.html",
-                  {'personne':         personne,
+                  {'personne': personne,
                    'societes': mdl.societe.find_all()})
 
 

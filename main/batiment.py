@@ -102,9 +102,9 @@ def update(request):
                    'form': form})
 
 
-def search(request):
-    proprietaire = request.GET.get('proprietaire', None)
-    batiments = mdl.batiment.search(proprietaire)
+def search_par_proprietaire(request):
+    proprietaire_id = request.GET.get('proprietaire', None)
+    batiments = mdl.batiment.search_par_proprietaire(proprietaire_id)
     return render(request, 'batiment/listeBatiments.html',
                   {'batiments': batiments,
                    'proprietaires': mdl.proprietaire.find_distinct_proprietaires()})
@@ -117,5 +117,5 @@ def delete(request, batiment_id):
         if batiment:
             batiment.delete()
 
-    return search(request)
+    return search_par_proprietaire(request)
 

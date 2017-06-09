@@ -1,5 +1,4 @@
 
-
     <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header">
@@ -19,57 +18,67 @@
                     <input type="text"
                            id="txt_nom_societe"
                            name="nom" maxlength="100">
-                    <br>
+                    <br><br>
                     <label>Description</label>
                     <br>
                     <textarea id="txt_description_societe" name="description" cols="50" rows="5"></textarea>
-                    <br>
-                    <label>Rue</label>
-                    <br>
-                    <input type="text"
-                           id="txt_rue"
-                           name="rue" maxlength="200">
-                    <br>
-                    <label>Numéro</label>
-                    <br>
-                    <input type="text"
-                           id="txt_numero_societe"
-                           name="numero">
-                    <br>
-                    <label>Boite</label>
-                    <br>
-                    <input type="text"
-                           id="txt_boite_societe"
-                           name="boite" maxlength="100">
-                    <br>
-                    <label>Lieu-dit</label>
-                    <br>
-                    <input type="text"
-                           id="txt_lieu_dit_societe"
-                           name="lieu_dit" maxlength="200">
-                    <br>
-                    <label>Code postal</label>
-                    <br>
-                    <input list="localites" type="text" id="txt_localite_cp_societe"
-                           class="form-control" name="localite_cp"
-                           value="{{ batiment.localite.code_postal| default_if_none:''}}" maxlength="10">
-                    <datalist id="localites">
-                        {% for l in localites %}
-                            <option value="{{ l.code_postal }}" data-id="{{ l.id }}">{{ l.code_postal }}</option>
-                        {% endfor %}
-                    </datalist>
-                    <br>
-                    <label class="control-label">Localité</label>
-                    <br>
-                    <input list="localites_nom" type="text" id="txt_localite_societe"
-                           class="form-control" name="localite_societe_other"
-                           vmaxlength="150">
-                    <datalist id="localites_nom">
-                        {% for l in localites %}
-                            <option value="{{ l.localite }}" data-id="{{ l.id }}">{{ l.localite }}</option>
-                        {% endfor %}
-                    </datalist>
-                    <br>
+                    <br><br>
+                    <div class="row">
+                        <div class="col-md-8">
+                            <label>Rue</label>
+                            <input type="text"
+                                   class="form-control"
+                                   id="txt_rue"
+                                   name="rue" maxlength="200">
+                        </div>
+                        <div class="col-md-2">
+                            <label>Numéro</label>
+                            <input type="text"
+                                   class="form-control"
+                                   id="txt_numero_societe"
+                                   name="numero">
+                        </div>
+                        <div class="col-md-2">
+                            <label>Boite</label>
+                            <input type="text"
+                                   class="form-control"
+                                   id="txt_boite_societe"
+                                   name="boite" maxlength="100">
+                        </div>
+                    </div>
+                    <br><br>
+                    <div class="row">
+                        <div class="col-md-3">
+                            <label>Code postal</label>
+                            <input list="localites" type="text" id="txt_localite_cp_societe"
+                                   class="form-control" name="localite_cp"
+                                   value="{{ batiment.localite.code_postal| default_if_none:''}}" maxlength="10">
+                            <datalist id="localites">
+                                {% for l in localites %}
+                                    <option value="{{ l.code_postal }}" data-id="{{ l.id }}">{{ l.code_postal }}</option>
+                                {% endfor %}
+                            </datalist>
+                        </div>
+                        <div class="col-md-4">
+                            <label class="control-label">Localité</label>
+                            <input list="localites_nom" type="text" id="txt_localite_societe"
+                                   class="form-control" name="localite_societe_other"
+                                   vmaxlength="150">
+                            <datalist id="localites_nom">
+                                {% for l in localites %}
+                                    <option value="{{ l.localite }}" data-id="{{ l.id }}">{{ l.localite }}</option>
+                                {% endfor %}
+                            </datalist>
+                        </div>
+                        <div class="col-md-5">
+                            <label>Lieu-dit</label>
+                            <input type="text"
+                                   class="form-control"
+                                   id="txt_lieu_dit_societe"
+                                   name="lieu_dit" maxlength="200">
+                        </div>
+                    </div>
+                    <br><br>
                     <label>Type</label>
                     <br>
                     <select id="slt_type">
@@ -78,7 +87,7 @@
                         <option value="BANQUE">Banque</option>
                         <option value="NOTAIRE">Notaire</option>
                     </select>
-
+                    <br><br>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-default" data-dismiss="modal"
                                 id="bt_cancel_create_societe">Annuler

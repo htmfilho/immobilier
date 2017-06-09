@@ -21,42 +21,27 @@
 #    see http://www.gnu.org/licenses/.
 #
 ##############################################################################
-from django.db import models
+from django.test import TestCase
+from django.utils import timezone
+from dateutil.relativedelta import relativedelta
+from main.models import batiment as mdl_batiment
+from main.tests.factories.batiment import BatimentFactory
+from main.tests.factories.personne import PersonneFactory
+from main.tests.factories.proprietaire import ProprietaireFactory
+from main.tests.models import test_personne
 
 
-class Localite(models.Model):
-    code_postal = models.CharField(max_length=10, blank=False, null=False)
-    localite = models.CharField(max_length=150, blank=False, null=False)
-    pays = models.ForeignKey('Pays', blank=True, null=True)
+class BatimentTest(TestCase):
 
-    def __str__(self):
-        return self.code_postal + " " + self.localite
+    def test_find_my_batiments(self):
+        gestionnaire=test_personne.create_gestionnaire_par_defaut()
+        un_batiment = BatimentFactory()
+        un_proprio = ProprietaireFactory(proprietaire=gestionnaire,
+                                         batiment=un_batiment)
 
-    class Meta:
-        ordering = ['localite']
+        self.assertCountEqual(mdl_batiment.find_batiments_gestionnaire(),[un_batiment])
 
+    def test_search_par_proprietaire(self):
+        un_proprio = ProprietaireFactory()
+        self.assertCountEqual(mdl_batiment.search_par_proprietaire(un_proprio.id),[un_proprio.batiment])
 
-def autocomplete_search_fields():
-    return 'localite', 'code_postal'
-
-
-def find_all():
-    return Localite.objects.all()
-
-
-def find_by_id(an_id):
-    return Localite.objects.get(pk=an_id)
-
-
-def search(un_code_postal, une_localite):
-    out = None
-    queryset = Localite.objects
-    if un_code_postal:
-        queryset = queryset.filter(code_postal=un_code_postal)
-
-    if une_localite:
-        queryset = queryset.filter(localite__iexact=une_localite)
-
-    if un_code_postal or une_localite:
-        out = queryset
-    return out

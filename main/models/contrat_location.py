@@ -80,14 +80,14 @@ class ContratLocation(models.Model):
         self.date_fin = df
         self.renonciation = (self.date_debut + relativedelta(years=1))-relativedelta(days=10)
         un_indice_sante = None
-        if self.date_debut < datetime.datetime(1981, 1, 1):
+        if self.date_debut < datetime.date(1981, 1, 1):
             pass
         else:
-            if self.date_debut < datetime.datetime(1983, 1, 1):
+            if self.date_debut < datetime.date(1983, 1, 1):
                 pass
             else:
                 one_mon_timedelta = datetime.timedelta(days=1 * 365/12)
-                if self.date_debut < datetime.datetime(1994, 2, 1):
+                if self.date_debut < datetime.date(1994, 2, 1):
                     date_ref = self.date_debut - one_mon_timedelta
                     un_indice_sante = IndiceSante.find_by_date(date_ref)
                 else:
@@ -192,10 +192,12 @@ def find_by_batiment(a_batiment):
 
 
 def find_by_batiment_date_debut_gte(a_batiment, location):
+    # pense que c'est pas utilisé
     ContratLocation.objects.filter(batiment=a_batiment, date_debut__gte=location.date_fin)
 
 
 def find_by_batiment_date_fin_lte(a_batiment, location):
+    # pense que c'est pas utilisé
     ContratLocation.objects.filter(batiment=a_batiment, date_fin__lte=location.date_debut)
 
 
@@ -204,7 +206,6 @@ def update_suivi_alerte(date_debut, location, financement_location, date_fin, ty
     date_f = date_debut + relativedelta(months=1)
     i = 0
     while date_f <= date_fin:
-        print('creation nouveau suivi')
         suivi = SuiviLoyer.SuiviLoyer(etat_suivi='A_VERIFIER',
                                       date_paiement=date_d,
                                       remarque=None,

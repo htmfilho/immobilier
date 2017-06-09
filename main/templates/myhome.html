@@ -5,7 +5,6 @@
 
 {% endblock %}
 {% block content %}
-
 <a class="btn btn-default" href="{% url 'batiment-create' %}" title="Pour créer un nouveau batiment">
     <span class="glyphicon glyphicon-plus" aria-hidden="true"> Ajout local</span>
 </a>
@@ -14,7 +13,7 @@
 <a class="btn btn-default" href="{% url 'personne-create' %}" title="Pour créer un nouveau contact">
     <span class="glyphicon glyphicon-plus" aria-hidden="true"> Ajout contact</span>
 </a>
-<a class="btn btn-default" href="#" title="Pour ajouter un nouveau revenu"><span class="glyphicon glyphicon-plus" aria-hidden="true"> Ajout revenu</span></a>
+<a class="btn btn-default" href="#" title="Pour ajouter un nouveau revenu" style="visibility: hidden;display: none;"><span class="glyphicon glyphicon-plus" aria-hidden="true"> Ajout revenu</span></a>
 <a class="btn btn-default" href="{% url 'fraismaintenance-new' %}" title="Pour ajouter une nouvelle dépense">
     <span class="glyphicon glyphicon-plus" aria-hidden="true"> Ajout frais</span></a>
 <a class="btn btn-default" href="{% url 'contratgestion-new' %}" title="Pour ajouter un honoraire"><span class="glyphicon glyphicon-plus" aria-hidden="true"> Ajout honoraires</span></a>
@@ -167,7 +166,7 @@
         <div class="panel panel-default">
             <div class="panel-heading">Administration</div>
             <div class="panel-body">
-                {% include 'main/alert_list_sub.html' %}
+                {% include 'alerte/alert_list_sub.html' %}
             </div>
         </div>
     </div>

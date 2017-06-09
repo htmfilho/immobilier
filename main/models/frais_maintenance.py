@@ -48,21 +48,18 @@ class FraisMaintenance(models.Model):
 
 
 def find_by_batiment(a_batiment):
-    # print('find_by_batiment')
-    # print(batiment_id)
-    # a_batiment = Batiment.find_batiment(batiment_id)
     if a_batiment:
         return FraisMaintenance.objects.filter(batiment=a_batiment)
     return None
 
 
-def find_my_frais():
-    batiments = Batiment.find_my_batiments()
+def find_mes_frais_du_mois():
+    batiments = Batiment.find_batiments_gestionnaire()
     frais = []
     n = timezone.now()
     if batiments:
         for b in batiments:
-            frais_liste = find_by_batiment(b.id)
+            frais_liste = find_by_batiment(b)
             for f in frais_liste:
                 if f.contrat_location is None and f.date_realisation is not None \
                         and (f.date_realisation.month == n.month and f.date_realisation.year == n.year):

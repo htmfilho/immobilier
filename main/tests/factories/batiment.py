@@ -21,42 +21,33 @@
 #    see http://www.gnu.org/licenses/.
 #
 ##############################################################################
-from django.db import models
+import factory
+import factory.fuzzy
+import operator
+from main.tests.factories.localite import LocaliteFactory
+from django.conf import settings
+from django.utils import timezone
+from faker import Faker
+fake = Faker()
 
 
-class Localite(models.Model):
-    code_postal = models.CharField(max_length=10, blank=False, null=False)
-    localite = models.CharField(max_length=150, blank=False, null=False)
-    pays = models.ForeignKey('Pays', blank=True, null=True)
+def _get_tzinfo():
+    if settings.USE_TZ:
+        return timezone.get_current_timezone()
+    else:
+        return None
 
-    def __str__(self):
-        return self.code_postal + " " + self.localite
 
+class BatimentFactory(factory.DjangoModelFactory):
     class Meta:
-        ordering = ['localite']
+        model = 'main.Batiment'
 
+    rue = factory.Sequence(lambda n: 'Rue - %d' % n)
+    numero = factory.fuzzy.FuzzyInteger(1, 100)
+    boite = factory.Sequence(lambda n: '%d' % n)
+    lieu_dit = factory.Sequence(lambda n: 'Lieu dit - %d' % n)
+    #localite = models.ForeignKey('Localite')
+    localite = factory.SubFactory(LocaliteFactory)
 
-def autocomplete_search_fields():
-    return 'localite', 'code_postal'
-
-
-def find_all():
-    return Localite.objects.all()
-
-
-def find_by_id(an_id):
-    return Localite.objects.get(pk=an_id)
-
-
-def search(un_code_postal, une_localite):
-    out = None
-    queryset = Localite.objects
-    if un_code_postal:
-        queryset = queryset.filter(code_postal=un_code_postal)
-
-    if une_localite:
-        queryset = queryset.filter(localite__iexact=une_localite)
-
-    if un_code_postal or une_localite:
-        out = queryset
-    return out
+    # superficie = models.DecimalField(max_digits=8, decimal_places=3, blank=True, null=True)
+    # performance_energetique = models.CharField(max_length=30, blank=True, null=True)

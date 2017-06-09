@@ -7,7 +7,7 @@
         <meta name="apple-mobile-web-app-capable" content="yes" />
 		    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
 		    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, minimal-ui">
-        <link href='https://fonts.googleapis.com/css?family=Armata' rel='stylesheet' type='text/css'>
+        <link rel="stylesheet" href="{% static 'css/armata.css' %}" type='text/css'>
         <link rel="icon" href="{% static 'images/favicon.ico' %}" />
         <link rel="stylesheet" href="{% static "css/bootstrap.min.css" %}">
         <link rel="stylesheet" href="{% static "css/bootstrap-theme.min.css" %}">
@@ -25,7 +25,7 @@
         <div class="container">
           <!-- Brand and toggle get grouped for better mobile display -->
           <div class="navbar-header">
-            <a class="navbar-brand" href="{% url 'home' %}"><img src="{% static 'images/logo.jpg' %}" style="margin-top: -10px;height:60px;"></a>
+            <a class="navbar-brand" href="{% url 'home' %}"><img src="{% static 'images/logo.png' %}" style="margin-top: -10px;height:60px;"></a>
           </div>
 
           <!-- Collect the nav links, forms, and other content for toggling -->
@@ -61,7 +61,6 @@
                   {% endblock %}
               </ol>
           {% endblock %}
-<br/>
         {% block content %}
         {% endblock %}
       </div>
@@ -74,7 +73,7 @@
       <script src="{% static "js/personne.js" %}"></script>
       <script src="{% static "js/societe.js" %}"></script>
       <script src="{% static "js/suivi.js" %}"></script>
-      <script src="https://cdn.datatables.net/1.10.12/js/jquery.dataTables.min.js"></script>
+      <script src="{% static "js/jquery.dataTables.min.js" %}"></script>
       <script src="{% static 'js/bootstrap-datepicker.min.js' %}"></script>
       <script src="{% static 'js/locales/bootstrap-datepicker.fr.js' %}"></script>
       <script src="{% static "js/customComboBox.js" %}"></script>
@@ -82,35 +81,35 @@
       <script>
         $(document).ready(function() {
 
-
-            $('#tbl_data').dataTable( {
+            $('#tbl_data').dataTable({
+                "lengthChange": false,
                 "language": {
                     "url": "/static/i18n/French.json"
                 }
-            } );
+            });
 
             $('#tbl_data_batiments').DataTable({
-                        "columnDefs": [ {
-                            "targets": 'no-sort',
-                            "orderable": false,
-                        } ]
-                        ,
-                        "language": {
-                            "url": "/static/i18n/French.json"
-                        }
-                    }
-
+                "lengthChange": false,
+                "columnDefs": [{
+                    "targets": 'no-sort',
+                    "orderable": false,
+                }]
+                ,
+                "language": {
+                    "url": "/static/i18n/French.json"
+                }
+            }
             );
             $('#tbl_data_honoraires').DataTable({
-                        "columnDefs": [ {
-                            "targets": 'no-sort',
-                            "orderable": false,
-                        } ],
-                        "language": {
-                            "url": "/static/i18n/French.json"
-                        }
-                    }
-
+                "lengthChange": false,
+                "columnDefs": [{
+                    "targets": 'no-sort',
+                    "orderable": false,
+                }],
+                "language": {
+                    "url": "/static/i18n/French.json"
+                }
+            }
             );
             $('#message_info').fadeOut(5000);
             //document.querySelector('input[list="localites_nom"]').addEventListener('input', onInput);

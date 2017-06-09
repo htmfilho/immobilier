@@ -23,7 +23,7 @@
 ##############################################################################
 from django.db import models
 from django.contrib import admin
-from main.models import professionnel as Professionnel
+from main.models import professionnel
 
 
 class SocieteAdmin(admin.ModelAdmin):
@@ -36,6 +36,7 @@ class Societe(models.Model):
         ('NON_PRECISE', '-'),
         ('ASSURANCE', 'Assurance'),
         ('BANQUE', 'Banque'),
+        ('COURTIER', 'Courtier'),
         ('NOTAIRE', 'Notaire'),
     )
     nom = models.CharField(max_length=100, blank=False, null=False)
@@ -46,19 +47,15 @@ class Societe(models.Model):
     lieu_dit = models.CharField(max_length=200, blank=True, null=True)
     code_postal = models.CharField(max_length=10, blank=True, null=True)
     localite = models.ForeignKey('Localite', blank=True, null=True)
-    # personnel = models.ForeignKey(Personne, blank=True, null=True)
     type = models.ForeignKey('TypeSociete', blank=True, null=True)
 
     @property
     def professionnels(self):
-        l = Professionnel.objects.filter(societe=self)
-        for ll in l:
-            print(ll)
-        return l
+        return professionnel.objects.filter(societe=self)
 
     @property
     def personnel(self):
-        return Professionnel.find_by_societe(self).order_by('personne')
+        return professionnel.find_by_societe(self).order_by('personne')
 
     def __str__(self):
         ch = self.nom

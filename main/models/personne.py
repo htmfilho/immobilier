@@ -30,6 +30,10 @@ from main.models import fonction as Fonction
 from main.models import professionnel as Professionnel
 from main.models import contrat_gestion as ContratGestion
 
+PRENOM_GESTIONNAIRE = 'Stéphan'
+
+NOM_GESTIONNAIRE = 'Marchal'
+
 
 class PersonneAdmin(admin.ModelAdmin):
     search_fields = ['nom']
@@ -38,14 +42,14 @@ class PersonneAdmin(admin.ModelAdmin):
 
 class Personne(models.Model):
 
-    TYPE_PERSONNE = (
-        ('NON_PRECISE', '-'),
-        ('LOCATAIRE', 'Locataire'),
-        ('PROFESSIONNEL', 'Professionnel'),
-        ('PROPRIETAIRE', 'Propriétaire'),
-        ('ANCIEN_LOCATAIRE', 'Ancien locataire'),
-        ('ANCIEN_PROPRIETAIRE', 'Ancien propriétaire'),
-    )
+    # TYPE_PERSONNE = (
+    #     ('NON_PRECISE', '-'),
+    #     ('LOCATAIRE', 'Locataire'),
+    #     ('PROFESSIONNEL', 'Professionnel'),
+    #     ('PROPRIETAIRE', 'Propriétaire'),
+    #     ('ANCIEN_LOCATAIRE', 'Ancien locataire'),
+    #     ('ANCIEN_PROPRIETAIRE', 'Ancien propriétaire'),
+    # )
     nom = models.CharField(max_length=100)
     prenom = models.CharField(max_length=100)
     prenom2 = models.CharField(max_length=100, blank=True, null=True)
@@ -60,7 +64,7 @@ class Personne(models.Model):
     gsm = models.CharField(max_length=30, blank=True, null=True)
     societe = models.ForeignKey('Societe', blank=True, null=True)
     num_compte_banque = models.CharField(max_length=30, blank=True, null=True)
-    personne_type = models.CharField(max_length=20, choices=TYPE_PERSONNE, default='NON_PRECISE', blank=True, null=True)  # a enlever
+    #personne_type = models.CharField(max_length=20, choices=TYPE_PERSONNE, default='NON_PRECISE', blank=True, null=True)  # a enlever
     fonction = models.ForeignKey('Fonction', blank=True, null=True)
 
     def __init__(self,  *args, **kwargs):
@@ -144,7 +148,10 @@ class Personne(models.Model):
 
 
 def find_personne(id):
-    return Personne.objects.get(pk=id)
+    try:
+        return Personne.objects.get(pk=id)
+    except:
+        return None
 
 
 def find_all():
@@ -152,11 +159,10 @@ def find_all():
 
 
 def find_gestionnaire_default():
-    nom = 'Marchal'
-    prenom = 'Stéphan'
-    list_personne = Personne.objects.filter(nom=nom, prenom=prenom)
-    if list_personne:
-        return list_personne[0]
+    list_personne = Personne.objects.filter(nom=NOM_GESTIONNAIRE,
+                                            prenom=PRENOM_GESTIONNAIRE)
+    if list_personne.exists():
+        return list_personne.first()
     return None
 
 
@@ -165,7 +171,8 @@ def delete_personne(id):
     if personne:
         if personne != find_gestionnaire_default():
             personne.delete()
-    return None
+            return True
+    return False
 
 
 def find_personne_by_nom_prenom(un_nom, un_prenom, un_prenom2):

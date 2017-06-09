@@ -22,7 +22,7 @@
 #
 ##############################################################################
 from . import views, batiment, proprietaire, suivis, alertes, contratlocation, financement, locataire, contratgestion, \
-    frais, honoraire, personne, tests, test3, assurance, fonction, societe, pays, fonction, societe
+    frais, honoraire, personne, essai_pdf, essai3, assurance, fonction, societe, pays, fonction, societe
 from django.conf.urls import url
 from django.contrib.auth.views import login, logout
 
@@ -34,8 +34,6 @@ urlpatterns = [
     # listes
     url(r'^listeComplete', views.listeComplete),
     url(r'^listeBatiments', views.listeBatiments, name='listeBatiments'),
-    url(r'^listeBatiments/filtrer/personne/([0-9]+)/$', views.listeBatiments_filtrer,
-        name='listeBatiments-filtrer-personne'),
 
     url(r'^listeProprietaires', proprietaire.liste_proprietaires, name='listeProprietaires'),
     url(r'^listeContratGestion/$', views.ContratGestionList.as_view(), name='contrat_gestion_list'),
@@ -164,14 +162,14 @@ urlpatterns = [
     url(r'^test/image/$', views.test_image, name='test_image'),
     url(r'^test/merge/$', views.test_merge, name='test_merge'),
     url(r'^test/upload/$', views.upload, name='upload'),
-    url(r'^test/upload2/$', tests.test_create_pdf, name='test_pdf'),
-    url(r'^test3/$', test3.test, name='test3'),
+    url(r'^test/upload2/$', essai_pdf.test_create_pdf, name='test_pdf'),
+    url(r'^test3/$', essai3.test, name='test3'),
 
     url(r'^assurance_create/$', assurance.create, name='assurance_create'),
     url(r'^prolongation/$', contratlocation.prolongation, name='prolongation'),
     url(r'^fonction_create/$', fonction.create, name='fonction_create'),
     url(r'^societes_liste/$', societe.societe_liste, name='societe_liste'),
-    url(r'^batiment/search/$', batiment.search, name='batiment_search'),
+    url(r'^batiment/search/$', batiment.search_par_proprietaire, name='batiment_search'),
     url(r'^societe/update/$', societe.update, name='societe_update'),
     url(r'^societe/edit/([0-9]+)/$', societe.edit, name='societe_edit'),
     url(r'^location/form/$', contratlocation.contrat_location_form, name="contrat_location_form"),

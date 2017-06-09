@@ -26,7 +26,7 @@
         <div class="row">
             <div class="col-md-8">
                 <label>Rue</label>
-                <input class="form-control" name="rue" value="{{ societe.rue| default_if_none:'' }}">
+                <input class="form-control" name="rue" value="{{ societe.rue| default_if_none:'' }}" maxlength="200">
             </div>
 
             <div class="col-md-2">
@@ -37,7 +37,7 @@
             </div>
             <div class="col-md-2">
                 <label>Boite</label>
-                <input class="form-control" name="boite" value="{{ societe.boite| default_if_none:'' }}">
+                <input class="form-control" name="boite" value="{{ societe.boite| default_if_none:'' }}"  maxlength="100">
             </div>
         </div>
         <br>

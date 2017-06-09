@@ -5,7 +5,6 @@
     <li class="active">Propriétaire</li>
 {% endblock %}
 {% block content %}
-
     <ul class="nav nav-tabs">
         <li class="active"><a data-toggle="tab" href="#info_proprietaire">Info Propriétaire</a></li>
         {% if action != 'add' %}
@@ -173,6 +172,8 @@
             </div>
         </div>
     </div>
+    {% include "societe/societe_create_personne.html" %}
+    {% include "fonction/fonction_create_personne.html" %}
 {% endblock %}
 
 

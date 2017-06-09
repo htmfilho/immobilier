@@ -21,42 +21,32 @@
 #    see http://www.gnu.org/licenses/.
 #
 ##############################################################################
-from django.db import models
+import factory
+import factory.fuzzy
+import operator
+from main.models.enums import alerte_etat
+from django.conf import settings
+from django.utils import timezone
+from faker import Faker
+fake = Faker()
 
 
-class Localite(models.Model):
-    code_postal = models.CharField(max_length=10, blank=False, null=False)
-    localite = models.CharField(max_length=150, blank=False, null=False)
-    pays = models.ForeignKey('Pays', blank=True, null=True)
+def _get_tzinfo():
+    if settings.USE_TZ:
+        return timezone.get_current_timezone()
+    else:
+        return None
 
-    def __str__(self):
-        return self.code_postal + " " + self.localite
 
+class AlerteFactory(factory.DjangoModelFactory):
     class Meta:
-        ordering = ['localite']
+        model = 'main.Alerte'
+
+    description = factory.Sequence(lambda n: 'Description - %d' % n)
+    date_alerte = fake.date_time_this_decade(before_now=True, after_now=False, tzinfo=_get_tzinfo())
+
+    # contrat_gestion = models.ForeignKey('ContratGestion', blank=True, null=True, verbose_name=u"Contrat de gestion")
+    # contrat_location = models.ForeignKey('ContratLocation', blank=True, null=True, verbose_name=u"Contrat location")
+    etat = factory.Iterator(alerte_etat.ETATS, getter=operator.itemgetter(0))
 
 
-def autocomplete_search_fields():
-    return 'localite', 'code_postal'
-
-
-def find_all():
-    return Localite.objects.all()
-
-
-def find_by_id(an_id):
-    return Localite.objects.get(pk=an_id)
-
-
-def search(un_code_postal, une_localite):
-    out = None
-    queryset = Localite.objects
-    if un_code_postal:
-        queryset = queryset.filter(code_postal=un_code_postal)
-
-    if une_localite:
-        queryset = queryset.filter(localite__iexact=une_localite)
-
-    if un_code_postal or une_localite:
-        out = queryset
-    return out

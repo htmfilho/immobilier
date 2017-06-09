@@ -25,6 +25,8 @@ from django.db import models
 from django.contrib import admin
 from django.utils import timezone
 from dateutil.relativedelta import relativedelta
+from main.models.enums import alerte_etat
+
 
 
 class AlerteAdmin(admin.ModelAdmin):
@@ -32,17 +34,13 @@ class AlerteAdmin(admin.ModelAdmin):
 
 
 class Alerte(models.Model):
-    ETAT = (
-        ('A_VERIFIER', 'A vérifier'),
-        ('VERIFIER', 'Vérifier'),
-        ('COURRIER', 'Courrier à préparer'))
 
     description = models.TextField(verbose_name=u"Description")
     date_alerte = models.DateField(auto_now=False, auto_now_add=False, blank=True, null=True,
                                    verbose_name=u"Date alerte")
     contrat_gestion = models.ForeignKey('ContratGestion', blank=True, null=True, verbose_name=u"Contrat de gestion")
     contrat_location = models.ForeignKey('ContratLocation', blank=True, null=True, verbose_name=u"Contrat location")
-    etat = models.CharField(max_length=10, choices=ETAT, default='A_VERIFIER', verbose_name=u"Etat")
+    etat = models.CharField(max_length=10, choices=alerte_etat.ETATS, default=alerte_etat.A_VERIFIER, verbose_name=u"Etat")
 
     class Meta:
         ordering = ['date_alerte']

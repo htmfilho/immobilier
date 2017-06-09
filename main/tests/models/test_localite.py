@@ -21,42 +21,22 @@
 #    see http://www.gnu.org/licenses/.
 #
 ##############################################################################
-from django.db import models
+from django.test import TestCase
+from main.models import localite as mdl_localite
+from main.tests.factories.localite import LocaliteFactory
 
 
-class Localite(models.Model):
-    code_postal = models.CharField(max_length=10, blank=False, null=False)
-    localite = models.CharField(max_length=150, blank=False, null=False)
-    pays = models.ForeignKey('Pays', blank=True, null=True)
+class LocaliteTest(TestCase):
 
-    def __str__(self):
-        return self.code_postal + " " + self.localite
+    def test_search(self):
+        a_cp_param = "5001"
+        a_localite_param = "Lisogne"
 
-    class Meta:
-        ordering = ['localite']
+        a_localite = LocaliteFactory(code_postal=a_cp_param, localite=a_localite_param)
 
+        self.assertCountEqual(mdl_localite.search(a_cp_param, a_localite_param), [a_localite])
 
-def autocomplete_search_fields():
-    return 'localite', 'code_postal'
+    def test_find_by_id(self):
+        a_localite = LocaliteFactory()
+        self.assertEqual(mdl_localite.find_by_id(a_localite.id), a_localite)
 
-
-def find_all():
-    return Localite.objects.all()
-
-
-def find_by_id(an_id):
-    return Localite.objects.get(pk=an_id)
-
-
-def search(un_code_postal, une_localite):
-    out = None
-    queryset = Localite.objects
-    if un_code_postal:
-        queryset = queryset.filter(code_postal=un_code_postal)
-
-    if une_localite:
-        queryset = queryset.filter(localite__iexact=une_localite)
-
-    if un_code_postal or une_localite:
-        out = queryset
-    return out

@@ -111,7 +111,7 @@ def find_suivis_by_etat_suivi(date_ref, etat_suivi):
 
 
 def find_mes_suivis_by_etat_suivi(date_ref, etat_suivi):
-    mes_batiment = Batiment.find_my_batiments()
+    mes_batiment = Batiment.find_batiments_gestionnaire()
     start_date = datetime.datetime(date_ref.year, date_ref.month, 1)
     end_date = datetime.datetime(date_ref.year, date_ref.month, calendar.mdays[date_ref.month])
     if mes_batiment:

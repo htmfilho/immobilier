@@ -67,7 +67,7 @@
       <tr class="{{s.etat_suivi}}">
         <td>{{s.financement_location.contrat_location.batiment}}</td>
         <td>{{s.date_paiement|date:"d/m/Y"}}</td>
-        <td>{{s.etat_suivi}}</td>
+        <td>{{s.get_etat_suivi_display}}</td>
         <td style="background-color:{%if s.loyer_percu == s.financement_location.loyer%}transparent{% else %}red{% endif %};">{{s.loyer_percu}} ({{s.financement_location.loyer}})</td>
         {% if s.financement_location.charges > 0 %}
         <td style="background-color:{%if s.charges_percu == s.financement_location.charges%}transparent{% else %}red{% endif %};">{{s.charges_percu}} ({{s.financement_location.charges}})</td>

@@ -91,8 +91,8 @@ class Batiment(models.Model):
             adresse_complete += " " + str(self.localite.localite)
         return adresse_complete
 
-    def proprietaires(self):
-        return Proprietaire.find_by_batiment(self)
+    # def proprietaires(self):
+    #     return Proprietaire.find_by_batiment(self)
 
     def contrats_location(self):
         return ContratLocation.find_by_batiment(self)
@@ -227,15 +227,15 @@ def find_batiment(id):
     return Batiment.objects.get(pk=id)
 
 
-def find_my_batiments():
+def find_batiments_gestionnaire():
     personne = Personne.find_gestionnaire_default()
     if personne:
         return Proprietaire.find_batiment_by_personne(personne)
     return None
 
 
-def search(proprietaire=None):
-    if proprietaire and proprietaire != "":
-        proprio = Proprietaire.find_proprietaire(proprietaire)
+def search_par_proprietaire(proprietaire_id=None):
+    if proprietaire_id and proprietaire_id != "":
+        proprio = Proprietaire.find_proprietaire(proprietaire_id)
         return Proprietaire.find_batiment_by_personne(proprio.proprietaire)
     return Batiment.objects.all()
