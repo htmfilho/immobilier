@@ -25,7 +25,7 @@ from django.shortcuts import render, get_object_or_404
 from datetime import datetime
 from django.shortcuts import redirect
 from main import models as mdl
-
+from main import pages_utils
 
 def liste_proprietaires(request):
     proprietaires = mdl.proprietaire.find_all()
@@ -77,7 +77,7 @@ def delete_proprietaire_batiment(request, proprietaire_id):
     batiment = proprietaire.batiment
     proprietaire.delete()
 
-    return render(request, "batiment_form.html", {'batiment': batiment})
+    return render(request, pages_utils.PAGE_BATIMENT_FORM, {'batiment': batiment})
 
 
 def delete_proprietaire(request, proprietaire_id):
@@ -170,7 +170,7 @@ def redirections(request, batiment):
     if request.POST.get('prev', None) == 'lp':
         return liste_proprietaires(request)
     if request.POST.get('prev', None) == 'fb':
-        return render(request, "batiment_form.html",
+        return render(request, pages_utils.PAGE_BATIMENT_FORM,
                       {'batiment': batiment})
 
 

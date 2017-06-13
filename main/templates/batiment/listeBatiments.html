@@ -18,15 +18,15 @@
             <table class="table table-hover"
                    id="tbl_data_batiments">
                 <thead>
-                <tr>
-                    <th>Bien</th>
-                    <th>En gestion</th>
-                    <th>Localité</th>
-                    <th>Proprio(s)s</th>
-                    <th class="no-sort">Locataires</th>
-                    <th class="no-sort">Location</th>
-                    <th class="no-sort"></th>
-                </tr>
+                    <tr>
+                        <th>Bien</th>
+                        <th>Localité</th>
+                        <th>En gestion</th>
+                        <th>Proprio(s)s</th>
+                        <th class="no-sort">Locataires</th>
+                        <th class="no-sort">Location</th>
+                        <th class="no-sort"></th>
+                    </tr>
                 </thead>
                 <tbody>
                 {% for batiment in batiments %}
@@ -35,9 +35,10 @@
                             <a href="{% url 'batiment' batiment.pk %}" title="Pour modifier un batiment">
                                 {{ batiment.adresse_rue | default_if_none:''}}</a>
                         </td>
-                        <td><input type="checkbox" {% if batiment.en_gestion %}checked{% endif %}  disabled></td>
                         <td><a href="{% url 'batiment' batiment.pk %}" title="Pour modifier un batiment">
-                            {{ batiment.adresse_localite | default_if_none:''}}</a></td>
+                            {{ batiment.adresse_localite | default_if_none:''}}</a>
+                        </td>
+                        <td><input type="checkbox" {% if batiment.en_gestion %}checked{% endif %}  disabled></td>
                         <td>
                             <table style="margin-top:-10px;">
                                 {% for proprietaire in batiment.proprietaires %}

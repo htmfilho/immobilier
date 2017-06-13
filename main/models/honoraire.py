@@ -44,7 +44,6 @@ class Honoraire(models.Model):
                                      verbose_name=u"Date paiement")
     etat = models.CharField(max_length=10, choices=ETAT_HONORAIRE, default='A_VERIFIER', verbose_name=u"Etat")
 
-
     def __str__(self):
         if self.contrat_gestion:
             return str(self.contrat_gestion)

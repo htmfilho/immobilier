@@ -24,20 +24,18 @@
 from django.shortcuts import render, get_object_or_404
 from main.forms import BatimentForm
 from main import models as mdl
+from main import pages_utils
 
 
 def create(request):
-    batiment = mdl.batiment.Batiment()
-    return render(request, "batiment_form.html",
-                  {'batiment':         batiment,
-                   'localites':    mdl.localite.find_all()})
+    return render(request, pages_utils.PAGE_BATIMENT_FORM,
+                  {'batiment':  mdl.batiment.Batiment(),
+                   'localites': mdl.localite.find_all()})
 
 
 def batiment_form(request, batiment_id):
-    batiment = mdl.batiment.find_batiment(batiment_id)
-
-    return render(request, "batiment_form.html",
-                  {'batiment':     batiment,
+    return render(request, pages_utils.PAGE_BATIMENT_FORM,
+                  {'batiment':     mdl.batiment.find_batiment(batiment_id),
                    'assurances':   mdl.assurance.find_all(),
                    'localites':    mdl.localite.find_all()})
 
@@ -95,7 +93,7 @@ def update(request):
             batiment.save()
             message_info = "Données sauvegardées"
 
-    return render(request, "batiment_form.html",
+    return render(request, pages_utils.PAGE_BATIMENT_FORM,
                   {'batiment':     batiment,
                    'localites':    mdl.localite.find_all(),
                    'message_info': message_info,

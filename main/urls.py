@@ -126,7 +126,8 @@ urlpatterns = [
     url(r'^societe/create/personne/$', societe.create, name='personne-create-societe'),
     # url(r'^batiment5/(?P<pk>\d+)/$', BatimentDetailView.as_view(), batiment_info)
     url(r'^alertes/$', alertes.list, name='alerte_list'),
-    url(r'^alertes/update/([0-9]+)/$', alertes.update, name='alerte-update'),
+    url(r'^alertes/update/$', alertes.update_a_verifier, name='alerte-update-a-verifier'),
+    url(r'^alertes/search/$', alertes.search, name='alerte-search'),
 
     # url(r'^location/create/$', views.ContratLocationCreate.as_view(), name='location-create'),
     # url(r'^location/update/(?P<pk>[0-9]+)/$', views.ContratLocationUpdate.as_view(), name='location-update'),

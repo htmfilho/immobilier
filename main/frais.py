@@ -26,6 +26,7 @@ from datetime import datetime
 from main.forms import FraisMaintenanceForm
 from main.views_utils import get_key
 from main import models as mdl
+from main import pages_utils
 
 
 def new(request):
@@ -242,4 +243,4 @@ def delete_frais(request, id):
     if frais:
         frais.delete()
 
-    return render(request, "batiment_form.html", {'batiment': batiment})
+    return render(request, pages_utils.PAGE_BATIMENT_FORM, {'batiment': batiment})

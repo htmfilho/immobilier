@@ -47,7 +47,9 @@ def locataire_form(request, id):
 def update(request, id):
     locataire = get_object_or_404(mdl.locataire.Locataire, pk=id)
     return render(request, LOCATAIRE_FORM_HTML,
-                  {'locataire': locataire,
+                  {'action': 'update',
+                   'locataire': locataire,
+                   'personnes': mdl.personne.find_all(),
                    'personne': locataire.personne})
 
 

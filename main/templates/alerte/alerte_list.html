@@ -1,0 +1,26 @@
+{% extends "layout.html" %}
+{% load staticfiles %}
+{% load order %}
+{% block breadcrumb %}
+  <li class="active">Liste des alertes</li>
+{% endblock %}
+{% block content %}
+    <div class="panel  panel-info">
+        <div class="panel-heading">Filtrer par</div>
+        <div class="panel-body">
+            <form method="get" action="{% url 'alerte-search'%}">
+                <label>Etat alerte</label>
+                <select id="slt_etat_alerte" name="etat_alerte" class="form-control">
+                    <option value="">-</option>
+                    <option value="A_VERIFIER" {% if etat_alerte == 'A_VERIFIER' %}selected{% endif %}>A vérifier</option>
+                    <option value="VERIFIER" {% if etat_alerte == 'VERIFIER' %}selected{% endif %}>Vérifier</option>
+                    <option value="COURRIER" {% if etat_alerte == 'COURRIER' %}selected{% endif %}>Courrier</option>
+                </select>
+                <br>
+                <input type="submit" value="OK" id="bt_alerte_search"  class="btn btn-primary pull-right" >
+            </form>
+        </div>
+    </div>
+    <br>
+    {% include 'alerte/alert_list_sub.html' %}
+{% endblock %}

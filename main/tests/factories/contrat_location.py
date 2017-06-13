@@ -27,12 +27,19 @@ import factory.fuzzy
 from main.tests.factories.batiment import BatimentFactory
 from django.conf import settings
 from django.utils import timezone
+from django.conf import settings
 from faker import Faker
 fake = Faker()
 
 
+def _get_tzinfo():
+    if settings.USE_TZ:
+        return timezone.get_current_timezone()
+    else:
+        return None
+
 def generate_date_fin(contrat):
-    return datetime.date(contrat.date_debut.year,12,31)
+    return datetime.datetime(contrat.date_debut.year,12,31)
 
 
 class ContratLocationFactory(factory.DjangoModelFactory):
@@ -40,8 +47,9 @@ class ContratLocationFactory(factory.DjangoModelFactory):
         model = 'main.ContratLocation'
 
     batiment = factory.SubFactory(BatimentFactory)
-    date_debut = factory.fuzzy.FuzzyDate(datetime.date(timezone.now().year, 1, 1),datetime.date(timezone.now().year+10, 1, 1))
-    date_fin = generate_date_fin
+
+    date_debut = factory.Faker('date_time_this_decade', before_now=True, after_now=False)
+    date_fin = factory.Faker('date_time_this_decade', before_now=False, after_now=True)
     # renonciation = models.DateField(auto_now=False, auto_now_add=False, blank=True, null=True)
     # remarque = models.TextField(blank=True, null=True)
     # assurance = models.ForeignKey('Assurance', blank=True, null=True)

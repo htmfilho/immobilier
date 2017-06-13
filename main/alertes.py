@@ -23,15 +23,37 @@
 ##############################################################################
 from django.shortcuts import render
 from main import models as mdl
+from main.models.enums import alerte_etat
 
 
 def list(request):
-    return render(request, "main/alerte_list.html",
-                  {'alertes': mdl.alerte.find_by_etat('A_VERIFIER')})
+    return render(request, "alerte/alerte_list.html",
+                  {'alertes': mdl.alerte.find_by_etat(alerte_etat.VERIFIER)})
 
 
-def update(request, alerte_id):
-    alerte = mdl.alerte.find_by_id(alerte_id)
-    alerte.etat = 'VERIFIER'
-    alerte.save()
-    return list(request)
+def update_a_verifier(request):
+    etat_alerte = request.POST.get('txt_etat_alerte')
+    save_alerte(request.POST.get('alerte_id'))
+
+    return render_alerte(etat_alerte, request)
+
+
+def search(request):
+    return render_alerte(request.GET.get('etat_alerte'), request)
+
+
+def render_alerte(etat_alerte, request):
+    if etat_alerte:
+        return render(request, "alerte/alerte_list.html",
+                      {'alertes': mdl.alerte.find_by_etat(etat_alerte),
+                       'etat_alerte': etat_alerte})
+    else:
+        return render(request, "alerte/alerte_list.html",
+                      {'alertes': mdl.alerte.find_all()})
+
+
+def save_alerte(alerte_id):
+    if alerte_id:
+        alerte = mdl.alerte.find_by_id(alerte_id)
+        alerte.etat = alerte_etat.VERIFIER
+        alerte.save()

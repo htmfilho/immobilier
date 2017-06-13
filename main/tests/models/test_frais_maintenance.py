@@ -48,11 +48,11 @@ class FraisMaintenanceTest(TestCase):
                                         batiment=un_batiment)
         frais_1 = FraisMaintenanceFactory(batiment=un_batiment,
                                           contrat_location=None,
-                                          date_realisation=datetime.date(timezone.now().year, timezone.now().month, 1))
+                                          date_realisation=datetime.datetime(timezone.now().year, timezone.now().month, 1))
 
         frais_2 = FraisMaintenanceFactory(batiment=un_batiment,
                                           contrat_location=None,
-                                          date_realisation=datetime.date(timezone.now().year, timezone.now().month, 2))
+                                          date_realisation=datetime.datetime(timezone.now().year, timezone.now().month, 2))
 
         self.assertCountEqual(mdl_frais_maintenance.find_mes_frais_du_mois(), [frais_1, frais_2])
 

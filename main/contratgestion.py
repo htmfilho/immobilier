@@ -24,8 +24,8 @@
 from django.shortcuts import render, get_object_or_404, redirect
 from main.forms import ContratGestionForm
 from datetime import datetime
-from main.views_utils import get_key
 from main import models as mdl
+from main import pages_utils
 
 
 def new(request):
@@ -85,8 +85,6 @@ def update(request):
     form = ContratGestionForm(data=request.POST)
     gestion = None
     personne = None
-
-    print(form['batiment_id'].value())
 
     batiment_id = mdl.batiment.Batiment(form['batiment_id'].value()).id
     # batiment_id = get_key(request.POST.get('batiment_id', None))
@@ -182,7 +180,7 @@ def delete(request, contrat_gestion_id):
     batiment = contrat_gestion.batiment
     if contrat_gestion:
         contrat_gestion.delete()
-    return render(request, "batiment_form.html", {'batiment': batiment})
+    return render(request, pages_utils.PAGE_BATIMENT_FORM, {'batiment': batiment})
 
 
 def data_valid(form, contrat):

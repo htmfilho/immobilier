@@ -30,7 +30,7 @@ from main.tests.factories.contrat_gestion import ContratGestionFactory
 from main.tests.factories.financement_location import FinancementLocationFactory
 from main.tests.models import test_personne
 
-class ContratGestionTest(TestCase):
+# class ContratGestionTest(TestCase):
     # marche pas
     # def test_search(self):
     #     gestionnaire_par_defaut = test_personne.create_gestionnaire_par_defaut()

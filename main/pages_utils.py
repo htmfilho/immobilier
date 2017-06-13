@@ -21,30 +21,4 @@
 #    see http://www.gnu.org/licenses/.
 #
 ##############################################################################
-import datetime
-import factory
-import factory.fuzzy
-from main.tests.factories.personne import PersonneFactory
-from main.tests.factories.batiment import BatimentFactory
-from django.utils import timezone
-from django.conf import settings
-
-
-def _get_tzinfo():
-    if settings.USE_TZ:
-        return timezone.get_current_timezone()
-    else:
-        return None
-
-def generate_date_fin(contrat):
-    return datetime.date(contrat.date_debut.year,12,31)
-
-class ContratGestionFactory(factory.DjangoModelFactory):
-    class Meta:
-        model = 'main.ContratGestion'
-
-    batiment = factory.SubFactory(BatimentFactory)
-    gestionnaire = factory.SubFactory(PersonneFactory)
-    date_debut = factory.Faker('date_time_this_decade', before_now=True, after_now=False, tzinfo=_get_tzinfo())
-    date_fin = factory.Faker('date_time_this_decade', before_now=False, after_now=True, tzinfo=_get_tzinfo())
-    montant_mensuel = factory.fuzzy.FuzzyDecimal(250.50, 480.0)
+PAGE_BATIMENT_FORM = "batiment/batiment_form.html"

@@ -28,7 +28,6 @@ from dateutil.relativedelta import relativedelta
 from main.models.enums import alerte_etat
 
 
-
 class AlerteAdmin(admin.ModelAdmin):
     list_filter = ('etat',)
 
@@ -62,3 +61,8 @@ def find_by_etat_today(etat_alerte):
     date_d = timezone.now() - relativedelta(months=1)
     date_f = timezone.now() + relativedelta(months=1)
     return Alerte.objects.filter(etat=etat_alerte, date_alerte__lte=date_f, date_alerte__gte=date_d)
+
+
+def find_all():
+    return Alerte.objects.all().order_by('date_alerte')
+

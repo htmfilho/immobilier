@@ -1,29 +1,58 @@
 {% load staticfiles %}
 {% load order %}
-<table class="table table-striped table-hover"
-       id="tbl_data">
-    <thead>
-        <tr>
-            <th>Description</th>
-            <th>Date alerte</th>
-            <th>Contrat gestion</th>
-            <th>Contrat location</th>
-            <th>Etat</th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-        {% for alerte in alertes %}
+<form action="{% url 'alerte-update-a-verifier' %}"
+      method="post"
+      id="form_alerte_update">
+    {% csrf_token %}
+    <input type="hidden"
+           id="hdn_etat_alerte"
+           name="txt_etat_alerte"
+           value="{{ etat_alerte }}">
+    <input type="hidden"
+           id="hdn_alerte_id"
+           name="alerte_id">
+
+    <table class="table table-hover"
+           id="tbl_data_alertes">
+        <thead>
             <tr>
-                <td>{{ alerte.description| default_if_none:'' }}</td>
-                <td data-order="{{ alerte.date_alerte|date:"Y-m-d" | default_if_none:'' }}">{{ alerte.date_alerte|date:"d/m/Y" | default_if_none:'' }}</td>
-                <td>{% if alerte.contrat_gestion%}{{ alerte.contrat_gestion }}{%endif%}</td>
-                <td>{% if alerte.contrat_location%}{{alerte.contrat_location.batiment}}, {{ alerte.contrat_location.date_debut|date:"j/m/Y" }}-{{ alerte.contrat_location.date_fin|date:"j/m/Y" }}{%endif%}</td>
-                <td>{{ alerte.get_etat_display| default_if_none:'' }}</td>
-                <td>
-                    <a href="{% url 'alerte-update' alerte.pk %}" title="Passe à l'état vérifier"><img src="{% static 'images/glyphicons-153-check.png' %}"/></a>
-                </td>
+                <th>Description</th>
+                <th>Date alerte</th>
+                <th>Contrat gestion</th>
+                <th>Contrat location</th>
+                <th>Etat</th>
+                <th class="no-sort"></th>
             </tr>
-        {% endfor%}
-    </tbody>
-</table>
+        </thead>
+        <tbody>
+            {% for alerte in alertes %}
+                <tr>
+                    <td>{{ alerte.description| default_if_none:'' }}</td>
+                    <td data-order="{{ alerte.date_alerte|date:"Y-m-d" | default_if_none:'' }}">{{ alerte.date_alerte|date:"d/m/Y" | default_if_none:'' }}</td>
+                    <td>
+                        {% if alerte.contrat_gestion%}
+                            {{ alerte.contrat_gestion }}
+                        {%endif%}
+                    </td>
+                    <td>
+                        {% if alerte.contrat_location%}
+                            {{alerte.contrat_location.batiment}}, {{ alerte.contrat_location.date_debut|date:"j/m/Y" }}-{{ alerte.contrat_location.date_fin|date:"j/m/Y" }}
+                        {%endif%}
+                    </td>
+                    <td>
+                        <span {% if alerte.etat == 'A_VERIFIER' %}style="color:red;"{% endif %}>{{ alerte.get_etat_display| default_if_none:'' }}</span>
+                    </td>
+                    <td>
+                        {% if alerte.etat != 'VERIFIER' %}
+                            <button type="button" title="Passe à l'état vérifier" id="btn_update_alerte_{{ alerte.id }}"><img src="{% static 'images/glyphicons-153-check.png' %}"/></button>
+                            <a
+                               title="Passe à l'état vérifier">
+
+                            </a>
+                        {% endif %}
+                    </td>
+                </tr>
+            {% endfor%}
+        </tbody>
+    </table>
+</form>

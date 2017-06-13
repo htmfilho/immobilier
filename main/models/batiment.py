@@ -91,8 +91,8 @@ class Batiment(models.Model):
             adresse_complete += " " + str(self.localite.localite)
         return adresse_complete
 
-    # def proprietaires(self):
-    #     return Proprietaire.find_by_batiment(self)
+    def proprietaires(self):
+        return Proprietaire.find_by_batiment(self)
 
     def contrats_location(self):
         return ContratLocation.find_by_batiment(self)

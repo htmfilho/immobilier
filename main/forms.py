@@ -84,9 +84,12 @@ class PersonneForm(forms.Form):
         super(PersonneForm, self).__init__(*args, ** kwargs)
 
 
-class BatimentForm(forms.Form):
-    superficie = forms.DecimalField(required=False, max_digits=8, decimal_places=3, localize=True)
-    numero = forms.IntegerField()
+class BatimentForm(ModelForm):
+    # superficie = forms.DecimalField(required=False, max_digits=8, decimal_places=3, localize=True)
+    # numero = forms.IntegerField()
+    class Meta:
+        model = batiment.Batiment
+        fields = ['superficie', 'numero']
 
     def __init__(self, *args, **kwargs):
         super(BatimentForm, self).__init__(*args, ** kwargs)

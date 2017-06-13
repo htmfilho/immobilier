@@ -29,6 +29,7 @@ from main.tests.factories.batiment import BatimentFactory
 from main.tests.factories.contrat_location import ContratLocationFactory
 from django.conf import settings
 from django.utils import timezone
+from django.conf import settings
 from faker import Faker
 fake = Faker()
 
@@ -52,4 +53,4 @@ class FraisMaintenanceFactory(factory.DjangoModelFactory):
     # societe = models.ForeignKey('Societe', blank=True, null=True)
     description = factory.Sequence(lambda n: 'Description - %d' % n)
     montant = factory.fuzzy.FuzzyDecimal(1, 480.0)
-    date_realisation = factory.fuzzy.FuzzyDate(datetime.date(timezone.now().year, 1, 1),datetime.date(timezone.now().year+2, 1, 1))
+    date_realisation = factory.Faker('date_time_this_decade', before_now=True, after_now=False, tzinfo=_get_tzinfo())

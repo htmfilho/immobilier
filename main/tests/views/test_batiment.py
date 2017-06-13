@@ -21,30 +21,28 @@
 #    see http://www.gnu.org/licenses/.
 #
 ##############################################################################
-import datetime
-import factory
-import factory.fuzzy
-from main.tests.factories.personne import PersonneFactory
+from django.test import TestCase, RequestFactory
+from unittest import mock
 from main.tests.factories.batiment import BatimentFactory
-from django.utils import timezone
-from django.conf import settings
+from django.core.urlresolvers import reverse
 
 
-def _get_tzinfo():
-    if settings.USE_TZ:
-        return timezone.get_current_timezone()
-    else:
-        return None
+class BatimentTest(TestCase):
 
-def generate_date_fin(contrat):
-    return datetime.date(contrat.date_debut.year,12,31)
+    @mock.patch('django.contrib.auth.decorators')
+    @mock.patch('main.views.layout.render')
+    def test_search_par_proprietaire(self, mock_render, mock_decorators):
+        un_batiment = BatimentFactory()
+        print('test_search_par_proprietaire')
+        request_factory = RequestFactory()
+        request = request_factory.get(reverse('batiment', args=[un_batiment.id]))
+        request.user = mock.Mock()
 
-class ContratGestionFactory(factory.DjangoModelFactory):
-    class Meta:
-        model = 'main.ContratGestion'
+        from main.batiment import search_par_proprietaire
+        search_par_proprietaire(request)
 
-    batiment = factory.SubFactory(BatimentFactory)
-    gestionnaire = factory.SubFactory(PersonneFactory)
-    date_debut = factory.Faker('date_time_this_decade', before_now=True, after_now=False, tzinfo=_get_tzinfo())
-    date_fin = factory.Faker('date_time_this_decade', before_now=False, after_now=True, tzinfo=_get_tzinfo())
-    montant_mensuel = factory.fuzzy.FuzzyDecimal(250.50, 480.0)
+        self.assertTrue(mock_render.called)
+        request, template, context = mock_render.call_args[0]
+
+        self.assertEqual(template, 'batiment/listeBatiments.html')
+        self.assertEqual(len(context['academic_years']), 1)

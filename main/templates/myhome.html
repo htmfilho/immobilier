@@ -1,8 +1,7 @@
 {% extends "layout.html" %}
 {% load staticfiles %}
 {% load order %}
-{% block breadcrumb %}
-
+{% block breadcrumbarea %}
 {% endblock %}
 {% block content %}
 <a class="btn btn-default" href="{% url 'batiment-create' %}" title="Pour créer un nouveau batiment">
@@ -27,54 +26,18 @@
                 Revenus (<span style="color:green">{{tot_recettes}}</span>) et dépenses(<span style="color:red">{{tot_depenses}}</span>) pour {{mois_en_cours}} {%if tot_recettes > tot_depenses%}<span class="glyphicon glyphicon-thumbs-up pull-right" style="color:green;font-size:larger;"></span>{%else%}<span class="glyphicon glyphicon-thumbs-down pull-right" style="color:red;font-size:larger;"></span>{%endif%}</div>
             <div class="panel-body">
                 <div style="border-style:outset;">
-                <label>Paiements recus</label>
+                <label>Paiements recus  (pour mois en cours)</label>
                 <table class="table table-condensed">
                     <thead>
-                    <th>Batiment</th>
-                    <th>Date paiement</th>
-                    <th>Etat</th>
-                    <th>Loyer</th>
-                    <th>Charges</th>
-                    <th></th>
-                    </thead>
-                    <tbody>
-                    {% for s in suivis_recus %}
-                    <tr class="{{s.etat_suivi}}">
-                        <td>{{s.financement_location.contrat_location.batiment}}</td>
-                        <td>{{s.date_paiement|date:"j/m/Y"}}</td>
-                        <td>{{s.etat_suivi}}</td>
-                        <td style="background-color:{%if s.loyer_percu == s.financement_location.loyer%}transparent{% else %}red{% endif %};">
-                            {{s.loyer_percu}} ({{s.financement_location.loyer}})
-                        </td>
-                        {% if s.financement_location.charges > 0 %}
-                        <td style="background-color:{%if s.charges_percu == s.financement_location.charges%}transparent{% else %}red{% endif %};">
-                            {{s.charges_percu}} ({{s.financement_location.charges}})
-                        </td>
-                        {% else %}
-                        <td>-</td>
-                        {% endif %}
-                        <td><a href="{% url 'suivis-updatel' s.id %}?dated={{date_debut|date:" j/m/Y"}}&datef={{date_fin|date:"j/m/Y"}}&etat={{etat}}"
-                            title="Pour modifier un suivi" onclick="submit()"><span class="glyphicon glyphicon-pencil"
-                                                                                    aria-hidden="true"></span></a></td>
-                    </tr>
-                    {% endfor %}
-                    </tbody>
-                </table>
-                </div>
-                <br>
-                <div style="border-style:outset;">
-                    <label>Loyer(s) impayé(s)</label>
-                    <table class="table table-condensed">
-                        <thead>
                         <th>Batiment</th>
                         <th>Date paiement</th>
                         <th>Etat</th>
                         <th>Loyer</th>
                         <th>Charges</th>
                         <th></th>
-                        </thead>
-                        <tbody>
-                        {% for s in suivis_non_paye %}
+                    </thead>
+                    <tbody>
+                        {% for s in suivis_recus %}
                         <tr class="{{s.etat_suivi}}">
                             <td>{{s.financement_location.contrat_location.batiment}}</td>
                             <td>{{s.date_paiement|date:"j/m/Y"}}</td>
@@ -83,81 +46,71 @@
                                 {{s.loyer_percu}} ({{s.financement_location.loyer}})
                             </td>
                             {% if s.financement_location.charges > 0 %}
-                            <td style="background-color:{%if s.charges_percu == s.financement_location.charges%}transparent{% else %}red{% endif %};">
-                                {{s.charges_percu}} ({{s.financement_location.charges}})
-                            </td>
+                                <td style="background-color:{%if s.charges_percu == s.financement_location.charges%}transparent{% else %}red{% endif %};">
+                                    {{s.charges_percu}} ({{s.financement_location.charges}})
+                                </td>
                             {% else %}
-                            <td>-</td>
+                                <td>-</td>
                             {% endif %}
-                            <td><a href="{% url 'suivis-updatel' s.id %}?dated={{date_debut|date:" j/m/Y"}}&datef={{date_fin|date:"j/m/Y"}}&etat={{etat}}"
-                                title="Pour modifier un suivi" onclick="submit()"><span class="glyphicon glyphicon-pencil"
-                                                                                        aria-hidden="true"></span></a></td>
+                            <td>
+                                <a href="{% url 'suivis-updatel' s.id %}?dated={{date_debut|date:" j/m/Y"}}&datef={{date_fin|date:"j/m/Y"}}&etat={{etat}}"
+                                   title="Pour modifier un suivi"
+                                   onclick="submit()">
+                                    <span class="glyphicon glyphicon-pencil" aria-hidden="true"></span>
+                                </a>
+                            </td>
                         </tr>
                         {% endfor %}
+                    </tbody>
+                </table>
+                </div>
+                <br>
+                <div style="border-style:outset;">
+                    <label>Loyer(s) impayé(s)  (pour mois en cours)</label>
+                    <table class="table table-condensed">
+                        <thead>
+                            <th>Batiment</th>
+                            <th>Date paiement</th>
+                            <th>Etat</th>
+                            <th>Loyer</th>
+                            <th>Charges</th>
+                            <th></th>
+                        </thead>
+                        <tbody>
+                            {% for s in suivis_non_paye %}
+                            <tr class="{{s.etat_suivi}}">
+                                <td>{{s.financement_location.contrat_location.batiment}}</td>
+                                <td>{{s.date_paiement|date:"j/m/Y"}}</td>
+                                <td>{{s.get_etat_suivi_display}}</td>
+                                <td style="background-color:{%if s.loyer_percu == s.financement_location.loyer%}transparent{% else %}red{% endif %};">
+                                    {{s.loyer_percu}} ({{s.financement_location.loyer}})
+                                </td>
+                                {% if s.financement_location.charges > 0 %}
+                                    <td style="background-color:{%if s.charges_percu == s.financement_location.charges%}transparent{% else %}red{% endif %};">
+                                        {{s.charges_percu}} ({{s.financement_location.charges}})
+                                    </td>
+                                {% else %}
+                                    <td>-</td>
+                                {% endif %}
+                                <td>
+                                    <a href="{% url 'suivis-updatel' s.id %}?dated={{date_debut|date:" j/m/Y"}}&datef={{date_fin|date:"j/m/Y"}}&etat={{etat}}"
+                                       title="Pour modifier un suivi"
+                                       onclick="submit()">
+                                        <span class="glyphicon glyphicon-pencil" aria-hidden="true"></span>
+                                    </a>
+                                </td>
+                            </tr>
+                            {% endfor %}
                         </tbody>
                     </table>
                 </div>
                 <br>
-                <div style="border-style:outset;">
-                    <label>Mes frais</label>
-                    <table class="table table-condensed">
-                        <thead><tr><th>Bien</th><th>Entrepreneur</th><th>Montant</th><th></th></tr></thead>
-                        <tbody>
-                        {% for f in mes_frais%}
-                        <tr><td>{{f.batiment}}</td><td>{{f.entrepreneur}}</td><td>{{f.montant}}</td><td><a href="{% url 'fraismaintenance-prepare-update' f.id %}" title="Pour modifier des frais"><span class="glyphicon glyphicon-pencil" aria-hidden="true"></span></a></td></tr>
-                        {% endfor%}
-                        </tbody>
-                    </table>
-                </div>
-
+                {% include 'frais/frais_dashboard.html'  %}
             </div>
         </div>
     </div>
     <div class="col-md-6">
-        <div class="panel panel-default">
-            <div class="panel-heading">Mes locaux</div>
-            <div class="panel-body">
-                <table class="table table-striped table-hover">
-                    <thead>
-                    <th>Bien</th>
-                    <th>Locataire(s)</th>
-                    <th>Location</th>
-                    </thead>
-                    {% for batiment in batiments %}
-                    <tr>
-                        <td>
-                            <a href="{% url 'batiment' batiment.pk%}"
-                               title="Pour modifier un batiment">{{batiment  | default_if_none:''}}</a>
-                        </td>
-                        <td>
-                          <table >
-                            {% for p in batiment.locataires_actuels2 %}
-                            <tr>
-                                <td><a href="{% url 'locataire-update' p.id %}">{{  p.personne.nom }} {{  p.personne.prenom }} </a></td>
-                            </tr>
-                          {% endfor%}
-                          </table>
-                        </td>
-                        <td>
-                            <table>
-                                <tr>
-                                    <td>
-                           {% if batiment.location_actuelle%}
-                            Loyer: &nbsp;{{ batiment.location_actuelle.loyer_base }}
-                            {%endif%}
-                                    </td>
-                                </tr>
-                                <tr><td>                            {% if batiment.location_actuelle%}
-                            Fin: &nbsp;{{ batiment.location_actuelle.date_fin|date:"j/m/Y" }}
-                            {%endif%}</td></tr>
-                            </table>
-
-                        </td>
-                    </tr>
-                    {% endfor%}
-                </table>
-            </div>
-        </div>
+        {% include 'batiment/mes_batiments_dashboard.html'  %}
     </div>
 </div>
 
@@ -171,51 +124,7 @@
         </div>
     </div>
     <div class="col-md-6">
-        <div class="panel panel-default">
-            <div class="panel-heading">Mes locataires</div>
-            <div class="panel-body">
-
-                <table class="table table-striped table-hover">
-                    <thead>
-                        <th>Personne</th>
-                        <th>Bien</th>
-                        <th>Location</th>
-                        <th></th>
-                    </thead>
-                {% for locataire in locataires %}
-                    <tr>
-                        <td>
-                            <a href="{% url 'locataire-update' locataire.id %}">{{ locataire.personne| default_if_none:'' }}</a>
-                        </td>
-                        <td>
-                          {%if locataire.contrat_location %}
-                          {{ locataire.contrat_location.batiment| default_if_none:'' }}
-                          {%endif%}
-                        </td>
-                        <td>
-                            {%if locataire.contrat_location %}
-                            {{ locataire.contrat_location.date_debut|date:"j/m/Y" }} au {{ locataire.contrat_location.date_fin|date:"j/m/Y" }}
-                            {%endif%}
-                        </td>
-
-                        <td>
-                          <a href="{% url 'locataire' locataire.id %}"
-                             title="Pour modifier un locataire"><span class="glyphicon glyphicon-pencil" aria-hidden="true"></span></a>
-                          <a href="{% url 'locataire-delete' locataire.id %}"
-                             title="Pour supprimer un locataire"
-                             onclick="return confirm('Sûr de vouloir supprimer?')"><span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
-                          </a>
-                        </td>
-                        </td>
-
-                    </tr>
-                {% endfor%}
-                </table>
-
-
-
-            </div>
-        </div>
+        {% include 'locataire/mes_locataires_dashboard.html'  %}
     </div>
 </div>
 {% endblock %}

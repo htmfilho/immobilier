@@ -26,6 +26,8 @@ from datetime import datetime
 from main.forms import PersonneForm
 from main import models as mdl
 from main.views_utils import get_key
+from django.http import HttpResponseRedirect
+from django.core.urlresolvers import reverse
 
 
 def get_personne(personne_id):
@@ -67,17 +69,36 @@ def search(request):
 def update(request):
     form = PersonneForm(data=request.POST)
     personne = populate_personne(request)
+    previous = request.POST.get('previous', None)
 
     if form.is_valid():
         personne.save()
-        return render(request, "personne/personne_list.html",
-                      {'personnes': mdl.personne.find_all()})
+        batiment_id = get_batiment_id(previous)
+        if batiment_id:
+            return HttpResponseRedirect(reverse('batiment', args=(batiment_id, )))
+        else:
+            return render(request, "personne/personne_list.html",
+                          {'personnes': mdl.personne.find_all()})
     else:
         return render(request, "personne/personne_form.html",
                       {'personne': personne,
                        'form': form,
                        'pays': mdl.pays.find_all(),
                        'societes': mdl.societe.find_all()})
+
+
+def get_batiment_id(previous):
+    if previous:
+        try:
+            pos1 = previous.index('/batiment/')
+            if pos1 != -1:
+                pos1 = pos1 + len('/batiment/')
+                pos2 = previous.index('/', pos1)
+                if pos2 != -1:
+                    return previous[pos1:pos2]
+        except:
+            return None
+    return None
 
 
 def populate_personne(request):
