@@ -24,10 +24,11 @@
 from django.shortcuts import render
 from main import models as mdl
 from main.models.enums import alerte_etat
+from main.pages_utils import PAGE_ALERTE_LIST
 
 
 def list(request):
-    return render(request, "alerte/alerte_list.html",
+    return render(request, PAGE_ALERTE_LIST,
                   {'alertes': mdl.alerte.find_by_etat(alerte_etat.VERIFIER)})
 
 
@@ -44,11 +45,11 @@ def search(request):
 
 def render_alerte(etat_alerte, request):
     if etat_alerte:
-        return render(request, "alerte/alerte_list.html",
+        return render(request, PAGE_ALERTE_LIST,
                       {'alertes': mdl.alerte.find_by_etat(etat_alerte),
                        'etat_alerte': etat_alerte})
     else:
-        return render(request, "alerte/alerte_list.html",
+        return render(request, PAGE_ALERTE_LIST,
                       {'alertes': mdl.alerte.find_all()})
 
 

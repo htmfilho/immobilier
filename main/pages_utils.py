@@ -22,3 +22,5 @@
 #
 ##############################################################################
 PAGE_BATIMENT_FORM = "batiment/batiment_form.html"
+PAGE_ALERTE_LIST = "alerte/alerte_list.html"
+PAGE_LISTE_BATIMENTS = 'batiment/listeBatiments.html'

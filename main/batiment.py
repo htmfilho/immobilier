@@ -25,6 +25,8 @@ from django.shortcuts import render, get_object_or_404
 from main.forms import BatimentForm
 from main import models as mdl
 from main import pages_utils
+from django.contrib.auth.decorators import login_required
+from main.pages_utils import PAGE_LISTE_BATIMENTS
 
 
 def create(request):
@@ -100,10 +102,11 @@ def update(request):
                    'form': form})
 
 
+@login_required
 def search_par_proprietaire(request):
     proprietaire_id = request.GET.get('proprietaire', None)
     batiments = mdl.batiment.search_par_proprietaire(proprietaire_id)
-    return render(request, 'batiment/listeBatiments.html',
+    return render(request, PAGE_LISTE_BATIMENTS,
                   {'batiments': batiments,
                    'proprietaires': mdl.proprietaire.find_distinct_proprietaires()})
 

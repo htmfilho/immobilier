@@ -8,7 +8,9 @@
 
       <a href="{% url 'personne-create' %}"
          title="Pour ajouter une nouvelle personne"
-              class="btn btn-default pull-right"><span class="glyphicon glyphicon-plus" aria-hidden="true"> Ajouter</span></a>
+         class="btn btn-default pull-right">
+          <span class="glyphicon glyphicon-plus" aria-hidden="true"> Ajouter</span>
+      </a>
 
       <br> <br>
       <table class="table table-striped table-hover display"
@@ -58,14 +60,17 @@
                   {{ personne.fonction.nom_fonction }}
                   {% endif %}
               </td>
-              <td>{% if personne.societe %}
-                  <a href="{% url 'societe_edit' personne.societe.id %}">{{ personne.societe.nom }}</a>
+              <td>
+                  {% if personne.societe %}
+                    <a href="{% url 'societe_edit' personne.societe.id %}">{{ personne.societe.nom }}</a>
                   {% endif %}
               </td>
               <td>
                 <a href="{% url 'personne-delete-2' personne.id %}"
                    title="Pour supprimer une personne"
-                   onclick="return confirm('Sûr de vouloir supprimer?')"><span class="glyphicon glyphicon-remove" aria-hidden="true"></span></a>
+                   onclick="return confirm('Sûr de vouloir supprimer?')">
+                    <span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
+                </a>
               </td>
 
           </tr>

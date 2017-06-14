@@ -56,6 +56,7 @@ import datetime
 from templated_docs import fill_template
 from templated_docs.http import FileResponse
 from django.forms import formset_factory
+from main.pages_utils import PAGE_LISTE_BATIMENTS
 
 
 class ContratGestionList(ListView):
@@ -195,7 +196,7 @@ def get_total_recettes(suivis_recus):
 
 def listeBatiments(request):
     batiments = mdl.batiment.find_all()
-    return render(request, 'batiment/listeBatiments.html',
+    return render(request, PAGE_LISTE_BATIMENTS,
                   {'batiments': batiments,
                    'proprietaires': mdl.proprietaire.find_distinct_proprietaires()})
 
