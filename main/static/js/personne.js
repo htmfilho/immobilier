@@ -79,3 +79,42 @@ $("#bt_save_new_fonction_2").click(function(event) {
     });
 
 });
+
+$("#btn_ajouter_personne").click(function(event) {
+    $.ajax({
+        url: '/validate_personne?nom='+ $('#txt_nom_new_personne').val() + "&prenom=" + $('#txt_prenom_new_personne').val() +"&prenom2=" + $('#txt_prenom2_new_personne').val(),
+        success: function(data){
+
+            if(data.valide){
+                div_visibility('#txt_msg_error_new_personne', false);
+                $("#form_ajouter_personne").submit();
+                return true;
+            }else{
+                div_visibility('#txt_msg_error_new_personne', true);
+                return false;
+            }
+        }
+
+    }).then(function (data) {
+    });
+
+
+});
+
+function div_visibility(id, visible){
+    if(visible){
+        $(id).css('visibility', 'visible');
+        $(id).css('display', 'block');
+    }else{
+        $(id).css('visibility', 'hidden');
+        $(id).css('display', 'none');
+    }
+}
+
+$("#btn_locataire_ajout_personne").click(function(event) {
+    div_visibility('#txt_msg_error_new_personne', false);
+    $('#txt_nom_new_personne').val('');
+    $('#txt_prenom_new_personne').val('');
+    $('#txt_prenom2_new_personne').val('');
+
+});

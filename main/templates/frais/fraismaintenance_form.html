@@ -11,56 +11,57 @@
 {% block content %}
 
 <form action="{% url 'fraismaintenance-update' %}" method="post">
-  {% csrf_token %}
-  <input type="hidden" id="previous" name="previous" value="{{request.META.HTTP_REFERER }}"/>
-  <input type="hidden" value="{{ frais.id }}" name="id"/>
-  <input type="hidden" value="{{ action }}" name="action"/>
+    {% csrf_token %}
+    <input type="hidden" id="previous" name="previous" value="{{previous}}"/>
+    <input type="hidden" value="{{ frais.id | default_if_none:'' }}" name="id"/>
+    <input type="hidden" value="{{ action }}" name="action"/>
 
-  <div class="row">
-    <div class="col-md-6">
-    <label>Batiment</label>
-    {% if frais.batiment %}
-    <input type="hidden" value="{{ frais.batiment.id }}" name="batiment_id"/>
-    <input class="form-control" value="{{ frais.batiment }}" name="batiment" readonly>
-    {% else %}
-    <select class="form-control" name="batiment_id" >
-      {%if frais.batiment %}
-        <option value="-" >-</option>
-      {%else%}
-        <option value="-" selected>-</option>
-      {%endif%}
-      {% for b in batiments %}
-          {% if frais.batiment == b.id %}
-            <option value="{{ b.id }}" selected>{{ b }}</option>
-          {%else%}
-            <option value="{{ b.id }}">{{ b }}</option>
-          {% endif %}
-      {% endfor %}
-    </select>
-    {% endif %}
-  </div>
-  <div class="col-md-6">
-    <label>A charge des locataires</label>
-    <input class="form-control" type="checkbox" name="contrat_location" {%if frais.contrat_location%}checked{%endif%}>
-  </div>
-</div>
-<div class="row">
-  <div class="col-md-6">
-    <label>Entrepreneur</label>
-    <select class="form-control" name="entrepreneur" id="slt_entrepreneur">
-      <option value="">-</option>
-      {% for entrepreneur in entrepreneurs %}
-            <option value="{{entrepreneur.id}}" {%if frais.entrepreneur.id == entrepreneur.id%}selected{%endif%}>{{entrepreneur}}</option>
-      {%endfor%}
-    </select>
-  </div>
+    <div class="row">
+        <div class="col-md-6">
+            <label>Batiment2</label>
+            {% if frais.batiment %}
+                <input type="hidden" value="{{ frais.batiment.id }}" name="batiment_id"/>
+                <input class="form-control" value="{{ frais.batiment }}" name="batiment" readonly>
+            {% else %}
+                <select class="form-control" name="batiment_id" >
+                  {%if frais.batiment %}
+                    <option value="-" >-</option>
+                  {%else%}
+                    <option value="-" selected>-</option>
+                  {%endif%}
+                  {% for b in batiments %}
+                      {% if frais.batiment.id == b.id %}
+                        <option value="{{ b.id }}" selected>{{ b }}</option>
+                      {%else%}
+                        <option value="{{ b.id }}">{{ b }}</option>
+                      {% endif %}
+                  {% endfor %}
+                </select>
+            {% endif %}
+          </div>
+          <div class="col-md-6">
+              <input type="checkbox" name="contrat_location" {%if frais.contrat_location%}checked{%endif%}>
+            <label>A charge des locataires</label>
 
-  <div class="col-md-5">
-      <input type="checkbox"  id="chb_new_entrepreneur" name="new_entrepreneur">
-      <label>Ajouter un nouvel entrepreneur</label>
-  </div>
-</div>
-<div id="pnl_new_entrepreneur" style="visibility:hidden;display:none;background-color: #BAEEBA;margin:15px">
+          </div>
+    </div>
+    <div class="row">
+      <div class="col-md-6">
+        <label>Entrepreneur</label>
+        <select class="form-control" name="entrepreneur" id="slt_entrepreneur">
+          <option value="">-</option>
+          {% for entrepreneur in entrepreneurs %}
+                <option value="{{entrepreneur.id}}" {%if frais.entrepreneur.id == entrepreneur.id%}selected{%endif%}>{{entrepreneur}}</option>
+          {%endfor%}
+        </select>
+      </div>
+
+      <div class="col-md-5">
+          <input type="checkbox"  id="chb_new_entrepreneur" name="new_entrepreneur">
+          <label>Ajouter un nouvel entrepreneur</label>
+      </div>
+    </div>
+    <div id="pnl_new_entrepreneur" style="visibility:hidden;display:none;background-color: #BAEEBA;margin:15px">
     <br>
     <div class="row" style="margin:15px" >
         <div class="col-md-4">
@@ -92,36 +93,37 @@
             </select>
         </div>
     </div>
-<br>
-</div>
-<div class="row">
-  <div class="col-md-12">
-    <label>Description</label>
-    <textarea class="form-control required" name="description" required="true" cols="4" rows="4" >{%if frais.description %}{{ frais.description }}{%endif%}</textarea>
-  </div>
-</div>
-<div class="row">
-  <div class="col-md-3">
-    <label>Montant</label>
-    <input class="form-control"
-           value="{{frais.montant | default_if_none:''}}"
-           name="montant" required>
-  </div>
-  <div class="col-md-3">
-    <label>Date réalisation</label>
-    <input class="form-control"
-           id="txt_date_realisation"
-           value="{%if frais.date_realisation %}{{ frais.date_realisation|date:"d/m/Y" }}{%endif%}"
-           name="date_realisation">
-    <span class="erreur_formulaire" id="spn_date_realisation"></span>
-  </div>
-  <div class="col-md-6">
-  </div>
-</div>
+    <br>
+    </div>
+    <div class="row">
+      <div class="col-md-12">
+        <label>Description</label>
+        <textarea class="form-control required" name="description" required="true" cols="4" rows="4" >{%if frais.description %}{{ frais.description }}{%endif%}</textarea>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-md-3">
+        <label>Montant</label>
+        <input class="form-control"
+               value="{{frais.montant | default_if_none:''}}"
+               name="montant" required>
+          <font class="erreur_formulaire">{{ form.montant.errors }}</font>
+      </div>
+      <div class="col-md-3">
+        <label>Date réalisation</label>
+        <input class="form-control"
+               id="txt_date_realisation"
+               value="{%if frais.date_realisation %}{{ frais.date_realisation|date:"d/m/Y" }}{%endif%}"
+               name="date_realisation">
+        <span class="erreur_formulaire" id="spn_date_realisation"></span>
+      </div>
+      <div class="col-md-6">
+      </div>
+    </div>
 
-      <button ype="submit" class="btn btn-primary pull-right"  id="bt_fraismaintenance_save">
-          <span class="glyphicon glyphicon-floppy-disk" aria-hidden="true"> Enregistrer</span>
-      </button>
+    <button ype="submit" class="btn btn-primary pull-right"  id="bt_fraismaintenance_save">
+      <span class="glyphicon glyphicon-floppy-disk" aria-hidden="true"> Enregistrer</span>
+    </button>
 
 </form>
 

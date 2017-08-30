@@ -21,6 +21,19 @@
           <input class="form-control" name="prenom2" id="txt_prenom2" value="{{ personne.prenom2| default_if_none:'' }}">
        </div>
     </div>
+      <br>
+      <div class="row">
+          <div class="col-md-6">
+              <label>Civilité</label>
+              <select class="form-control" name="titre" id="txt_titre">
+                  <option value="NON_PRECISE" {% if personne.titre == 'NON_PRECISE' %}selected{% endif %}>-</option>
+                  <option value="MADAME" {% if personne.titre == 'MADAME' %}selected{% endif %}>Madame</option>
+                  <option value="MADEMOISELLE" {% if personne.titre == 'MADEMOISELLE' %}selected{% endif %}>Mademoiselle</option>
+                  <option value="MONSIEUR" {% if personne.titre == 'MONSIEUR' %}selected{% endif %}>Monsieur</option>
+                  <option value="MAITRE" {% if personne.titre == 'MAITRE' %}selected{% endif %}>Maître</option>
+              </select>
+          </div>
+      </div>
     <br>
     <div class="row">
       <div class="col-md-6">
@@ -32,6 +45,8 @@
         {% if personne.id %}
             <label>Type personne</label><br>
             {{ personne.type }}
+        {% else %}
+            -
         {% endif %}
       </div>
     </div>

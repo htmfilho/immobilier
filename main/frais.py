@@ -27,67 +27,73 @@ from main.forms import FraisMaintenanceForm
 from main.views_utils import get_key
 from main import models as mdl
 from main import pages_utils
+from main.pages_utils import NEW, UPDATE, PAGE_FRAIS_FORM
+from main.views_utils import get_previous
 
 
 def new(request):
-    print('new')
     frais = mdl.frais_maintenance.FraisMaintenance()
-    previous = request.POST.get('previous', None)
-
-    return render(request, "frais/fraismaintenance_form.html",
+    return render(request, PAGE_FRAIS_FORM,
                   {'frais':     frais,
                    'personnes': mdl.personne.find_all(),
-                   'action':   'new',
+                   'action':   NEW,
                    'batiments': mdl.batiment.find_all(),
                    'contrats_location': mdl.contrat_location.find_all(),
                    'entrepreneurs': mdl.professionnel.find_all(),
                    'societes': mdl.societe.find_all_with_name(),
                    'fonctions': mdl.fonction.find_all(),
-                   'previous':  previous})
+                   'previous':  get_previous(request)})
 
 
 def create(request, batiment_id):
     print('create')
+    print(batiment_id)
     batiment = get_object_or_404(mdl.batiment.Batiment, pk=batiment_id)
     frais = mdl.frais_maintenance.FraisMaintenance()
     frais.batiment = batiment
-
-    return render(request, "frais/fraismaintenance_form.html",
+    previous = request.META.get('HTTP_REFERER', '/')
+    return render(request, PAGE_FRAIS_FORM,
                   {'frais':     frais,
                    'personnes': mdl.personne.find_all(),
-                   'action':   'new',
+                   'action':   NEW,
+                   'batiments': mdl.batiment.find_all(),
                    'entrepreneurs': mdl.professionnel.find_all(),
                    'societes': mdl.societe.find_all_with_name(),
-                   'fonctions': mdl.fonction.find_all()
+                   'fonctions': mdl.fonction.find_all(),
+                   'previous':  previous
                    })
 
 
 def prepare_update(request, id):
     print('prepare_update')
     frais = mdl.frais_maintenance.find_by_id(id)
-    return render(request, "frais/fraismaintenance_form.html",
+    return render(request, PAGE_FRAIS_FORM,
                   {'frais':  frais,
-                   'action': 'update',
+                   'action': UPDATE,
                    'entrepreneurs': mdl.professionnel.find_all()})
 
 
 def update(request):
     print('frais update')
     batiment_id = get_key(request.POST.get('batiment_id', None))
-    if request.POST.get('action', None) == 'new':
+    print(batiment_id)
+    action = request.POST.get('action', None)
+    frais_id = request.POST.get('id', None)
+    if request.POST.get('action', None) == NEW:
         frais = mdl.frais_maintenance.FraisMaintenance()
         if batiment_id:
             batiment = get_object_or_404(mdl.batiment.Batiment, pk=batiment_id)
             frais.batiment = batiment
     else:
-        frais = get_object_or_404(mdl.frais_maintenance.FraisMaintenance, pk=request.POST.get('id', None))
-        batiment = get_object_or_404(mdl.batiment.Batiment, pk=batiment_id)
-        frais.batiment = batiment
+        if frais_id:
+            frais = get_object_or_404(mdl.frais_maintenance.FraisMaintenance, pk=frais_id)
+        if batiment_id:
+            frais.batiment = get_object_or_404(mdl.batiment.Batiment, pk=batiment_id)
+        else:
+            frais.batiment = None
     frais.contrat_location = None
     if request.POST.get('contrat_location') == 'on':
-
         cl = frais.batiment.location_actuelle
-
         if cl:
             frais.contrat_location = cl
 
@@ -112,7 +118,10 @@ def update(request):
         frais.description = None
 
     if request.POST.get('montant', None):
-        frais.montant = float(request.POST['montant'].replace(',', '.'))
+        try:
+            frais.montant = float(request.POST['montant'].replace(',', '.'))
+        except:
+            frais.montant = 0
     else:
         frais.montant = 0
     if request.POST.get('date_realisation', None):
@@ -130,16 +139,17 @@ def update(request):
         return redirect(previous)
     else:
         print('invalid')
-        return render(request, "frais/fraismaintenance_form.html", {
+        previous = request.POST.get('previous', None)
+        return render(request, PAGE_FRAIS_FORM, {
             'frais': frais,
             'form': form,
-            'action': 'update',
+            'action': action,
+            'previous': previous,
             'entrepreneurs': mdl.professionnel.find_all()})
 
 
 def nouveau_professionnel(request):
-    # nouvelle entrepreneur
-
+    # nouvel entrepreneur
     personne = get_personne(request)
     societe = get_societe(request)
     fonction = get_fonction(request)
@@ -217,10 +227,10 @@ def contrat_new(request, contrat_location_id):
     if location:
         frais.contrat_location = location
         frais.batiment = location.batiment
-    return render(request, "frais/fraismaintenance_form.html",
+    return render(request, PAGE_FRAIS_FORM,
                   {'frais':             frais,
                    'personnes':         mdl.personne.find_all(),
-                   'action':            'new',
+                   'action':            NEW,
                    'batiments':         mdl.batiment.find_all(),
                    'contrats_location': mdl.contrat_location.find_all(),
                    'entrepreneurs':     mdl.professionnel.find_all(),
@@ -236,6 +246,7 @@ def is_new_value(id):
             return False
         except:
             return True
+
 
 def delete_frais(request, id):
     frais = mdl.frais_maintenance.find_by_id(id)

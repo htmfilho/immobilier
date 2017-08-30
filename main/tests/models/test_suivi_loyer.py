@@ -21,17 +21,19 @@
 #    see http://www.gnu.org/licenses/.
 #
 ##############################################################################
-DATE_SHORT_FORMAT = "%d/%m/%Y"
+from django.test import TestCase
+from django.utils import timezone
+from dateutil.relativedelta import relativedelta
+from main.models import suivi_loyer as mdl_suivi_loyer
+from main.tests.factories.personne import PersonneFactory
+from main.tests.factories.suivi_loyer import SuiviLoyerFactory
+import operator
 
 
-def get_key(id):
-    if id is None or id == "" or id == "-" or id == "None":
-        return None
-    return int(id)
+# class SuiviLoyerTest(TestCase):
 
-
-def get_previous(request):
-    previous = request.POST.get('previous', None)
-    if previous is None:
-        return request.META.get('HTTP_REFERER', '/')
-    return previous
+    # def test_find_suivis(self):
+        # print('iii')
+        # suivi_1 = SuiviLoyerFactory()
+        # print('iii2')
+        # self.assertCountEqual(mdl_suivi_loyer.find_all(), [suivi_1])

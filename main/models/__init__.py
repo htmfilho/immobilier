@@ -23,4 +23,4 @@
 ##############################################################################
 from main.models import personne,alerte,assurance, banque,batiment,contrat_gestion,contrat_location, \
 financement_location,fonction,frais_maintenance, honoraire,localite, locataire, modele_document, pays, photo, \
-professionnel, proprietaire, societe,suivi_loyer, type_societe, indice_sante
+professionnel, proprietaire, societe,suivi_loyer, type_societe, indice_sante, document_modele

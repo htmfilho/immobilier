@@ -1,0 +1,44 @@
+{% extends "layout.html" %}
+{% load staticfiles %}
+
+{% block breadcrumb %}
+    <li class="active">Liste des documents</li>
+{% endblock %}
+{% block content %}
+    <div class="row">
+        <div class="col-md-8">
+        </div>
+        <div class="col-md-4">
+
+        </div>
+    </div>
+    <br>
+    <div class="panel panel-default">
+        <div class="panel-body">
+
+            <br><br>
+            <table class="table table-hover"
+                   id="tbl_documents">
+                <thead>
+                <tr>
+                    <th>Sujet</th>
+                    <th>Modèle</th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for document in documents %}
+                    <tr>
+                    <td>
+                        {{ document.sujet }}
+                    </td>
+                    <td>
+                        {{ document.modele }}
+                    </td>
+
+                {% endfor %}
+                </tbody>
+            </table>
+
+        </div>
+    </div>
+{% endblock %}

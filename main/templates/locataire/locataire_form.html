@@ -110,14 +110,13 @@
                       <br>
                       du {{ locataire.contrat_location.date_debut|date:"j/m/Y" }} au
                       {{ locataire.contrat_location.date_fin|date:"j/m/Y" }}
-
                       <br>
                       <br>
                   {% else %}
                       {% if locations %}
                           <div class="row">
                               <div class="col-md-6">
-                                  <select name="location_id">
+                                  <select name="location_id" required>
                                       <option>-</option>
                                       {% for location in locations %}
                                           <option value="{{ location.id }}">{{ location }}</option>

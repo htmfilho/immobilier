@@ -24,3 +24,8 @@
 PAGE_BATIMENT_FORM = "batiment/batiment_form.html"
 PAGE_ALERTE_LIST = "alerte/alerte_list.html"
 PAGE_LISTE_BATIMENTS = 'batiment/listeBatiments.html'
+PAGE_FRAIS_FORM = "frais/fraismaintenance_form.html"
+
+UPDATE = 'update'
+NEW = 'new'
+LOCATAIRE_FORM_HTML = "locataire/locataire_form.html"

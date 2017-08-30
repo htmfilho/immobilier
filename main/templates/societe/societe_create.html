@@ -50,10 +50,10 @@
                     <div class="row">
                         <div class="col-md-3">
                             <label>Code postal</label>
-                            <input list="localites" type="text" id="txt_localite_cp_societe"
+                            <input list="localites_soc" type="text" id="txt_localite_cp_societe"
                                    class="form-control" name="localite_cp"
                                    value="{{ batiment.localite.code_postal| default_if_none:''}}" maxlength="10">
-                            <datalist id="localites">
+                            <datalist id="localites_soc">
                                 {% for l in localites %}
                                     <option value="{{ l.code_postal }}" data-id="{{ l.id }}">{{ l.code_postal }}</option>
                                 {% endfor %}
@@ -61,10 +61,10 @@
                         </div>
                         <div class="col-md-4">
                             <label class="control-label">Localité</label>
-                            <input list="localites_nom" type="text" id="txt_localite_societe"
+                            <input list="localites_nom_soc" type="text" id="txt_localite_societe"
                                    class="form-control" name="localite_societe_other"
                                    vmaxlength="150">
-                            <datalist id="localites_nom">
+                            <datalist id="localites_nom_soc">
                                 {% for l in localites %}
                                     <option value="{{ l.localite }}" data-id="{{ l.id }}">{{ l.localite }}</option>
                                 {% endfor %}

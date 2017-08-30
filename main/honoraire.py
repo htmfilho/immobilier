@@ -29,13 +29,17 @@ from dateutil.relativedelta import relativedelta
 from datetime import datetime
 from main.forms import HonoraireForm
 from main import models as mdl
+from main.models.enums import etat_honoraire
 
 
 def list(request):
     date_limite = timezone.now() - relativedelta(days=15)
     date_limite_sup = timezone.now() + relativedelta(days=15)
     return render(request, "honoraire/honoraire_list.html",
-                  {'honoraires':  mdl.honoraire.find_by_batiment_etat_date(None, 'A_VERIFIER', date_limite, date_limite_sup),
+                  {'honoraires':  mdl.honoraire.find_by_batiment_etat_date(None,
+                                                                           etat_honoraire.A_VERIFIER,
+                                                                           date_limite,
+                                                                           date_limite_sup),
                    'batiments':   mdl.honoraire.find_all_batiments(),
                    'date_limite': date_limite,
                    'date_limite_sup': date_limite_sup,
@@ -59,7 +63,7 @@ def search(request):
 
     batiment_selected = batiment_id
     if batiment_selected is None:
-        batiment_selected="TOUS"
+        batiment_selected = "TOUS"
     return render(request, "honoraire/honoraire_list.html",
                   {'honoraires': mdl.honoraire.find_by_batiment_etat_date(batiment_id,
                                                                           etat_query,

@@ -36,7 +36,31 @@
               <li><a href="{% url 'contratlocation_list' %}">Locations</a><a href="#"></a></li>
               <li><a href="{% url 'suivis' %}">Finances</a><a href="#"></a></li>
               <li><a href="{% url 'honoraire-list' %}">Honoraires</a></li>
-              <li><a href="{% url 'alerte_list' %}">Agenda</a></li>
+              <li><a href="{% url 'alerte-list' %}">Agenda</a></li>
+              <li>
+                  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button"
+                     aria-haspopup="true"
+                     aria-expanded="false"
+                     id="lnk_home_dropdown_catalog">Courrier<span
+                          class="caret"></span></a>
+                <ul class="dropdown-menu" >
+                    <li><a href="{% url 'lettre' %}" title="Lettre avec odt">Lettre</a></li>
+                    <li style="visibility:hidden;display:none;"><a href="{% url 'document_list' %}">Liste des documents</a></li>
+                </ul>
+              </li>
+              {% if location.id %}
+                  <li>
+                      <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button"
+                         aria-haspopup="true"
+                         aria-expanded="false"
+                         id="lnk_home_dropdown_catalog">Courrier location<span
+                              class="caret"></span></a>
+                      <ul class="dropdown-menu">
+                          <li><a href="{% url 'lettre_indexation_form' location.id %}">Lettre indexation</a></li>
+                      </ul>
+                  </li>
+              {% endif %}
+
             </ul>
             <ul class="nav navbar-nav navbar-right">
                 <li><a href="/admin" target="_blank"><span class="glyphicon glyphicon-cog" aria-hidden="true"></span> Administration</a></li>
@@ -82,6 +106,16 @@
       <script>
         $(document).ready(function() {
 
+            $('#tbl_suivis_list').dataTable({
+                "lengthChange": false,
+                "language": {
+                    "url": "/static/i18n/French.json"
+                },
+                "columnDefs": [{
+                    "targets": 'no-sort',
+                    "orderable": false,
+                }]
+            });
             $('#tbl_data').dataTable({
                 "lengthChange": false,
                 "language": {
@@ -102,6 +136,15 @@
             }
             );
             $('#tbl_data_honoraires').DataTable({
+                "rowCallback": function( row, data, index ) {
+                    var id= data[0];
+                    console.log(index);
+                    var id = parseFloat(data[0]),
+                            $node = this.api().row(row).nodes().to$();
+                    var id_color = index + 1;
+                    $node.addClass('row'+id);
+
+                },
                 "lengthChange": false,
                 "columnDefs": [{
                     "targets": 'no-sort',
@@ -121,31 +164,6 @@
             applyTo = document.querySelector('input[list="localites"]');
             if(applyTo) { applyTo.addEventListener('input', onInput2);}
 
-            $(".select_updatable").customComboBox({
-
-                tipText : "Entrez la nouvelle valeur",
-
-                tipClass : "mytipclass",
-
-                allowed : /[A-Za-z0-9\$\.\s]/,
-
-                notallowed : /[\<\>]/,
-
-                index : 'last',
-
-                isEditing : function(el, status, value) {
-                    if (typeof window.console!='object') { return; }
-                    console.info('Editing status changed to (', status, ') on ', el, ' combo box and the selected value is "', value, '"');
-                },
-                onKeyDown : function(el, character, fulltext) {
-                    if (typeof window.console!='object') { return; }
-                    console.info('The character (', character, ') was just typed into ', el, ' combo box and the complete text is now "', fulltext, '"');
-                },
-                onDelete : function(el, fulltext) {
-                    if (typeof window.console!='object') { return; }
-                    console.info('A character was deleted from ', el, ' combo box and the complete text is now "', fulltext, '"');
-                }
-            });
 
             $("form p").find('input').on('click',function(e) {
                 var sel = $(e.currentTarget).prev('select');

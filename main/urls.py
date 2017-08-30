@@ -22,7 +22,8 @@
 #
 ##############################################################################
 from . import views, batiment, proprietaire, suivis, alertes, contratlocation, financement, locataire, contratgestion, \
-    frais, honoraire, personne, essai_pdf, essai3, assurance, fonction, societe, pays, fonction, societe
+    frais, honoraire, personne, essai_pdf, essai3, assurance, fonction, societe, pays, fonction, societe, document,\
+    lettre
 from django.conf.urls import url
 from django.contrib.auth.views import login, logout
 
@@ -87,7 +88,7 @@ urlpatterns = [
     url(r'^personne/delete2/([0-9]+)/$', views.personne_delete, name='personne-delete-2'),
     url(r'^personnes/$', personne.list, name='personne_list'),
     url(r'^personnes/search/$', personne.search, name='personne_search'),
-
+    url(r'^validate_personne/$', personne.validate_personne, name='validate_personne'),
 
     url(r'^batiment/create/$', batiment.create, name='batiment-create'),
     url(r'^batiment/([0-9]+)/$', batiment.batiment_form, name='batiment'),
@@ -125,7 +126,7 @@ urlpatterns = [
     url(r'^societe/(?P<pk>[0-9]+)/$', views.SocieteDetail.as_view(), name='societe'),
     url(r'^societe/create/personne/$', societe.create, name='personne-create-societe'),
     # url(r'^batiment5/(?P<pk>\d+)/$', BatimentDetailView.as_view(), batiment_info)
-    url(r'^alertes/$', alertes.list, name='alerte_list'),
+    url(r'^alertes/$', alertes.list, name='alerte-list'),
     url(r'^alertes/update/$', alertes.update_a_verifier, name='alerte-update-a-verifier'),
     url(r'^alertes/search/$', alertes.search, name='alerte-search'),
 
@@ -159,7 +160,7 @@ urlpatterns = [
     url(r'^honoraire/update/$', honoraire.update, name='honoraire-update'),
     url(r'^honoraire/edit/([0-9]+)/$', honoraire.honoraire_form, name='honoraire'),
     url(r'^honoraire/delete/(?P<pk>[0-9]+)/$', views.HonoraireDelete.as_view(), name='honoraire-delete'),
-    url(r'^test/$', views.test, name='test'),
+    url(r'^test/$', views.merge_form, name='test'),
     url(r'^test/image/$', views.test_image, name='test_image'),
     url(r'^test/merge/$', views.test_merge, name='test_merge'),
     url(r'^test/upload/$', views.upload, name='upload'),
@@ -178,11 +179,21 @@ urlpatterns = [
     url(r'^fraismaintenance/contrat/new/([0-9]+)/$', frais.contrat_new, name='fraismaintenance-new-contrat'),
 
     url(r'^test/lettre/$', views.lettre_form, name='lettre'),
-    url(r'^test/lettre_create/$', views.lettre_create, name='lettre_create'),
+    url(r'^test/lettre_create/$', lettre.lettre_create, name='lettre_create'),
     url(r'^pays_create/$', pays.create, name='pays_create'),
     url(r'^fonction_create/$', fonction.create, name='fonction_create'),
 
     url(r'^societe_create/$', societe.create_new, name='societe_create'),
+    url(r'^document/liste/$', document.document_bd_list, name='document_list'),
+    url(r'^document/form/([0-9]+)/$', document.document_form, name='document_form'),
+    url(r'^document/lettre_indexation_form/([0-9]+)/$', document.lettre_indexation_form, name='lettre_indexation_form'),
+    url(r'^document/lettre_indexation_new/([0-9]+)/$', document.lettre_indexation_new, name='lettre_indexation_new'),
+    url(r'^document/lettre_indexation/([0-9]+)/$', document.lettre_indexation, name='lettre_indexation'),
+
+
+
+
+
 
 
 ]

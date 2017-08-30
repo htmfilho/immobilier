@@ -26,33 +26,37 @@ from main.views_utils import get_key
 from main import models as mdl
 from django.http import HttpResponseRedirect
 from django.core.urlresolvers import reverse
+from django.contrib.auth.decorators import login_required
+from main.pages_utils import NEW, UPDATE, LOCATAIRE_FORM_HTML
 
 
-LOCATAIRE_FORM_HTML = "locataire/locataire_form.html"
-
-
+@login_required
 def locataire_form(request, id):
     locataire = get_object_or_404(mdl.locataire.Locataire, pk=id)
     next = request.META.get('HTTP_REFERER', '/')
     return render(request, LOCATAIRE_FORM_HTML,
                   {'locataire': locataire,
-                   'personne': locataire.personne,
-                   'action':    'update',
+                   'personne':  locataire.personne,
+                   'action':    UPDATE,
                    'personnes': mdl.personne.find_all(),
-                   'societes': mdl.societe.find_all(),
+                   'societes':  mdl.societe.find_all(),
                    'fonctions': mdl.fonction.find_all(),
-                   'next': next})
+                   'next': next,
+                   'localites': mdl.localite.find_all()})
 
 
+@login_required
 def update(request, id):
     locataire = get_object_or_404(mdl.locataire.Locataire, pk=id)
     return render(request, LOCATAIRE_FORM_HTML,
-                  {'action': 'update',
+                  {'action':    UPDATE,
                    'locataire': locataire,
                    'personnes': mdl.personne.find_all(),
-                   'personne': locataire.personne})
+                   'personne':  locataire.personne,
+                   'localites': mdl.localite.find_all()})
 
 
+@login_required
 def new(request, location_id):
     location = get_object_or_404(mdl.contrat_location.ContratLocation, pk=location_id)
     locataire = mdl.locataire.Locataire()
@@ -60,12 +64,12 @@ def new(request, location_id):
 
     return render(request, LOCATAIRE_FORM_HTML,
                   {'locataire': locataire,
-                   'location': location,
+                   'location':  location,
                    'personnes': get_personnes_non_locataires(location),
-                   'societes': mdl.societe.find_all(),
-                   'action': 'update',
-                   'personnes': mdl.personne.find_all(),
-                   'fonctions': mdl.fonction.find_all(), })
+                   'societes':  mdl.societe.find_all(),
+                   'action':    UPDATE,
+                   'fonctions': mdl.fonction.find_all(),
+                   'localites': mdl.localite.find_all()})
 
 
 def get_personnes_non_locataires(location):
@@ -80,16 +84,19 @@ def get_personnes_non_locataires(location):
     return l
 
 
+@login_required
 def new_without_known_location(request):
-    locataire = mdl.locataire.Locataire()
     return render(request, LOCATAIRE_FORM_HTML,
-                  {'locataire': locataire,
+                  {'locataire': mdl.locataire.Locataire(),
                    'locations': mdl.contrat_location.find_all(),
                    'personnes': mdl.personne.find_all(),
-                   'societes': mdl.societe.find_all(),
-                   'fonctions': mdl.fonction.find_all(), })
+                   'societes':  mdl.societe.find_all(),
+                   'fonctions': mdl.fonction.find_all(),
+                   'localites': mdl.localite.find_all(),
+                   'action':    NEW})
 
 
+@login_required
 def add(request):
     locataire_id = get_key(request.POST.get('locataire_id', None))
     location_id = request.POST.get('location_id', None)
@@ -99,15 +106,15 @@ def add(request):
     locataire.save()
 
     action = request.POST.get('action', None)
-    if action == "update":
+    if action == UPDATE:
         return render(request, "contratlocation_update.html", {'location': locataire.contrat_location})
     else:
         return HttpResponseRedirect(reverse('home'))
 
 
 def populate_locataire(locataire_id, location_id, personne_id, request):
-    locataire = get_locataire(locataire_id)
-    location = get_location(location_id)
+    locataire = _get_locataire(locataire_id)
+    location = _get_location(location_id)
     locataire.contrat_location = location
     if personne_id:
         personne = get_object_or_404(mdl.personne.Personne, pk=personne_id)
@@ -125,20 +132,21 @@ def populate_locataire(locataire_id, location_id, personne_id, request):
         societe = get_object_or_404(mdl.societe.Societe, pk=request.POST['societe'])
     locataire.societe = societe
     locataire.tva = request.POST['tva']
-
+    fonction_locataire = None
     if request.POST['profession']:
         try:
 
             id_fonction = int(request.POST['profession'])
             fonction_locataire = mdl.fonction.find_by_id(id_fonction)
         except:
-            fonction_locataire = None
+            pass
 
     locataire.profession = fonction_locataire
     locataire.contrat_location = location
     return locataire
 
 
+@login_required
 def delete(request, locataire_id):
     locataire = get_object_or_404(mdl.locataire.Locataire, pk=locataire_id)
     location = locataire.contrat_location
@@ -149,15 +157,14 @@ def delete(request, locataire_id):
 
 def personne_create(request):
     location_id = request.POST.get('location_id_pers', None)
+    action = request.POST.get('action_current', None)
     locataire = mdl.locataire.Locataire()
     location = None
     if location_id:
         location = get_object_or_404(mdl.contrat_location.ContratLocation, pk=location_id)
         locataire.contrat_location = location
 
-    personne = mdl.personne.Personne(nom=request.POST.get('nom', None), prenom=request.POST.get('prenom', None))
-    personne.save()
-    locataire.personne = personne
+    locataire.personne = _save_personne(request)
     personnes = mdl.personne.find_all()
 
     return render(request, LOCATAIRE_FORM_HTML,
@@ -165,24 +172,33 @@ def personne_create(request):
                    'location': location,
                    'personnes': personnes,
                    'societes': mdl.societe.find_all(),
-                   'fonctions': mdl.fonction.find_all(), })
+                   'locations': mdl.contrat_location.find_all(),
+                   'fonctions': mdl.fonction.find_all(),
+                   'action': action})
 
 
+def _save_personne(request):
+    personne = mdl.personne.Personne(nom=request.POST.get('nom', None),
+                                     prenom=request.POST.get('prenom', None),
+                                     prenom2=request.POST.get('prenom2', None))
+    personne.save()
+    return personne
+
+
+@login_required
 def list(request):
     return render(request, "locataire_list.html",
                   {'locataires': mdl.locataire.find_all(),
                    'personnes': mdl.personne.find_all()})
 
 
-def get_locataire(locataire_id):
+def _get_locataire(locataire_id):
     if locataire_id:
         return get_object_or_404(mdl.locataire.Locataire, pk=locataire_id)
-    else:
-        return mdl.locataire.Locataire()
+    return mdl.locataire.Locataire()
 
 
-def get_location(location_id):
+def _get_location(location_id):
     if location_id:
         return get_object_or_404(mdl.contrat_location.ContratLocation, pk=location_id)
-
     return None

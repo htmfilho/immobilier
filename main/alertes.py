@@ -29,7 +29,8 @@ from main.pages_utils import PAGE_ALERTE_LIST
 
 def list(request):
     return render(request, PAGE_ALERTE_LIST,
-                  {'alertes': mdl.alerte.find_by_etat(alerte_etat.VERIFIER)})
+                  {'alertes': mdl.alerte.find_by_etat(alerte_etat.VERIFIER),
+                   'etat_alerte': alerte_etat.VERIFIER })
 
 
 def update_a_verifier(request):

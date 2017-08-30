@@ -29,6 +29,8 @@ from dateutil.relativedelta import relativedelta
 import datetime
 import calendar
 from main.models import batiment as Batiment
+
+
 ETAT = (
     ('A_VERIFIER', 'A vérifier'),
     ('IMPAYE', 'Impayé'),
@@ -69,16 +71,10 @@ class SuiviLoyer(models.Model):
 
 
 def find_suivis(date_d_param, date_f_param, etat_param):
-    etat = None
-    if etat_param != "":
-        etat = etat_param
-    date_d = None
-    if date_d_param != "":
-        date_d = date_d_param
-    date_f = None
-    if date_f_param != "":
-        date_f = date_f_param
-    out = None
+    etat = get_param(etat_param)
+    date_d = get_param(date_d_param)
+    date_f = get_param(date_f_param)
+
     queryset = SuiviLoyer.objects
     if etat:
         queryset = queryset.filter(etat_suivi=etat)
@@ -87,8 +83,15 @@ def find_suivis(date_d_param, date_f_param, etat_param):
     if date_f:
         queryset = queryset.filter(date_paiement__lte=date_f)
     if etat or date_d or date_f:
-        out = queryset
-    return out
+        return queryset
+    else:
+        return SuiviLoyer.objects.all
+
+
+def get_param(etat_param):
+    if etat_param != "":
+        return etat_param
+    return None
 
 
 def find_suivis_a_verifier():

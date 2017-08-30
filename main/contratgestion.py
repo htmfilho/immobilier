@@ -26,9 +26,12 @@ from main.forms import ContratGestionForm
 from datetime import datetime
 from main import models as mdl
 from main import pages_utils
+from main.pages_utils import NEW, UPDATE
+from main.views_utils import get_previous
 
 
 def new(request):
+    print('new')
     contrat = mdl.contrat_gestion.ContratGestion()
     personne_gestionnaire = mdl.personne.find_gestionnaire_default()
     if personne_gestionnaire:
@@ -37,12 +40,14 @@ def new(request):
     return render(request, "contratgestion_update.html",
                   {'contrat':   contrat,
                    'personnes': mdl.personne.find_all(),
-                   'action':   'new',
+                   'action':   NEW,
                    'prev':      'fb',
+                   'previous': get_previous(request),
                    'batiments': batiments})
 
 
 def create(request, batiment_id):
+    print('create')
     """
     ok - 1
     """
@@ -58,12 +63,14 @@ def create(request, batiment_id):
     return render(request, "contratgestion_update.html",
                   {'contrat':   contrat,
                    'personnes': mdl.personne.find_all(),
-                   'action':   'new',
+                   'action':   NEW,
                    'batiments': mdl.batiment.find_all(),
+                   'previous': get_previous(request),
                    'prev':      'fb'})
 
 
 def prepare_update(request, id):
+
 
     contrat = mdl.contrat_gestion.find_by_id(id)
     personnes = []
@@ -71,15 +78,13 @@ def prepare_update(request, id):
     personnes.append(personne_gestionnaire)
     return render(request, "contratgestion_update.html",
                   {'contrat':   contrat,
-                   'action':   'update',
+                   'action':   UPDATE,
+                   'previous': get_previous(request),
                    'batiments': mdl.batiment.find_all(),
                    'personnes': personnes})
 
 
 def update(request):
-    """
-    ok - 1
-    """
     print('update CONTRAT  GESTION')
     previous = request.POST.get('previous', None)
     form = ContratGestionForm(data=request.POST)
@@ -87,9 +92,12 @@ def update(request):
     personne = None
 
     batiment_id = mdl.batiment.Batiment(form['batiment_id'].value()).id
+    if batiment_id == '-':
+        batiment_id = None
+
     # batiment_id = get_key(request.POST.get('batiment_id', None))
     print('action : ', request.POST.get('action', None))
-    if request.POST.get('action', None) == 'new':
+    if request.POST.get('action', None) == NEW:
         gestion = mdl.contrat_gestion.ContratGestion()
         batiment = get_object_or_404(mdl.batiment.Batiment, pk=batiment_id)
         gestion.batiment = batiment
@@ -125,19 +133,20 @@ def update(request):
             gestion.date_fin = None
     else:
         gestion.date_fin = None
-    if gestion.date_debut and gestion.date_fin:
-        if gestion.date_debut > gestion.date_fin:
-            return render(request, "contratgestion_update.html",
-                          {'contrat': gestion,
-                           'message': 'La date de début doit être < à la date de fin'})
+    # if gestion.date_debut and gestion.date_fin:
+    #     if gestion.date_debut > gestion.date_fin:
+    #         print(gestion.batiment)
+    #         return render(request, "contratgestion_update.html",
+    #                       {'contrat': gestion,
+    #                        'message': 'La date de début doit être < à la date de fin'})
     if personne is None:
         print('personne is none')
         message = "Il faut sélectionner un gestionnaire"
         return render(request, "contratgestion_update.html",
                       {'contrat': gestion,
-                       'action':   'update',
+                       'action':  UPDATE,
                        'message': message,
-                       'form':     form})
+                       'form':    form})
     if form.is_valid() and data_valid(form, gestion):
         print('form valid')
         montant_mensuel = request.POST.get('montant_mensuel', None)
@@ -148,16 +157,19 @@ def update(request):
                 gestion.montant_mensuel = None
         gestion.save()
         return redirect(previous)
+
+        # messages.add_message(request, messages.INFO, 'Hello world.')
+        # return HttpResponse(status=204)
     else:
         print('form invalid')
         personnes = []
         personne_gestionnaire = mdl.personne.find_gestionnaire_default()
         personnes.append(personne_gestionnaire)
         return render(request, "contratgestion_update.html",
-                      {'contrat': gestion,
-                       'action': 'update',
-                       'message': 'Invalide',
-                       'form': form,
+                      {'contrat':   gestion,
+                       'action':    UPDATE,
+                       'message':   'Invalide',
+                       'form':      form,
                        'personnes': personnes,
                        'batiments': mdl.batiment.find_all()})
         # return render_to_response("contratgestion_update.html",

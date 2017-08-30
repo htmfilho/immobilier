@@ -9,25 +9,25 @@
       <a href="{% url 'personne-create' %}"
          title="Pour ajouter une nouvelle personne"
          class="btn btn-default pull-right">
-          <span class="glyphicon glyphicon-plus" aria-hidden="true"> Ajouter</span>
+          <span class="glyphicon glyphicon-plus" aria-hidden="true"> Ajout contact</span>
       </a>
 
       <br> <br>
-      <table class="table table-striped table-hover display"
+      <table class="table table-hover"
              id="tbl_data">
           <thead>
-          <tr>
-              <th>Nom</th>
-              <th>Prénom</th>
-              <th>Prénom2</th>
-              <th>Type</th>
-              <th>Email</th>
-              <th>Gsm</th>
-              <th>Téléphone</th>
-              <th>Profession</th>
-              <th>Société</th>
-              <th></th>
-          </tr>
+              <tr>
+                  <th>Nom</th>
+                  <th>Prénom</th>
+                  <th>Prénom2</th>
+                  <th>Type(s)</th>
+                  <th>Email</th>
+                  <th>Gsm</th>
+                  <th>Téléphone</th>
+                  <th>Fonction</th>
+                  <th>Société</th>
+                  <th></th>
+              </tr>
           </thead>
           <tbody>
       {% for personne in personnes %}

@@ -45,6 +45,7 @@ INSTALLED_APPS = (
     'main',
     'rest_framework',
     'statici18n',
+    'wkhtmltopdf'
 
 
 )
@@ -125,8 +126,9 @@ LOGIN_URL = reverse_lazy('login')
 LOGOUT_URL = reverse_lazy('logout')
 LOGIN_REDIRECT_URL = '/'
 
+MEDIA_ROOT = 'files'
 MEDIA_URL = '/photos/'
-MEDIA_ROOT = '/photos/'
+
 
 LOGO_URL = os.path.join(BASE_DIR, "main/static/images/logo_ci.png")
 

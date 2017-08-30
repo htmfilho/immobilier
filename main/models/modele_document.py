@@ -34,6 +34,7 @@ class ModeleDocument(models.Model):
     contenu = RichTextField()
     sujet = models.CharField(max_length=255, blank=True, null=True)
     fichier_modele = models.CharField(max_length=255, blank=True, null=True)
+    modele = models.FileField(upload_to='files/', blank=True, null=True)
 
     def __str__(self):
         return self.type_document
@@ -41,3 +42,11 @@ class ModeleDocument(models.Model):
 
 def find_by_reference(a_reference):
     return ModeleDocument.objects.get(reference=a_reference)
+
+
+def find_all():
+    return ModeleDocument.objects.all()
+
+
+def find_by_id(a_document_id):
+    return ModeleDocument.objects.get(pk=a_document_id)

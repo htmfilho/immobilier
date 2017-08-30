@@ -21,17 +21,14 @@
 #    see http://www.gnu.org/licenses/.
 #
 ##############################################################################
-DATE_SHORT_FORMAT = "%d/%m/%Y"
+A_VERIFIER = 'A_VERIFIER'
+IMPAYE = 'IMPAYE'
+EN_RETARD = 'EN_RETARD'
+PAYE = 'PAYE'
 
-
-def get_key(id):
-    if id is None or id == "" or id == "-" or id == "None":
-        return None
-    return int(id)
-
-
-def get_previous(request):
-    previous = request.POST.get('previous', None)
-    if previous is None:
-        return request.META.get('HTTP_REFERER', '/')
-    return previous
+ETAT_HONORAIRE = (
+    (A_VERIFIER, 'A vérifier'),
+    (IMPAYE, 'Impayé'),
+    (EN_RETARD, 'En retard'),
+    (PAYE, 'Payé')
+)

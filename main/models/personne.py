@@ -24,7 +24,6 @@
 from django.db import models
 from django.contrib import admin
 from main.models import proprietaire as Proprietaire
-from main.models import pays as Pays
 from main.models import locataire as Locataire
 from main.models import fonction as Fonction
 from main.models import professionnel as Professionnel
@@ -42,18 +41,16 @@ class PersonneAdmin(admin.ModelAdmin):
 
 class Personne(models.Model):
 
-    # TYPE_PERSONNE = (
-    #     ('NON_PRECISE', '-'),
-    #     ('LOCATAIRE', 'Locataire'),
-    #     ('PROFESSIONNEL', 'Professionnel'),
-    #     ('PROPRIETAIRE', 'Propriétaire'),
-    #     ('ANCIEN_LOCATAIRE', 'Ancien locataire'),
-    #     ('ANCIEN_PROPRIETAIRE', 'Ancien propriétaire'),
-    # )
+    CIVILITE = (
+        ('NON_PRECISE', 'Madame, Monsieur,'),
+        ('MONSIEUR', 'Monsieur'),
+        ('MADAME', 'Madame'),
+        ('MADEMOISELLE', 'Mademoiselle'),
+        ('MAITRE', 'Maître')
+    )
     nom = models.CharField(max_length=100)
     prenom = models.CharField(max_length=100)
     prenom2 = models.CharField(max_length=100, blank=True, null=True)
-    # societe        = models.CharField(max_length=100, blank=True, null=True)
     email = models.EmailField(blank=True, null=True)
     profession = models.CharField(max_length=100, blank=True, null=True)
     date_naissance = models.DateField(auto_now=False, blank=True, null=True, auto_now_add=False)
@@ -64,8 +61,8 @@ class Personne(models.Model):
     gsm = models.CharField(max_length=30, blank=True, null=True)
     societe = models.ForeignKey('Societe', blank=True, null=True)
     num_compte_banque = models.CharField(max_length=30, blank=True, null=True)
-    #personne_type = models.CharField(max_length=20, choices=TYPE_PERSONNE, default='NON_PRECISE', blank=True, null=True)  # a enlever
     fonction = models.ForeignKey('Fonction', blank=True, null=True)
+    titre = models.CharField(max_length=20, choices=CIVILITE, default='NON_PRECISE', blank=True, null=True)
 
     def __init__(self,  *args, **kwargs):
         super(Personne, self).__init__(*args, **kwargs)
@@ -176,6 +173,8 @@ def delete_personne(id):
 
 
 def find_personne_by_nom_prenom(un_nom, un_prenom, un_prenom2):
+    print('find_personne_by_nom_prenom')
+    print("nom:{} prenom{} prenom2{}".format(un_nom, un_prenom, un_prenom2))
     return Personne.objects.filter(nom__iexact=un_nom, prenom__iexact=un_prenom, prenom2__iexact=un_prenom2)
 
 

@@ -9,15 +9,25 @@
         <div class="panel-heading">Filtrer par</div>
         <div class="panel-body">
             <form method="get" action="{% url 'alerte-search'%}">
-                <label>Etat alerte</label>
-                <select id="slt_etat_alerte" name="etat_alerte" class="form-control">
-                    <option value="">-</option>
-                    <option value="A_VERIFIER" {% if etat_alerte == 'A_VERIFIER' %}selected{% endif %}>A vérifier</option>
-                    <option value="VERIFIER" {% if etat_alerte == 'VERIFIER' %}selected{% endif %}>Vérifier</option>
-                    <option value="COURRIER" {% if etat_alerte == 'COURRIER' %}selected{% endif %}>Courrier</option>
-                </select>
+                <div class="row">
+                    <div class="col-md-5">
+                        <label>Etat alerte</label>
+                        <select id="slt_etat_alerte" name="etat_alerte" class="form-control">
+                            <option value="">Tous</option>
+                            <option value="A_VERIFIER" {% if etat_alerte == 'A_VERIFIER' %}selected{% endif %}>A vérifier</option>
+                            <option value="VERIFIER" {% if etat_alerte == 'VERIFIER' %}selected{% endif %}>Vérifier</option>
+                            <option value="COURRIER" {% if etat_alerte == 'COURRIER' %}selected{% endif %}>Courrier</option>
+                        </select>
+                    </div>
+                    <div class="col-md-6">
+                    </div>
+                    <div class="col-md-1">
+                        <button type="submit" id="bt_alerte_search"  class="btn btn-primary pull-right">
+                            <span class="glyphicon glyphicon-search" aria-hidden="true"></span>
+                        </button>
+                    </div>
+                </div>
                 <br>
-                <input type="submit" value="OK" id="bt_alerte_search"  class="btn btn-primary pull-right" >
             </form>
         </div>
     </div>

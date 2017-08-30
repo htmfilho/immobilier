@@ -68,11 +68,9 @@ class PersonneForm(forms.Form):
         # model = personne.Personne
         # fields = ['nom', 'prenom', 'email', 'profession', 'date_naissance', 'lieu_naissance', 'pays_naissance',
         #           'num_identite', 'telephone', 'gsm', 'societe']
-        #autocomplete_fields = ('prenom', 'profession', 'lieu_naissance', 'pays_naissance')
-
+        # autocomplete_fields = ('prenom', 'profession', 'lieu_naissance', 'pays_naissance')
 
     def clean(self):
-        print('clean personneform')
         cleaned_data = super(PersonneForm, self).clean()
         if self.cleaned_data['num_identite'] == "":
             return None
@@ -107,8 +105,6 @@ class BatimentForm(ModelForm):
         #     except ValueError:
         #         self.errors['numero'] = 'Le numéro doit être numérique'
 
-
-
 class ProprietaireForm(forms.ModelForm):
     class Meta:
         model = proprietaire.Proprietaire
@@ -136,6 +132,12 @@ class FraisMaintenanceForm(forms.Form):
 
     def __init__(self, *args, **kwargs):
         super(FraisMaintenanceForm, self).__init__(*args, ** kwargs)
+
+    def clean(self):
+        cleaned_data = super(FraisMaintenanceForm, self).clean()
+        if cleaned_data.get('montant') and cleaned_data.get('montant') < 0:
+            self.errors['montant'] = 'Le montant doit être > 0'
+        return cleaned_data
 
 
 class SocieteForm(ModelForm):
@@ -242,10 +244,6 @@ class ContratGestionForm(ModelForm):
 
     def __init__(self, *args, **kwargs):
         super(ContratGestionForm, self).__init__(*args, ** kwargs)
-        for f in self.fields:
-            print('f',f)
-        #self.fields["batiment_id"].queryset = mdl.batiment.find_all()
-
 
     def clean(self):
         print('clean ContratGestionForm')
@@ -283,11 +281,10 @@ class LettreForm(forms.Form):
     )
 
     sujet = forms.CharField()
-    format = forms.ChoiceField(choices=FORMAT_CHOICES)
+    # format = forms.ChoiceField(choices=FORMAT_CHOICES)
     fichier_modele = forms.CharField()
-    titre = forms.CharField()
-
-
+    location = forms.ModelChoiceField(required=True, queryset=mdl.contrat_location.find_all())
+    # titre = forms.CharField()
 
     # def __init__(self, modele_document=None, *args, **kwargs):
     #

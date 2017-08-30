@@ -14,7 +14,6 @@
 
     <div class="tab-content">
         <br>
-
         <div id="info_proprietaire" class="tab-pane fade in active">
             <div id="ff">
                 <form method="post" action="{% url 'proprietaire-update-save' %}" id="proprietaire_form">
@@ -86,7 +85,9 @@
                         <div class="col-md-12">
                             <label for="batiment_id">Batiment</label><br>
                             {{ proprietaire.batiment }}
-                            <input type="text" id="batiment_id" name="batiment_id"
+                            <input type="hidden"
+                                   id="batiment_id"
+                                   name="batiment_id"
                                    value="{{ proprietaire.batiment.id }}"/>
                         </div>
                     </div>
@@ -109,13 +110,11 @@
                         </div>
                     </div>
                     <br>
-
                     <button type="submit" class="btn btn-primary pull-right"
                             title="Sauvegarder"><span class="glyphicon glyphicon-floppy-disk"
                                                       aria-hidden="true"> Enregistrer</span>
 
                     </button>
-
                 </form>
             </div>
         </div>

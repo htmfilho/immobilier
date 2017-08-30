@@ -1,6 +1,7 @@
 {% extends "layout.html" %}
 {% load staticfiles %}
 {% load order %}
+{% cycle 'row1' 'row2' as rowcolors %}
 {% block breadcrumb %}
   <li class="active">Liste des honoraires</li>
 {% endblock %}
@@ -15,7 +16,7 @@
                     <form method="get" action="{% url 'honoraires-search'%}">
                         <div class="row">
                             <div class="col-md-3">
-                                <label>Batiment</label>
+                                <label>Local</label>
                                 <select class="form-control" name="batiment_id" >
                                     {%if batiment %}
                                         <option value="TOUS" >Tous</option>
@@ -76,7 +77,9 @@
                                 <span class="erreur_formulaire" id="spn_date_limite_sup"></span>
                             </div>
                             <div class="col-md-2">
-                                <input type="submit" value="OK" id="bt_honoraire_search"  class="btn btn-primary pull-right" >
+                                <button type="submit" id="bt_honoraire_search"  class="btn btn-default pull-right" >
+                                    <span class="glyphicon glyphicon-search" aria-hidden="true"></span>
+                                </button>
                             </div>
                             </div>
                         </div>
@@ -88,7 +91,6 @@
     <div ></div>
         {% include "honoraire/sub_honoraire_list.html" %}
     </div>
-
 </div>
 </div>
 

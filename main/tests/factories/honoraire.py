@@ -21,17 +21,26 @@
 #    see http://www.gnu.org/licenses/.
 #
 ##############################################################################
-DATE_SHORT_FORMAT = "%d/%m/%Y"
+import factory
+import factory.fuzzy
+from main.tests.factories.contrat_gestion import ContratGestionFactory
+import operator
+from main.models.enums import etat_honoraire
+from django.conf import settings
+from django.utils import timezone
 
 
-def get_key(id):
-    if id is None or id == "" or id == "-" or id == "None":
+def _get_tzinfo():
+    if settings.USE_TZ:
+        return timezone.get_current_timezone()
+    else:
         return None
-    return int(id)
 
 
-def get_previous(request):
-    previous = request.POST.get('previous', None)
-    if previous is None:
-        return request.META.get('HTTP_REFERER', '/')
-    return previous
+class HonoraireFactory(factory.DjangoModelFactory):
+    class Meta:
+        model = 'main.Honoraire'
+
+    # contrat_gestion = factory.SubFactory(ContratGestionFactory) sinon trop d'honoraire sont crées
+    date_paiement = factory.Faker('date_time_this_decade', before_now=True, after_now=False, tzinfo=_get_tzinfo())
+    etat = factory.Iterator(etat_honoraire.ETAT_HONORAIRE, getter=operator.itemgetter(0))

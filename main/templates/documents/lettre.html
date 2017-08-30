@@ -1,23 +1,43 @@
+{% extends "layout.html" %}
 {% load staticfiles %}
-<!doctype html>
-<html lang="en">
-<head>
-    <meta charset="utf-8">
-    <title>Conseil immo</title>
+{% block breadcrumb %}
+{% endblock %}
+{% block content %}
 
-    <meta name="apple-mobile-web-app-capable" content="yes" />
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, minimal-ui">
-    <link href='https://fonts.googleapis.com/css?family=Armata' rel='stylesheet' type='text/css'>
-    <link rel="icon" href="{% static 'images/favicon.ico' %}" />
+    <div class="panel panel-default">
+        <div class="panel-body">
+            <br>
+            {% if contrat_location.id %}
+            <form method="post"
+                  action="{% url 'lettre_indexation' contrat_location.id %}">
+                {% csrf_token %}
+                <div class="panel panel-default">
+                    <div class="panel-header">{{ modele.reference }}<br><br></div>
+                    <div class="panel-body">
 
-</head>
-<body>
-qsdfqsfq
-{{ form.errors }}
+                        <label>Pour le local suivant:</label><br>
+                        {{ contrat_location.batiment.adresse_rue  }}<br>
+                        {{ contrat_location.batiment.adresse_localite  }}<br><br>
+                        <label>Pour la location suivante:</label><br>
+                        du cau {{ contrat_location.date_fin }}<br><br>
+                        <label>Locataire(s):</label><br>
+                        {% for locataire in contrat_location.locataires %}
+                            {{ locataire.personne }}<br>
+                        {% endfor %}
+                        <label>Format</label>
+                        <br>
+                        <select name="format_fichier">
+                            <option value="pdf">PDF</option>
+                            <option value="docx">Word</option>
+                        </select><br>
+                        <button type="button" class="btn btn-default pull-right" data-dismiss="modal"
+                                id="bt_cancel_create_assurance">Annuler</button>
+                        <input type="submit" class="btn btn-primary pull-right" value="Ok"/>
+                    </div>
+                </div>
 
-{{ form.non_field_errors }}
-sujet : {{ subject }}
-
-</body>
-</html>
+            </form>
+          {% endif %}
+        </div>
+    </div>
+{% endblock %}

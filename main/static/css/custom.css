@@ -37,4 +37,46 @@ input:required {
 
 }
 
+.row1{ background-color:rgb(255, 204, 204) !important;}
+.row2{ background-color:rgb(255, 217, 204) !important;}
+.row3{ background-color:rgb(255, 230, 204) !important;}
+.row4{ background-color:rgb(255, 235, 205) !important;}
+.row5{ background-color:rgb(255, 242, 204) !important;}
+.row6{ background-color:rgb(255, 255, 204) !important;}
+.row7{ background-color:rgb(242, 255, 204) !important;}
+.row8{ background-color:rgb(230, 255, 204) !important;}
+.row9{ background-color:rgb(217, 255, 204) !important;}
+.row10{ background-color:rgb(204, 255, 204) !important;}
+.row11{ background-color:rgb(204, 255, 217) !important;}
+.row12{ background-color:rgb(204, 255, 230) !important;}
+.row13{ background-color:rgb(204, 255, 242) !important;}
+.row14{ background-color:rgb(204, 255, 255) !important;}
+.row15{ background-color:rgb(204, 242, 255) !important;}
+.row16{ background-color:rgb(204, 230, 255) !important;}
+.row17{ background-color:rgb(204, 217, 255) !important;}
+.row18{ background-color:rgb(204, 204, 255) !important;}
+.row19{ background-color:rgb(217, 204, 255) !important;}
+.row20{ background-color:rgb(230, 204, 255) !important;}
+.row21{ background-color:rgb(242, 204, 255) !important;}
+.row22{ background-color:rgb(255, 204, 255) !important;}
+.row23{ background-color:rgb(255, 204, 242) !important;}
+.row24{ background-color:rgb(255, 204, 230) !important;}
+.row25{ background-color:rgb(255, 204, 217) !important;}
+.row26{ background-color:rgb(255, 204, 204) !important;}
 
+
+/*
+165 	#ccfff2	rgb(204, 255, 242)	hsl(165, 100%, 90%)
+180 	#ccffff	rgb(204, 255, 255)	hsl(180, 100%, 90%)
+195 	#ccf2ff	rgb(204, 242, 255)	hsl(195, 100%, 90%)
+210 	#cce6ff	rgb(204, 230, 255)	hsl(210, 100%, 90%)
+225 	#ccd9ff	rgb(204, 217, 255)	hsl(225, 100%, 90%)
+240 	#ccccff	rgb(204, 204, 255)	hsl(240, 100%, 90%)
+255 	#d9ccff	rgb(217, 204, 255)	hsl(255, 100%, 90%)
+270 	#e6ccff	rgb(230, 204, 255)	hsl(270, 100%, 90%)
+285 	#f2ccff	rgb(242, 204, 255)	hsl(285, 100%, 90%)
+300 	#ffccff	rgb(255, 204, 255)	hsl(300, 100%, 90%)
+315 	#ffccf2	rgb(255, 204, 242)	hsl(315, 100%, 90%)
+330 	#ffcce6	rgb(255, 204, 230)	hsl(330, 100%, 90%)
+345 	#ffccd9	rgb(255, 204, 217)	hsl(345, 100%, 90%)
+360 	#ffcccc	rgb(255, 204, 204)*/

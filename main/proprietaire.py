@@ -26,6 +26,8 @@ from datetime import datetime
 from django.shortcuts import redirect
 from main import models as mdl
 from main import pages_utils
+from main.pages_utils import NEW, UPDATE
+
 
 def liste_proprietaires(request):
     proprietaires = mdl.proprietaire.find_all()
@@ -36,7 +38,7 @@ def proprietaire(request, proprietaire_id):
     a_proprietaire = mdl.proprietaire.find_proprietaire(proprietaire_id)
     return render(request, "proprietaire_form.html",
                   {'proprietaire': a_proprietaire,
-                   'action': 'update',
+                   'action': UPDATE,
                    'personnes': get_personnes_possible(a_proprietaire.batiment),
                    'prev': request.GET.get('prev'),
                    'societes': mdl.societe.find_all_with_name(),
@@ -67,8 +69,8 @@ def add_proprietaire(request, batiment_id):
 def update_proprietaire(request, proprietaire_id):
     proprietaire = mdl.proprietaire.find_proprietaire(proprietaire_id)
     return render(request, "proprietaire_form.html",
-                  {'proprietaire':         proprietaire,
-                   'action':               'update'})
+                  {'proprietaire': proprietaire,
+                   'action':       UPDATE})
 
 
 def delete_proprietaire_batiment(request, proprietaire_id):
@@ -148,7 +150,7 @@ def proprietaire_update_save(request):
 
     proprietaire.proprietaire = personne
 
-    if proprietaire.date_debut and  proprietaire.date_fin:
+    if proprietaire.date_debut and proprietaire.date_fin:
         if proprietaire.date_debut > proprietaire.date_fin:
             return render(request, "proprietaire_form.html",
                           {'proprietaire': proprietaire,

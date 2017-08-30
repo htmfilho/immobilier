@@ -26,6 +26,9 @@ from django.contrib import admin
 from django.utils import timezone
 from dateutil.relativedelta import relativedelta
 from main.models import contrat_gestion as ContratGestion
+from main.models.enums import etat_honoraire
+
+MOIS_DE_BATTEMENT = 1
 
 
 class HonoraireAdmin(admin.ModelAdmin):
@@ -33,16 +36,12 @@ class HonoraireAdmin(admin.ModelAdmin):
 
 
 class Honoraire(models.Model):
-    ETAT_HONORAIRE = (
-        ('A_VERIFIER', 'A vérifier'),
-        ('IMPAYE', 'Impayé'),
-        ('EN_RETARD', 'En retard'),
-        ('PAYE', 'Payé')
-    )
+
     contrat_gestion = models.ForeignKey('ContratGestion', blank=True, null=True, verbose_name=u"Contrat de gestion")
     date_paiement = models.DateField(auto_now=False, auto_now_add=False, blank=True, null=True,
                                      verbose_name=u"Date paiement")
-    etat = models.CharField(max_length=10, choices=ETAT_HONORAIRE, default='A_VERIFIER', verbose_name=u"Etat")
+    etat = models.CharField(max_length=10, choices=etat_honoraire.ETAT_HONORAIRE, default=etat_honoraire.A_VERIFIER,
+                            verbose_name=u"Etat")
 
     def __str__(self):
         if self.contrat_gestion:
@@ -52,9 +51,11 @@ class Honoraire(models.Model):
 
 
 def find_honoraires_by_etat_today(etat):
-    date_d = timezone.now() - relativedelta(months=1)
-    date_f = timezone.now() + relativedelta(months=1)
-    return Honoraire.objects.filter(etat=etat, date_paiement__lte=date_f, date_paiement__gte=date_d)
+    if etat:
+        return Honoraire.objects.filter(etat=etat,
+                                        date_paiement__lte=timezone.now() + relativedelta(months=MOIS_DE_BATTEMENT),
+                                        date_paiement__gte=timezone.now() - relativedelta(months=MOIS_DE_BATTEMENT))
+    return None
 
 
 def find_all():
@@ -67,7 +68,7 @@ def find_by_batiment_etat_date(batiment_id, etat, date_limite_inf, date_limite_s
     if batiment_id:
         queryset = queryset.filter(contrat_gestion__batiment__id=int(batiment_id))
 
-    if etat is not None and len(etat) > 0:
+    if etat:
         queryset = queryset.filter(etat=etat)
 
     if date_limite_inf:

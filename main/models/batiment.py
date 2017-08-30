@@ -154,12 +154,8 @@ class Batiment(models.Model):
     @property
     def location_actuelle(self):
         locations = ContratLocation.find_by_batiment_dates(self)
-        l = None
         if locations:
-            l = locations.first()
-
-        if l:
-            return l
+            return locations.first()
         else:
             return ContratLocation.find_last_by_batiment(self)
 
@@ -214,6 +210,7 @@ class Batiment(models.Model):
         if ContratGestion.find_by_batiment(self).exists():
             return True
         return False
+
 
 def autocomplete_search_fields():
     return 'localite'

@@ -1,27 +1,30 @@
 {% extends "layout.html" %}
 {% load staticfiles %}
 {% block breadcrumb %}
+    <li>Lettre d'indexation</li>
 {% endblock %}
 {% block content %}
 
     <div class="panel panel-default">
         <div class="panel-body">
             <br>
+
             <form method="post"
                   action="{% url 'lettre_create' %}">
                 {% csrf_token %}
-                {{ form.as_p }}
-                {% for f in formset %}
-                {{  f.as_table }}
-                {% endfor %}
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-default" data-dismiss="modal"
-                            id="bt_cancel_create_assurance">Annuler</button>
-                    <input type="submit" class="btn btn-primary" value="Ok"/>
-                </div>
 
+                <label>Location :</label>
+                <br>
+                {{ form.location }}
+                <br>
             </form>
 
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-default" data-dismiss="modal"
+                    id="bt_cancel_create_lettre">Annuler
+            </button>
+            <input type="submit" class="btn btn-primary" value="Ok"/>
         </div>
     </div>
 {% endblock %}

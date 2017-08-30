@@ -28,6 +28,8 @@ from main import models as mdl
 from main.views_utils import get_key
 from django.http import HttpResponseRedirect
 from django.core.urlresolvers import reverse
+from django.http import HttpResponse
+import json
 
 
 def get_personne(personne_id):
@@ -121,6 +123,7 @@ def populate_personne(request):
     personne.telephone = request.POST['telephone']
     personne.gsm = request.POST['gsm']
     personne.date_naissance = populate_date(request.POST['date_naissance'])
+    personne.titre = request.POST['titre']
     return personne
 
 
@@ -170,4 +173,23 @@ def get_fonction(request):
                 return fonction.save()
     return None
 
+
+def validate_personne(request):
+    nom = request.POST.get('nom', None)
+    prenom = request.POST.get('prenom', None)
+    prenom2 = request.POST.get('prenom2', None)
+    personnes = mdl.personne.find_personne_by_nom_prenom(nom, prenom, prenom2)
+    print('validate_personne {} {} {}'.format(nom, prenom, prenom2))
+    nom = request.GET.get('nom', None)
+    prenom = request.GET.get('prenom', None)
+    prenom2 = request.GET.get('prenom2', None)
+    print('validate_personne {} {} {}'.format(nom, prenom, prenom2))
+    personnes = mdl.personne.find_personne_by_nom_prenom(nom, prenom, prenom2)
+    print(personnes)
+    if personnes:
+        print('validate_personne False')
+        return HttpResponse(json.dumps({'valide': False}), content_type='application/json')
+        # return False
+    print('validate_personne True')
+    return HttpResponse(json.dumps({'valide': True}), content_type='application/json')
 

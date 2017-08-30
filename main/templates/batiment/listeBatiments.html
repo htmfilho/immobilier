@@ -1,28 +1,33 @@
 {% extends "layout.html" %}
 {% load staticfiles %}
-
+{% block breadcrumb %}
+    <li class="active">Liste des locaux</li>
+{% endblock %}
 {% block content %}
     <div class="row">
         <div class="col-md-8">
         </div>
         <div class="col-md-4">
-            <a href="{% url 'batiment-create' %}"
-               title="Pour créer un nouveau batiment"
-               class="btn btn-default pull-right"><span class="glyphicon glyphicon-plus" aria-hidden="true"></span></a>
+
         </div>
     </div>
     <br>
     <div class="panel panel-default">
         <div class="panel-body">
-            <br>
+            <a href="{% url 'batiment-create' %}"
+               title="Pour créer un nouveau local"
+               class="btn btn-default pull-right">
+                <span class="glyphicon glyphicon-plus" aria-hidden="true"> Ajout local</span>
+            </a>
+            <br><br>
             <table class="table table-hover"
                    id="tbl_data_batiments">
                 <thead>
                     <tr>
                         <th>Bien</th>
                         <th>Localité</th>
-                        <th>En gestion</th>
-                        <th>Proprio(s)s</th>
+                        <th class="no-sort">En gestion</th>
+                        <th>Propriétaire(s)</th>
                         <th class="no-sort">Locataires</th>
                         <th class="no-sort">Location</th>
                         <th class="no-sort"></th>

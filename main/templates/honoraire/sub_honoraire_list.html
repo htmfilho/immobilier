@@ -1,7 +1,8 @@
 
-    <table class="table table-striped table-hover" id="tbl_data_honoraires">
+    <table class="table table-hover" id="tbl_data_honoraires">
         <thead>
             <tr>
+                <th></th>
                 <th>Contrat</th>
                 <th class="no-sort">Montant mensuel</th>
                 <th>Date paiement attendu</th>
@@ -12,8 +13,13 @@
     <tbody>
         {% for honoraire in honoraires %}
             <tr>
-                <td><a href="{% url 'gestion-prepare-update-all' honoraire.contrat_gestion.pk%}"
-                                   title="Pour modifier un contrat de gestion">{{ honoraire.contrat_gestion.batiment }}</a></td>
+                <td style="visibility:hidden;">{{honoraire.contrat_gestion.id}}</td>
+                <td>
+                    <a href="{% url 'gestion-prepare-update-all' honoraire.contrat_gestion.pk%}"
+                       title="Pour modifier un contrat de gestion">
+                        {{ honoraire.contrat_gestion.batiment }}
+                    </a>
+                </td>
                 <td>{{ honoraire.contrat_gestion.montant_mensuel| default_if_none:'' }}</td>
                 <td>
                     {% if honoraire.date_paiement %}

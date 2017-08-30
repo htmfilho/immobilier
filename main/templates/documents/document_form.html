@@ -1,0 +1,25 @@
+{% extends "layout.html" %}
+{% load staticfiles %}
+{% block breadcrumb %}
+    <li >Liste des document</li>
+    <li class="active">Document</li>
+{% endblock %}
+{% block content %}
+    <div class="row">
+        <div class="col-md-8">
+        </div>
+        <div class="col-md-4">
+
+        </div>
+    </div>
+    <br>
+    <div class="panel panel-default">
+        <div class="panel-body">
+
+            <br><br>
+            {{ document.id }}
+            <br>
+            {{ document.contenu }}
+        </div>
+    </div>
+{% endblock %}

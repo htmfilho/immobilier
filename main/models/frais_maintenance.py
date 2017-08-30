@@ -24,6 +24,12 @@
 from django.db import models
 from main.models import batiment as Batiment
 from django.utils import timezone
+from django.contrib import admin
+
+
+class FraisMaintenanceAdmin(admin.ModelAdmin):
+    search_fields = ['batiment']
+    list_display = ('batiment', 'description', 'montant')
 
 
 class FraisMaintenance(models.Model):

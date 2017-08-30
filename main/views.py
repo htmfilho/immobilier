@@ -57,6 +57,7 @@ from templated_docs import fill_template
 from templated_docs.http import FileResponse
 from django.forms import formset_factory
 from main.pages_utils import PAGE_LISTE_BATIMENTS
+from main.models.enums import etat_honoraire
 
 
 class ContratGestionList(ListView):
@@ -158,10 +159,10 @@ def home(request):
     mes_frais = mdl.frais_maintenance.find_mes_frais_du_mois()
 
     return render(request, 'myhome.html',
-                  {'alertes':         mdl.alerte.find_by_etat('A_VERIFIER'),
+                  {'alertes':         mdl.alerte.find_by_etat_today('A_VERIFIER'),
                    'batiments':       mdl.batiment.find_batiments_gestionnaire(),
                    'contrats':        mdl.contrat_gestion.find_my_contrats(),
-                   'honoraires':      mdl.honoraire.find_honoraires_by_etat_today('A_VERIFIER'),
+                   'honoraires':      mdl.honoraire.find_honoraires_by_etat_today(etat_honoraire.A_VERIFIER),
                    'suivis':          suivis,
                    'previous':        request.POST.get('previous', None),
                    'suivis_recus':    suivis_recus,
@@ -199,6 +200,7 @@ def listeBatiments(request):
     return render(request, PAGE_LISTE_BATIMENTS,
                   {'batiments': batiments,
                    'proprietaires': mdl.proprietaire.find_distinct_proprietaires()})
+
 
 @login_required
 def listeComplete(request):
@@ -428,7 +430,7 @@ def test_merge(request):
     # return pagecat2(request)
 
 
-def test(request):
+def merge_form(request):
     return render(request, "test.html")
 
 
@@ -1274,80 +1276,4 @@ def lettre_form(request):
     return render(request, "lettre.html", {'form': form, 'formset': formset})
 
 
-def lettre_create(request):
-    print('lettre_view')
-    formset = None
-    if request.method == 'POST':
-        form = LettreForm(request.POST or None)
-        print(form)
-        formset = LigneForm(request.POST or None)
-        ArticleFormSet = formset_factory(LigneForm, extra=2)
-        formset = ArticleFormSet(initial=[{'test': 'Django is now open source', },
-                                          {'test': 'Django is now open source2', }])
-    else:
-        form = LettreForm()
-
-    print(form.errors)
-    if formset.is_valid():
-        print('formset valid')
-    else:
-        print('formset invalid')
-    if form.is_valid():
-        print('form valid')
-
-        doctype = form.cleaned_data['format']
-        data = form.cleaned_data
-        lignes = []
-        ligne1 = LigneTest()
-        ligne1.col1 = "col1"
-        ligne1.col2 = "col2"
-
-        ligne2 = LigneTest()
-        ligne2.col1 = "col12"
-        ligne2.col2 = "col22"
-
-        lignes.append(ligne1)
-        lignes.append(ligne2)
-        #  lignes = [["ii","oo"],["ii2","oo2"]]
-        data.update({'lignes': lignes})
-        data.update({'l1': 'l1'})
-        data.update({'l2': 'l2'})
-        data.update({'html': '<table><tr><td>sss</td><td>ksdf</td></tr></table>'})
-
-        ArticleFormSet = formset_factory(LigneForm, extra=2)
-        formset = ArticleFormSet(initial=[{'test': 'Django is now open source', },
-                                          {'test': 'Django is now open source2', }])
-        data.update({'formset': formset})
-
-        data.update({'dateJour': timezone.now()})
-        personne = mdl.personne.find_personne(1)
-        data.update({'nom': personne.nom})
-        data.update({'prenom': personne.prenom})
-        bat = mdl.batiment.find_batiment(1)
-        data.update({'adresse': bat.adresse_rue})
-        data.update({'localite': bat.adresse_localite})
-        personne_gestionnaire = mdl.personne.find_gestionnaire_default()
-        data.update({'gestionnaire_nom': personne_gestionnaire.nom})
-        data.update({'gestionnaire_prenom': personne_gestionnaire.prenom})
-
-        filename = fill_template(
-            'documents/lettre.odt', data,
-            output_format=doctype)
-        visible_filename = 'invoice.{}'.format(doctype)
-
-        return FileResponse(filename, visible_filename)
-    else:
-        print('form invalid')
-        print(form.errors)
-        return render(request, 'documents/lettre.html', {'form': form, 'formset': formset})
-
-
-class LigneTest:
-
-    def __init__(self):
-        self.col1 = "Ferrari"
-        self.col2 = "Ferrari"
-
-    def ligne_complete(self):
-        return "{0} {1}".format(self.col1, self.col2)
 

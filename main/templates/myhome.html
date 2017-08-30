@@ -7,12 +7,18 @@
 <a class="btn btn-default" href="{% url 'batiment-create' %}" title="Pour créer un nouveau batiment">
     <span class="glyphicon glyphicon-plus" aria-hidden="true"> Ajout local</span>
 </a>
-<a class="btn btn-default" href="{% url 'locataire-new-location' %}" title="Pour ajouter un nouveau locataire"><span class="glyphicon glyphicon-plus" aria-hidden="true"> Ajout locataire</span></a>
-<a class="btn btn-default" href="{% url 'contrat_location_form' %}" title="Pour ajouter une nouvelle location"><span class="glyphicon glyphicon-plus" aria-hidden="true"> Ajout location</span></a>
+<a class="btn btn-default" href="{% url 'locataire-new-location' %}" title="Pour ajouter un nouveau locataire">
+    <span class="glyphicon glyphicon-plus" aria-hidden="true"> Ajout locataire</span>
+</a>
+<a class="btn btn-default" href="{% url 'contrat_location_form' %}" title="Pour ajouter une nouvelle location">
+    <span class="glyphicon glyphicon-plus" aria-hidden="true"> Ajout location</span>
+</a>
 <a class="btn btn-default" href="{% url 'personne-create' %}" title="Pour créer un nouveau contact">
     <span class="glyphicon glyphicon-plus" aria-hidden="true"> Ajout contact</span>
 </a>
-<a class="btn btn-default" href="#" title="Pour ajouter un nouveau revenu" style="visibility: hidden;display: none;"><span class="glyphicon glyphicon-plus" aria-hidden="true"> Ajout revenu</span></a>
+<a class="btn btn-default" href="#" title="Pour ajouter un nouveau revenu" style="visibility: hidden;display: none;">
+    <span class="glyphicon glyphicon-plus" aria-hidden="true"> Ajout revenu</span>
+</a>
 <a class="btn btn-default" href="{% url 'fraismaintenance-new' %}" title="Pour ajouter une nouvelle dépense">
     <span class="glyphicon glyphicon-plus" aria-hidden="true"> Ajout frais</span></a>
 <a class="btn btn-default" href="{% url 'contratgestion-new' %}" title="Pour ajouter un honoraire"><span class="glyphicon glyphicon-plus" aria-hidden="true"> Ajout honoraires</span></a>
@@ -117,7 +123,7 @@
 <div class="row">
     <div class="col-md-6">
         <div class="panel panel-default">
-            <div class="panel-heading">Administration</div>
+            <div class="panel-heading">Administration (date alerte dans - ou + 1 mois et état 'à vérifier') </div>
             <div class="panel-body">
                 {% include 'alerte/alert_list_sub.html' %}
             </div>

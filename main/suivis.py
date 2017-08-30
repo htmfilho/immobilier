@@ -31,12 +31,15 @@ from main import models as mdl
 
 
 def suivis_search(request):
-    date_debut = request.GET['date_debut']
-    date_fin = request.GET['date_fin']
+    print('suivis_search')
+    date_debut = None
+    date_fin = None
     etat = request.GET['etat']
-
+    print(date_debut)
     if date_debut:
+        print('if')
         date_debut = datetime.strptime(request.GET['date_debut'], '%d/%m/%Y')
+
     if date_fin:
         date_fin = datetime.strptime(request.GET['date_fin'], '%d/%m/%Y')
     if etat == 'TOUS':
@@ -45,8 +48,7 @@ def suivis_search(request):
 
 
 def list_suivis(request, date_debut, date_fin, etat):
-    if etat is None:
-        etat = 'TOUS'
+
     return render(request, "suivi/suivis.html",
                   {'date_debut': date_debut,
                    'date_fin':    date_fin,

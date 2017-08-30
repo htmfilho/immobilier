@@ -1,0 +1,42 @@
+{% load staticfiles %}
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>Conseil immo</title>
+
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, minimal-ui">
+    <link href='https://fonts.googleapis.com/css?family=Armata' rel='stylesheet' type='text/css'>
+    <link rel="icon" href="{% static 'images/favicon.ico' %}" />
+
+</head>
+<body>
+     {{ document.id }}
+     {{ document.reference }}
+    <table>
+        <thead>
+            <th>Variable</th>
+            <th>Valeur</th>
+        </thead>
+        <tbody>
+            {% for key, value in variables.items %}
+                <tr>
+                    <td>{{ key }}</td>
+                    <td><input type="text" value="{{ value | default_if_none:'' }}"/></td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    <div>
+
+     {{ document.contenu|safe  }}
+        <form action="{% url 'create_pdf' %}" method="post">
+            {% csrf_token %}
+            <input type="text" name="contenu" value="{{ contenu|safe  }}">
+            <input type="submit" value="ok"/>
+        </form>
+    </div>
+</body>
+</html>

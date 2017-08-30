@@ -18,14 +18,19 @@
                           action="{% url 'location_search'%}" >
                         <div class="row">
                             <div class="col-md-4">
-                                <label>Date fin location supérieure à </label>
+                                <label>Date fin location supérieure au </label>
                                 <input id="txt_date_fin_filtre_location"
                                        name="date_fin_filtre_location"
                                        class="form-control"
                                        value="{{date_fin_filtre_location|date:"j/m/Y"}}">
                             </div>
-                            <div class="col-md-8">
-                                <input type="submit" value="OK" name="btn" class="btn btn-default pull-right">
+                            <div class="col-md-4">
+                            </div>
+                            <div class="col-md-4">
+                                <button class="btn btn-default pull-right" type="submit"
+                                   title="Pour ajouter un contrat de location">
+                                    <span class="glyphicon glyphicon-search" aria-hidden="true"></span>
+                                </button>
                             </div>
                         </div>
                     </form>
@@ -33,17 +38,23 @@
             </div>
             <!-- fin Filtre -->
         </div>
-        <div class="col-md-4">
+        <div class="col-md-1">
+            </div>
+        <div class="col-md-3">
             <a class="btn btn-default pull-right" href="{% url 'contrat_location_form' %}"
-               title="Pour ajouter un contrat de location"><span class="glyphicon glyphicon-plus" aria-hidden="true"></span></a>
+               title="Pour ajouter un contrat de location">
+                <span class="glyphicon glyphicon-plus" aria-hidden="true"> Ajout contrat location</span>
+            </a>
         </div>
 
     </div>
-    <table class="table table-striped table-hover">
+    <table class="table table-hover">
         <thead>
             <th>Batiment</th>
             <th>Loyer (de base)</th>
-            <th>Dernier versement payé</th>
+            <th title="Dernier versement dont l'état est payé et pour lequel on a encodé une date de paiement">
+                Dernier versement payé
+            </th>
             <th>Locataires</th>
             <th>Date fin</th>
             <th>Date renonciation</th>
@@ -52,7 +63,11 @@
         <tbody>
             {% for contrat in locations %}
                 <tr>
-                    <td><a href="{% url 'location-prepare-update-all' contrat.pk %}" title="Pour modifier un contrat de location">{{ contrat.batiment }}</a></td>
+                    <td>
+                        <a href="{% url 'location-prepare-update-all' contrat.pk %}" title="Pour modifier un contrat de location">
+                            {{ contrat.batiment }}
+                        </a>
+                    </td>
                     <td>{{ contrat.loyer_base }}</td>
                     <td>{{ contrat.dernier_versement.date_paiement_reel |date:"j/m/Y" }}</td>
                     <td>
