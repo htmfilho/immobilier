@@ -17,11 +17,14 @@ body {
 .erreur_formulaire{
   color:red;
 }
+#menu_main{
+  width:75%;;
+}
 
 #container_main{
 /*margin-left:15px;
 margin-right:15px;*/
-width:75%;;
+width:85%;;
 }
 
 input:required {

@@ -59,6 +59,16 @@ from django.forms import formset_factory
 from main.pages_utils import PAGE_LISTE_BATIMENTS
 from main.models.enums import etat_honoraire
 
+# def log_out(request):
+#     print('log_out')
+#     logout(request)
+#     if settings.OVERRIDED_LOGOUT_URL:
+#         return redirect(settings.OVERRIDED_LOGOUT_URL)
+#     return redirect('logged_out')
+#
+# def logged_out(request):
+#     print('logged_out')
+#     return layout.render(request, 'registration/logged_out.html', {})
 
 class ContratGestionList(ListView):
     model = mdl.contrat_gestion
@@ -144,10 +154,12 @@ def merge_pdf4(request):
     return render(request, "test.html")
 
 
+@login_required
 def dashboard(request):
     return render(request, 'main/dashboard.html', {})
 
 
+@login_required
 def home(request):
     suivis = mdl.suivi_loyer.find_suivis_a_verifier_proche()
     suivis_recus = mdl.suivi_loyer.find_suivis_by_etat_suivi(timezone.now(), 'PAYE')
@@ -195,6 +207,7 @@ def get_total_recettes(suivis_recus):
     return tot_recettes
 
 
+@login_required
 def listeBatiments(request):
     batiments = mdl.batiment.find_all()
     return render(request, PAGE_LISTE_BATIMENTS,
@@ -1276,4 +1289,5 @@ def lettre_form(request):
     return render(request, "lettre.html", {'form': form, 'formset': formset})
 
 
-
+def document(request):
+    return render(request, "manuel.pdf")

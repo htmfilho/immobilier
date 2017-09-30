@@ -32,8 +32,10 @@ from main.pages_utils import NEW, UPDATE, LOCATAIRE_FORM_HTML
 
 @login_required
 def locataire_form(request, id):
+    print('locataire_form')
     locataire = get_object_or_404(mdl.locataire.Locataire, pk=id)
     next = request.META.get('HTTP_REFERER', '/')
+    print(next)
     return render(request, LOCATAIRE_FORM_HTML,
                   {'locataire': locataire,
                    'personne':  locataire.personne,

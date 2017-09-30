@@ -26,12 +26,14 @@ from . import views, batiment, proprietaire, suivis, alertes, contratlocation, f
     lettre
 from django.conf.urls import url
 from django.contrib.auth.views import login, logout
+from django.conf import settings
+
 
 urlpatterns = [
     url(r'^$', views.home, name='home'),
     # login / logout urls
-    url(r'^login/$', login, name='login'),
-    url(r'^logout/$', logout, name='logout'),
+    url(r'^login/$',login, {'template_name': settings.LOGOUT_REDIRECT_URL}, name='login'),
+    url(r'^logout/$', logout, {'next_page': settings.LOGOUT_REDIRECT_URL}, name='logout'),
     # listes
     url(r'^listeComplete', views.listeComplete),
     url(r'^listeBatiments', views.listeBatiments, name='listeBatiments'),
@@ -189,11 +191,6 @@ urlpatterns = [
     url(r'^document/lettre_indexation_form/([0-9]+)/$', document.lettre_indexation_form, name='lettre_indexation_form'),
     url(r'^document/lettre_indexation_new/([0-9]+)/$', document.lettre_indexation_new, name='lettre_indexation_new'),
     url(r'^document/lettre_indexation/([0-9]+)/$', document.lettre_indexation, name='lettre_indexation'),
-
-
-
-
-
 
 
 ]

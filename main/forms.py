@@ -280,9 +280,9 @@ class LettreForm(forms.Form):
         ('html', 'HTML'),
     )
 
-    sujet = forms.CharField()
+    sujet = forms.CharField(required=False)
     # format = forms.ChoiceField(choices=FORMAT_CHOICES)
-    fichier_modele = forms.CharField()
+    fichier_modele = forms.CharField(required=False)
     location = forms.ModelChoiceField(required=True, queryset=mdl.contrat_location.find_all())
     # titre = forms.CharField()
 

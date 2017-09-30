@@ -4,7 +4,6 @@
     <li>Lettre d'indexation</li>
 {% endblock %}
 {% block content %}
-
     <div class="panel panel-default">
         <div class="panel-body">
             <br>
@@ -12,19 +11,20 @@
             <form method="post"
                   action="{% url 'lettre_create' %}">
                 {% csrf_token %}
-
                 <label>Location :</label>
                 <br>
                 {{ form.location }}
                 <br>
+                <br>
+
+                <div class="pull-right">
+                    <button type="button" class="btn btn-default" data-dismiss="modal"
+                            id="bt_cancel_create_lettre">Annuler
+                    </button>
+                    <input type="submit" class="btn btn-primary" value="Ok">
+                </div>
             </form>
 
-        </div>
-        <div class="modal-footer">
-            <button type="button" class="btn btn-default" data-dismiss="modal"
-                    id="bt_cancel_create_lettre">Annuler
-            </button>
-            <input type="submit" class="btn btn-primary" value="Ok"/>
         </div>
     </div>
 {% endblock %}

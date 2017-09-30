@@ -47,6 +47,7 @@ def lettre_create(request):
         form = LettreForm()
 
     if form.is_valid():
+        print('form_valid')
         doctype = 'docx'
         data = form.cleaned_data
         location = data['location']
@@ -98,6 +99,7 @@ def lettre_create(request):
 
         return FileResponse(filename, visible_filename)
     else:
+        print('form_valid pas')
         return render(request, 'documents/lettre.html', {'form': form})
 
 
