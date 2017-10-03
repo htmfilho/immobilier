@@ -119,7 +119,7 @@
   <br>
       <ul class="nav nav-tabs">
         <li class="active"><a data-toggle="tab" href="#locataires">Locataires</a></li>
-          <li><a data-toggle="tab" href="#suivis">Suivis ({{location.suivis |length }})</a></li>
+          <li><a data-toggle="tab" href="#suivis">Suivis ({{location.suivis_anterieurs |length }}) jusqu'à ce jour</a></li>
           <li><a data-toggle="tab" href="#frais">Frais ({{location.liste_frais |length }})</a></li>
           <li><a data-toggle="tab" href="#financement">Loyers</a></li>
           <li><a data-toggle="tab" href="#comptabilite"><span style="color:{% if location.tot_suivis_paye <  location.total_frais%}red;{% else %}green;{% endif %}">Comptabilité</span></a></li>
@@ -172,7 +172,7 @@
                   <th>Remarque</th>
                   <th></th>
                 </thead>
-            {% for s in location.suivis %}
+            {% for s in location.suivis_anterieurs %}
                   <tr class="{{s.etat_suivi}}">
                     <td>{{s.date_paiement|date:"d/m/Y"}}</td>
                     <td>{{s.get_etat_suivi_display}}</td>
@@ -246,9 +246,12 @@
             </tr>
             {% endfor%}
             <tr style="text-align:right">
-              <td colspan="5"><a href="{% url 'financement-new' location.pk %}?prev=fl"
-                                 title="Pour ajouter un nouveau financement"
-                                 ><span class="glyphicon glyphicon-plus" aria-hidden="true"></span></a></td>
+              <td colspan="5">
+                  <a href="{% url 'financement-new' location.pk %}?prev=fl"
+                     title="Pour ajouter un nouveau financement">
+                      <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
+                  </a>
+              </td>
             </tr>
               </tbody>
             </table>

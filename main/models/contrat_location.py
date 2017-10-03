@@ -108,7 +108,6 @@ class ContratLocation(models.Model):
         df = (self.date_fin + relativedelta(years=type_prolongation))
         self.date_fin = df
         self.renonciation = (self.date_fin-relativedelta(days=10))
-        print(self.date_fin)
         c = super(ContratLocation, self).save(*args, **kwargs)
 
         dernier_financement = self.financement_courant
@@ -139,6 +138,16 @@ class ContratLocation(models.Model):
         for f in financements:
             sui = SuiviLoyer.\
                 SuiviLoyer.objects.filter(financement_location=f)
+            if sui.exists():
+                suivis_liste.extend(sui)
+        return suivis_liste
+
+    def suivis_anterieurs(self):
+        financements = self.financements()
+        suivis_liste = []
+        for f in financements:
+            sui = SuiviLoyer. \
+                SuiviLoyer.objects.filter(financement_location=f, date_paiement__lte=timezone.now())
             if sui.exists():
                 suivis_liste.extend(sui)
         return suivis_liste
