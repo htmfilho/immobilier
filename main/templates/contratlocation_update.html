@@ -121,7 +121,7 @@
         <li class="active"><a data-toggle="tab" href="#locataires">Locataires</a></li>
           <li><a data-toggle="tab" href="#suivis">Suivis ({{location.suivis |length }})</a></li>
           <li><a data-toggle="tab" href="#frais">Frais ({{location.liste_frais |length }})</a></li>
-          <li><a data-toggle="tab" href="#financement">Historique financements</a></li>
+          <li><a data-toggle="tab" href="#financement">Loyers</a></li>
           <li><a data-toggle="tab" href="#comptabilite"><span style="color:{% if location.tot_suivis_paye <  location.total_frais%}red;{% else %}green;{% endif %}">Comptabilité</span></a></li>
       </ul>
     <div class="tab-content">
@@ -226,7 +226,7 @@
             </div>
                 <div id="financement" class="tab-pane fade">
           <br>
-          <label class="control-label">Historique financements de la location</label>
+          <label class="control-label">Historique loyers de la location</label>
           <table class="table table-striped table-hover">
             <thead>
                 <th>Date début</th>
