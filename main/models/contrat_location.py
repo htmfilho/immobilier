@@ -145,12 +145,8 @@ class ContratLocation(models.Model):
     def suivis_anterieurs(self):
         financements = self.financements()
         suivis_liste = []
-        for f in financements:
-            sui = SuiviLoyer. \
-                SuiviLoyer.objects.filter(financement_location=f, date_paiement__lte=timezone.now())
-            if sui.exists():
-                suivis_liste.extend(sui)
-        return suivis_liste
+        return SuiviLoyer.SuiviLoyer.objects.filter(financement_location__in=financements,
+                                         date_paiement__lte=timezone.now()).order_by('-date_paiement')
 
     def tot_suivis_paye(self):
         financements = self.financements()
