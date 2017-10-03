@@ -12,13 +12,13 @@
 
 <form action="{% url 'fraismaintenance-update' %}" method="post">
     {% csrf_token %}
-    <input type="hidden" id="previous" name="previous" value="{{previous}}"/>
+    <input type="hidden" id="previous" name="previous" value="{{request.META.HTTP_REFERER }}"/>
     <input type="hidden" value="{{ frais.id | default_if_none:'' }}" name="id"/>
     <input type="hidden" value="{{ action }}" name="action"/>
 
     <div class="row">
         <div class="col-md-6">
-            <label>Batiment2</label>
+            <label>Batiment</label>
             {% if frais.batiment %}
                 <input type="hidden" value="{{ frais.batiment.id }}" name="batiment_id"/>
                 <input class="form-control" value="{{ frais.batiment }}" name="batiment" readonly>
@@ -40,11 +40,11 @@
             {% endif %}
           </div>
           <div class="col-md-6">
-              <input type="checkbox" name="contrat_location" {%if frais.contrat_location%}checked{%endif%}>
-            <label>A charge des locataires</label>
+
 
           </div>
     </div>
+    <br>
     <div class="row">
       <div class="col-md-6">
         <label>Entrepreneur</label>
@@ -95,12 +95,14 @@
     </div>
     <br>
     </div>
+    <br>
     <div class="row">
       <div class="col-md-12">
         <label>Description</label>
         <textarea class="form-control required" name="description" required="true" cols="4" rows="4" >{%if frais.description %}{{ frais.description }}{%endif%}</textarea>
       </div>
     </div>
+    <br>
     <div class="row">
       <div class="col-md-3">
         <label>Montant</label>
@@ -117,8 +119,12 @@
                name="date_realisation">
         <span class="erreur_formulaire" id="spn_date_realisation"></span>
       </div>
-      <div class="col-md-6">
+      <div class="col-md-3">
+          <input type="checkbox" name="contrat_location" {%if frais.contrat_location%}checked{%endif%} >
+          &nbsp;<label>A charge des locataires</label>
       </div>
+        <div class="col-md-3">
+        </div>
     </div>
 
     <button ype="submit" class="btn btn-primary pull-right"  id="bt_fraismaintenance_save">
