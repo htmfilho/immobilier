@@ -177,6 +177,9 @@
                           <a href="{% url 'location-prepare-update-all' batiment.location_actuelle.id %}">
                             du {{ batiment.location_actuelle.date_debut|date:"j/m/Y"}} au {{ batiment.location_actuelle.date_fin|date:"j/m/Y"}}
                             </a>
+                          &nbsp;(Loyer : {{ batiment.location_actuelle.financement_courant.loyer }})
+                      {% else %}
+                          Pas de location en cours
                       {%endif%}
                     </div>
                     <div class="col-md-1">
@@ -215,6 +218,8 @@
                     </tr>
                     {% endfor%}
                   </table>
+                  {% else %}
+                     Pas de locataire encodé actuellement
                   {% endif %}
                   {% if batiment.location_actuelle %}
                   <a href="{% url 'locataire-new' batiment.location_actuelle.id %}"
