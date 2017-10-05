@@ -44,11 +44,9 @@ def create_old(request):
 
 
 def create(request):
-    print('create fonction')
     new_assurance = mdl.fonction.Fonction()
     new_assurance.nom_fonction = request.GET.get('nom', None)
     new_assurance.save()
-    print(new_assurance.id)
     serializer = FonctionSerializer(mdl.fonction.find_all(), many=True)
     return JSONResponse(serializer.data)
 

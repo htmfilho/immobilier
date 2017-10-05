@@ -39,7 +39,6 @@ class MyTemplate(PageTemplate):
             )]
         PageTemplate.__init__(self, name, frames)
         # use first page as template
-        print('pdf_template_filename', pdf_template_filename)
         page = PdfReader(pdf_template_filename).pages[0]
         self.page_template = pagexobj(page)
         # Scale it to fill the complete page
@@ -70,22 +69,19 @@ class MyDocTemplate(BaseDocTemplate):
 
 
 def create_toc():
-    print('createtoc')
     """Creates the table of contents"""
     table_of_contents = TableOfContents()
     table_of_contents.dotsMinLevel = 0
     header1 = ParagraphStyle(name='Heading1', fontSize=16, leading=16)
     header2 = ParagraphStyle(name='Heading2', fontSize=14, leading=14)
-    table_of_contents.levelStyles=[header1, header2]
+    table_of_contents.levelStyles = [header1, header2]
 
     return [table_of_contents, PageBreak()]
 
 
 def create_pdf(filename, pdf_template_filename):
     """Create the pdf, with all the contents"""
-    print('create_pdf')
     pdf_report = open(filename, "wb")
-    print('k')
     document = MyDocTemplate(pdf_report)
     templates = [MyTemplate(pdf_template_filename, name='background')]
     # pdf_template_filename2='chat.pdf'
@@ -95,7 +91,6 @@ def create_pdf(filename, pdf_template_filename):
     styles = getSampleStyleSheet()
     elements = [NextPageTemplate('background')]
     elements.extend(create_toc())
-    print('avt for')
     # Dummy content (hello world x 200)
     for i in range(2):
         page = PdfReader("chat.pdf").pages[0]
@@ -106,17 +101,13 @@ def create_pdf(filename, pdf_template_filename):
         # canvas.restoreState()
         # elements.append(Paragraph(pagexobj(page), styles['Heading1']))
         elements.append(Paragraph("Hello World" + str(i), styles['Heading1']))
-    print('apres for')
     document.multiBuild(elements)
     pdf_report.close()
 
 
 if __name__ == '__main__':
-    print('ici')
     try:
-        print('ici2')
         output, template = sys.argv[1:]
-        print('ici3')
         create_pdf(output, template)
     except ValueError:
         print("Usage: %s <output> <template>" % (sys.argv[0]))

@@ -31,7 +31,6 @@ from random import randint
 
 
 def render(request, template, values):
-    print('mon render')
     values['js'] = randint(0, 100)
 
     return shortcuts.render(request, template, values, RequestContext(request))

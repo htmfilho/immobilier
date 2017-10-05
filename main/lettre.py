@@ -34,11 +34,9 @@ from django.forms import formset_factory
 
 
 def lettre_create(request):
-    print('lettre_view')
     formset = None
     if request.method == 'POST':
         form = LettreForm(request.POST or None)
-        print(form)
         formset = LigneForm(request.POST or None)
         ArticleFormSet = formset_factory(LigneForm, extra=2)
         formset = ArticleFormSet(initial=[{'test': 'Django is now open source', },
@@ -47,7 +45,6 @@ def lettre_create(request):
         form = LettreForm()
 
     if form.is_valid():
-        print('form_valid')
         doctype = 'docx'
         data = form.cleaned_data
         location = data['location']
@@ -91,15 +88,15 @@ def lettre_create(request):
         personne_gestionnaire = mdl.personne.find_gestionnaire_default()
         data.update({'gestionnaire_nom': personne_gestionnaire.nom})
         data.update({'gestionnaire_prenom': personne_gestionnaire.prenom})
+        data.update({'tableau': [['ligne1','ligne2'],['ligne1','ligne2']]})
 
         filename = fill_template(
-            'documents/lettre.odt', data,
+            'documents/lettre.docx', data,
             output_format=doctype)
         visible_filename = 'lettre.{}'.format(doctype)
 
         return FileResponse(filename, visible_filename)
     else:
-        print('form_valid pas')
         return render(request, 'documents/lettre.html', {'form': form})
 
 

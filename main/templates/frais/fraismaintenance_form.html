@@ -2,8 +2,8 @@
 {% load staticfiles %}
 {% load order %}
 {% block breadcrumb %}
-    {% if  frais.batiment %}<li><a href="{% url 'batiment' frais.batiment.id %}">Batiment</a></li>{% endif %}
-{% if prev == 'fl' %}
+    {% if frais.batiment %}<li><a href="{% url 'batiment' frais.batiment.id %}">Batiment</a></li>{% endif %}
+{% if previous == 'liste' %}
   <li><a href="{% url 'fraismaintenance_list' %}">Liste frais</a></li>
 {% endif %}
   <li class="active">Frais de maintenance</li>
@@ -12,7 +12,7 @@
 
 <form action="{% url 'fraismaintenance-update' %}" method="post">
     {% csrf_token %}
-    <input type="hidden" id="previous" name="previous" value="{{request.META.HTTP_REFERER }}"/>
+    <input type="text" id="previous" name="previous" value="{{ previous }}"/>
     <input type="hidden" value="{{ frais.id | default_if_none:'' }}" name="id"/>
     <input type="hidden" value="{{ action }}" name="action"/>
 
@@ -57,43 +57,46 @@
       </div>
 
       <div class="col-md-5">
-          <input type="checkbox"  id="chb_new_entrepreneur" name="new_entrepreneur">
-          <label>Ajouter un nouvel entrepreneur</label>
+          <label>&nbsp;</label>
+          <div>
+              <input type="checkbox"  id="chb_new_entrepreneur" name="new_entrepreneur">
+              <label>Ajouter un nouvel entrepreneur</label>
+          </div>
       </div>
     </div>
     <div id="pnl_new_entrepreneur" style="visibility:hidden;display:none;background-color: #BAEEBA;margin:15px">
-    <br>
-    <div class="row" style="margin:15px" >
-        <div class="col-md-4">
-            <label>Personne</label>
-            <select name="new_personne"  id="slt_person" class="form-control select_updatable">
-                <option value="-" ></option>
-                {%for p in personnes%}
-                    <option value="{{p.id}}" >{{p}}</option>
-                {%endfor%}
-            </select>
-            <span>(Si nouvelle personne séparé les nom prenoms d'un espace)</span>
+        <br>
+        <div class="row" style="margin:15px" >
+            <div class="col-md-4">
+                <label>Personne</label>
+                <select name="new_personne"  id="slt_person" class="form-control select_updatable">
+                    <option value="-" ></option>
+                    {%for p in personnes%}
+                        <option value="{{p.id}}" >{{p}}</option>
+                    {%endfor%}
+                </select>
+                <span>(Si nouvelle personne séparé les nom prenoms d'un espace)</span>
+            </div>
+            <div class="col-md-4">
+                <label>Société</label>
+                <select name="new_societe"  id="slt_societe" class="form-control select_updatable">
+                    <option value="-" >-</option>
+                    {%for s in societes%}
+                        <option value="{{s.id}}" >{{s}}</option>
+                    {%endfor%}
+                </select>
+            </div>
+            <div class="col-md-4">
+                <label>Fonction</label>
+                <select name="new_fonction"  id="slt_fonction" class="form-control select_updatable">
+                    <option value="-" >-</option>
+                    {%for f in fonctions%}
+                        <option value="{{f.id}}">{{f}}</option>
+                    {%endfor%}
+                </select>
+            </div>
         </div>
-        <div class="col-md-4">
-            <label>Société</label>
-            <select name="new_societe"  id="slt_societe" class="form-control select_updatable">
-                <option value="-" >-</option>
-                {%for s in societes%}
-                    <option value="{{s.id}}" >{{s}}</option>
-                {%endfor%}
-            </select>
-        </div>
-        <div class="col-md-4">
-            <label>Fonction</label>
-            <select name="new_fonction"  id="slt_fonction" class="form-control select_updatable">
-                <option value="-" >-</option>
-                {%for f in fonctions%}
-                    <option value="{{f.id}}">{{f}}</option>
-                {%endfor%}
-            </select>
-        </div>
-    </div>
-    <br>
+        <br>
     </div>
     <br>
     <div class="row">
@@ -127,7 +130,7 @@
         </div>
     </div>
 
-    <button ype="submit" class="btn btn-primary pull-right"  id="bt_fraismaintenance_save">
+    <button ype="submit" class="btn btn-primary pull-right" id="bt_fraismaintenance_save">
       <span class="glyphicon glyphicon-floppy-disk" aria-hidden="true"> Enregistrer</span>
     </button>
 

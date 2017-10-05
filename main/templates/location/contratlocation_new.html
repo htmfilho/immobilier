@@ -22,7 +22,9 @@
 * see http://www.gnu.org/licenses/.
 {% endcomment %}
 
-    {% if  location.batiment %}<li><a href="{% url 'batiment' location.batiment.id %}">Batiment</a></li>{% endif %}
+{% if  location.batiment %}
+    <li><a href="{% url 'batiment' location.batiment.id %}">Batiment</a></li>
+{% endif %}
   <li class="active">Location</li>
 {% endblock %}
 {% block content %}

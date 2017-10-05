@@ -29,6 +29,7 @@ from django.http import HttpResponse
 from rest_framework import serializers
 from rest_framework.renderers import JSONRenderer
 
+
 class JSONResponse(HttpResponse):
     def __init__(self, data, **kwargs):
         content = JSONRenderer().render(data)
@@ -51,7 +52,6 @@ def update(request):
     societe_id = None
     if request.POST['societe_id']:
         societe_id = int(request.POST['societe_id'])
-    print(societe_id)
     if societe_id:
         societe = get_object_or_404(mdl.societe.Societe, pk=societe_id)
     else:
@@ -65,9 +65,8 @@ def update(request):
     else:
         societe.numero = None
     societe.boite = request.POST['boite']
-    societe.lieu_dit =request.POST['lieu_dit']
+    societe.lieu_dit = request.POST['lieu_dit']
     societe.localite = None
-    print(request.POST['localite'])
     if request.POST['localite']:
         if request.POST['localite'] != '':
             societe.localite = mdl.localite.find_by_id(int(request.POST['localite']))

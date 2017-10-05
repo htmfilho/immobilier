@@ -179,17 +179,12 @@ def validate_personne(request):
     prenom = request.POST.get('prenom', None)
     prenom2 = request.POST.get('prenom2', None)
     personnes = mdl.personne.find_personne_by_nom_prenom(nom, prenom, prenom2)
-    print('validate_personne {} {} {}'.format(nom, prenom, prenom2))
     nom = request.GET.get('nom', None)
     prenom = request.GET.get('prenom', None)
     prenom2 = request.GET.get('prenom2', None)
-    print('validate_personne {} {} {}'.format(nom, prenom, prenom2))
     personnes = mdl.personne.find_personne_by_nom_prenom(nom, prenom, prenom2)
-    print(personnes)
     if personnes:
-        print('validate_personne False')
         return HttpResponse(json.dumps({'valide': False}), content_type='application/json')
-        # return False
-    print('validate_personne True')
+
     return HttpResponse(json.dumps({'valide': True}), content_type='application/json')
 

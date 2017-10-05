@@ -67,18 +67,14 @@ class MyDocTemplateMerge(SimpleDocTemplate):
 
 
     def afterFlowable(self, flowable):
-         print('afterFlowable')
          "Registers TOC entries."
          if flowable.__class__.__name__ == 'Paragraph':
              text = flowable.getPlainText()
-             print('kkkkk',flowable)
              style = flowable.style.name
-             print('style',style)
              if style == 'normal':
                  self.notify('TOCEntry', (0, text, self.page))
 
 def merge_pdf():
-    print('merge_pdf')
     pdf1 = "pdf1.pdf"
     pdf2 = "pdf2.pdf"
 
@@ -104,7 +100,6 @@ def merge_pdf():
     no_page=2
     manual_toc = True
     if manual_toc:
-        print('manual_toc')
         cpt = 0
         content.append(Paragraph('Table of contents' , ParagraphStyle('normal')))
         for fname in pdfs:
@@ -141,7 +136,6 @@ def merge_pdf():
     no_page=1
     cpt=0
     for fname in pdfs:
-        print('for')
         input = PdfFileReader(open(fname, 'rb'))
 
         number_of_page = input.getNumPages()

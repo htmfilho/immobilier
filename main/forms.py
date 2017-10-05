@@ -93,7 +93,6 @@ class BatimentForm(ModelForm):
         super(BatimentForm, self).__init__(*args, ** kwargs)
 
     def clean(self):
-        print('clean')
         cleaned_data = super(BatimentForm, self).clean()
         if cleaned_data.get('superficie') and cleaned_data.get('superficie') < 0:
             self.errors['superficie'] = 'Si une superficie est encodée elle doit être > à 0'
@@ -246,18 +245,10 @@ class ContratGestionForm(ModelForm):
         super(ContratGestionForm, self).__init__(*args, ** kwargs)
 
     def clean(self):
-        print('clean ContratGestionForm')
         cleaned_data = super(ContratGestionForm, self).clean()
-        print(cleaned_data.get('date_debut'))
         if cleaned_data.get('date_debut') and cleaned_data.get('date_fin'):
             if cleaned_data.get('date_debut') > cleaned_data.get('date_fin'):
                 self.errors['date_debut'] = 'Dates erronées'
-        if cleaned_data.get('batiment_id'):
-            print(cleaned_data.get('batiment_id'))
-            print('if')
-        else:
-            print('else')
-            print(cleaned_data.get('batiment_id'))
         return cleaned_data
 
 

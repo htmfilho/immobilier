@@ -41,7 +41,6 @@ def prepare_update(request, location_id):
 
 
 def update(request):
-    print('update')
     previous = request.POST.get('previous', None)
     id = request.POST.get('id', None)
     form = ContratLocationForm(data=request.POST)
@@ -65,6 +64,8 @@ def update(request):
             # Les financements seront adaptés via le save
             location.save_prolongation(int(request.POST.get('type_prolongation')))
         else:
+            # print(form.date_debut)
+            print(location.date_debut)
             location.save()
 
         return redirect(previous)
@@ -124,7 +125,6 @@ def confirm_delete(request):
 
 
 def test(request):
-    print('test')
     """
     ok - 1
     """
@@ -216,7 +216,6 @@ def prolongation(request):
 
 
 def contrat_location_form(request):
-    print('contrat_location_form')
     nouvelle_location = mdl.contrat_location.ContratLocation()
     auj = date.today()
     nouvelle_location.date_debut = auj.strftime("%d/%m/%Y")

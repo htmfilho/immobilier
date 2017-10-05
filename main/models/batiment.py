@@ -199,9 +199,7 @@ class Batiment(models.Model):
     @property
     def location_en_cours(self):
         locations = ContratLocation.find_by_batiment_dates(self)
-        print(locations)
         if locations:
-
             return True
         return None
 

@@ -147,12 +147,8 @@ def find(financement_courant, date_debut, etat):
 
 
 def find_dernier_paye(un_contrat_location):
-    print('find_dernier_paye')
-    print(un_contrat_location)
     resul = SuiviLoyer.objects.filter(financement_location__contrat_location=un_contrat_location,
                                       date_paiement_reel__isnull=False,
                                       etat_suivi='PAYE').order_by('-date_paiement_reel')
-    for r in resul:
-        print('for')
-        print(r.date_paiement_reel)
+
     return resul.first()

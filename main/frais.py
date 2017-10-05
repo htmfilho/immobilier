@@ -29,6 +29,16 @@ from main import models as mdl
 from main import pages_utils
 from main.pages_utils import NEW, UPDATE, PAGE_FRAIS_FORM
 from main.views_utils import get_previous
+from django.http import HttpResponseRedirect
+from django.core.urlresolvers import reverse
+
+LISTE = 'liste'
+
+DASHBOARD = 'dashboard'
+
+LOCATION = 'location'
+
+BATIMENT = 'batiment'
 
 
 def new(request):
@@ -46,8 +56,6 @@ def new(request):
 
 
 def create(request, batiment_id):
-    print('create')
-    print(batiment_id)
     batiment = get_object_or_404(mdl.batiment.Batiment, pk=batiment_id)
     frais = mdl.frais_maintenance.FraisMaintenance()
     frais.batiment = batiment
@@ -64,22 +72,24 @@ def create(request, batiment_id):
                    })
 
 
-def prepare_update(request, id):
+def prepare_update(request, id, previous):
     print('prepare_update')
+    print(previous)
     frais = mdl.frais_maintenance.find_by_id(id)
+
     return render(request, PAGE_FRAIS_FORM,
                   {'frais':  frais,
                    'action': UPDATE,
-                   'entrepreneurs': mdl.professionnel.find_all()})
+                   'entrepreneurs': mdl.professionnel.find_all(),
+                   'previous': previous})
 
 
 def update(request):
-    print('frais update')
     batiment_id = get_key(request.POST.get('batiment_id', None))
-    print(batiment_id)
     action = request.POST.get('action', None)
     frais_id = request.POST.get('id', None)
-    if request.POST.get('action', None) == NEW:
+
+    if action == NEW:
         frais = mdl.frais_maintenance.FraisMaintenance()
         if batiment_id:
             batiment = get_object_or_404(mdl.batiment.Batiment, pk=batiment_id)
@@ -105,8 +115,6 @@ def update(request):
         if entrepreneur:
             professionnel = get_object_or_404(mdl.professionnel.Professionnel, pk=entrepreneur)
 
-    print(professionnel)
-
     frais.entrepreneur = professionnel
     # if request.POST.get('societe', None):
     #     frais.societe = request.POST['societe']
@@ -130,22 +138,31 @@ def update(request):
     else:
         frais.date_realisation = None
     form = FraisMaintenanceForm(data=request.POST)
-
+    previous = request.POST.get('previous', None)
     if form.is_valid():
-        print('valid')
+
         frais.save()
-        print(frais.id)
-        previous = request.POST.get('previous', None)
-        return redirect(previous)
+
+        if previous == 'batiment':
+            return HttpResponseRedirect(reverse('batiment', args=(batiment_id, )))
+        if previous == 'location':
+            return HttpResponseRedirect(reverse('location-prepare-update-all', args=(frais.contrat_location.id, )))
+        if previous == 'dashboard':
+            return redirect('home')
+        if previous == 'liste':
+            return HttpResponseRedirect(reverse('fraismaintenance_list'))
+
     else:
-        print('invalid')
+
         previous = request.POST.get('previous', None)
         return render(request, PAGE_FRAIS_FORM, {
             'frais': frais,
             'form': form,
             'action': action,
             'previous': previous,
-            'entrepreneurs': mdl.professionnel.find_all()})
+            'entrepreneurs': mdl.professionnel.find_all(),
+            'societes': mdl.societe.find_all_with_name(),
+            'fonctions': mdl.fonction.find_all()})
 
 
 def nouveau_professionnel(request):
@@ -188,7 +205,6 @@ def get_societe(request):
 
 def get_personne(request):
     if is_new_value(request.POST.get('new_personne', None)):
-        print('personne_ne')
         personne_new_value = request.POST.get('new_personne', None)
 
         if personne_new_value:
@@ -211,18 +227,18 @@ def list(request):
                            {'frais_list': frais_list})
 
 
-def delete(request, id):
+def delete(request, id, previous):
     frais = get_object_or_404(mdl.frais_maintenance.FraisMaintenance, pk=id)
     if frais:
         frais.delete()
     return render(request, "fraismaintenance_confirm_delete.html",
-                           {'object': frais})
+                           {'object': frais, 'previous': previous})
 
 
 def contrat_new(request, contrat_location_id):
-    print('contrat_new')
     frais = mdl.frais_maintenance.FraisMaintenance()
-    previous = request.POST.get('previous', None)
+    # previous = request.POST.get('previous', None)
+    previous = "location"
     location = get_object_or_404(mdl.contrat_location.ContratLocation, pk=contrat_location_id)
     if location:
         frais.contrat_location = location
@@ -248,10 +264,49 @@ def is_new_value(id):
             return True
 
 
-def delete_frais(request, id):
+def delete_frais(request, id, previous):
     frais = mdl.frais_maintenance.find_by_id(id)
     batiment = frais.batiment
+    contrat_location = frais.contrat_location
     if frais:
         frais.delete()
 
+    return get_redirection(batiment, contrat_location, previous, request)
+
+
+def get_redirection(batiment, contrat_location, previous, request):
+    if previous == 'batiment':
+        return HttpResponseRedirect(reverse('batiment', args=(batiment.id,)))
+    if previous == 'location':
+        return HttpResponseRedirect(reverse('location-prepare-update-all', args=(contrat_location.id,)))
+    if previous == 'liste':
+        return HttpResponseRedirect(reverse('fraismaintenance_list'))
     return render(request, pages_utils.PAGE_BATIMENT_FORM, {'batiment': batiment})
+
+
+def prepare_update_from_batiment(request, id):
+    return prepare_update(request, id, BATIMENT)
+
+
+def prepare_update_from_location(request, id):
+    return prepare_update(request, id, LOCATION)
+
+
+def prepare_update_from_dashboard(request, id):
+    return prepare_update(request, id, DASHBOARD)
+
+
+def prepare_update_from_list(request, id):
+    return prepare_update(request, id, LISTE)
+
+
+def delete_frais_from_batiment(request, id):
+    return delete_frais(request, id, BATIMENT)
+
+
+def delete_frais_from_location(request, id):
+    return delete_frais(request, id, LOCATION)
+
+
+def delete_frais_from_list(request, id):
+    return delete_frais(request, id, LISTE)

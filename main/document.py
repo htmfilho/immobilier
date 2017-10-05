@@ -72,7 +72,6 @@ def document_form(request, document_id):
 
 
 def lettre_indexation_form(request, contrat_location_id):
-    print('lettre_indexation_form')
     modele = mdl.modele_document.find_by_reference('LETTRE_INDEXATION')
     form = None
     formset = None
@@ -101,7 +100,6 @@ def lettre_indexation_form(request, contrat_location_id):
 
 
 def lettre_indexation(request, contrat_location_id):
-    print('lettre_indexation')
     modele = mdl.modele_document.find_by_reference('LETTRE_INDEXATION')
     a_contrat_location = mdl.contrat_location.find_by_id(contrat_location_id)
 

@@ -64,8 +64,6 @@ def update(request):
         localite = None
         if request.POST['localite_cp'] and request.POST['localite_cp'] != '' \
                 and request.POST['localite_nom'] and request.POST['localite_nom'] != '':
-            print(request.POST['localite_cp'])
-            print(request.POST['localite_nom'])
             localites = mdl.localite.search(request.POST['localite_cp'], request.POST['localite_nom'])
             if not localites.exists():
                 localite = mdl.localite.Localite()
@@ -112,7 +110,6 @@ def search_par_proprietaire(request):
 
 
 def delete(request, batiment_id):
-    print('delete', batiment_id)
     if batiment_id:
         batiment = get_object_or_404(mdl.batiment.Batiment, pk=batiment_id)
         if batiment:

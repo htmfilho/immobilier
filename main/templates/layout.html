@@ -226,62 +226,74 @@
         $("#proprietaire_date_debut").datepicker({
             autoclose: true,
             orientation: "bottom auto",
-            language: "fr"
+            language: "fr",
+            showOtherMonths: false
         });
         $("#proprietaire_date_fin").datepicker({
             autoclose: true,
             orientation: "bottom auto",
-            language: "fr"
+            language: "fr",
+            showOtherMonths: false
         });
         $("#txt_date_naissance").datepicker({
             autoclose: true,
             orientation: "bottom auto",
-            language: "fr"
+            language: "fr",
+            showOtherMonths: false
         });
         $("#txt_date_realisation").datepicker({
             autoclose: true,
             orientation: "bottom auto",
-            language: "fr"
+            language: "fr",
+            showOtherMonths: false
         });
         $("#update_date_debut_location").datepicker({
             autoclose: true,
             orientation: "bottom auto",
-            language: "fr"
+            language: "fr",
+            showOtherMonths: false
         });
         $("#date_debut_gestion").datepicker({
             autoclose: true,
             orientation: "bottom auto",
-            language: "fr"
+            language: "fr",
+            showOtherMonths: false
         });
         $("#date_fin_gestion").datepicker({
             autoclose: true,
             orientation: "bottom auto",
-            language: "fr"
+            language: "fr",
+            showOtherMonths: false
         });
         $("#date_debut_financement").datepicker({
             autoclose: true,
             orientation: "bottom auto",
-            language: "fr"
+            language: "fr",
+            showOtherMonths: false
         });
         $("#date_fin_financement").datepicker({
             autoclose: true,
             orientation: "bottom auto",
-            language: "fr"
+            language: "fr",
+            showOtherMonths: false
         });
         $("#date_paiement_reel").datepicker({
             autoclose: true,
             orientation: "bottom auto",
-            language: "fr"
+            language: "fr",
+            showOtherMonths: false
         });
         $("#form_date_debut_location").datepicker({
             autoclose: true,
             orientation: "bottom auto",
-            language: "fr"
+            language: "fr",
+            showOtherMonths: false
         });
         $("#new_date_debut").datepicker({
             autoclose: true,
             orientation: "bottom auto",
-            language: "fr"
+            language: "fr",
+            showOtherMonths: false
         });
 
 
@@ -304,6 +316,31 @@
                 $('#pnl_new_entrepreneur').css('visibility', 'hidden');
                 $('#pnl_new_entrepreneur').css('display', 'none');
                 $('#slt_entrepreneur').prop('disabled', false);
+            }
+        });
+        $(".select_updatable").customComboBox({
+
+            tipText : "Entrez la nouvelle valeur",
+
+            tipClass : "mytipclass",
+
+            allowed : /[A-Za-z0-9áàâäãåçéèêëíìîïñóòôöõúùûü\$\.\'\s]/,
+
+            notallowed : /[\<\>]/,
+
+            index : 'last',
+
+            isEditing : function(el, status, value) {
+                if (typeof window.console!='object') { return; }
+                console.info('Editing status changed to (', status, ') on ', el, ' combo box and the selected value is "', value, '"');
+            },
+            onKeyDown : function(el, character, fulltext) {
+                if (typeof window.console!='object') { return; }
+                console.info('The character (', character, ') was just typed into ', el, ' combo box and the complete text is now "', fulltext, '"');
+            },
+            onDelete : function(el, fulltext) {
+                if (typeof window.console!='object') { return; }
+                console.info('A character was deleted from ', el, ' combo box and the complete text is now "', fulltext, '"');
             }
         });
     </script>

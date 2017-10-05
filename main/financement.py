@@ -27,7 +27,6 @@ from main import models as mdl
 
 
 def new(request, location_id):
-    print('new')
     location = mdl.contrat_location.find_by_id(location_id)
 
     # Trouver le dernier financement
@@ -65,7 +64,6 @@ def create(request):
         date_fin_initiale = financement_courant.date_fin
         dd = None
         if request.POST['date_debut']:
-            print(request.POST['date_debut'])
             dd = datetime.strptime(request.POST['date_debut'], '%d/%m/%Y')
 
         financement_courant.date_fin = dd

@@ -31,7 +31,6 @@ from main.views_utils import get_previous
 
 
 def new(request):
-    print('new')
     contrat = mdl.contrat_gestion.ContratGestion()
     personne_gestionnaire = mdl.personne.find_gestionnaire_default()
     if personne_gestionnaire:
@@ -47,7 +46,6 @@ def new(request):
 
 
 def create(request, batiment_id):
-    print('create')
     """
     ok - 1
     """
@@ -85,7 +83,6 @@ def prepare_update(request, id):
 
 
 def update(request):
-    print('update CONTRAT  GESTION')
     previous = request.POST.get('previous', None)
     form = ContratGestionForm(data=request.POST)
     gestion = None
@@ -96,7 +93,6 @@ def update(request):
         batiment_id = None
 
     # batiment_id = get_key(request.POST.get('batiment_id', None))
-    print('action : ', request.POST.get('action', None))
     if request.POST.get('action', None) == NEW:
         gestion = mdl.contrat_gestion.ContratGestion()
         batiment = get_object_or_404(mdl.batiment.Batiment, pk=batiment_id)
@@ -140,7 +136,6 @@ def update(request):
     #                       {'contrat': gestion,
     #                        'message': 'La date de début doit être < à la date de fin'})
     if personne is None:
-        print('personne is none')
         message = "Il faut sélectionner un gestionnaire"
         return render(request, "contratgestion_update.html",
                       {'contrat': gestion,
@@ -148,7 +143,6 @@ def update(request):
                        'message': message,
                        'form':    form})
     if form.is_valid() and data_valid(form, gestion):
-        print('form valid')
         montant_mensuel = request.POST.get('montant_mensuel', None)
         if montant_mensuel:
             try:
@@ -161,7 +155,6 @@ def update(request):
         # messages.add_message(request, messages.INFO, 'Hello world.')
         # return HttpResponse(status=204)
     else:
-        print('form invalid')
         personnes = []
         personne_gestionnaire = mdl.personne.find_gestionnaire_default()
         personnes.append(personne_gestionnaire)

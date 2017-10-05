@@ -99,9 +99,14 @@ urlpatterns = [
     url(r'^batiments/$', views.BatimentList.as_view(), name='batiment_list'),
     url(r'^batiment/deletep/([0-9]+)/$', proprietaire.delete_proprietaire_batiment,
         name='delete_proprietaire_batiment'),
+    url(r'^batiment/fraismaintenance/prepare/update/([0-9]+)/$', frais.prepare_update_from_batiment, name='fraismaintenance-edit-from-batiment'),
+    url(r'^location/fraismaintenance/prepare/update/([0-9]+)/$', frais.prepare_update_from_location, name='fraismaintenance-edit-from-location'),
+    url(r'^dashboard/fraismaintenance/prepare/update/([0-9]+)/$', frais.prepare_update_from_dashboard, name='fraismaintenance-edit-from-dashboard'),
+    url(r'^frais/list/fraismaintenance/prepare/update/([0-9]+)/$', frais.prepare_update_from_list, name='fraismaintenance-edit-from-list'),
 
-
-
+    url(r'^batiment/fraismaintenance/delete/([0-9]+)/$', frais.delete_frais_from_batiment, name='fraismaintenance-delete-from-batiment'),
+    url(r'^location/fraismaintenance/delete/([0-9]+)/$', frais.delete_frais_from_location, name='fraismaintenance-delete-from-location'),
+    url(r'^frais/liste/fraismaintenance/delete/([0-9]+)/$', frais.delete_frais_from_list, name='fraismaintenance-delete-from-list'),
     # url(r'^proprietaire/create/$', views.ProprietaireCreate.as_view(), name='proprietaire-create'),
     # url(r'^proprietaire/createb/(?P<pk>[0-9]+)/$', views.ProprietaireCreateForBatiment.as_view(), name='proprietaire-create-batiment'),
     # url(r'^proprietaire/update/(?P<pk>[0-9]+)/$', views.ProprietaireUpdate.as_view(), name='proprietaire-update'),

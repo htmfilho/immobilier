@@ -31,13 +31,10 @@ from main import models as mdl
 
 
 def suivis_search(request):
-    print('suivis_search')
     date_debut = None
     date_fin = None
     etat = request.GET['etat']
-    print(date_debut)
     if date_debut:
-        print('if')
         date_debut = datetime.strptime(request.GET['date_debut'], '%d/%m/%Y')
 
     if date_fin:
@@ -66,7 +63,6 @@ def suivis(request):
 
 
 def refresh_suivis(request):
-    print('refresh_suivis')
     date_debut = request.POST['date_debut']
     date_fin = request.POST['date_fin']
     etat = request.POST['etat']
@@ -85,7 +81,6 @@ def suivis_update(request):
         pass
     elif request.method == 'POST':
         for key, value in request.POST.iteritems():
-            print(key, value)
             if key.startswith('suivi_'):
                 print('info suivis')
 
@@ -106,7 +101,6 @@ def suivis_update(request):
 
 
 def suivis_updatel(request, suivi_id):
-    print('suivis_updatel')
     suivi = get_object_or_404(mdl.suivi_loyer.SuiviLoyer, pk=suivi_id)
     # etat =  request.POST['etat']
     # print (etat)
@@ -127,7 +121,6 @@ def suivis_updatel(request, suivi_id):
 
 
 def update_suivi(request):
-    print('update_suivi')
     etat = request.POST['etat']
     suivi = get_object_or_404(mdl.suivi_loyer.SuiviLoyer, pk=request.POST['id'])
 
@@ -135,7 +128,6 @@ def update_suivi(request):
         suivi.date_paiement_reel = datetime.strptime(request.POST['date_paiement_reel'], '%d/%m/%Y')
     else:
         suivi.date_paiement_reel = None
-    print(request.POST['etat_suivi'])
     if request.POST['etat_suivi']:
         if request.POST['etat_suivi'] == '-' or request.POST['etat_suivi'] == 'TOUS':
             suivi.etat_suivi = None
@@ -161,7 +153,6 @@ def update_suivi(request):
     form = SuiviForm(data=request.POST)
 
     if form.is_valid():
-        print('form is valid')
         suivi.save()
         if request.POST.get('previous', None):
             return redirect(request.POST.get('previous', None))
@@ -172,7 +163,6 @@ def update_suivi(request):
                                datetime.strptime(request.POST['date_debut'], '%d/%m/%Y'),
                                datetime.strptime(request.POST['date_fin'], '%d/%m/%Y'), etat)
     else:
-        print('form is invalid')
         return render(request, "suivi/suivi_form.html",
                       {'suivi':      suivi,
                        'form': form})

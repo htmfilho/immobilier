@@ -173,8 +173,6 @@ def delete_personne(id):
 
 
 def find_personne_by_nom_prenom(un_nom, un_prenom, un_prenom2):
-    print('find_personne_by_nom_prenom')
-    print("nom:{} prenom{} prenom2{}".format(un_nom, un_prenom, un_prenom2))
     return Personne.objects.filter(nom__iexact=un_nom, prenom__iexact=un_prenom, prenom2__iexact=un_prenom2)
 
 

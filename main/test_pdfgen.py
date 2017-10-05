@@ -63,7 +63,4 @@ def create_pdf():
 
 
 if __name__ == '__main__':
-    print('ici')
-
-
     create_pdf()

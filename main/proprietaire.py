@@ -26,7 +26,7 @@ from datetime import datetime
 from django.shortcuts import redirect
 from main import models as mdl
 from main import pages_utils
-from main.pages_utils import NEW, UPDATE
+from main.pages_utils import UPDATE
 
 
 def liste_proprietaires(request):
@@ -74,7 +74,6 @@ def update_proprietaire(request, proprietaire_id):
 
 
 def delete_proprietaire_batiment(request, proprietaire_id):
-    print('delete_proprietaire_batiment')
     proprietaire = mdl.proprietaire.find_proprietaire(proprietaire_id)
     batiment = proprietaire.batiment
     proprietaire.delete()
@@ -86,7 +85,6 @@ def delete_proprietaire(request, proprietaire_id):
     proprietaire = mdl.proprietaire.find_proprietaire(proprietaire_id)
     batiment = proprietaire.batiment
     proprietaire.delete()
-    print(request)
     # if '/p/' in request.get_full_path():
     #     print('if')
     #     return render(request, "proprietaire_form.html",
@@ -104,7 +102,6 @@ def delete_proprietaire(request, proprietaire_id):
 
 def proprietaire_update_save(request):
     previous = request.POST['previous']
-    print('previous:', previous)
     proprietaire = None
     action = request.POST.get('action', None)
     if 'update' == action:
@@ -160,7 +157,6 @@ def proprietaire_update_save(request):
                            'message': 'La date de début doit être < à la date de fin',
                            'pays': mdl.pays.find_all()})
     proprietaire.save()
-    print(previous)
     if previous:
         return redirect(previous)
     if not request.POST['prev'] is None:
@@ -168,7 +164,6 @@ def proprietaire_update_save(request):
 
 
 def redirections(request, batiment):
-    print('redirection', request.POST.get('prev', None))
     if request.POST.get('prev', None) == 'lp':
         return liste_proprietaires(request)
     if request.POST.get('prev', None) == 'fb':

@@ -35,12 +35,10 @@ class JSONResponse(HttpResponse):
 
 
 def create(request):
-    print('create pays')
     nouveau_pays = mdl.pays.Pays()
     nouveau_pays.nom = request.GET.get('nom', None)
 
     nouveau_pays.save()
-    print(nouveau_pays.id)
     serializer = PaysSerializer(mdl.pays.find_all(), many=True)
     return JSONResponse(serializer.data)
 

@@ -53,8 +53,6 @@ from reportlab.platypus.tableofcontents import TableOfContents
 from reportlab.platypus.frames import Frame
 import datetime
 
-from templated_docs import fill_template
-from templated_docs.http import FileResponse
 from django.forms import formset_factory
 from main.pages_utils import PAGE_LISTE_BATIMENTS
 from main.models.enums import etat_honoraire
@@ -69,6 +67,7 @@ from main.models.enums import etat_honoraire
 # def logged_out(request):
 #     print('logged_out')
 #     return layout.render(request, 'registration/logged_out.html', {})
+
 
 class ContratGestionList(ListView):
     model = mdl.contrat_gestion
@@ -232,9 +231,7 @@ def personne(request, personne_id):
 
 def update_personne(request):
     personne = mdl.personne.Personne()
-    print(request.POST.get('action', None))
     if 'add' == request.POST.get('action', None) or 'modify' == request.POST.get('action', None):
-        print(request.POST['id'])
         personne = get_object_or_404(mdl.personne.Personne, pk=request.POST['id'])
         personne.nom = request.POST['nom']
         personne.prenom = request.POST['prenom']
@@ -301,7 +298,6 @@ class ProprietaireCreate(CreateView):
     form_class = ProprietaireForm
 
     def form_valid(self, form):
-        print('form valid')
         proprietaire = form.save(commit=False)
         # article.author = self.request.user
         return super(ProprietaireCreate, self).form_valid(form)
@@ -493,7 +489,6 @@ def build_pdf(image_file):
 
 
 def merge_pdf(request):
-    print('merge_pdf')
     pdf1 = "pdf1.pdf"
     pdf2 = "pdf2.pdf"
 
@@ -515,7 +510,6 @@ def merge_pdf(request):
     no_page = 2
     manual_toc = True
     if manual_toc:
-        print('manual_toc')
         cpt = 0
         content.append(Paragraph('Table of contents', ParagraphStyle('normal')))
         for fname in pdfs:
@@ -550,7 +544,6 @@ def merge_pdf(request):
     no_page = 1
     cpt = 0
     for fname in pdfs:
-        print('for')
         input = PdfFileReader(open(fname, 'rb'))
 
         number_of_page = input.getNumPages()
@@ -594,9 +587,7 @@ def upload(request):
         if form.is_valid():
             file_name = request.FILES['file']
             if file_name is not None:
-                print(file_name.content_type)
                 if 'image' in file_name.content_type:
-                    print('image')
                     return build_pdf(file_name)
 
         return HttpResponseRedirect(reverse('test'))
@@ -665,8 +656,6 @@ def merge_pdf2(request):
     # to
     # fin toc
     # merge
-    print('merge_pdf')
-
     if not pdfs or len(pdfs) < 2:
         exit("Please enter at least two pdfs for merging!")
     no_page = 1
@@ -723,7 +712,6 @@ def merge_pdf2(request):
 
 def add_header_footer(canvas, doc):
     canvas.saveState()
-    print('add_header_footer')
     canvas.restoreState()
 
 
@@ -769,7 +757,6 @@ def essai(request):
     no_page = 1
     manual_toc = True
     if manual_toc:
-        print('manual_toc')
         toc = TableOfContents()
 
         cpt = 0
@@ -807,12 +794,10 @@ class MyDocTemplateMerge(SimpleDocTemplate):
         SimpleDocTemplate.__init__(self, *args, **kwargs)
 
     def afterFlowable(self, flowable):
-         print('afterFlowable')
          "Registers TOC entries."
          if flowable.__class__.__name__ == 'Paragraph':
              text = flowable.getPlainText()
              style = flowable.style.name
-             print('style', style)
              if style == 'normal':
                  self.notify('TOCEntry', (0, text, self.page))
 
@@ -828,7 +813,6 @@ class MyDocTemplate(SimpleDocTemplate):
          if flowable.__class__.__name__ == 'Paragraph':
              text = flowable.getPlainText()
              style = flowable.style.name
-             print('style', style)
              if style == 'normal':
                  self.notify('TOCEntry', (0, text, self.page))
 
@@ -837,7 +821,7 @@ def merge_pdf3(request):
     pdf1 = "pdf1.pdf"
     pdf2 = "pdf2.pdf"
 
-    pdfs=[pdf1, pdf2]
+    pdfs = [pdf1, pdf2]
     #
     buffer = BytesIO()
 
@@ -849,7 +833,6 @@ def merge_pdf3(request):
                             bottomMargin=18)
 
     content = []
-    print('merge_pdf')
 
     if not pdfs or len(pdfs) < 2:
         exit("Please enter at least two pdfs for merging!")
@@ -887,11 +870,10 @@ def merge_pdf3(request):
 
     #merger.append(buffer)
     num_page = 1
-    no_page=1
-    cpt=0
+    no_page = 1
+    cpt = 0
 
     for fname in pdfs:
-        print('for')
         input = PdfFileReader(open(fname, 'rb'))
 
         number_of_page = input.getNumPages()
@@ -1032,7 +1014,6 @@ class MyDocTemplate(BaseDocTemplate):
 
 
 def pagecat(request):
-    print('pagecat')
     pdf1 = "pdf1.pdf"
     pdf2 = "pdf2.pdf"
 
@@ -1064,7 +1045,6 @@ def pagecat(request):
     Story.append(toc)
     manual_toc = True
     if manual_toc:
-        print('manual_toc')
         cpt = 0
         Story.append(Paragraph('<b>Table of contents</b>', centered))
         for fname in pdfs:
@@ -1147,7 +1127,6 @@ def pagecat2(request):
 
 
 def add_header_footer(canvas, doc):
-    print('add_header_footer')
     """
     Add the page number
     """
