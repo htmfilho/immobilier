@@ -4,7 +4,8 @@
     "pk": 1,
     "fields": {
       "prenom": "Leila",
-      "nom": "Verpoorten"
+      "nom": "Verpoorten",
+      "civilite": "MADAME"
     }
   },
   {
@@ -12,7 +13,8 @@
     "pk": 2,
     "fields": {
       "prenom": "Michel",
-      "nom": "Marchal"
+      "nom": "Marchal",
+      "civilite": "MONSIEUR"
     }
   },
   {
@@ -20,7 +22,8 @@
     "pk": 3,
     "fields": {
       "prenom": "Stéphan",
-      "nom": "Marchal"
+      "nom": "Marchal",
+      "civilite": "MONSIEUR"
     }
   },
   {
@@ -28,7 +31,8 @@
     "pk": 4,
     "fields": {
       "prenom": "Jeanne",
-      "nom": "Lebrun"
+      "nom": "Lebrun",
+      "civilite": "MADAME"
     }
   },
   {
@@ -36,7 +40,8 @@
     "pk": 5,
     "fields": {
       "prenom": "Hervé",
-      "nom": "Marcelle"
+      "nom": "Marcelle",
+      "civilite": "MONSIEUR"
     }
   },
   {
@@ -44,7 +49,8 @@
     "pk": 6,
     "fields": {
       "prenom": "Géraldine",
-      "nom": "Garlant"
+      "nom": "Garlant",
+      "civilite": "MADAME"
     }
   },
   {
@@ -52,7 +58,8 @@
     "pk": 7,
     "fields": {
       "prenom": "Roger",
-      "nom": "Verpoorten"
+      "nom": "Verpoorten",
+      "civilite": "MONSIEUR"
     }
   },
   {
@@ -60,15 +67,17 @@
     "pk": 8,
     "fields": {
       "prenom": "Germaine",
-      "nom": "Lesquoy"
+      "nom": "Lesquoy",
+      "civilite": "MADAME"
     }
   },
   {
     "model": "main.personne",
     "pk": 9,
     "fields": {
-      "prenom": "j",
-      "nom": "James"
+      "prenom": "-",
+      "nom": "James",
+      "civilite": "MONSIEUR"
     }
   },
 
@@ -77,7 +86,8 @@
     "pk": 10,
     "fields": {
       "prenom": "André",
-      "nom": "Mignon"
+      "nom": "Mignon",
+      "civilite": "MONSIEUR"
     }
   },
   {
@@ -85,7 +95,8 @@
     "pk": 11,
     "fields": {
       "prenom": "Arnaud",
-      "nom": "Verpoorten"
+      "nom": "Verpoorten",
+      "civilite": "MONSIEUR"
     }
   },
   {

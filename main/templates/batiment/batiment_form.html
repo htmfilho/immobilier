@@ -36,7 +36,7 @@
           <label class="control-label">Code postal</label>
           <input list="localites" type="text" id="localite"
                  class="form-control" name="localite_cp"
-                 value="{{batiment.localite.code_postal| default_if_none:''}}" maxlength="10">
+                 value="{{batiment.localite.code_postal| default_if_none:''}}" maxlength="10" required>
           <datalist id="localites">
             {% for l in localites %}
                   <option value="{{ l.code_postal }}" data-id="{{l.id}}">{{ l.code_postal }}</option>
@@ -48,7 +48,7 @@
           <input list="localites_nom" type="text" id="localite_nom"
                  class="form-control" name="localite_nom"
                  value="{{batiment.localite.localite| default_if_none:''}}"
-                 maxlength="150">
+                 maxlength="150" required>
           <datalist id="localites_nom">
             {% for l in localites %}
                   <option value="{{ l.localite }}" data-id="{{l.id}}">{{ l.localite }}</option>
@@ -138,10 +138,12 @@
                     {% if batiment.proprietaires|length > 0 %}
                       <table class="table table-striped table-hover">
                         <thead>
-                          <th>Nom</th>
-                          <th>Date début</th>
-                          <th>Date fin</th>
-                          <th></th>
+                            <tr>
+                              <th>Nom</th>
+                              <th>Date début</th>
+                              <th>Date fin</th>
+                              <th></th>
+                            </tr>
                         </thead>
                         {% for proprietaire in batiment.proprietaires %}
                         <tr>
@@ -177,7 +179,7 @@
                           <a href="{% url 'location-prepare-update-all' batiment.location_actuelle.id %}">
                             du {{ batiment.location_actuelle.date_debut|date:"j/m/Y"}} au {{ batiment.location_actuelle.date_fin|date:"j/m/Y"}}
                             </a>
-                          &nbsp;(Loyer : {{ batiment.location_actuelle.financement_courant.loyer }})
+                          &nbsp;(Loyer : {{ batiment.location_actuelle.dernier_financement.loyer }})
                       {% else %}
                           Pas de location en cours
                       {%endif%}
@@ -236,11 +238,13 @@
                   {%if batiment.contrats_gestion%}
                     <table class="table table-striped table-hover">
                         <thead>
-                            <th>Date début</th>
-                            <th>Date fin</th>
-                            <th>Montant mensuel</th>
-                            <th>Gestionnaire</th>
-                            <th></th>
+                            <tr>
+                                <th>Date début</th>
+                                <th>Date fin</th>
+                                <th>Montant mensuel</th>
+                                <th>Gestionnaire</th>
+                                <th></th>
+                            </tr>
                         </thead>
                         <tbody>
                             {% for c in batiment.contrats_gestion %}
@@ -281,12 +285,14 @@
                   {% if batiment.frais_list %}
                   <table class="table table-striped">
                     <thead>
-                        <th>Professionnel</th>
-                        <th>Description</th>
-                        <th>Montant</th>
-                        <th>Date réalisation</th>
-                        <th>A charge du locataire </th>
-                        <th></th>
+                        <tr>
+                            <th>Professionnel</th>
+                            <th>Description</th>
+                            <th>Montant</th>
+                            <th>Date réalisation</th>
+                            <th>A charge du locataire </th>
+                            <th></th>
+                        </tr>
                     </thead>
                       {% for f in batiment.frais_list %}
                     <tr>
@@ -324,14 +330,16 @@
               <br>
               <table class="table">
                   <thead>
-                  <th>Frais ({{ batiment.location_actuelle.liste_frais|length }})</th>
-                  <th>Revenus</th>
+                    <tr>
+                      <th>Frais ({{ batiment.location_actuelle.liste_frais|length }})</th>
+                      <th>Revenus</th>
+                    </tr>
                   </thead>
                   <tbody>
-                  <tr>
-                      <td>{{ batiment.location_actuelle..total_frais }}</td>
-                      <td>{{ batiment.location_actuelle..tot_suivis_paye }}</td>
-                  </tr>
+                      <tr>
+                          <td>{{ batiment.location_actuelle..total_frais }}</td>
+                          <td>{{ batiment.location_actuelle..tot_suivis_paye }}</td>
+                      </tr>
                   </tbody>
               </table>
           </div>

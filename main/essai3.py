@@ -17,35 +17,20 @@
 ## You should have received a copy of the GNU General Public License
 ## along with Indico;if not, see <http://www.gnu.org/licenses/>.
 from django.shortcuts import render
-from PyPDF2 import PdfFileMerger,  PdfFileReader, PdfFileWriter
+from PyPDF2 import PdfFileReader, PdfFileWriter
 from io import BytesIO
 from django.http import HttpResponse
-from django.http import HttpResponseRedirect
-import os
 import math
-import cgi
-import shutil
-import xml.sax.saxutils as saxutils
-import uuid
 from django.utils.translation import ugettext_lazy as _
-from reportlab.platypus import SimpleDocTemplate, PageTemplate, Table
-from reportlab.platypus.tableofcontents import TableOfContents
+from reportlab.platypus import SimpleDocTemplate, PageTemplate
 from reportlab.lib.styles import ParagraphStyle
 from reportlab.lib.units import inch, cm
-from reportlab.lib.enums import TA_CENTER, TA_RIGHT, TA_LEFT
+from reportlab.lib.enums import TA_CENTER
 from reportlab import platypus
 from reportlab.pdfgen.canvas import Canvas
 from reportlab.platypus.frames import Frame
 from reportlab.lib.pagesizes import landscape, A4, LETTER, A0, A1, A2, A3, A5
-from reportlab.pdfbase import pdfmetrics
-from reportlab.pdfbase.ttfonts import TTFont
-from reportlab.lib.fonts import addMapping
 
-import subprocess
-import os
-import tempfile
-
-from PIL import Image as PILImage
 from reportlab.lib.units import mm
 ratio = math.sqrt(math.sqrt(2.0))
 PAGE_SIZE = A4
@@ -483,7 +468,7 @@ class DocTemplateWithTOC(SimpleDocTemplate):
         self.mergePDFs(self.filename, contentFile)
 
     def mergePDFs(self, pdf1, pdf2):
-        from PyPDF2 import PdfFileMerger,  PdfFileReader, PdfFileWriter
+        from PyPDF2 import PdfFileReader, PdfFileWriter
         from io import StringIO
         outputStream = StringIO.StringIO()
         pdf1Stream = StringIO.StringIO()

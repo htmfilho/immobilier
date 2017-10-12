@@ -29,8 +29,6 @@ from crispy_forms.layout import Submit
 from main import views_utils
 from main import models as mdl
 
-from django.forms import formset_factory
-
 
 class LoginForm(forms.Form):
     username = forms.CharField()
@@ -71,12 +69,10 @@ class PersonneForm(forms.Form):
         # autocomplete_fields = ('prenom', 'profession', 'lieu_naissance', 'pays_naissance')
 
     def clean(self):
-        cleaned_data = super(PersonneForm, self).clean()
         if self.cleaned_data['num_identite'] == "":
             return None
         else:
             return self.cleaned_data['num_identite']
-        return cleaned_data
 
     def __init__(self, *args, **kwargs):
         super(PersonneForm, self).__init__(*args, ** kwargs)
@@ -302,4 +298,8 @@ class LettreForm(forms.Form):
 
 
 
+
+class BatimentLocaliteForm(forms.Form):
+    localite_cp= forms.CharField(required=True)
+    localite_nom = forms.CharField(required=True)
 

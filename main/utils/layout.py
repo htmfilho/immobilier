@@ -25,9 +25,7 @@
 ##############################################################################
 from django import shortcuts
 from django.template.context import RequestContext
-from main import models as mdl
 from random import randint
-
 
 
 def render(request, template, values):

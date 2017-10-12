@@ -2,138 +2,151 @@
 {% load staticfiles %}
 {% load order %}
 {% block breadcrumb %}
-    {% if frais.batiment %}<li><a href="{% url 'batiment' frais.batiment.id %}">Batiment</a></li>{% endif %}
-{% if previous == 'liste' %}
-  <li><a href="{% url 'fraismaintenance_list' %}">Liste frais</a></li>
-{% endif %}
-  <li class="active">Frais de maintenance</li>
+    {% if frais.batiment %}
+        <li><a href="{% url 'batiment' frais.batiment.id %}">Batiment</a></li>
+    {% endif %}
+    {% if previous == 'liste' %}
+      <li><a href="{% url 'fraismaintenance_list' %}">Liste frais</a></li>
+    {% endif %}
+    <li class="active">Frais de maintenance</li>
 {% endblock %}
 {% block content %}
+    <form action="{% url 'fraismaintenance-update' %}" method="post">
+        {% csrf_token %}
+        <input type="hidden" id="previous" name="previous" value="{{ previous }}"/>
+        <input type="hidden" value="{{ frais.id | default_if_none:'' }}" name="id"/>
+        <input type="hidden" value="{{ action }}" name="action"/>
 
-<form action="{% url 'fraismaintenance-update' %}" method="post">
-    {% csrf_token %}
-    <input type="text" id="previous" name="previous" value="{{ previous }}"/>
-    <input type="hidden" value="{{ frais.id | default_if_none:'' }}" name="id"/>
-    <input type="hidden" value="{{ action }}" name="action"/>
-
-    <div class="row">
-        <div class="col-md-6">
-            <label>Batiment</label>
-            {% if frais.batiment %}
-                <input type="hidden" value="{{ frais.batiment.id }}" name="batiment_id"/>
-                <input class="form-control" value="{{ frais.batiment }}" name="batiment" readonly>
-            {% else %}
-                <select class="form-control" name="batiment_id" >
-                  {%if frais.batiment %}
-                    <option value="-" >-</option>
-                  {%else%}
-                    <option value="-" selected>-</option>
-                  {%endif%}
-                  {% for b in batiments %}
-                      {% if frais.batiment.id == b.id %}
-                        <option value="{{ b.id }}" selected>{{ b }}</option>
+        <div class="row">
+            <div class="col-md-6">
+                <label>Batiment</label>
+                {% if frais.batiment %}
+                    <input type="hidden" value="{{ frais.batiment.id }}" name="batiment_id"/>
+                    <input class="form-control" value="{{ frais.batiment }}" name="batiment" readonly>
+                {% else %}
+                    <select class="form-control" name="batiment_id" >
+                      {%if frais.batiment %}
+                        <option value="-" >-</option>
                       {%else%}
-                        <option value="{{ b.id }}">{{ b }}</option>
-                      {% endif %}
-                  {% endfor %}
-                </select>
-            {% endif %}
-          </div>
+                        <option value="-" selected>-</option>
+                      {%endif%}
+                      {% for b in batiments %}
+                          {% if frais.batiment.id == b.id %}
+                            <option value="{{ b.id }}" selected>{{ b }}</option>
+                          {%else%}
+                            <option value="{{ b.id }}">{{ b }}</option>
+                          {% endif %}
+                      {% endfor %}
+                    </select>
+                {% endif %}
+              </div>
+              <div class="col-md-6">
+              </div>
+        </div>
+        <br>
+        <div class="row">
           <div class="col-md-6">
-
-
+            <label>Entrepreneur</label>
+            <select class="form-control" name="entrepreneur" id="slt_entrepreneur">
+              <option value="">-</option>
+              {% for entrepreneur in entrepreneurs %}
+                    <option value="{{entrepreneur.id}}" {%if frais.entrepreneur.id == entrepreneur.id%}selected{%endif%}>{{entrepreneur}}</option>
+              {%endfor%}
+            </select>
           </div>
-    </div>
-    <br>
-    <div class="row">
-      <div class="col-md-6">
-        <label>Entrepreneur</label>
-        <select class="form-control" name="entrepreneur" id="slt_entrepreneur">
-          <option value="">-</option>
-          {% for entrepreneur in entrepreneurs %}
-                <option value="{{entrepreneur.id}}" {%if frais.entrepreneur.id == entrepreneur.id%}selected{%endif%}>{{entrepreneur}}</option>
-          {%endfor%}
-        </select>
-      </div>
 
-      <div class="col-md-5">
-          <label>&nbsp;</label>
-          <div>
-              <input type="checkbox"  id="chb_new_entrepreneur" name="new_entrepreneur">
-              <label>Ajouter un nouvel entrepreneur</label>
+          <div class="col-md-5">
+              <label>&nbsp;</label>
+              <div>
+                  <input type="checkbox"  id="chb_new_entrepreneur" name="new_entrepreneur">
+                  <label>Ajouter un nouvel entrepreneur</label>
+              </div>
           </div>
-      </div>
-    </div>
-    <div id="pnl_new_entrepreneur" style="visibility:hidden;display:none;background-color: #BAEEBA;margin:15px">
-        <br>
-        <div class="row" style="margin:15px" >
-            <div class="col-md-4">
-                <label>Personne</label>
-                <select name="new_personne"  id="slt_person" class="form-control select_updatable">
-                    <option value="-" ></option>
-                    {%for p in personnes%}
-                        <option value="{{p.id}}" >{{p}}</option>
-                    {%endfor%}
-                </select>
-                <span>(Si nouvelle personne séparé les nom prenoms d'un espace)</span>
+        </div>
+        <div id="pnl_new_entrepreneur" style="visibility:hidden;display:none;background-color: #BAEEBA;margin:15px">
+            <br>
+            <div class="row" style="margin:15px" >
+                <div class="col-md-4">
+                    <label>Personne</label>
+                    <select name="new_personne"  id="slt_person" class="form-control select_updatable">
+                        <option value="-" ></option>
+                        {%for p in personnes%}
+                            <option value="{{p.id}}" >{{p}}</option>
+                        {%endfor%}
+                    </select>
+                    <span>(Si nouvelle personne séparé les nom prenoms d'un espace)</span>
+                </div>
+                <div class="col-md-4">
+                    <label>Société</label>
+                    <select name="new_societe"  id="slt_societe" class="form-control select_updatable">
+                        <option value="-" >-</option>
+                        {%for s in societes%}
+                            <option value="{{s.id}}" >{{s}}</option>
+                        {%endfor%}
+                    </select>
+                </div>
+                <div class="col-md-4">
+                    <label>Fonction</label>
+                    <select name="new_fonction"  id="slt_fonction" class="form-control select_updatable">
+                        <option value="-" >-</option>
+                        {%for f in fonctions%}
+                            <option value="{{f.id}}">{{f}}</option>
+                        {%endfor%}
+                    </select>
+                </div>
             </div>
-            <div class="col-md-4">
-                <label>Société</label>
-                <select name="new_societe"  id="slt_societe" class="form-control select_updatable">
-                    <option value="-" >-</option>
-                    {%for s in societes%}
-                        <option value="{{s.id}}" >{{s}}</option>
-                    {%endfor%}
-                </select>
-            </div>
-            <div class="col-md-4">
-                <label>Fonction</label>
-                <select name="new_fonction"  id="slt_fonction" class="form-control select_updatable">
-                    <option value="-" >-</option>
-                    {%for f in fonctions%}
-                        <option value="{{f.id}}">{{f}}</option>
-                    {%endfor%}
-                </select>
-            </div>
+            <br>
         </div>
         <br>
-    </div>
-    <br>
-    <div class="row">
-      <div class="col-md-12">
-        <label>Description</label>
-        <textarea class="form-control required" name="description" required="true" cols="4" rows="4" >{%if frais.description %}{{ frais.description }}{%endif%}</textarea>
-      </div>
-    </div>
-    <br>
-    <div class="row">
-      <div class="col-md-3">
-        <label>Montant</label>
-        <input class="form-control"
-               value="{{frais.montant | default_if_none:''}}"
-               name="montant" required>
-          <font class="erreur_formulaire">{{ form.montant.errors }}</font>
-      </div>
-      <div class="col-md-3">
-        <label>Date réalisation</label>
-        <input class="form-control"
-               id="txt_date_realisation"
-               value="{%if frais.date_realisation %}{{ frais.date_realisation|date:"d/m/Y" }}{%endif%}"
-               name="date_realisation">
-        <span class="erreur_formulaire" id="spn_date_realisation"></span>
-      </div>
-      <div class="col-md-3">
-          <input type="checkbox" name="contrat_location" {%if frais.contrat_location%}checked{%endif%} >
-          &nbsp;<label>A charge des locataires</label>
-      </div>
-        <div class="col-md-3">
+        <div class="row">
+          <div class="col-md-12">
+            <label>Description</label>
+            <textarea class="form-control required" name="description" required="true" cols="4" rows="4" >{%if frais.description %}{{ frais.description }}{%endif%}</textarea>
+          </div>
         </div>
-    </div>
+        <br>
+        <div class="row">
+          <div class="col-md-3">
+            <label>Montant</label>
+            <input class="form-control"
+                   value="{{frais.montant | default_if_none:''}}"
+                   id="txt_montant"
+                   name="montant" required>
+              <font class="erreur_formulaire">{{ form.montant.errors }}</font>
+          </div>
+          <div class="col-md-3">
+            <label>Date réalisation</label>
+            <input class="form-control"
+                   id="txt_date_realisation"
+                   value="{%if frais.date_realisation %}{{ frais.date_realisation|date:"d/m/Y" }}{%endif%}"
+                   name="date_realisation">
+            <span class="erreur_formulaire" id="spn_date_realisation"></span>
+          </div>
+          <div class="col-md-3">
+              <input type="checkbox" name="contrat_location" {%if frais.contrat_location%}checked{%endif%} >
+              &nbsp;<label>A charge des locataires</label>
+          </div>
+            <div class="col-md-3">
+            </div>
+        </div>
 
-    <button ype="submit" class="btn btn-primary pull-right" id="bt_fraismaintenance_save">
-      <span class="glyphicon glyphicon-floppy-disk" aria-hidden="true"> Enregistrer</span>
-    </button>
+        <button ype="submit" class="btn btn-primary pull-right" id="bt_fraismaintenance_save">
+          <span class="glyphicon glyphicon-floppy-disk" aria-hidden="true"> Enregistrer</span>
+        </button>
 
-</form>
+    </form>
 
+{% endblock %}
+{% block script %}
+<script>
+    $("#txt_montant").blur(function(event) {
+        var score = $("#txt_montant").val().replace(',', '.');
+        var regex = /^\d+(\.\d{0,2})?$/;
+        $("#txt_montant").val(score);
+
+        if(!regex.test(score)){
+            $("#txt_montant").val(score);
+        }
+    });
+</script>
 {% endblock %}

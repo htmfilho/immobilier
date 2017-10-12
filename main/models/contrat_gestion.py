@@ -22,9 +22,7 @@
 #
 ##############################################################################
 from django.db import models
-from main.models import alerte as Alerte
 from main.models import personne as Personne
-from main.models import honoraire as Honoraire
 from dateutil.relativedelta import relativedelta
 from main import models as mdl
 

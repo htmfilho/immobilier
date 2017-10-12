@@ -46,20 +46,13 @@
                 <ul class="dropdown-menu" >
                     <li><a href="{% url 'lettre' %}" title="Lettre avec odt">Lettre</a></li>
                     <li style="visibility:hidden;display:none;"><a href="{% url 'document_list' %}">Liste des documents</a></li>
+                    {% if location.id %}
+                        <li><a href="{% url 'lettre_indexation_form' location.id %}">Lettre indexation</a>
+
+                        </li>
+                    {% endif %}
                 </ul>
               </li>
-              {% if location.id %}
-                  <li>
-                      <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button"
-                         aria-haspopup="true"
-                         aria-expanded="false"
-                         id="lnk_home_dropdown_catalog">Courrier location<span
-                              class="caret"></span></a>
-                      <ul class="dropdown-menu">
-                          <li><a href="{% url 'lettre_indexation_form' location.id %}">Lettre indexation</a></li>
-                      </ul>
-                  </li>
-              {% endif %}
 
             </ul>
             <ul class="nav navbar-nav navbar-right">

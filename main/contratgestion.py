@@ -155,9 +155,7 @@ def update(request):
         # messages.add_message(request, messages.INFO, 'Hello world.')
         # return HttpResponse(status=204)
     else:
-        personnes = []
-        personne_gestionnaire = mdl.personne.find_gestionnaire_default()
-        personnes.append(personne_gestionnaire)
+        personnes=[mdl.personne.find_gestionnaire_default()]
         return render(request, "contratgestion_update.html",
                       {'contrat':   gestion,
                        'action':    UPDATE,

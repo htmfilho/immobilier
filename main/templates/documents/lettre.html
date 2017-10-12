@@ -19,7 +19,7 @@
                         {{ contrat_location.batiment.adresse_rue  }}<br>
                         {{ contrat_location.batiment.adresse_localite  }}<br><br>
                         <label>Pour la location suivante:</label><br>
-                        du cau {{ contrat_location.date_fin }}<br><br>
+                        du {{ contrat_location.date_debut|date:"j/m/Y" }} au {{ contrat_location.date_fin|date:"j/m/Y" }}<br><br>
                         <label>Locataire(s):</label><br>
                         {% for locataire in contrat_location.locataires %}
                             {{ locataire.personne }}<br>

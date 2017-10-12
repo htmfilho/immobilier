@@ -22,7 +22,6 @@
 #
 ##############################################################################
 from django.db import models
-from main.models import indice_sante as IndiceSante
 
 
 class FinancementLocation(models.Model):
@@ -51,3 +50,7 @@ def find_by_location(une_location):
 
 def create(date_debut, date_fin, loyer_base, un_indice_sante):
     return FinancementLocation(date_debut=date_debut, date_fin=date_fin, loyer=loyer_base, indice_sante=un_indice_sante)
+
+
+def find_by_id(an_id):
+    return FinancementLocation.objects.get(pk=an_id)

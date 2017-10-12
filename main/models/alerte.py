@@ -44,7 +44,6 @@ class Alerte(models.Model):
     class Meta:
         ordering = ['date_alerte']
 
-
     def __str__(self):
         return self.date_alerte.strftime('%d-%m-%Y') + " " + self.etat
 

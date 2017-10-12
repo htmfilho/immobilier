@@ -50,15 +50,17 @@
     </div>
     <table class="table table-hover">
         <thead>
-            <th>Batiment</th>
-            <th>Loyer (de base)</th>
-            <th title="Dernier versement dont l'état est payé et pour lequel on a encodé une date de paiement">
-                Dernier versement payé
-            </th>
-            <th>Locataires</th>
-            <th>Date fin</th>
-            <th>Date renonciation</th>
-            <th></th>
+            <tr>
+                <th>Batiment</th>
+                <th>Loyer (de base)</th>
+                <th title="Dernier versement dont l'état est payé et pour lequel on a encodé une date de paiement">
+                    Dernier versement payé
+                </th>
+                <th>Locataires</th>
+                <th>Date fin</th>
+                <th>Date renonciation</th>
+                <th></th>
+            </tr>
         </thead>
         <tbody>
             {% for contrat in locations %}

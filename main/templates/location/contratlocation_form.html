@@ -1,5 +1,5 @@
 {% extends "layout.html" %}
-{% block breadcrumb %}
+
 {% comment "License" %}
 * Immobilier it's an application
 * designed to manage the core business of property management, buildings,
@@ -21,6 +21,7 @@
 * at the root of the source code of this program.  If not,
 * see http://www.gnu.org/licenses/.
 {% endcomment %}
+{% block breadcrumb %}
     {% if  location.batiment %}<li><a href="{% url 'batiment' location.batiment.id %}">Batiment</a></li>{% endif %}
   <li class="active">Location</li>
 {% endblock %}

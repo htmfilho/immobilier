@@ -22,7 +22,6 @@
 #
 ##############################################################################
 from django.db import models
-from django.contrib import admin
 from main.models import batiment as Batiment
 
 
@@ -46,8 +45,8 @@ class Proprietaire(models.Model):
         ch = ch + self.batiment.localite.localite
         return ch
 
-    def get_absolute_url(self):
-        return reverse('proprietaire_list')
+    # def get_absolute_url(self):
+    #     return reverse('proprietaire_list')
 
     class Meta:
         unique_together = (("proprietaire", "batiment"),)

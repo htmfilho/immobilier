@@ -59,7 +59,7 @@ def create(request, batiment_id):
     batiment = get_object_or_404(mdl.batiment.Batiment, pk=batiment_id)
     frais = mdl.frais_maintenance.FraisMaintenance()
     frais.batiment = batiment
-    previous = request.META.get('HTTP_REFERER', '/')
+    previous = 'batiment'
     return render(request, PAGE_FRAIS_FORM,
                   {'frais':     frais,
                    'personnes': mdl.personne.find_all(),
@@ -140,7 +140,6 @@ def update(request):
     form = FraisMaintenanceForm(data=request.POST)
     previous = request.POST.get('previous', None)
     if form.is_valid():
-
         frais.save()
 
         if previous == 'batiment':

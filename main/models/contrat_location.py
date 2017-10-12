@@ -68,8 +68,15 @@ class ContratLocation(models.Model):
             return f
         return None
 
+    @property
+    def dernier_financement(self):
+        list = FinancementLocation.find_by_location(self).order_by('-date_fin')
+        for f in list:
+            return f
+        return None
+
     def financements(self):
-        return FinancementLocation.find_by_location(self)
+        return FinancementLocation.find_by_location(self).order_by('date_debut')
 
     @property
     def dernier_versement(self):
@@ -144,9 +151,8 @@ class ContratLocation(models.Model):
 
     def suivis_anterieurs(self):
         financements = self.financements()
-        suivis_liste = []
         return SuiviLoyer.SuiviLoyer.objects.filter(financement_location__in=financements,
-                                         date_paiement__lte=timezone.now()).order_by('-date_paiement')
+                                                    date_paiement__lte=timezone.now()).order_by('-date_paiement')
 
     def tot_suivis_paye(self):
         financements = self.financements()

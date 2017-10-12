@@ -43,6 +43,7 @@ def batiment_form(request, batiment_id):
 
 
 def update(request):
+    print('update')
     batiment = mdl.batiment.Batiment()
     message_info = None
     form = None
@@ -90,8 +91,17 @@ def update(request):
             batiment.description = None
 
         if form.is_valid():
+
+            # form = BatimentLocaliteForm(data=request.POST)
+            # if form.is_valid():
+            #
+            #     print('valid')
+            # else:
+            #     print('invalid')
             batiment.save()
             message_info = "Données sauvegardées"
+        else:
+            print('invalid')
 
     return render(request, pages_utils.PAGE_BATIMENT_FORM,
                   {'batiment':     batiment,
@@ -116,4 +126,10 @@ def delete(request, batiment_id):
             batiment.delete()
 
     return search_par_proprietaire(request)
+
+def donnees_valides(data):
+    print(data)
+    print(data['localite_nom'])
+    print(data['rue'])
+    return False
 

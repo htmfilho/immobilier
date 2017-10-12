@@ -41,6 +41,7 @@ def prepare_update(request, location_id):
 
 
 def update(request):
+    print('location update')
     previous = request.POST.get('previous', None)
     id = request.POST.get('id', None)
     form = ContratLocationForm(data=request.POST)
@@ -59,24 +60,35 @@ def update(request):
         location.assurance = None
 
     if form.is_valid():
+        data = form.cleaned_data
+
         if prolongation_action and (request.POST.get('type_prolongation') == '1' \
                                     or request.POST.get('type_prolongation') == '7'):
             # Les financements seront adaptés via le save
             location.save_prolongation(int(request.POST.get('type_prolongation')))
         else:
             # print(form.date_debut)
-            print(location.date_debut)
+            date_debut_formulaire =  data['date_debut']
+
+            if date_debut_formulaire != location.date_debut:
+                print('attention différence dans les dates')
+            else:
+                print('pas de différence de date')
+            if data['loyer_base'] != location.loyer_base or data['charges_base'] != location.charges_base :
+                print('attention différence dans les  loyers/charges')
+            else:
+                print('pas de difféence de loyer/char')
             location.save()
+        if not prolongation_action:
+            return redirect(previous)
 
-        return redirect(previous)
 
-    else:
-        return render(request, "contratlocation_update.html",
-                               {'location':    location,
-                                'assurances':  mdl.assurance.find_all(),
-                                'nav':         'list_batiment',
-                                'form':        form,
-                                'previous':    previous})
+    return render(request, "contratlocation_update.html",
+                           {'location':    location,
+                            'assurances':  mdl.assurance.find_all(),
+                            'nav':         'list_batiment',
+                            'form':        form,
+                            'previous':    previous})
 
 
 def contrat_location_for_batiment(request, batiment_id):
@@ -194,6 +206,7 @@ def test(request):
 
 
 def prolongation(request):
+    print('prolongation')
     id_location = request.GET['id_location']
     type_prolongation = request.GET['type_prolongation']
     location = get_object_or_404(mdl.contrat_location.ContratLocation, pk=id_location)

@@ -1,9 +1,11 @@
 {% extends "layout.html" %}
+{% load l10n %}
 {% block breadcrumb %}
     {% if location.batiment %}
-        <li><a href="{% url 'batiment' location.batiment.id  %}">Batiment</a></a></li>
+        <li><a href="{% url 'batiment' location.batiment.id  %}">Batiment</a></li>
     {% endif %}
   <li class="active">Location</li>
+
 {% endblock %}
 {% block content %}
 <div class="panel panel-default">
@@ -23,15 +25,15 @@
         <input class="form-control"
                id="update_date_debut_location"
                value="{%if location.date_debut%}{{location.date_debut|date:"j/m/Y"}}{%endif%}" name="date_debut"
-               readonly disabled>
+               readonly>
        {% if form.date_debut.errors%}<font class="erreur_formulaire">{{form.date_debut.errors}}</font>{%endif%}
       </div>
 
       <div class="col-md-3">
-        <label>Date fin</label>
+        <label>Date fin  {%  if location.financements|length > 1 %}<span class="glyphicon glyphicon-exclamation-sign" title="Contrat modifié"></span>{% endif %}</label>
         <input class="form-control" id="date_fin_location"
                value="{%if location.date_fin%}{{location.date_fin|date:"j/m/Y"}}{%endif%}" name="date_fin"
-               readonly disabled>
+               readonly>
       </div>
       <div class="col-md-3">
         <label>Prolongation</label>
@@ -48,9 +50,9 @@
         <div class="col-md-3">
           <label>&nbsp;</label>
          <button type="submit"
-                class="btn btn-default"
-                id="bt_prolongation"
-                name="bt_prolongation">Prolongation</button>
+                 class="btn btn-default"
+                 id="bt_prolongation"
+                 name="bt_prolongation">Prolongation</button>
           <span class="erreur_formulaire" id="txt_msg_error_slt_type_prolongation" style="visibility:hidden:display:none;"></span>
         </div>
       </div>
@@ -73,8 +75,8 @@
 
       <div class="row">
         <div class="col-md-3">
-        <label for="loyer_base">Loyer de base</label>
-        <input class="form-control" id="loyer_base" value="{{location.loyer_base}}" name="loyer_base">
+        <label for="loyer_base">Loyer de base {%  if location.financements|length > 1 %}<span class="glyphicon glyphicon-exclamation-sign" title="Contrat modifié"></span>{% endif %}</label>
+        <input class="form-control" id="loyer_base" value="{{location.loyer_base}}" name="loyer_base" readonly>
           {% if form.loyer_base.errors%}<font class="erreur_formulaire">{{form.loyer_base.errors}}</font>{%endif%}
       </div>
 
@@ -91,7 +93,7 @@
 
       <div class="col-md-4">
         <label>Assurance</label>
-        <select class="form-control" name="assurance"  class="form-control">
+        <select class="form-control" name="assurance">
           <option value="-">-</option>
           {%for a in assurances%}
             {%if a.id == location.assurance.id%}
@@ -121,7 +123,12 @@
         <li class="active"><a data-toggle="tab" href="#locataires">Locataires</a></li>
           <li><a data-toggle="tab" href="#suivis">Suivis ({{location.suivis_anterieurs |length }}) jusqu'à ce jour</a></li>
           <li><a data-toggle="tab" href="#frais">Frais ({{location.liste_frais |length }})</a></li>
-          <li><a data-toggle="tab" href="#financement">Loyers</a></li>
+          <li><a data-toggle="tab" href="#financement">
+                  Loyers
+                  {% if location.dernier_financement and location.dernier_financement.loyer != location.loyer_base %}
+                      <span class=" alert-warning" title="Loyer de base modifié">({{ location.dernier_financement.loyer }})</span>
+                  {% endif %}
+              </a></li>
           <li><a data-toggle="tab" href="#comptabilite"><span style="color:{% if location.tot_suivis_paye <  location.total_frais%}red;{% else %}green;{% endif %}">Comptabilité</span></a></li>
       </ul>
     <div class="tab-content">
@@ -131,11 +138,13 @@
           <label class="control-label">Locataires</label>
           <table class="table table-striped table-hover">
             <thead>
-                <th>Nom</th>
-                <th>Prénom</th>
-                <th>Informations complémentaires</th>
-                <th>Principal</th>
-                <th></th>
+                <tr>
+                    <th>Nom</th>
+                    <th>Prénom</th>
+                    <th>Informations complémentaires</th>
+                    <th>Principal</th>
+                    <th></th>
+                </tr>
             </thead>
               <tbody>
             {% for locataire in location.locataires %}
@@ -165,12 +174,14 @@
         <div id="suivis" class="tab-pane fade">
             <table class="table ">
                 <thead>
-                  <th>Date paiement</th>
-                  <th>Etat</th>
-                  <th>Loyer</th>
-                  <th>Charges</th>
-                  <th>Remarque</th>
-                  <th></th>
+                    <tr>
+                      <th>Date paiement</th>
+                      <th>Etat</th>
+                      <th>Loyer</th>
+                      <th>Charges</th>
+                      <th>Remarque</th>
+                      <th></th>
+                    </tr>
                 </thead>
             {% for s in location.suivis_anterieurs %}
                   <tr class="{{s.etat_suivi}}">
@@ -195,11 +206,13 @@
         <div id="frais" class="tab-pane fade">
            <table class="table table-striped table-hover">
               <thead>
-                  <th>Entrepreneur</th>
-                  <th>Description</th>
-                  <th>Montant</td>
-                  <th>Date réalisation</th>
-                  <th></th>
+                  <tr>
+                      <th>Entrepreneur</th>
+                      <th>Description</th>
+                      <th>Montant</th>
+                      <th>Date réalisation</th>
+                      <th></th>
+                  </tr>
                 </thead>
           {% for frais in location.liste_frais %}
               <tr>
@@ -229,11 +242,13 @@
           <label class="control-label">Historique loyers de la location</label>
           <table class="table table-striped table-hover">
             <thead>
-                <th>Date début</th>
-                <th>Date fin</th>
-                <th>Loyer</th>
-                <th>Charges</th>
-                <th>Indice santé</th>
+                <tr>
+                    <th>Date début</th>
+                    <th>Date fin</th>
+                    <th>Loyer</th>
+                    <th>Charges</th>
+                    <th>Indice santé</th>
+                </tr>
             </thead>
               <tbody>
             {% for financement in location.financements %}
@@ -248,8 +263,8 @@
             <tr style="text-align:right">
               <td colspan="5">
                   <a href="{% url 'financement-new' location.pk %}?prev=fl"
-                     title="Pour ajouter un nouveau financement">
-                      <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
+                     title="Pour ajouter un nouveau financement" class="btn btn-default pull-right">
+                      Modifier montant loyer/charges
                   </a>
               </td>
             </tr>
@@ -260,8 +275,10 @@
             <br>
             <table class="table">
                 <thead>
-                    <th>Frais ({{ location.liste_frais|length }})</th>
-                    <th>Revenus</th>
+                    <tr>
+                        <th>Frais ({{ location.liste_frais|length }})</th>
+                        <th>Revenus</th>
+                    </tr>
                 </thead>
                 <tbody>
                     <tr>

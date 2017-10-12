@@ -1,56 +1,14 @@
-from django.shortcuts import render
-from PyPDF2.pdf import RectangleObject
-from reportlab.pdfgen import canvas
-from django.contrib.auth.decorators import login_required
-from reportlab.pdfgen.canvas import Canvas
-from main.models import *
-from django.views.generic import DetailView
-from django.core.urlresolvers import reverse
-import os
-from .exportUtils import export_xls_batiment
-from django.http import HttpResponseRedirect
-from django.shortcuts import render, get_object_or_404
-from django.utils import timezone
-from dateutil.relativedelta import relativedelta
-import datetime
-from django.db import models
 from django.views.generic import *
-from django.core.urlresolvers import reverse_lazy
-from main.forms import PersonneForm, BatimentForm, ProprietaireForm, FraisMaintenanceForm, SocieteForm, ContratLocationForm, FileForm
-import datetime
 
-from dateutil.relativedelta import relativedelta
-from . import batiment, proprietaire, suivis, alertes, contratlocation, financement, locataire, contratgestion
 from io import BytesIO
-from django.http import HttpResponse
-from django.conf import settings
 from reportlab.lib.pagesizes import A4
-from reportlab.lib.enums import TA_JUSTIFY, TA_RIGHT, TA_CENTER, TA_LEFT
-from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, Image, PageBreak, Table, TableStyle, KeepTogether, KeepInFrame, BaseDocTemplate
+from reportlab.platypus import SimpleDocTemplate, Paragraph
 
-from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
+from reportlab.lib.styles import ParagraphStyle
 from reportlab.lib.units import mm
-from reportlab.lib import colors
-from django.utils.translation import ugettext_lazy as _
-import datetime
-import json
-import sys
-import PyPDF2
-from PyPDF2 import PdfFileMerger,  PdfFileReader, PdfFileWriter
-from io import StringIO
-from urllib.request import urlopen
-from urllib.request import Request
-from django.conf import settings
-import os
-from  reportlab.platypus.tableofcontents import TableOfContents
-import os.path
-from reportlab.lib import utils
+from PyPDF2 import PdfFileMerger,  PdfFileReader
 
-from reportlab.lib.units import cm, inch
 from reportlab.lib.pagesizes import A4 as A4
-from reportlab.platypus.doctemplate import PageTemplate, BaseDocTemplate, NextPageTemplate
-from reportlab.platypus.tableofcontents import TableOfContents
-from reportlab.platypus.frames import Frame
 
 PAGE_SIZE = A4
 MARGIN_SIZE = 15 * mm

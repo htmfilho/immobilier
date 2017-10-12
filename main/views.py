@@ -686,7 +686,6 @@ def merge_pdf2(request):
     for fname in pdfs:
         input = PdfFileReader(open(fname, 'rb'))
 
-        number_of_page = input.getNumPages()
         output.addPage(input.getPage(0))
 
         # if no_page ==0:
