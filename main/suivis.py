@@ -28,6 +28,8 @@ from datetime import datetime
 from main.forms import SuiviForm
 from django.shortcuts import redirect
 from main import models as mdl
+from django.http import HttpResponseRedirect
+from django.core.urlresolvers import reverse
 
 
 def suivis_search(request):
@@ -77,6 +79,7 @@ def refresh_suivis(request):
 
 
 def suivis_update(request):
+    print('updat')
     if request.method == 'GET':
         pass
     elif request.method == 'POST':
@@ -100,7 +103,9 @@ def suivis_update(request):
                    })
 
 
-def suivis_updatel(request, suivi_id):
+def suivis_updatel(request, suivi_id, previous):
+    print('suivis_updatel')
+    print(previous)
     suivi = get_object_or_404(mdl.suivi_loyer.SuiviLoyer, pk=suivi_id)
     # etat =  request.POST['etat']
     # print (etat)
@@ -117,11 +122,14 @@ def suivis_updatel(request, suivi_id):
                   {'suivi':      suivi,
                    'date_debut': date_debut,
                    'date_fin':   date_fin,
-                   'etat':       etat})
+                   'etat':       etat,
+                   'previous': previous})
 
 
 def update_suivi(request):
+    print('update_suivi')
     etat = request.POST['etat']
+    previous = request.POST['previous']
     suivi = get_object_or_404(mdl.suivi_loyer.SuiviLoyer, pk=request.POST['id'])
 
     if request.POST.get('date_paiement_reel', None):
@@ -155,6 +163,12 @@ def update_suivi(request):
     if form.is_valid():
         suivi.save()
         if request.POST.get('previous', None):
+            if previous == 'liste':
+                return redirect("suivis")
+            if previous == 'home':
+                return redirect("home")
+            if previous == 'location':
+                return HttpResponseRedirect(reverse('location-prepare-update-all', args=(suivi.financement_location.contrat_location.id, )))
             return redirect(request.POST.get('previous', None))
         else:
             if etat == 'TOUS':
@@ -165,5 +179,15 @@ def update_suivi(request):
     else:
         return render(request, "suivi/suivi_form.html",
                       {'suivi':      suivi,
-                       'form': form})
+                       'form': form,
+                       'previous': previous})
 
+
+def suivis_update_liste(request, suivi_id):
+    return suivis_updatel(request, suivi_id, 'liste')
+
+def suivis_update_home(request, suivi_id):
+    return suivis_updatel(request, suivi_id, 'home')
+
+def suivis_update_location(request, suivi_id):
+    return suivis_updatel(request, suivi_id, 'location')

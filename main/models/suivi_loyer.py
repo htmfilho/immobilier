@@ -43,7 +43,7 @@ class SuiviLoyerAdmin(admin.ModelAdmin):
     list_display = ('loyer_percu', 'etat_suivi', 'financement_location')
     fieldsets = ((None, {'fields': ('loyer_percu', 'etat_suivi', 'financement_location')}),)
     search_fields = ['etat_suivi', 'financement_location__contrat_location']
-
+    raw_id_fields = ('financement_location', )
 
 class SuiviLoyer(models.Model):
     financement_location = models.ForeignKey('FinancementLocation')

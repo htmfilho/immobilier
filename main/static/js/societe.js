@@ -28,8 +28,7 @@ $("#bt_save_new_societe_new").click(function(event) {
                 }
             });
             if(max_id > 0){
-                alert('kk');
-                $("#slt_societes").append(new Option(nom, max_id));
+               $("#slt_societes").append(new Option(nom, max_id));
                 $("#slt_societes_locataire").append(new Option(nom, max_id));
             }
 

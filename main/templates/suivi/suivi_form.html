@@ -1,13 +1,18 @@
 
 {% extends "layout.html" %}
 {% block breadcrumb %}
-  <li><a href="{% url 'suivis' %}">Les suivis</a></li>
-  <li class="active">Suivi</li>
+    {%  if previous == 'liste' %}
+      <li><a href="{% url 'suivis' %}">Les suivis</a></li>
+      <li class="active">Suivi</li>
+    {% endif %}
+    {%  if previous == 'location' %}
+        <li class="active">Location</li>
+    {% endif %}
 {% endblock %}
 {% block content %}
 <form  method="post" action="{% url 'update_suivi' %}">
   {% csrf_token %}
-  <input type="hidden" id="previous" name="previous" value="{{request.META.HTTP_REFERER}}"/>
+  <input type="hidden" id="previous" name="previous" value="{{ previous }}"/>
   <input type="hidden" value="{{date_debut|date:"j/m/Y"}}" name="date_debut"/>
   <input type="hidden" value="{{date_fin|date:"j/m/Y"}}" name="date_fin"/>
   <input type="hidden" value="{{etat}}" name="etat"/>

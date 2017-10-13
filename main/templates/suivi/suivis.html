@@ -55,13 +55,15 @@
 {% if suivis|length > 0 %}
   <table class="table table-hover" id="tbl_suivis_list">
     <thead>
-      <th>Batiment</th>
-      <th>Date paiement</th>
-      <th>Etat</th>
-      <th class="no-sort">Loyer</th>
-      <th class="no-sort">Charges</th>
-      <th class="no-sort">Remarque</th>
-      <th></th>
+        <tr>
+          <th>Batiment</th>
+          <th>Date paiement</th>
+          <th>Etat</th>
+          <th class="no-sort">Loyer</th>
+          <th class="no-sort">Charges</th>
+          <th class="no-sort">Remarque</th>
+          <th></th>
+        </tr>
     </thead>
     <tbody>
     {% for s in suivis %}
@@ -77,7 +79,7 @@
         {% endif %}
         <td>{{s.remarque| default_if_none:"-" }}</td>
         <td>
-            <a href="{% url 'suivis-updatel' s.id %}?dated={{date_debut|date:"j/m/Y"}}&datef={{date_fin|date:"j/m/Y"}}&etat={{etat}}"
+            <a href="{% url 'suivis-update-liste' s.id %}?dated={{date_debut|date:"j/m/Y"}}&datef={{date_fin|date:"j/m/Y"}}&etat={{etat}}"
                title="Pour modifier un suivi"
                onclick="submit()">
                 <span class="glyphicon glyphicon-pencil" aria-hidden="true"></span>

@@ -98,6 +98,7 @@ def new_without_known_location(request):
 
 @login_required
 def add(request):
+    print('add locataire')
     locataire_id = get_key(request.POST.get('locataire_id', None))
     location_id = request.POST.get('location_id', None)
     personne_id = get_key(request.POST.get('personne_id', None))

@@ -57,7 +57,13 @@ urlpatterns = [
     url(r'^suivis/$', suivis.suivis, name='suivis'),
     url(r'^suivis/search$', suivis.suivis_search, name='suivis_search'),
     url(r'^suivis/update$', suivis.suivis_update, name='suivis-update'),
-    url(r'^suivis/updatel/([0-9]+)/$', suivis.suivis_updatel, name='suivis-updatel'),
+    # url(r'^suivis/updatel/([0-9]+)/$', suivis.suivis_updatel, name='suivis-updatel'),
+    url(r'^suivis/updatel/([0-9]+)/liste/$', suivis.suivis_update_liste, name='suivis-update-liste'),
+    url(r'^suivis/updatel/([0-9]+)/home/$', suivis.suivis_update_home, name='suivis-update-home'),
+    url(r'^suivis/updatel/([0-9]+)/location/$', suivis.suivis_update_location, name='suivis-update-location'),
+
+
+
     url(r'^suivis/update_suivi$', suivis.update_suivi, name='update_suivi'),
 
 

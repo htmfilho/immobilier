@@ -42,12 +42,14 @@
           <font class="erreur_formulaire">{{ form.email.errors|striptags }}</font>
       </div>
       <div class="col-md-6">
-        {% if personne.id %}
-            <label>Type personne</label><br>
-            {{ personne.type }}
-        {% else %}
-            -
-        {% endif %}
+          {% if personne.type%}
+            {% if personne.id %}
+                <label>Type personne</label><br>
+                {{ personne.type }}
+            {% else %}
+                -
+            {% endif %}
+          {% endif %}
       </div>
     </div>
     <br>

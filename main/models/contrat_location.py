@@ -31,7 +31,11 @@ from main.models import suivi_loyer as SuiviLoyer
 from main.models import indice_sante as IndiceSante
 from main.models import alerte as Alerte
 from dateutil.relativedelta import relativedelta
+from django.contrib import admin
 
+
+class ContratLocationAdmin(admin.ModelAdmin):
+    raw_id_fields = ('batiment', 'assurance', 'indice_sante_base')
 
 class ContratLocation(models.Model):
     batiment = models.ForeignKey('Batiment')
