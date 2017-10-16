@@ -6,7 +6,7 @@
 {% block content %}
     <form id="financement_form" method="post" action="{% url 'create-financement' %}">
         {% csrf_token %}
-        <input type="hidden" id="previous" name="previous" value="{{request.META.HTTP_REFERER }}"/>
+        <input type="hidden" id="previous" name="previous" value="{{ previous }}"/>
         <input type="hidden" value="{{ prev }}" name="prev"/>
         <input type="hidden" value="{{ id_location }}" id="id" name="id"/>
         <br>

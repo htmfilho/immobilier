@@ -50,16 +50,20 @@ def new(request, location_id):
                   {'old_financement': financement,
                    'nouveau_financement': nouveau_financement,
                    'id_location': location.id,
-                   'prev': request.GET.get('prev', None) })
+                   'prev': request.GET.get('prev', None),
+                   'previous': 'location'})
 
 
 def create(request):
+    location = mdl.contrat_location.find_by_id(request.POST['id'])
     if request.POST.get('cancel_financement_loc_new', None):
         previous = request.POST.get('previous', None)
-        return redirect(previous)
+        if previous == 'location':
+            return render(request, "contratlocation_update.html",
+                          {'location': location})
     else:
         prev = request.POST.get('prev', None)
-        location = mdl.contrat_location.find_by_id(request.POST['id'])
+
         # todo : récupérer le nouveau financement, adapter l'ancien et sauver le tout en bd
         # adaptation du financement courant
         financement_courant = location.dernier_financement
@@ -82,9 +86,10 @@ def create(request):
 
         financement_courant = mdl.financement_location.find_by_id(location.financement_courant.id)
 
-        if prev == 'fl':
+        if prev == 'fl' or previous == 'location':
             return render(request, "contratlocation_update.html",
                           {'location': location})
+
 
         return redirect('/contratlocations/')
 
