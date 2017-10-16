@@ -1,12 +1,13 @@
 {% extends "layout.html" %}
 {% load l10n %}
+
 {% block breadcrumb %}
     {% if location.batiment %}
         <li><a href="{% url 'batiment' location.batiment.id  %}">Batiment</a></li>
     {% endif %}
-  <li class="active">Location</li>
-
+    <li class="active">Location</li>
 {% endblock %}
+
 {% block content %}
 <div class="panel panel-default">
   <div class="panel-body">
@@ -164,8 +165,11 @@
             </tr>
             {% endfor%}
             <tr style="text-align:right">
-              <td colspan="5"><a href="{% url 'locataire-new' location.pk %}"
-                                 title="Pour ajouter un nouveau locataire"><span class="glyphicon glyphicon-plus" aria-hidden="true"></span></a>
+              <td colspan="5">
+                  <a href="{% url 'locataire-new' location.pk %}"
+                     title="Pour ajouter un nouveau locataire">
+                      <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
+                  </a>
               </td>
             </tr>
               </tbody>

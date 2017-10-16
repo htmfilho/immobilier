@@ -198,7 +198,7 @@
                    <div class="col-md-11">
                    </div>
                    <div class="col-md-1">
-                     {% if batiment.location_actuelle%}
+                     {% if batiment.location_actuelle %}
                      {%else%}
                       <a href="{% url 'location-create-batiment' batiment.id %}?prev=fb"
                          class="btn pull-right"
@@ -223,12 +223,16 @@
                       </table>
                       {% else %}
                          Pas de locataire encodé actuellement
+                         <a href="{% url 'locataire-new' batiment.location_actuelle.pk %}"
+                            title="Pour ajouter un nouveau locataire">
+                             <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
+                         </a>
                       {% endif %}
                   {% endif %}
                   {% if batiment.location_actuelle %}
                   <a href="{% url 'locataire-new' batiment.location_actuelle.id %}"
                      style="visibility:hidden;display:none;"
-                     title="Pour ajouter un nouveau locataire 1"
+                     title="Pour ajouter un nouveau locataire"
                      class="btn pull-right"><span class="glyphicon glyphicon-plus" aria-hidden="true"></span></a>
                   {% endif %}
               </div>
