@@ -3,9 +3,12 @@
     <div class="panel-body">
         <table class="table table-striped table-hover">
             <thead>
-            <th>Bien</th>
-            <th>Locataire(s)</th>
-            <th>Location</th>
+                <tr>
+                    <th>Bien</th>
+                    <th>Locataire(s)</th>
+                    <th>Location</th>
+                    <th>Gestion</th>
+                </tr>
             </thead>
             {% for batiment in batiments %}
                 <tr>
@@ -35,8 +38,8 @@
                                 Fin: &nbsp;{{ batiment.location_actuelle.date_fin|date:"j/m/Y" }}
                             {%endif%}</td></tr>
                         </table>
-
                     </td>
+                    <td><input type="checkbox" {% if batiment.en_gestion %}checked{% endif %} disabled></td>
                 </tr>
             {% endfor%}
         </table>

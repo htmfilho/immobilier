@@ -4,10 +4,13 @@
 
         <table class="table table-striped table-hover">
             <thead>
-            <th>Personne</th>
-            <th>Bien</th>
-            <th>Location</th>
-            <th></th>
+                <tr>
+                    <th>Personne</th>
+                    <th>Bien</th>
+                    <th>Location</th>
+                    <th></th>
+                    <th></th>
+                </tr>
             </thead>
             <tbody>
             {% for locataire in locataires %}
@@ -34,6 +37,8 @@
                            onclick="return confirm('Sûr de vouloir supprimer?')"><span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
                         </a>
                     </td>
+                    <td>
+                        <input type="checkbox" {% if locataire.contrat_location.batiment.en_gestion  %}checked{% endif %} disabled>
                     </td>
 
                 </tr>

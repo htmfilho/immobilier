@@ -29,14 +29,7 @@ from dateutil.relativedelta import relativedelta
 import datetime
 import calendar
 from main.models import batiment as Batiment
-
-
-ETAT = (
-    ('A_VERIFIER', 'A vérifier'),
-    ('IMPAYE', 'Impayé'),
-    ('EN_RETARD', 'En retard'),
-    ('PAYE', 'Payé')
-)
+from main.models.enums import etat_suivi
 
 
 class SuiviLoyerAdmin(admin.ModelAdmin):
@@ -48,7 +41,7 @@ class SuiviLoyerAdmin(admin.ModelAdmin):
 class SuiviLoyer(models.Model):
     financement_location = models.ForeignKey('FinancementLocation')
     date_paiement = models.DateField(auto_now=False, auto_now_add=False)
-    etat_suivi = models.CharField(max_length=10, choices=ETAT, default='A_VERIFIER')
+    etat_suivi = models.CharField(max_length=10, choices=etat_suivi.ETATS, default=etat_suivi.A_VERIFIER)
     remarque = models.TextField(blank=True, null=True)
     loyer_percu = models.DecimalField(max_digits=5, decimal_places=2, blank=True, null=True)
     charges_percu = models.DecimalField(max_digits=5, decimal_places=2, blank=True, null=True)
@@ -97,13 +90,13 @@ def get_param(etat_param):
 def find_suivis_a_verifier():
     return SuiviLoyer.objects.filter(Q(date_paiement__gte=timezone.now(),
                                        date_paiement__lte=timezone.now() + relativedelta(months=1),
-                                       etat_suivi='A_VERIFIER')
-                                     | Q(date_paiement__lte=timezone.now(), etat_suivi='A_VERIFIER'))
+                                       etat_suivi=etat_suivi.A_VERIFIER)
+                                     | Q(date_paiement__lte=timezone.now(), etat_suivi=etat_suivi.A_VERIFIER))
 
 
 def find_suivis_a_verifier_proche():
     return SuiviLoyer.objects.filter(Q(date_paiement__lte=timezone.now() + relativedelta(months=2),
-                                       etat_suivi='A_VERIFIER'))
+                                       etat_suivi=etat_suivi.A_VERIFIER))
 
 
 def find_suivis_by_etat_suivi(date_ref, etat_suivi):

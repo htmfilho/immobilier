@@ -57,17 +57,6 @@ from django.forms import formset_factory
 from main.pages_utils import PAGE_LISTE_BATIMENTS
 from main.models.enums import etat_honoraire
 
-# def log_out(request):
-#     print('log_out')
-#     logout(request)
-#     if settings.OVERRIDED_LOGOUT_URL:
-#         return redirect(settings.OVERRIDED_LOGOUT_URL)
-#     return redirect('logged_out')
-#
-# def logged_out(request):
-#     print('logged_out')
-#     return layout.render(request, 'registration/logged_out.html', {})
-
 
 class ContratGestionList(ListView):
     model = mdl.contrat_gestion

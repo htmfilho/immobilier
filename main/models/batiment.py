@@ -33,6 +33,7 @@ from main.models import locataire as Locataire
 from main.models import frais_maintenance as FraisMaintenance
 from main.models import suivi_loyer as SuiviLoyer
 from main.models import contrat_gestion as ContratGestion
+from itertools import chain
 
 
 class BatimentAdmin(admin.ModelAdmin):
@@ -210,6 +211,7 @@ class Batiment(models.Model):
         return False
 
 
+
 def autocomplete_search_fields():
     return 'localite'
 
@@ -224,8 +226,18 @@ def find_batiment(id):
 
 def find_batiments_gestionnaire():
     personne = Personne.find_gestionnaire_default()
+    batiments_gestionnaire=[]
     if personne:
-        return Proprietaire.find_batiment_by_personne(personne)
+        batiments_gestionnaire =  Proprietaire.find_batiment_by_personne(personne)
+        batiments_en_gestion = find_batiment_by_gestionnaire()
+        # return batiments_gestionnaire
+        # return chain(batiments_gestionnaire,batiments_en_gestion)
+        # bats = []
+        # for b in batiments_gestionnaire:
+        #     bats.append(b)
+        # for b in batiments_gestionnaire:
+        #     bats.append(b)
+        return  chain(batiments_gestionnaire, batiments_en_gestion)
     return None
 
 
@@ -234,3 +246,12 @@ def search_par_proprietaire(proprietaire_id=None):
         proprio = Proprietaire.find_proprietaire(proprietaire_id)
         return Proprietaire.find_batiment_by_personne(proprio.proprietaire)
     return Batiment.objects.all()
+
+
+def find_batiment_by_gestionnaire():
+    res = []
+    batiments_en_gestion = ContratGestion.find_my_contrats()
+    for bat in batiments_en_gestion:
+        if bat not in res:
+            res.append(bat.batiment)
+    return res

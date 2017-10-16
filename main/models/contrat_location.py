@@ -164,10 +164,10 @@ class ContratLocation(models.Model):
         tot = 0
         for f in financements:
             sui = SuiviLoyer. \
-                SuiviLoyer.objects.filter(financement_location=f, etat_suivi='PAYE')
+                SuiviLoyer.objects.filter(financement_location=f, etat_suivi__in=('PAYE', 'SURPAYE'))
             if sui.exists():
                 for s in sui:
-                    tot += s.financement_location.loyer
+                    tot += s.loyer_percu
 
         return tot
 

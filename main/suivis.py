@@ -30,6 +30,8 @@ from django.shortcuts import redirect
 from main import models as mdl
 from django.http import HttpResponseRedirect
 from django.core.urlresolvers import reverse
+from main.models.enums import etat_suivi
+from decimal import Decimal
 
 
 def suivis_search(request):
@@ -47,7 +49,6 @@ def suivis_search(request):
 
 
 def list_suivis(request, date_debut, date_fin, etat):
-
     return render(request, "suivi/suivis.html",
                   {'date_debut': date_debut,
                    'date_fin':    date_fin,
@@ -161,6 +162,9 @@ def update_suivi(request):
     form = SuiviForm(data=request.POST)
 
     if form.is_valid():
+        print(type( suivi.loyer_percu))
+        if Decimal(suivi.loyer_percu) > suivi.financement_location.loyer:
+            suivi.etat_suivi = etat_suivi.SURPAYE
         suivi.save()
         if request.POST.get('previous', None):
             if previous == 'liste':

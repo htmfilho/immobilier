@@ -25,6 +25,7 @@ from django.db import models
 from main.models import professionnel as Professionnel
 from main.models import personne as Personne
 from main.models import proprietaire as Proprietaire
+from main.models import contrat_gestion as ContratGestion
 
 
 class Locataire(models.Model):
@@ -81,6 +82,7 @@ def find_my_locataires():
         batiments = Proprietaire.find_batiment_by_personne(personne)
         for b in batiments:
             l.extend(b.locataires_actuels2())
+        l.extend(find_locataires_by_gestionnaire())
     return l
 
 
@@ -94,3 +96,11 @@ def find_all():
 
 def find_by_personne(une_personne):
     return Locataire.objects.filter(personne=une_personne)
+
+
+def find_locataires_by_gestionnaire():
+    l = []
+    batiments_en_gestion = ContratGestion.find_my_contrats()
+    for bat in batiments_en_gestion:
+        l.extend(bat.batiment.locataires_actuels2())
+    return l

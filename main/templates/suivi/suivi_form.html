@@ -10,106 +10,112 @@
     {% endif %}
 {% endblock %}
 {% block content %}
-<form  method="post" action="{% url 'update_suivi' %}">
-  {% csrf_token %}
-  <input type="hidden" id="previous" name="previous" value="{{ previous }}"/>
-  <input type="hidden" value="{{date_debut|date:"j/m/Y"}}" name="date_debut"/>
-  <input type="hidden" value="{{date_fin|date:"j/m/Y"}}" name="date_fin"/>
-  <input type="hidden" value="{{etat}}" name="etat"/>
-  <input type="hidden" value="{{suivi.id}}" name="id"/>
+    <form  method="post" action="{% url 'update_suivi' %}">
+      {% csrf_token %}
+      <input type="hidden" id="previous" name="previous" value="{{ previous }}"/>
+      <input type="hidden" value="{{date_debut|date:"j/m/Y"}}" name="date_debut"/>
+      <input type="hidden" value="{{date_fin|date:"j/m/Y"}}" name="date_fin"/>
+      <input type="hidden" value="{{etat}}" name="etat"/>
+      <input type="hidden" value="{{suivi.id}}" name="id"/>
 
-  <div class="row">
-    <div class="col-md-2">
-      <label>Date paiement</label>
-      <input class="form-control"
-             name="date_paiement"
-             title="Date théorique du paiement"
-             value="{{ suivi.date_paiement|date:"j/m/Y" }}" readonly>
-    </div>
-    <div class="col-md-2">
-      <label>Date réelle paiement</label>
-      <input class="form-control"
-             name="date_paiement_reel"
-             id="date_paiement_reel"
-             title="Date réelle du paiement"
-             value="{{ suivi.date_paiement_reel|date:"j/m/Y" }}">
-    <span style="font-size: smaller;color:grey;">(Double clic = date du jour)</span>
-      {% if form.date_paiement_reel.errors%}<span class="erreur_formulaire">{{form.date_paiement_reel.errors}}</span>{%endif%}
-    </div>
-  </div>
-    <br>
-  <div class="row">
-    <div class="col-md-4">
-      <label for="etat_suivi">Etat suivi</label>
-      <select class="form-control"  name="etat_suivi" id="etat_suivi" >
-        {% if suivi.etat_suivi == 'A_VERIFIER' %}
-        <option value="A_VERIFIER" selected>A vérifier</option>
-        {% else %}
-        <option value="A_VERIFIER">A vérifier</option>
-        {% endif %}
-        {% if suivi.etat_suivi == 'IMPAYE' %}
-        <option value="IMPAYE" selected>Impayé</option>
-        {% else %}
-        <option value="IMPAYE">Impayé</option>
-        {% endif %}
-        {% if suivi.etat_suivi == 'EN_RETARD' %}
-        <option value="EN_RETARD" selected>En retard</option>
-        {% else %}
-        <option value="EN_RETARD">En retard</option>
-        {% endif %}
-        {% if suivi.etat_suivi == 'PAYE' %}
-        <option value="PAYE" selected>Payé</option>
-        {% else %}
-        <option value="PAYE">Payé</option>
-        {% endif %}
-        {% if suivi.etat_suivi == 'TOUS' %}
-        <option value="TOUS" selected>-</option>
-        {% else %}
-        <option value="TOUS">-</option>
-        {% endif %}
-      </select>
-    </div>
-    <div class="col-md-2">
-    </div>
-
-  </div>
-<br>
-  <div class="row">
-    <div class="col-md-4">
-      <label>Loyer percu</label>
-      <input type="text" class="form-control"
-             id="txt_loyer_percu"
-             value="{{suivi.loyer_percu}}" name="loyer_percu"> (
-        <span id="spn_loyer_percu">Loyer attendu :
-            {{suivi.financement_location.loyer}}
-        </span>)
+      <div class="row">
+        <div class="col-md-2">
+          <label>Date paiement</label>
+          <input class="form-control"
+                 name="date_paiement"
+                 title="Date théorique du paiement"
+                 value="{{ suivi.date_paiement|date:"j/m/Y" }}" readonly>
+        </div>
+        <div class="col-md-2">
+          <label>Date réelle paiement</label>
+          <input class="form-control"
+                 name="date_paiement_reel"
+                 id="date_paiement_reel"
+                 title="Date réelle du paiement"
+                 value="{{ suivi.date_paiement_reel|date:"j/m/Y" }}">
+        <span style="font-size: smaller;color:grey;">(Double clic = date du jour)</span>
+          {% if form.date_paiement_reel.errors%}<span class="erreur_formulaire">{{form.date_paiement_reel.errors}}</span>{%endif%}
+        </div>
+      </div>
         <br>
-        <span style="font-size: smaller;color:grey;">(Double clic => loyer percu = montant attendu et etat = 'payé'"</span>
-        <input type="hidden" value="{{suivi.financement_location.loyer}}" id="hdn_loyer_attendu">
-    </div>
-    <div class="col-md-6">
-      {% if suivi.financement_location.charges > 0 %}
-      <label>Charges percues</label>
-      <input type="number"  class="form-control" value="{{suivi.charges_percu}}" name="charges_percu">({{suivi.financement_location.charges}})
-      {% endif %}
-    </div>
-  </div>
-<br>
-  <div class="row">
-    <div class="col-md-12">
-      <label>Remarque</label>
-      <input class="form-control" value="{{suivi.remarque| default_if_none:''}}" name="remarque">
-    </div>
-  </div>
-  {% if form.errors%}<span class="erreur_formulaire">{{form.errors}}</span>{%endif%}
-  <br>
+      <div class="row">
+        <div class="col-md-4">
+          <label for="etat_suivi">Etat suivi</label>
+          <select class="form-control"  name="etat_suivi" id="etat_suivi" >
+            {% if suivi.etat_suivi == 'A_VERIFIER' %}
+            <option value="A_VERIFIER" selected>A vérifier</option>
+            {% else %}
+            <option value="A_VERIFIER">A vérifier</option>
+            {% endif %}
+            {% if suivi.etat_suivi == 'IMPAYE' %}
+            <option value="IMPAYE" selected>Impayé</option>
+            {% else %}
+            <option value="IMPAYE">Impayé</option>
+            {% endif %}
+            {% if suivi.etat_suivi == 'EN_RETARD' %}
+            <option value="EN_RETARD" selected>En retard</option>
+            {% else %}
+            <option value="EN_RETARD">En retard</option>
+            {% endif %}
+            {% if suivi.etat_suivi == 'PAYE' %}
+            <option value="PAYE" selected>Payé</option>
+            {% else %}
+            <option value="PAYE">Payé</option>
+            {% endif %}
+              {% if suivi.etat_suivi == 'SURPAYE' %}
+                  <option value="SURPAYE" selected>Payé</option>
+              {% else %}
+                  <option value="SURPAYE">Sur-payé</option>
+              {% endif %}
 
-    <button type="submit" class="btn btn-primary pull-right" title="Enregistrer les infos sur le suivi">
-        <span class="glyphicon glyphicon-floppy-disk" aria-hidden="true"> Enregistrer</span>
-    </button>
+            {% if suivi.etat_suivi == 'TOUS' %}
+            <option value="TOUS" selected>-</option>
+            {% else %}
+            <option value="TOUS">-</option>
+            {% endif %}
+          </select>
+        </div>
+        <div class="col-md-2">
+        </div>
+
+      </div>
+    <br>
+      <div class="row">
+        <div class="col-md-4">
+          <label>Loyer percu</label>
+          <input type="text" class="form-control"
+                 id="txt_loyer_percu"
+                 value="{{suivi.loyer_percu}}" name="loyer_percu"> (
+            <span id="spn_loyer_percu">Loyer attendu :
+                {{suivi.financement_location.loyer}}
+            </span>)
+            <br>
+            <span style="font-size: smaller;color:grey;">(Double clic => loyer percu = montant attendu et etat = 'payé'"</span>
+            <input type="hidden" value="{{suivi.financement_location.loyer}}" id="hdn_loyer_attendu">
+        </div>
+        <div class="col-md-6">
+          {% if suivi.financement_location.charges > 0 %}
+          <label>Charges percues</label>
+          <input type="number"  class="form-control" value="{{suivi.charges_percu}}" name="charges_percu">({{suivi.financement_location.charges}})
+          {% endif %}
+        </div>
+      </div>
+    <br>
+      <div class="row">
+        <div class="col-md-12">
+          <label>Remarque</label>
+          <input class="form-control" value="{{suivi.remarque| default_if_none:''}}" name="remarque">
+        </div>
+      </div>
+      {% if form.errors%}<span class="erreur_formulaire">{{form.errors}}</span>{%endif%}
+      <br>
+
+        <button type="submit" class="btn btn-primary pull-right" title="Enregistrer les infos sur le suivi">
+            <span class="glyphicon glyphicon-floppy-disk" aria-hidden="true"> Enregistrer</span>
+        </button>
 
 
-</form>
+    </form>
 
 {% endblock %}
 
@@ -119,9 +125,9 @@
             var score = $(this).val().replace(',', '.');
             var regex = /^\d+(\.\d{0,2})?$/;
             $(this).val(score);
-
+            score = $(this).val()
             if(!regex.test(score)){
-                $(this).val(score);
+                $(this).val('');
             }
         });
 
