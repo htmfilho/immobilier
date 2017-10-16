@@ -63,7 +63,8 @@
               </div>
           </div>
         </div>
-        <div id="pnl_new_entrepreneur" style="visibility:hidden;display:none;background-color: #BAEEBA;margin:15px">
+        <div id="pnl_new_entrepreneur"
+             style="visibility:hidden;display:none;background-color: #BAEEBA;margin:15px">
             <br>
             <div class="row" style="margin:15px" >
                 <div class="col-md-4">
@@ -146,6 +147,20 @@
 
         if(!regex.test(score)){
             $("#txt_montant").val(score);
+        }
+    });
+    $("#chb_new_entrepreneur").click(function(event) {
+        if ($('#chb_new_entrepreneur').prop('checked')) {
+            $('#pnl_new_entrepreneur').css('visibility', 'visible');
+            $('#pnl_new_entrepreneur').css('display', 'block');
+            $('#slt_entrepreneur').prop('disabled', true);
+            $('#slt_entrepreneur').prop('disabled', true);
+            $('#slt_entrepreneur').prop('selectedIndex',0);
+
+        }else{
+            $('#pnl_new_entrepreneur').css('visibility', 'hidden');
+            $('#pnl_new_entrepreneur').css('display', 'none');
+            $('#slt_entrepreneur').prop('disabled', false);
         }
     });
 </script>

@@ -297,20 +297,7 @@
             $("#date_paiement_reel" ).datepicker({dateFormat:"dd/mm/yy"}).datepicker("setDate",new Date());
         });
 
-        $("#chb_new_entrepreneur").click(function(event) {
-            if ($('#chb_new_entrepreneur').prop('checked')) {
-                $('#pnl_new_entrepreneur').css('visibility', 'visible');
-                $('#pnl_new_entrepreneur').css('display', 'block');
-                $('#slt_entrepreneur').prop('disabled', true);
-                $('#slt_entrepreneur').prop('disabled', true);
-                $('#slt_entrepreneur').prop('selectedIndex',0);
 
-            }else{
-                $('#pnl_new_entrepreneur').css('visibility', 'hidden');
-                $('#pnl_new_entrepreneur').css('display', 'none');
-                $('#slt_entrepreneur').prop('disabled', false);
-            }
-        });
         $(".select_updatable").customComboBox({
 
             tipText : "Entrez la nouvelle valeur",
