@@ -121,16 +121,17 @@ class ContratLocation(models.Model):
         self.renonciation = (self.date_fin-relativedelta(days=10))
         c = super(ContratLocation, self).save(*args, **kwargs)
 
-        dernier_financement = self.financement_courant
+        dernier_financement = self.dernier_financement
         if dernier_financement:
-            date_debut_nouveau_fin = dernier_financement.date_fin + relativedelta(days=1)
-            dernier_financement.date_fin = self.date_fin
-            dernier_financement.save()
-            update_suivi_alerte(date_debut_nouveau_fin,
-                                self,
-                                dernier_financement,
-                                self.date_fin + relativedelta(days=1),
-                                'LOCATION')
+            if dernier_financement.date_fin:
+                date_debut_nouveau_fin = dernier_financement.date_fin + relativedelta(days=1)
+                dernier_financement.date_fin = self.date_fin
+                dernier_financement.save()
+                update_suivi_alerte(date_debut_nouveau_fin,
+                                    self,
+                                    dernier_financement,
+                                    self.date_fin + relativedelta(days=1),
+                                    'LOCATION')
         return c
 
     def liste_frais(self):

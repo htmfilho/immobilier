@@ -62,13 +62,15 @@ class Locataire(models.Model):
 
     def save(self,  *args, **kwargs):
         c = super(Locataire, self).save(*args, **kwargs)
-        professionnels = Professionnel.search(self.personne, self.societe, self.profession)
-        if not professionnels.exists():
-            professionnel = Professionnel.Professionnel()
-            professionnel.personne = self.personne
-            professionnel.societe = self.societe
-            professionnel.fonction = self.profession
-            professionnel.save()
+
+        if self.profession or self.societe:
+            professionnels = Professionnel.search(self.personne, self.societe, self.profession)
+            if not professionnels.exists():
+                professionnel = Professionnel.Professionnel()
+                professionnel.personne = self.personne
+                professionnel.societe = self.societe
+                professionnel.fonction = self.profession
+                professionnel.save()
         return c
 
 
