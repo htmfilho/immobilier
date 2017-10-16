@@ -72,23 +72,26 @@ def create(request, batiment_id):
                    })
 
 
-def prepare_update(request, id, previous):
+def prepare_update(request, frais_id, previous, location_id=None):
     print('prepare_update')
     print(previous)
-    frais = mdl.frais_maintenance.find_by_id(id)
+    frais = mdl.frais_maintenance.find_by_id(frais_id)
 
     return render(request, PAGE_FRAIS_FORM,
                   {'frais':  frais,
                    'action': UPDATE,
                    'entrepreneurs': mdl.professionnel.find_all(),
+                   'location_id': location_id,
                    'previous': previous})
 
 
 def update(request):
+    print('update')
+    location_id = request.POST.get('location_id', None)
     batiment_id = get_key(request.POST.get('batiment_id', None))
     action = request.POST.get('action', None)
     frais_id = request.POST.get('id', None)
-
+    print(action)
     if action == NEW:
         frais = mdl.frais_maintenance.FraisMaintenance()
         if batiment_id:
@@ -102,10 +105,13 @@ def update(request):
         else:
             frais.batiment = None
     frais.contrat_location = None
+    print(request.POST.get('contrat_location'))
+    contrat_location_id = location_id
     if request.POST.get('contrat_location') == 'on':
         cl = frais.batiment.location_actuelle
         if cl:
             frais.contrat_location = cl
+            contrat_location_id=cl.id
 
     professionnel = None
     if request.POST.get('new_entrepreneur') == 'on':
@@ -140,12 +146,13 @@ def update(request):
     form = FraisMaintenanceForm(data=request.POST)
     previous = request.POST.get('previous', None)
     if form.is_valid():
+        print('previous {}'.format(previous))
         frais.save()
 
         if previous == 'batiment':
             return HttpResponseRedirect(reverse('batiment', args=(batiment_id, )))
-        if previous == 'location':
-            return HttpResponseRedirect(reverse('location-prepare-update-all', args=(frais.contrat_location.id, )))
+        if previous == 'location' and contrat_location_id:
+            return HttpResponseRedirect(reverse('location-prepare-update-all', args=(contrat_location_id, )))
         if previous == 'dashboard':
             return redirect('home')
         if previous == 'liste':
@@ -235,6 +242,7 @@ def delete(request, id, previous):
 
 
 def contrat_new(request, contrat_location_id):
+    print('contrat_new')
     frais = mdl.frais_maintenance.FraisMaintenance()
     # previous = request.POST.get('previous', None)
     previous = "location"
@@ -244,6 +252,7 @@ def contrat_new(request, contrat_location_id):
         frais.batiment = location.batiment
     return render(request, PAGE_FRAIS_FORM,
                   {'frais':             frais,
+                   'location_id': contrat_location_id,
                    'personnes':         mdl.personne.find_all(),
                    'action':            NEW,
                    'batiments':         mdl.batiment.find_all(),
@@ -284,19 +293,22 @@ def get_redirection(batiment, contrat_location, previous, request):
 
 
 def prepare_update_from_batiment(request, id):
-    return prepare_update(request, id, BATIMENT)
+    return prepare_update(request, id, BATIMENT, None)
 
 
-def prepare_update_from_location(request, id):
-    return prepare_update(request, id, LOCATION)
+def prepare_update_from_location(request, id ):
+    print('prepare_update_from_location')
+    location_id = request.POST.get('id', None)
+    print(location_id)
+    return prepare_update(request, id, LOCATION, location_id)
 
 
 def prepare_update_from_dashboard(request, id):
-    return prepare_update(request, id, DASHBOARD)
+    return prepare_update(request, id, DASHBOARD, None)
 
 
 def prepare_update_from_list(request, id):
-    return prepare_update(request, id, LISTE)
+    return prepare_update(request, id, LISTE, None)
 
 
 def delete_frais_from_batiment(request, id):
