@@ -32,6 +32,8 @@ from main.views_utils import get_key
 from main import models as mdl
 from django.utils import timezone
 
+from django.http import HttpResponseRedirect
+
 
 def prepare_update(request, location_id):
     location = mdl.contrat_location.find_by_id(location_id)
@@ -41,7 +43,6 @@ def prepare_update(request, location_id):
 
 
 def update(request):
-    print('location update')
     previous = request.POST.get('previous', None)
     id = request.POST.get('id', None)
     form = ContratLocationForm(data=request.POST)
@@ -67,21 +68,19 @@ def update(request):
             # Les financements seront adaptés via le save
             location.save_prolongation(int(request.POST.get('type_prolongation')))
         else:
-            # print(form.date_debut)
-            date_debut_formulaire =  data['date_debut']
+            date_debut_formulaire = data['date_debut']
 
             if date_debut_formulaire != location.date_debut:
                 print('attention différence dans les dates')
             else:
                 print('pas de différence de date')
-            if data['loyer_base'] != location.loyer_base or data['charges_base'] != location.charges_base :
+            if data['loyer_base'] != location.loyer_base or data['charges_base'] != location.charges_base:
                 print('attention différence dans les  loyers/charges')
             else:
                 print('pas de difféence de loyer/char')
             location.save()
         if not prolongation_action:
             return redirect(previous)
-
 
     return render(request, "contratlocation_update.html",
                            {'location':    location,
@@ -128,12 +127,8 @@ def delete(request, location_id):
     location = get_object_or_404(mdl.contrat_location.ContratLocation, pk=location_id)
     if location:
         location.delete()
-    return render(request, "contratlocation_confirm_delete.html",
-                           {'object': location})
 
-
-def confirm_delete(request):
-    return redirect('/contratlocations/')
+    return HttpResponseRedirect(reverse('contratlocation_list'))
 
 
 def test(request):
@@ -206,7 +201,6 @@ def test(request):
 
 
 def prolongation(request):
-    print('prolongation')
     id_location = request.GET['id_location']
     type_prolongation = request.GET['type_prolongation']
     location = get_object_or_404(mdl.contrat_location.ContratLocation, pk=id_location)

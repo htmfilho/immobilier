@@ -156,7 +156,7 @@ urlpatterns = [
     # url(r'^location/(?P<pk>[0-9]+)/$', views.ContratLocationDetail.as_view(), name='contratlocation_detail'),
     # url(r'^contratlocations/$', views.ContratLocationList.as_view(), name='contratlocation_list'),
     url(r'^contratlocations/$', contratlocation.list, name='contratlocation_list'),
-    url(r'^location/delete/$', contratlocation.confirm_delete, name='confirm-delete-location'),
+
 
     url(r'^financement/new/([0-9]+)/$', financement.new, name='financement-new'),
     url(r'^financement/create/$', financement.create, name='create-financement'),

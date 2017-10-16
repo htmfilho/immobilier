@@ -88,7 +88,7 @@
                     <td>{{ contrat.date_fin|date:"j/m/Y" }}</td>
                     <td>{% if contrat.renonciation%}{{ contrat.renonciation|date:"j/m/Y" }}{% endif %}</td>
                     <td>
-                      <a href="{% url 'location-delete' contrat.pk%}"
+                      <a href="{% url 'location-delete' contrat.pk %}"
                          title="Pour supprimer un contrat de location"
                          onclick="return confirm('Sûr de vouloir supprimer?')">
                           <span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
