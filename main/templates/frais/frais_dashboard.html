@@ -2,17 +2,19 @@
     <label>Mes frais (pour mois en cours)</label>
     <table class="table table-condensed">
         <thead>
-        <th>Bien</th>
-        <th>Entrepreneur</th>
-        <th>Montant</th>
-        <th></th>
+            <tr>
+                <th>Bien</th>
+                <th>Entrepreneur</th>
+                <th>Montant</th>
+                <th></th>
+            </tr>
         </thead>
         <tbody>
         {% for f in mes_frais%}
             <tr>
-                <td>{{f.batiment}}</td>
-                <td>{{f.entrepreneur}}</td>
-                <td>{{f.montant}}</td>
+                <td>{{ f.batiment }}</td>
+                <td>{{ f.entrepreneur | default_if_none:''}}</td>
+                <td>{{ f.montant | default_if_none:'' }}</td>
                 <td>
                     <a href="{% url 'fraismaintenance-edit-from-dashboard' f.id %}"
                        title="Pour modifier des frais">
