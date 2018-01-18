@@ -34,6 +34,7 @@ class AlerteTest(TestCase):
     def test_find_by_etat_no_data(self):
         self.assertCountEqual(mdl_alerte.find_by_etat(alerte_etat.A_VERIFIER), [])
 
+
     def test_find_by_etat(self):
         une_alerte_a_verifier = AlerteFactory(etat=alerte_etat.A_VERIFIER)
         self.assertCountEqual(mdl_alerte.find_by_etat(alerte_etat.A_VERIFIER), [une_alerte_a_verifier])
