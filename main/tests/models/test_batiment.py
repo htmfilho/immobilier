@@ -22,11 +22,8 @@
 #
 ##############################################################################
 from django.test import TestCase
-from django.utils import timezone
-from dateutil.relativedelta import relativedelta
 from main.models import batiment as mdl_batiment
 from main.tests.factories.batiment import BatimentFactory
-from main.tests.factories.personne import PersonneFactory
 from main.tests.factories.proprietaire import ProprietaireFactory
 from main.tests.models import test_personne
 

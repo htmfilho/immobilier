@@ -22,6 +22,8 @@
 #
 ##############################################################################
 from main import views_utils
+from django.test import TestCase
+
 
 class ViewUtilsTest(TestCase):
 

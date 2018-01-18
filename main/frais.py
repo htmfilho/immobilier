@@ -31,13 +31,11 @@ from main.pages_utils import NEW, UPDATE, PAGE_FRAIS_FORM
 from main.views_utils import get_previous
 from django.http import HttpResponseRedirect
 from django.core.urlresolvers import reverse
+from main import societe
 
 LISTE = 'liste'
-
 DASHBOARD = 'dashboard'
-
 LOCATION = 'location'
-
 BATIMENT = 'batiment'
 
 
@@ -187,26 +185,30 @@ def get_fonction(request):
     if is_new_value(request.POST.get('new_fonction', None)):
         new_value = request.POST.get('new_fonction', None)
         if new_value:
-            fonction = mdl.fonction.Fonction(nom_fonction=new_value)
-            fonction.save()
-            return fonction
+            return creation_nouvelle_fonction(new_value)
     else:
-        fonction_id = get_key(request.POST.get('new_fonction', None))
-        return get_object_or_404(mdl.fonction.Fonction, pk=fonction_id)
+        return get_object_or_404(mdl.fonction.Fonction, pk=get_key(request.POST.get('new_fonction', None)))
     return None
+
+
+def creation_nouvelle_fonction(new_value):
+    fonction = mdl.fonction.Fonction(nom_fonction=new_value)
+    fonction.save()
+    return fonction
 
 
 def get_societe(request):
     if is_new_value(request.POST.get('new_societe', None)):
         new_value = request.POST.get('new_societe', None)
         if new_value:
-            societe = mdl.societe.Societe(nom=new_value)
-            societe.save()
-            return societe
+            return societe.creation_nouvelle_societe(new_value)
     else:
         societe_id = get_key(request.POST.get('new_societe', None))
         return get_object_or_404(mdl.societe.Societe, pk=societe_id)
     return None
+
+
+
 
 
 def get_personne(request):

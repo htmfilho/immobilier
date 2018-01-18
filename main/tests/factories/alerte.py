@@ -28,6 +28,8 @@ from main.models.enums import alerte_etat
 from django.conf import settings
 from django.utils import timezone
 from faker import Faker
+
+
 fake = Faker()
 
 

@@ -31,8 +31,10 @@ from faker import Faker
 from main.tests.factories.personne import PersonneFactory
 from main.tests.factories.batiment import BatimentFactory
 from main.tests.factories.financement_location import FinancementLocationFactory
-from main.models.suivi_loyer import ETAT
+from main.models.enums import etat_suivi
 import operator
+
+
 fake = Faker()
 
 
@@ -49,7 +51,7 @@ class SuiviLoyerFactory(factory.DjangoModelFactory):
     financement_location = factory.SubFactory(FinancementLocationFactory)
 
     date_paiement = factory.Faker('date_time_this_decade', before_now=True, after_now=False, tzinfo=_get_tzinfo())
-    etat_suivi = factory.Iterator(ETAT, getter=operator.itemgetter(0))
+    etat_suivi = factory.Iterator(etat_suivi, getter=operator.itemgetter(0))
     # remarque = models.TextField(blank=True, null=True)
     # loyer_percu = models.DecimalField(max_digits=5, decimal_places=2, blank=True, null=True)
     # charges_percu = models.DecimalField(max_digits=5, decimal_places=2, blank=True, null=True)

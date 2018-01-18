@@ -30,6 +30,7 @@ from django.http import HttpResponseRedirect
 from django.core.urlresolvers import reverse
 from django.http import HttpResponse
 import json
+from main import societe
 
 
 def get_personne(personne_id):
@@ -151,10 +152,8 @@ def populate_pays_naissance(request):
 
 def get_societe(request):
     if request.POST['societe'] == '-':
-        societe = mdl.societe.Societe(nom=request.POST.get('nom_nouvelle_societe', None),
-                                      description=request.POST.get('description_nouvelle_societe', None))
-        societe.save()
-        return societe
+        return societe.creation_nouvelle_societe(request.POST.get('nom_nouvelle_societe', None),
+                                      request.POST.get('description_nouvelle_societe', None))
     else:
         return mdl.societe.find_by_id(int(request.POST['societe']))
 

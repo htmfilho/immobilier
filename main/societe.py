@@ -119,3 +119,9 @@ def populate_societe(request):
         nouvelle_societe.localite = mdl.localite.search(localite_cp, localite_nom)
     return nouvelle_societe
 
+
+def creation_nouvelle_societe(new_value, a_description=None):
+    societe = mdl.societe.Societe(nom=new_value,
+                                  description=a_description)
+    societe.save()
+    return societe
