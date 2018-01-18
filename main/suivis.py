@@ -71,7 +71,6 @@ def refresh_suivis(request):
     etat = request.POST['etat']
     if etat == "TOUS":
         etat = None
-    # print(date_debut.strftime('%Y-%m-%d'))
     return render(request, "suivi/suivis.html",
                   {'date_debut':       date_debut,
                    'date_fin':         date_fin,
@@ -80,7 +79,6 @@ def refresh_suivis(request):
 
 
 def suivis_update(request):
-    print('updat')
     if request.method == 'GET':
         pass
     elif request.method == 'POST':
@@ -95,7 +93,6 @@ def suivis_update(request):
     etat = request.POST['etat']
     if etat == "TOUS":
         etat = None
-    # print(date_debut.strftime('%Y-%m-%d'))
 
     return render(request, "suivi/suivis.html",
                   {'date_debut':       date_debut,
@@ -105,11 +102,7 @@ def suivis_update(request):
 
 
 def suivis_updatel(request, suivi_id, previous):
-    print('suivis_updatel')
-    print(previous)
     suivi = get_object_or_404(mdl.suivi_loyer.SuiviLoyer, pk=suivi_id)
-    # etat =  request.POST['etat']
-    # print (etat)
     etat = request.GET['etat']
     date_debut = request.GET['dated']
     date_fin = request.GET['datef']
@@ -118,7 +111,6 @@ def suivis_updatel(request, suivi_id, previous):
     if date_fin:
         date_fin = datetime.strptime(date_fin, '%d/%m/%Y')
 
-    # etat = request.GET['etat']
     return render(request, "suivi/suivi_form.html",
                   {'suivi':      suivi,
                    'date_debut': date_debut,
@@ -128,7 +120,6 @@ def suivis_updatel(request, suivi_id, previous):
 
 
 def update_suivi(request):
-    print('update_suivi')
     etat = request.POST['etat']
     previous = request.POST['previous']
     suivi = get_object_or_404(mdl.suivi_loyer.SuiviLoyer, pk=request.POST['id'])
@@ -162,7 +153,6 @@ def update_suivi(request):
     form = SuiviForm(data=request.POST)
 
     if form.is_valid():
-        print(type( suivi.loyer_percu))
         if Decimal(suivi.loyer_percu) > suivi.financement_location.loyer:
             suivi.etat_suivi = etat_suivi.SURPAYE
         suivi.save()

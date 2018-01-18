@@ -52,10 +52,7 @@ def update(request):
     societe_id = None
     if request.POST['societe_id']:
         societe_id = int(request.POST['societe_id'])
-    if societe_id:
-        societe = get_object_or_404(mdl.societe.Societe, pk=societe_id)
-    else:
-        societe = mdl.societe.Societe()
+    societe = get_societe(societe_id)
 
     societe.nom = request.POST['nom']
     societe.description = request.POST['description']
@@ -75,11 +72,15 @@ def update(request):
     return HttpResponseRedirect(reverse('home'))
 
 
-def edit(request, societe_id):
+def get_societe(societe_id):
     if societe_id:
-        societe = get_object_or_404(mdl.societe.Societe, pk=societe_id)
+        return get_object_or_404(mdl.societe.Societe, pk=societe_id)
     else:
-        societe = mdl.societe.Societe()
+        return mdl.societe.Societe()
+
+
+def edit(request, societe_id):
+    societe = get_societe(societe_id)
     return render(request, "societe_form.html",
                   {'societe': societe,
                    'localites': mdl.localite.find_all()})
