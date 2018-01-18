@@ -24,6 +24,7 @@
 from . import views, batiment, proprietaire, suivis, alertes, contratlocation, financement, locataire, contratgestion, \
     frais, honoraire, personne, essai_pdf, essai3, assurance, fonction, societe, pays, fonction, societe, document,\
     lettre
+from main.pdf import image
 from django.conf.urls import url
 from django.contrib.auth.views import login, logout
 from django.conf import settings
@@ -69,9 +70,6 @@ urlpatterns = [
 
     # url(r'^update_personne/$', views.update_personne, name='update_personne'),
     url(r'^update_batiment/$', batiment.update, name='update_batiment'),
-
-    # test
-    url(r'^xlsRead', views.xlsRead, name='xlsRead'),
 
     # url(r'^photos/(?P<path>.*)$', 'django.views.static.serve', {
     #         'document_root': settings.MEDIA_ROOT,
@@ -174,9 +172,9 @@ urlpatterns = [
     url(r'^honoraire/edit/([0-9]+)/$', honoraire.honoraire_form, name='honoraire'),
     url(r'^honoraire/delete/(?P<pk>[0-9]+)/$', views.HonoraireDelete.as_view(), name='honoraire-delete'),
     url(r'^test/$', views.merge_form, name='test'),
-    url(r'^test/image/$', views.test_image, name='test_image'),
+    url(r'^test/image/$', image.test_image, name='test_image'),
     url(r'^test/merge/$', views.test_merge, name='test_merge'),
-    url(r'^test/upload/$', views.upload, name='upload'),
+    url(r'^test/upload/$', image.upload, name='upload'),
     url(r'^test/upload2/$', essai_pdf.test_create_pdf, name='test_pdf'),
     url(r'^test3/$', essai3.test, name='test3'),
 
@@ -202,6 +200,6 @@ urlpatterns = [
     url(r'^document/lettre_indexation_form/([0-9]+)/$', document.lettre_indexation_form, name='lettre_indexation_form'),
     url(r'^document/lettre_indexation_new/([0-9]+)/$', document.lettre_indexation_new, name='lettre_indexation_new'),
     url(r'^document/lettre_indexation/([0-9]+)/$', document.lettre_indexation, name='lettre_indexation'),
-
+    url(r'^manuel/$', views.manuel, name='manuel'),
 
 ]

@@ -583,3 +583,50 @@ def test(request):
     return response
 
     return render(request, "test.html")
+
+
+
+class DocTemplateWithTOC(SimpleDocTemplate):
+
+    def __init__(self, indexedFlowable, filename, firstPageNumber=1, **kw):
+        """toc is the TableOfContents object
+        indexedFlowale is a dictionnary with flowables as key and a dictionnary as value.
+            the sub-dictionnary have two key:
+                text: the text which will br print in the table
+                level: the level of the entry( modifying the indentation and the police
+        """
+        self._toc = []
+        self._tocStory = []
+        self._indexedFlowable = indexedFlowable
+        self._filename = filename
+        self._part = ""
+        self._firstPageNumber = firstPageNumber
+        SimpleDocTemplate.__init__(self, filename, **kw)
+
+        self._PAGE_HEIGHT = self.pagesize[1]
+        self._PAGE_WIDTH = self.pagesize[0]
+
+    def afterFlowable(self, flowable):
+        if flowable in self._indexedFlowable:
+            self._toc.append((self._indexedFlowable[flowable]["level"], self._indexedFlowable[flowable]["text"], self.page + self._firstPageNumber - 1))
+        try:
+            if flowable.getPart() != "":
+                self._part = flowable.getPart()
+        except:
+            pass
+
+    def handle_documentBegin(self):
+        self._part = ""
+        SimpleDocTemplate.handle_documentBegin(self)
+
+    def _prepareTOC(self):
+        headerStyle = ParagraphStyle({})
+        headerStyle.fontName = "LinuxLibertine-Bold"
+        headerStyle.alignment = TA_CENTER
+        entryStyle = ParagraphStyle({})
+        entryStyle.fontName = "LinuxLibertine"
+        entryStyle.spaceBefore = 8
+        self._tocStory.append(PageBreak())
+        self._tocStory.append(Spacer(cm, 1*cm))
+        self._tocStory.append(Paragraph(_("Table of contents"), headerStyle))
+        self._tocStory.append(Spacer(cm, 2*cm))

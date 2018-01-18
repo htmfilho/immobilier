@@ -75,6 +75,23 @@ class MyDocTemplate(BaseDocTemplate):
                 self.notify('TOCEntry', [1, text, self.page, key])
 
 
+class MyDocTemplate(BaseDocTemplate):
+    def __init__(self, filename, **kw):
+        frame1 = Frame(2.5*cm, 2.5*cm, 15*cm, 25*cm, id='F1')
+        self.allowSplitting = 0
+        BaseDocTemplate.__init__(self, filename, **kw)
+        self.addPageTemplates(PageTemplate('normal', [frame1], mainPageFrame))
+
+    def afterFlowable(self, flowable):
+        """Registers TOC entries."""
+        if flowable.__class__.__name__ == 'Paragraph':
+            text = flowable.getPlainText()
+            style = flowable.style.name
+            if style == 'Heading1':
+                self.notify('TOCEntry', (0, text, self.page))
+            if style == 'Heading2':
+                self.notify('TOCEntry', (1, text, self.page))
+
 def create_toc():
     """Creates the table of contents"""
     table_of_contents = TableOfContents()
@@ -135,3 +152,24 @@ def go(inpfn, firstpage, lastpage):
         canvas.showPage()
 
     canvas.save()
+
+def mainPageFrame(canvas, doc):
+    """The page frame used for all PDF documents."""
+
+    canvas.saveState()
+
+    pageNumber = canvas.getPageNumber()
+    canvas.line(2*cm, A4[1]-2*cm, A4[0]-2*cm, A4[1]-2*cm)
+    canvas.line(2*cm, 2*cm, A4[0]-2*cm, 2*cm)
+    if pageNumber > 1:
+        canvas.setFont('Times-Roman', 12)
+        canvas.drawString(4 * inch, cm, "%d" % pageNumber)
+        if hasattr(canvas, 'headerLine'):  # hackish
+            headerline = ' \xc2\x8d '.join(canvas.headerLine)
+            canvas.drawString(2*cm, A4[1]-1.75*cm, headerline)
+
+    canvas.setFont('Times-Roman', 8)
+    msg = "Generated with docpy. See http://www.reportlab.com!"
+    canvas.drawString(2*cm, 1.65*cm, msg)
+
+    canvas.restoreState()

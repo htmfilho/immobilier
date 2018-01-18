@@ -40,7 +40,20 @@ class IndiceSante(models.Model):
 
 
     def __str__(self):
-        return self.date_calcul + " " + str(self.annee_base) + str(self.indice)
+        ch = ""
+        if self.date_calcul:
+            ch += str(self.date_calcul)
+        else:
+            ch += ' - '
+        if self.annee_base:
+            ch = "{} {}".format(ch, str(self.annee_base))
+        else:
+            ch = '{} - '.format(ch)
+        if self.indice:
+            ch = "{} {}".format(ch, str(self.indice))
+        else:
+            ch = '{} - '.format(ch)
+        return ch
 
 
 def find_by_date(date_ref):

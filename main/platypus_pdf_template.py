@@ -68,6 +68,25 @@ class MyDocTemplate(BaseDocTemplate):
                 self.notify('TOCEntry', [1, text, self.page, key])
 
 
+
+class MyDocTemplate(BaseDocTemplate):
+    def __init__(self, filename, **kw):
+        frame1 = Frame(2.5*cm, 2.5*cm, 15*cm, 25*cm, id='F1')
+        self.allowSplitting = 0
+        BaseDocTemplate.__init__(self, filename, **kw)
+        self.addPageTemplates(PageTemplate('normal', [frame1], mainPageFrame))
+
+    def afterFlowable(self, flowable):
+        """Registers TOC entries."""
+        if flowable.__class__.__name__ == 'Paragraph':
+            text = flowable.getPlainText()
+            style = flowable.style.name
+            if style == 'Heading1':
+                self.notify('TOCEntry', (0, text, self.page))
+            if style == 'Heading2':
+                self.notify('TOCEntry', (1, text, self.page))
+
+
 def create_toc():
     """Creates the table of contents"""
     table_of_contents = TableOfContents()
