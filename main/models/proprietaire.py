@@ -34,7 +34,8 @@ class Proprietaire(models.Model):
 
     @property
     def batiments(self):
-        return Batiment.objects.filter(proprietaire=self)
+
+        return Batiment.find_by_proprietaire(self)
 
 
     def __str__(self):

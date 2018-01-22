@@ -31,10 +31,10 @@ from django.core.urlresolvers import reverse
 #
 #     @mock.patch('django.contrib.auth.decorators')
 #     @mock.patch('main.batiment.search_par_proprietaire')
-#     def test_search_par_proprietaire(self, mock_render, mock_decorators):
+#     def test_search_par_proprietaire_non_defini(self, mock_render, mock_decorators):
 #         mock_decorators.login_required = lambda x: x
 #         un_batiment = BatimentFactory()
-#         print('test_search_par_proprietaire')
+#         print('test_search_par_proprietaire_non_defini')
 #         request_factory = RequestFactory()
 #         request = request_factory.get(reverse('batiment', args=[un_batiment.id]))
 #         request.user = mock.Mock()

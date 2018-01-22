@@ -28,6 +28,8 @@ from main.models import locataire as Locataire
 from main.models import fonction as Fonction
 from main.models import professionnel as Professionnel
 from main.models import contrat_gestion as ContratGestion
+from django.contrib.auth.models import User
+
 
 PRENOM_GESTIONNAIRE = 'Stéphan'
 
@@ -63,6 +65,8 @@ class Personne(models.Model):
     num_compte_banque = models.CharField(max_length=30, blank=True, null=True)
     fonction = models.ForeignKey('Fonction', blank=True, null=True)
     titre = models.CharField(max_length=20, choices=CIVILITE, default='NON_PRECISE', blank=True, null=True)
+    user = models.OneToOneField(User, on_delete=models.CASCADE, blank=True, null=True)
+
 
     def __init__(self,  *args, **kwargs):
         super(Personne, self).__init__(*args, **kwargs)

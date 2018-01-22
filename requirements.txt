@@ -21,3 +21,4 @@ django-statici18n==1.1.5
 pdfkit
 wkhtmltopdf
 django-wkhtmltopdf
+coverage==4.4

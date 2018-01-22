@@ -255,3 +255,7 @@ def find_batiment_by_gestionnaire():
         if bat not in res:
             res.append(bat.batiment)
     return res
+
+
+def find_by_proprietaire(a_proprietaire):
+    return Batiment.objects.filter(proprietaire=a_proprietaire)
