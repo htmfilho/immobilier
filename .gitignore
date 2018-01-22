@@ -12,3 +12,4 @@ photos/LogoRBC.png
 *.pyc
 immovenv/
 main/templatetags/__pycache__/
+htmlcov/
