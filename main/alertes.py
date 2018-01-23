@@ -30,13 +30,12 @@ from main.pages_utils import PAGE_ALERTE_LIST
 def list(request):
     return render(request, PAGE_ALERTE_LIST,
                   {'alertes': mdl.alerte.find_by_etat(alerte_etat.VERIFIER),
-                   'etat_alerte': alerte_etat.VERIFIER })
+                   'etat_alerte': alerte_etat.VERIFIER})
 
 
 def update_a_verifier(request):
     etat_alerte = request.POST.get('txt_etat_alerte')
-    save_alerte(request.POST.get('alerte_id'))
-
+    save_alerte_a_verifier(request.POST.get('alerte_id'))
     return render_alerte(etat_alerte, request)
 
 
@@ -54,7 +53,7 @@ def render_alerte(etat_alerte, request):
                       {'alertes': mdl.alerte.find_all()})
 
 
-def save_alerte(alerte_id):
+def save_alerte_a_verifier(alerte_id):
     if alerte_id:
         alerte = mdl.alerte.find_by_id(alerte_id)
         alerte.etat = alerte_etat.VERIFIER
