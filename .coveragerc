@@ -8,6 +8,7 @@ omit =
     */immovenv/*
     */htmlcov/*
     */static/*
+    */pdf/*
 
 
 [report]
