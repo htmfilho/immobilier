@@ -184,13 +184,12 @@ def find_all():
 
 
 def search(date_fin):
-    out = None
-    queryset = ContratLocation.objects
+    print(date_fin)
     if date_fin:
-        queryset = queryset.filter(date_fin__gte=date_fin)
-    if date_fin:
-        out = queryset
-    return out
+        print('isssssssssssss')
+        return ContratLocation.objects.filter(date_fin__gte=date_fin)
+
+    return ContratLocation.objects.all()
 
 
 def find_by_batiment_dates(a_batiment):

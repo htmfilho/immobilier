@@ -34,6 +34,8 @@ from django.utils import timezone
 
 from django.http import HttpResponseRedirect
 
+CONTRAT_LOCATION_LIST_HTML = "location/contratlocation_list.html"
+
 
 def prepare_update(request, location_id):
     location = mdl.contrat_location.find_by_id(location_id)
@@ -116,9 +118,10 @@ def contrat_location_for_batiment(request, batiment_id):
 
 
 def list(request):
-    date_fin = timezone.now()
+    date_fin = timezone.now().date()
+    print(date_fin)
     locations = mdl.contrat_location.search(date_fin)
-    return render(request, "location/contratlocation_list.html",
+    return render(request, CONTRAT_LOCATION_LIST_HTML,
                            {'locations': locations,
                             'date_fin_filtre_location': date_fin})
 
