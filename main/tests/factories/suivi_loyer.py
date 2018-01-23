@@ -48,6 +48,7 @@ def _get_tzinfo():
 class SuiviLoyerFactory(factory.DjangoModelFactory):
     class Meta:
         model = 'main.SuiviLoyer'
+
     financement_location = factory.SubFactory(FinancementLocationFactory)
 
     date_paiement = factory.Faker('date_time_this_decade', before_now=True, after_now=False, tzinfo=_get_tzinfo())

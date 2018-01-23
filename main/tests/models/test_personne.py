@@ -22,10 +22,11 @@
 #
 ##############################################################################
 from django.test import TestCase
-from django.utils import timezone
-from dateutil.relativedelta import relativedelta
 from main.models import personne as mdl_personne
+from main.models import fonction as mdl_fonction
+from main.models import professionnel as mdl_professionnel
 from main.tests.factories.personne import PersonneFactory
+from main.tests.factories.fonction import FonctionFactory
 
 
 NOM_DUPONT = "Dupont"
@@ -46,8 +47,6 @@ class PersonneTest(TestCase):
     def test_find_gestionnaire_default(self):
         le_gestionnaire = create_gestionnaire_par_defaut()
         self.assertEquals(mdl_personne.find_gestionnaire_default(), le_gestionnaire)
-
-
         return le_gestionnaire
 
     def test_delete_impossible(self):
@@ -70,6 +69,31 @@ class PersonneTest(TestCase):
                                        prenom=PRENOM_MARCEL)
         self.assertCountEqual(mdl_personne.search(NOM_DUPONT, PRENOM_MARCEL), [une_personne])
 
+    def test_creation_nouveau_professionnal_avec_nouvelle_fonction(self):
+        nom_fonction_plombier = 'Plombier'
+        une_personne = PersonneFactory(profession=nom_fonction_plombier)
+
+        self.assertEquals(mdl_personne.find_personne(une_personne.id), une_personne)
+        self.assertEquals(mdl_professionnel.find_by_personne(une_personne).first().personne,
+                          une_personne)
+        self.assertEquals(mdl_fonction.find_by_nom(nom_fonction_plombier).nom_fonction,
+                          nom_fonction_plombier)
+
+    def test_creation_nouveau_professionnal_sans_nouvelle_fonction(self):
+
+        nom_fonction_plombier = 'Plombier'
+        une_fonction = FonctionFactory(nom_fonction=nom_fonction_plombier)
+        une_personne = PersonneFactory(fonction=une_fonction,
+                                       profession=une_fonction.nom_fonction)
+
+        self.assertEquals(mdl_personne.find_personne(une_personne.id), une_personne)
+        self.assertEquals(mdl_professionnel.find_by_personne(une_personne).first().personne,
+                          une_personne)
+        self.assertEquals(mdl_fonction.find_by_nom(nom_fonction_plombier).nom_fonction,
+                              nom_fonction_plombier)
+
+
 def create_gestionnaire_par_defaut():
     return PersonneFactory(nom=mdl_personne.NOM_GESTIONNAIRE,
-                                      prenom=mdl_personne.PRENOM_GESTIONNAIRE)
+                           prenom=mdl_personne.PRENOM_GESTIONNAIRE)
+

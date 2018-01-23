@@ -53,7 +53,7 @@ class AlertesViewTest(TestCase):
 
     def test_render_alert_avec_etat(self):
         url = reverse('alerte-search')
-        response = self.client.get(url,  {'etat_alerte': alerte_etat.VERIFIER})
+        response = self.client.get(url, {'etat_alerte': alerte_etat.VERIFIER})
 
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, alertes.PAGE_ALERTE_LIST)
