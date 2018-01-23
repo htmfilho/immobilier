@@ -21,25 +21,12 @@
 #    see http://www.gnu.org/licenses/.
 #
 ##############################################################################
-from django.test import TestCase, RequestFactory
-from django.core.urlresolvers import reverse
-from main.tests.factories.batiment import BatimentFactory
-from main.tests.factories.proprietaire import ProprietaireFactory
-from main.tests.factories.personne import PersonneFactory
-import factory
+from django import shortcuts
+from random import randint
 
 
-class ProprietaireViewTest(TestCase):
 
-    def test_liste_proprietaires(self):
-        factory.SubFactory(PersonneFactory)
-        un_batiment = BatimentFactory()
-        gestionnaire = factory.SubFactory(PersonneFactory)
-        ProprietaireFactory(proprietaire=gestionnaire,
-                            batiment=un_batiment)
-        url = reverse('listeProprietaires')
-        response = self.client.get(url)
-        self.assertEqual(response.status_code, 200)
-        self.assertTemplateUsed(response, 'listeProprietaires.html')
+def render(request, template, values):
+    values['js'] = randint(0, 100)
 
-
+    return shortcuts.render(request, template, values)

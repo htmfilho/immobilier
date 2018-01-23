@@ -48,6 +48,37 @@ class BatimentViewTest(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, batiment.PAGE_LISTE_BATIMENTS)
 
+    # @mock.patch('django.contrib.auth.decorators')
+    # @mock.patch('main.layout.render')
+    # def test_search_par_proprietaire(self, mock_render, mock_decorators):
+    #     print('test_search_par_proprietaire')
+    #     mock_decorators.login_required = lambda x: x
+    #     personne_1 = factory.SubFactory(PersonneFactory)
+    #     gestionnaire = factory.SubFactory(PersonneFactory)
+    #     batiment_1 = BatimentFactory()
+    #     proprietaire_1 = ProprietaireFactory(proprietaire=factory.SubFactory(PersonneFactory), batiment=BatimentFactory())
+    #
+    #     personne_2 = factory.SubFactory(PersonneFactory)
+    #     batiment_2 = BatimentFactory()
+    #     proprietaire_2 = ProprietaireFactory(proprietaire=personne_2, batiment=batiment_2)
+    #     request_factory = RequestFactory()
+    #     request = request_factory.get(reverse('batiment_search'))
+    #     request.proprietaire = proprietaire_2.id
+    #     request.user = mock.Mock()
+    #
+    #     from main import batiment
+        #
+        # response =  batiment.search_par_proprietaire(request)
+        # self.assertEqual(response.status_code, 200)
+        #
+        #
+        # self.assertTemplateUsed(response, batiment.PAGE_LISTE_BATIMENTS)
+        #
+
+        # self.assertTrue(mock_render.called)
+        # request, template, context = mock_render.call_args[0]
+        # self.assertEqual(template, batiment.PAGE_LISTE_BATIMENTS)
+
     def creer_5_batiments_avec_proprio(self):
         cpt = 0
         while cpt < 5:
