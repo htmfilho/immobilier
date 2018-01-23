@@ -28,6 +28,8 @@ import string
 from django.conf import settings
 from django.utils import timezone
 from faker import Faker
+from main.tests.factories.fonction import FonctionFactory
+
 
 def generate_personne_email(person):
     domain = factory.Faker('domain_name').generate({})
@@ -52,3 +54,4 @@ class PersonneFactory(factory.DjangoModelFactory):
     # num_compte_banque = models.CharField(max_length=30, blank=True, null=True)
     # personne_type = models.CharField(max_length=20, choices=TYPE_PERSONNE, default='NON_PRECISE', blank=True, null=True)  # a enlever
     # fonction = models.ForeignKey('Fonction', blank=True, null=True)
+    fonction = factory.SubFactory(FonctionFactory)

@@ -21,12 +21,11 @@
 #    see http://www.gnu.org/licenses/.
 #
 ##############################################################################
-from django.test import TestCase, RequestFactory
+from django.test import TestCase
 from django.core.urlresolvers import reverse
-from main import alertes
 from main.tests.factories.alerte import AlerteFactory
 from main.models.enums import alerte_etat
-from main import models as mdl
+from main import models as mdl, alertes
 
 
 class AlertesViewTest(TestCase):

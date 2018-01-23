@@ -21,9 +21,10 @@
 #    see http://www.gnu.org/licenses/.
 #
 ##############################################################################
-from . import views, batiment, proprietaire, suivis, alertes, contratlocation, financement, locataire, contratgestion, \
-    frais, honoraire, personne, essai_pdf, essai3, assurance, fonction, societe, pays, fonction, societe, document,\
+from . import views, batiment, proprietaire, suivis, contratlocation, financement, locataire, contratgestion, \
+    frais, honoraire, personne, essai_pdf, essai3, assurance, pays, fonction, societe, document,\
     lettre
+from main import alertes
 from main.pdf import image
 from django.conf.urls import url
 from django.contrib.auth.views import login, logout
@@ -62,8 +63,6 @@ urlpatterns = [
     url(r'^suivis/updatel/([0-9]+)/liste/$', suivis.suivis_update_liste, name='suivis-update-liste'),
     url(r'^suivis/updatel/([0-9]+)/home/$', suivis.suivis_update_home, name='suivis-update-home'),
     url(r'^suivis/updatel/([0-9]+)/location/$', suivis.suivis_update_location, name='suivis-update-location'),
-
-
 
     url(r'^suivis/update_suivi$', suivis.update_suivi, name='update_suivi'),
 

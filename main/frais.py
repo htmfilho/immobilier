@@ -33,6 +33,9 @@ from django.http import HttpResponseRedirect
 from django.core.urlresolvers import reverse
 from main import societe
 
+
+FRAIS_LIST_HTML = "frais/fraismaintenance_list.html"
+
 LISTE = 'liste'
 DASHBOARD = 'dashboard'
 LOCATION = 'location'
@@ -70,9 +73,7 @@ def create(request, batiment_id):
                    })
 
 
-def prepare_update(request, frais_id, previous, location_id=None):
-    print('prepare_update')
-    print(previous)
+def prepare_update(request, frais_id, previous=None, location_id=None):
     frais = mdl.frais_maintenance.find_by_id(frais_id)
 
     return render(request, PAGE_FRAIS_FORM,
@@ -90,6 +91,7 @@ def update(request):
     action = request.POST.get('action', None)
     frais_id = request.POST.get('id', None)
     print(action)
+    frais = None
     if action == NEW:
         frais = mdl.frais_maintenance.FraisMaintenance()
         if batiment_id:
@@ -109,7 +111,7 @@ def update(request):
         cl = frais.batiment.location_actuelle
         if cl:
             frais.contrat_location = cl
-            contrat_location_id=cl.id
+            contrat_location_id = cl.id
 
     professionnel = None
     if request.POST.get('new_entrepreneur') == 'on':
@@ -208,9 +210,6 @@ def get_societe(request):
     return None
 
 
-
-
-
 def get_personne(request):
     if is_new_value(request.POST.get('new_personne', None)):
         personne_new_value = request.POST.get('new_personne', None)
@@ -231,8 +230,8 @@ def get_personne(request):
 
 def list(request):
     frais_list = mdl.frais_maintenance.find_all()
-    return render(request, "fraismaintenance_list.html",
-                           {'frais_list': frais_list})
+    return render(request, FRAIS_LIST_HTML,
+                  {'frais_list': frais_list})
 
 
 def delete(request, id, previous):
@@ -298,10 +297,8 @@ def prepare_update_from_batiment(request, id):
     return prepare_update(request, id, BATIMENT, None)
 
 
-def prepare_update_from_location(request, id ):
-    print('prepare_update_from_location')
+def prepare_update_from_location(request, id):
     location_id = request.POST.get('id', None)
-    print(location_id)
     return prepare_update(request, id, LOCATION, location_id)
 
 
