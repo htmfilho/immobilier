@@ -92,22 +92,17 @@ class ContratLocation(models.Model):
         self.renonciation = (self.date_debut + relativedelta(years=1))-relativedelta(days=10)
         un_indice_sante = None
         if self.date_debut < datetime.datetime(1981, 1, 1):
-            print('if')
             pass
         else:
             if self.date_debut < datetime.datetime(1983, 1, 1):
-                print('if')
                 pass
             else:
                 one_mon_timedelta = datetime.timedelta(days=1 * 365/12)
                 if self.date_debut < datetime.datetime(1994, 2, 1):
-                    print('if 3')
                     date_ref = self.date_debut - one_mon_timedelta
                     un_indice_sante = IndiceSante.find_by_date(date_ref)
                 else:
-                    print('if 4')
                     date_ref = self.date_debut - one_mon_timedelta
-                    print(date_ref)
                     un_indice_sante = IndiceSante.find_by_date(date_ref)
 
         self.indice_sante_base = un_indice_sante

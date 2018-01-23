@@ -29,6 +29,8 @@ from main import pages_utils
 from main.pages_utils import NEW, UPDATE
 from main.views_utils import get_previous
 
+CONTRATGESTION_LIST_HTML = "contratgestion_list.html"
+
 
 def new(request):
     contrat = mdl.contrat_gestion.ContratGestion()
@@ -68,12 +70,9 @@ def create(request, batiment_id):
 
 
 def prepare_update(request, id):
-
-
     contrat = mdl.contrat_gestion.find_by_id(id)
-    personnes = []
     personne_gestionnaire = mdl.personne.find_gestionnaire_default()
-    personnes.append(personne_gestionnaire)
+    personnes = [personne_gestionnaire]
     return render(request, "contratgestion_update.html",
                   {'contrat':   contrat,
                    'action':   UPDATE,
@@ -155,7 +154,7 @@ def update(request):
         # messages.add_message(request, messages.INFO, 'Hello world.')
         # return HttpResponse(status=204)
     else:
-        personnes=[mdl.personne.find_gestionnaire_default()]
+        personnes = [mdl.personne.find_gestionnaire_default()]
         return render(request, "contratgestion_update.html",
                       {'contrat':   gestion,
                        'action':    UPDATE,
@@ -174,14 +173,15 @@ def update(request):
 
 def list(request):
     contrats = mdl.contrat_gestion.find_all()
-    return render(request, "contratgestion_list.html",
-                           {'contrats': contrats})
+    return render(request, CONTRATGESTION_LIST_HTML,
+                  {'contrats': contrats})
 
 
 def delete(request, contrat_gestion_id):
     contrat_gestion = get_object_or_404(mdl.contrat_gestion.ContratGestion, pk=contrat_gestion_id)
-    batiment = contrat_gestion.batiment
+    batiment = None
     if contrat_gestion:
+        batiment = contrat_gestion.batiment
         contrat_gestion.delete()
     return render(request, pages_utils.PAGE_BATIMENT_FORM, {'batiment': batiment})
 

@@ -112,7 +112,6 @@ def update(request):
 
 @login_required
 def search_par_proprietaire(request):
-    print('search_par_proprietaire zzz')
     proprietaire_id = request.GET.get('proprietaire', None)
     batiments = mdl.batiment.search_par_proprietaire(proprietaire_id)
     return render(request, PAGE_LISTE_BATIMENTS,
