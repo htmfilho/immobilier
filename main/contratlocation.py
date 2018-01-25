@@ -4,7 +4,7 @@
 #    designed to manage the core business of property management, buildings,
 #    rental agreement and so on.
 #
-#    Copyright (C) 2016-2017 Verpoorten Leïla
+#    Copyright (C) 2016-2018 Verpoorten Leïla
 #
 #    This program is free software: you can redistribute it and/or modify
 #    it under the terms of the GNU General Public License as published by
@@ -28,10 +28,9 @@ from datetime import date
 from datetime import datetime
 from main.forms import ContratLocationForm
 from dateutil.relativedelta import relativedelta
-from main.views_utils import get_key
 from main import models as mdl
 from django.utils import timezone
-
+from main.views_utils import get_key, get_date
 from django.http import HttpResponseRedirect
 
 CONTRAT_LOCATION_LIST_HTML = "location/contratlocation_list.html"
@@ -53,9 +52,8 @@ def update(request):
     if 'bt_prolongation' in request.POST:
         prolongation_action = True
 
-    if request.POST['renonciation']:
-        location.renonciation = datetime.strptime(request.POST['renonciation'], '%d/%m/%Y')
-    location.remarque = request.POST['remarque']
+    location.renonciation = get_date(request.POST.get('renonciation', None))
+    location.remarque = request.POST.get('remarque', None)
 
     if request.POST['assurance'] and not request.POST['assurance'] == '-':
         location.assurance = get_object_or_404(mdl.assurance.Assurance, pk=request.POST['assurance'])
@@ -122,8 +120,8 @@ def list(request):
     print(date_fin)
     locations = mdl.contrat_location.search(date_fin)
     return render(request, CONTRAT_LOCATION_LIST_HTML,
-                           {'locations': locations,
-                            'date_fin_filtre_location': date_fin})
+                  {'locations': locations,
+                   'date_fin_filtre_location': date_fin})
 
 
 def delete(request, location_id):
@@ -156,7 +154,7 @@ def test(request):
     #     location.renonciation = request.POST['renonciation']
     # else:
     #     location.renonciation = None
-    location.remarque = request.POST['remarque']
+    location.remarque = request.POST.get('remarque', None)
     if request.POST.get('nom_assurance_other'):
         assurance = mdl.assurance.Assurance()
         assurance.nom = request.POST.get('nom_assurance_other')
@@ -171,7 +169,7 @@ def test(request):
     location.loyer_base = request.POST['loyer_base']
     location.charges_base = request.POST['charges_base']
     if request.POST['date_debut']:
-        location.date_debut = datetime.strptime(request.POST['date_debut'], '%d/%m/%Y')
+        location.date_debut = get_date(request.POST.get('date_debut', None))
         locations_en_cours = mdl.contrat_location.find_by_batiment_location(batiment, location.date_debut)
         if locations_en_cours:
             location.date_fin = None
@@ -182,8 +180,9 @@ def test(request):
                            'assurances': mdl.assurance.find_all(),
                            'nav': 'list_batiment',
                            'batiments': mdl.batiment.find_all(),
-                           'message_contrat_location': 'Une location est déjà en cours à cette période {} au {}'.format(location_courante.date_debut.strftime('%d/%m/%Y'),
-                                                                                                                       location_courante.date_fin.strftime('%d/%m/%Y')),
+                           'message_contrat_location': 'Une location est déjà en cours à cette période {} au {}'
+                          .format(location_courante.date_debut.strftime('%d/%m/%Y'),
+                                  location_courante.date_fin.strftime('%d/%m/%Y')),
                            'form': form})
         else:
             location.date_fin = location.date_debut + relativedelta(years=1)

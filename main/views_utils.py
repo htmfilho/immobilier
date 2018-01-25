@@ -4,7 +4,7 @@
 #    designed to manage the core business of property management, buildings,
 #    rental agreement and so on.
 #
-#    Copyright (C) 2016-2017 Verpoorten Leïla
+#    Copyright (C) 2016-2018 Verpoorten Leïla
 #
 #    This program is free software: you can redistribute it and/or modify
 #    it under the terms of the GNU General Public License as published by
@@ -21,6 +21,9 @@
 #    see http://www.gnu.org/licenses/.
 #
 ##############################################################################
+from datetime import datetime
+
+
 DATE_SHORT_FORMAT = "%d/%m/%Y"
 
 
@@ -35,3 +38,9 @@ def get_previous(request):
     if previous is None:
         return request.META.get('HTTP_REFERER', '/')
     return previous
+
+
+def get_date(value):
+    if value:
+        return datetime.strptime(value, '%d/%m/%Y')
+    return None

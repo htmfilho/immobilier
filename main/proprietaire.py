@@ -4,7 +4,7 @@
 #    designed to manage the core business of property management, buildings,
 #    rental agreement and so on.
 #
-#    Copyright (C) 2016-2017 Verpoorten Leïla
+#    Copyright (C) 2016-2018 Verpoorten Leïla
 #
 #    This program is free software: you can redistribute it and/or modify
 #    it under the terms of the GNU General Public License as published by
@@ -22,11 +22,11 @@
 #
 ##############################################################################
 from django.shortcuts import render, get_object_or_404
-from datetime import datetime
 from django.shortcuts import redirect
 from main import models as mdl
 from main import pages_utils
 from main.pages_utils import UPDATE
+from main.views_utils import get_date
 
 
 def liste_proprietaires(request):
@@ -111,11 +111,9 @@ def proprietaire_update_save(request):
         batiment = get_object_or_404(mdl.batiment.Batiment, pk=request.POST['batiment_id'])
         proprietaire.batiment = batiment
 
-    if request.POST['date_debut']:
-        proprietaire.date_debut = datetime.strptime(request.POST['date_debut'], '%d/%m/%Y')
-    if request.POST['date_fin']:
-        proprietaire.date_fin = datetime.strptime(request.POST['date_fin'], '%d/%m/%Y')
-
+    proprietaire.date_debut = get_date(request.POST.get('date_debut', None))
+    proprietaire.date_fin = get_date(request.POST.get('date_fin', None))
+    message = None
     if request.POST.get('proprietaire') is None or request.POST.get('proprietaire') == '-':
         valide = True
         if request.POST['nouveau_nom'] and request.POST['nouveau_prenom']:
@@ -124,8 +122,8 @@ def proprietaire_update_save(request):
                                                                                request.POST['nouveau_prenom2'])
             if personne_deja_existante:
                 valide = False
-                message = 'Une personne existe déjà avec ces noms/prénoms : {} {}'.format(request.POST['nouveau_nom'],
-                                                                                          request.POST['nouveau_prenom'])
+                message = 'Une personne existe déjà avec ces noms/prénoms : {} {}'\
+                    .format(request.POST['nouveau_nom'], request.POST['nouveau_prenom'])
             else:
                 personne = mdl.personne.Personne(nom=request.POST['nouveau_nom'],
                                                  prenom=request.POST['nouveau_prenom'])

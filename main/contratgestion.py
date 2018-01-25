@@ -23,11 +23,12 @@
 ##############################################################################
 from django.shortcuts import render, get_object_or_404, redirect
 from main.forms import ContratGestionForm
-from datetime import datetime
 from main import models as mdl
 from main import pages_utils
 from main.pages_utils import NEW, UPDATE
 from main.views_utils import get_previous
+from main.views_utils import get_date
+
 
 CONTRATGESTION_LIST_HTML = "contratgestion_list.html"
 
@@ -110,24 +111,9 @@ def update(request):
         gestion.gestionnaire = personne
     if request.POST.get('montant_mensuel', None):
         gestion.montant_mensuel = request.POST.get('montant_mensuel')
-    if request.POST.get('date_debut', None):
-        try:
-            valid_datetime = datetime.strptime(request.POST['date_debut'], '%d/%m/%Y')
-            gestion.date_debut = valid_datetime
-        except:
-            gestion.date_debut = None
-    else:
-        gestion.date_debut = None
 
-    # gestion.date_fin = request.POST['date_fin']
-    if request.POST.get('date_fin', None):
-        try:
-            valid_datetime = datetime.strptime(request.POST['date_fin'], '%d/%m/%Y')
-            gestion.date_fin = valid_datetime
-        except:
-            gestion.date_fin = None
-    else:
-        gestion.date_fin = None
+    gestion.date_debut = get_date(request.POST.get('date_debut', None))
+    gestion.date_fin = get_date(request.POST.get('date_fin', None))
     # if gestion.date_debut and gestion.date_fin:
     #     if gestion.date_debut > gestion.date_fin:
     #         print(gestion.batiment)

@@ -4,7 +4,7 @@
 #    designed to manage the core business of property management, buildings,
 #    rental agreement and so on.
 #
-#    Copyright (C) 2016-2017 Verpoorten Leïla
+#    Copyright (C) 2016-2018 Verpoorten Leïla
 #
 #    This program is free software: you can redistribute it and/or modify
 #    it under the terms of the GNU General Public License as published by
@@ -24,28 +24,24 @@
 from django.shortcuts import render, get_object_or_404
 from django.utils import timezone
 from dateutil.relativedelta import relativedelta
-from datetime import datetime
 from django.shortcuts import redirect
 from main import models as mdl
 from django.http import HttpResponseRedirect
 from django.core.urlresolvers import reverse
 from main.models.enums import etat_suivi
 from decimal import Decimal
+from main.views_utils import get_date
+
 
 TOUS = 'TOUS'
-
 SUIVI_SUIVIS_HTML = "suivi/suivis.html"
 
 
 def suivis_search(request):
-    date_debut = None
-    date_fin = None
     etat = request.GET['etat']
-    if date_debut:
-        date_debut = datetime.strptime(request.GET['date_debut'], '%d/%m/%Y')
 
-    if date_fin:
-        date_fin = datetime.strptime(request.GET['date_fin'], '%d/%m/%Y')
+    date_debut = get_date(request.GET.get('date_debut', None))
+    date_fin = get_date(request.GET.get('date_fin', None))
     if etat == TOUS:
         etat = None
     return list_suivis(request, date_debut, date_fin, etat)
@@ -102,12 +98,9 @@ def suivis_update(request):
 def suivis_updatel(request, suivi_id, previous):
     suivi = get_object_or_404(mdl.suivi_loyer.SuiviLoyer, pk=suivi_id)
     etat = request.GET['etat']
-    date_debut = request.GET['dated']
-    date_fin = request.GET['datef']
-    if date_debut:
-        date_debut = datetime.strptime(date_debut, '%d/%m/%Y')
-    if date_fin:
-        date_fin = datetime.strptime(date_fin, '%d/%m/%Y')
+
+    date_debut = get_date(request.GET.get('dated', None))
+    date_fin = get_date(request.GET.get('datef', None))
 
     return render(request, "suivi/suivi_form.html",
                   {'suivi':      suivi,
@@ -134,8 +127,8 @@ def update_suivi(request):
         return redirect(request.POST.get('previous', None))
     else:
         return list_suivis(request,
-                           get_date(request, 'date_debut'),
-                           get_date(request, 'date_fin'),
+                           get_date(request.POST.get('date_debut', None)),
+                           get_date(request.POST.get('date_fin', None)),
                            etat)
     # else:
     #     Je pense que ça ne passera jamais ici je supprime le test sur forms.is_valid 23/01/2018
@@ -148,7 +141,7 @@ def update_suivi(request):
 
 def update_suivi_loyer(request):
     suivi = get_object_or_404(mdl.suivi_loyer.SuiviLoyer, pk=request.POST.get('id', None))
-    suivi.date_paiement_reel = get_date(request, 'date_paiement_reel')
+    suivi.date_paiement_reel = get_date(request.POST.get('date_paiement_reel', None))
     suivi.etat_suivi = get_etat_suivi(request)
     suivi.loyer_percu = get_montant(request, 'loyer_percu')
     suivi.charges_percu = get_montant(request, 'charges_percu')
@@ -180,13 +173,6 @@ def get_etat_suivi(request):
             return etat_suivi
     else:
         return 'A_VERIFIER'
-
-
-def get_date(request, nom_champ):
-    date_paiement = request.POST.get(nom_champ, None)
-    if date_paiement:
-        return datetime.strptime(date_paiement, '%d/%m/%Y')
-    return None
 
 
 def suivis_update_liste(request, suivi_id):

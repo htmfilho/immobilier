@@ -22,9 +22,8 @@
 #
 ##############################################################################
 from django.shortcuts import render, get_object_or_404, redirect
-from datetime import datetime
 from main.forms import FraisMaintenanceForm
-from main.views_utils import get_key
+from main.views_utils import get_key, get_date
 from main import models as mdl
 from main import pages_utils
 from main.pages_utils import NEW, UPDATE, PAGE_FRAIS_FORM
@@ -89,60 +88,15 @@ def update(request):
     location_id = request.POST.get('location_id', None)
     batiment_id = get_key(request.POST.get('batiment_id', None))
     action = request.POST.get('action', None)
-    frais_id = request.POST.get('id', None)
-    print(action)
-    frais = None
-    if action == NEW:
-        frais = mdl.frais_maintenance.FraisMaintenance()
-        if batiment_id:
-            batiment = get_object_or_404(mdl.batiment.Batiment, pk=batiment_id)
-            frais.batiment = batiment
-    else:
-        if frais_id:
-            frais = get_object_or_404(mdl.frais_maintenance.FraisMaintenance, pk=frais_id)
-        if batiment_id:
-            frais.batiment = get_object_or_404(mdl.batiment.Batiment, pk=batiment_id)
-        else:
-            frais.batiment = None
+
+    frais = set_batiment(action, batiment_id, request.POST.get('id', None))
     frais.contrat_location = None
-    print(request.POST.get('contrat_location'))
-    contrat_location_id = location_id
-    if request.POST.get('contrat_location') == 'on':
-        cl = frais.batiment.location_actuelle
-        if cl:
-            frais.contrat_location = cl
-            contrat_location_id = cl.id
+    contrat_location_id = get_contrat_location_id(frais, location_id, request)
+    frais.entrepreneur = get_professionnel(request)
+    frais.description = request.POST.get('description', None)
+    frais.montant = get_montant(request)
+    frais.date_realisation = get_date(request.POST.get('date_realisation', None))
 
-    professionnel = None
-    if request.POST.get('new_entrepreneur') == 'on':
-        professionnel = nouveau_professionnel(request)
-    else:
-        entrepreneur = get_key(request.POST.get('entrepreneur', None))
-        if entrepreneur:
-            professionnel = get_object_or_404(mdl.professionnel.Professionnel, pk=entrepreneur)
-
-    frais.entrepreneur = professionnel
-    # if request.POST.get('societe', None):
-    #     frais.societe = request.POST['societe']
-    # else:
-    #     frais.societe = None
-    if request.POST.get('description', None):
-        frais.description = request.POST['description']
-    else:
-        frais.description = None
-
-    if request.POST.get('montant', None):
-        try:
-            frais.montant = float(request.POST['montant'].replace(',', '.'))
-        except:
-            frais.montant = 0
-    else:
-        frais.montant = 0
-    if request.POST.get('date_realisation', None):
-        valid_datetime = datetime.strptime(request.POST['date_realisation'], '%d/%m/%Y')
-        frais.date_realisation = valid_datetime
-    else:
-        frais.date_realisation = None
     form = FraisMaintenanceForm(data=request.POST)
     previous = request.POST.get('previous', None)
     if form.is_valid():
@@ -169,6 +123,55 @@ def update(request):
             'entrepreneurs': mdl.professionnel.find_all(),
             'societes': mdl.societe.find_all_with_name(),
             'fonctions': mdl.fonction.find_all()})
+
+
+def get_montant(request):
+    if request.POST.get('montant', None):
+        try:
+            montant = float(request.POST['montant'].replace(',', '.'))
+        except:
+            montant = 0
+    else:
+        montant = 0
+    return montant
+
+
+def get_professionnel(request):
+    professionnel = None
+    if request.POST.get('new_entrepreneur') == 'on':
+        professionnel = nouveau_professionnel(request)
+    else:
+        entrepreneur = get_key(request.POST.get('entrepreneur', None))
+        if entrepreneur:
+            professionnel = get_object_or_404(mdl.professionnel.Professionnel, pk=entrepreneur)
+    return professionnel
+
+
+def get_contrat_location_id(frais, location_id, request):
+    contrat_location_id = location_id
+    if request.POST.get('contrat_location') == 'on':
+        cl = frais.batiment.location_actuelle
+        if cl:
+            frais.contrat_location = cl
+            contrat_location_id = cl.id
+    return contrat_location_id
+
+
+def set_batiment(action, batiment_id, frais_id):
+    frais = None
+    if action == NEW:
+        frais = mdl.frais_maintenance.FraisMaintenance()
+        if batiment_id:
+            batiment = get_object_or_404(mdl.batiment.Batiment, pk=batiment_id)
+            frais.batiment = batiment
+    else:
+        if frais_id:
+            frais = get_object_or_404(mdl.frais_maintenance.FraisMaintenance, pk=frais_id)
+        if batiment_id:
+            frais.batiment = get_object_or_404(mdl.batiment.Batiment, pk=batiment_id)
+        else:
+            frais.batiment = None
+    return frais
 
 
 def nouveau_professionnel(request):
