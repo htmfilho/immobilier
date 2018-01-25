@@ -12,5 +12,6 @@ exclude_patterns:
 - "**/tests/"
 - "**/migrations/"
 - "**/fixtures/"
+- "**/static/"
 - "settings.py"
 - "__init__.py"
