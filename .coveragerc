@@ -10,6 +10,7 @@ omit =
     */static/*
     */main/pdf/*
     */main/static/*
+    *main/static/js/customComboBox.js*
 
 
 [report]
