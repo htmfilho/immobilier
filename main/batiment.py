@@ -42,72 +42,60 @@ def batiment_form(request, batiment_id):
                    'localites':    mdl.localite.find_all()})
 
 
+def is_updating_action(request):
+    if 'add' == request.POST.get('action') or 'modify' == request.POST.get('action'):
+        return True
+    return False
+
+
+def get_field(field_name, request):
+    if request.POST[field_name] and request.POST[field_name] != '':
+        return request.POST[field_name]
+    return None
+
+
 def update(request):
-    print('update')
     batiment = mdl.batiment.Batiment()
     message_info = None
     form = None
-    if 'add' == request.POST.get('action') or 'modify' == request.POST.get('action'):
+    if is_updating_action(request):
         form = BatimentForm(data=request.POST)
-        if request.POST.get('id') and not request.POST['id'] == 'None':
-            batiment = get_object_or_404(mdl.batiment.Batiment, pk=request.POST['id'])
-        else:
-            batiment = mdl.batiment.Batiment()
+        batiment = get_batiment(request)
         batiment.rue = request.POST['rue']
-        if request.POST['numero'] and request.POST['numero'] != '':
-            batiment.numero = request.POST['numero']
-        else:
-            batiment.numero = None
-        if request.POST['numero'] and request.POST['boite'] != '':
-            batiment.boite = request.POST['boite']
-        else:
-            batiment.boite = None
-        localite = None
-        if request.POST['localite_cp'] and request.POST['localite_cp'] != '' \
-                and request.POST['localite_nom'] and request.POST['localite_nom'] != '':
-            localites = mdl.localite.search(request.POST['localite_cp'], request.POST['localite_nom'])
-            if not localites.exists():
-                localite = mdl.localite.Localite()
-                localite.localite = request.POST['localite_nom']
-                localite.code_postal = request.POST['localite_cp']
-                localite.save()
-            else:
-                localite = localites[0]
-
-        batiment.localite = localite
-
-        if request.POST['superficie']:
-            batiment.superficie = request.POST['superficie']
-        else:
-            batiment.superficie = None
-
-        if request.POST['performance_energetique'] and request.POST['performance_energetique'] != '':
-            batiment.performance_energetique = request.POST['performance_energetique']
-        else:
-            batiment.performance_energetique = None
-        if request.POST['description']:
-            batiment.description = request.POST['description']
-        else:
-            batiment.description = None
-
+        batiment.numero = get_field('numero', request)
+        batiment.boite = get_field('boite', request)
+        batiment.localite = get_localite(request)
+        batiment.superficie = request.POST.get('superficie', None)
+        batiment.performance_energetique = get_field('performance_energetique', request)
+        batiment.description = request.POST.get('description', None)
         if form.is_valid():
-
-            # form = BatimentLocaliteForm(data=request.POST)
-            # if form.is_valid():
-            #
-            #     print('valid')
-            # else:
-            #     print('invalid')
             batiment.save()
             message_info = "Données sauvegardées"
-        else:
-            print('invalid')
 
     return render(request, pages_utils.PAGE_BATIMENT_FORM,
                   {'batiment':     batiment,
                    'localites':    mdl.localite.find_all(),
                    'message_info': message_info,
                    'form': form})
+
+
+def get_localite(request):
+    if get_field('localite_cp', request) \
+            and get_field('localite_nom', request):
+        localites = mdl.localite.search(request.POST['localite_cp'], request.POST['localite_nom'])
+        if not localites.exists():
+            return create_localite(request.POST['localite_nom'], request.POST['localite_cp'])
+        else:
+            return localites[0]
+    return None
+
+
+def get_batiment(request):
+    if request.POST.get('id') and not request.POST['id'] == 'None':
+        return get_object_or_404(mdl.batiment.Batiment, pk=request.POST['id'])
+    else:
+        return mdl.batiment.Batiment()
+    return None
 
 
 @login_required
@@ -127,9 +115,9 @@ def delete(request, batiment_id):
 
     return search_par_proprietaire(request)
 
+
 def donnees_valides(data):
     print(data)
     print(data['localite_nom'])
     print(data['rue'])
     return False
-

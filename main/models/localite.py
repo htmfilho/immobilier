@@ -60,3 +60,10 @@ def search(un_code_postal, une_localite):
     if un_code_postal or une_localite:
         out = queryset
     return out
+
+def create_localite(nom, cp):
+    localite = mdl.localite.Localite()
+    localite.localite = nom
+    localite.code_postal = cp
+    localite.save()
+    return localite

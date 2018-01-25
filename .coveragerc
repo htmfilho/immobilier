@@ -9,6 +9,7 @@ omit =
     */htmlcov/*
     */static/*
     */main/pdf/*
+    */main/static/*
 
 
 [report]
