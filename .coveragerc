@@ -10,7 +10,8 @@ omit =
     */static/*
     */main/pdf/*
     */main/static/*
-    *main/static/js/customComboBox.js*
+    */main/static/js/customComboBox.js*
+    */main/platypus_pdf_template.py *
 
 
 [report]
