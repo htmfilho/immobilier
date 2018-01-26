@@ -83,3 +83,9 @@ input:required {
 330 	#ffcce6	rgb(255, 204, 230)	hsl(330, 100%, 90%)
 345 	#ffccd9	rgb(255, 204, 217)	hsl(345, 100%, 90%)
 360 	#ffcccc	rgb(255, 204, 204)*/
+
+.not-active {
+  pointer-events: none;
+  cursor: default;
+  color: #E0E0E0;
+}

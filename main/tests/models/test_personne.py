@@ -92,6 +92,20 @@ class PersonneTest(TestCase):
         self.assertEquals(mdl_fonction.find_by_nom(nom_fonction_plombier).nom_fonction,
                               nom_fonction_plombier)
 
+    def test_creation_nouvelle_personne_donnees_manquantes(self):
+        self.assertIsNone(mdl_personne.creation_nouvelle_personne(None, None))
+        self.assertIsNone(mdl_personne.creation_nouvelle_personne('Dupuis', None))
+        self.assertIsNone(mdl_personne.creation_nouvelle_personne(None, 'Pierre'))
+
+    def test_creation_nouvelle_personne(self):
+        un_nom = 'Dupuis'
+        un_prenom = 'Pierre'
+        nouvelle_personne = mdl_personne.creation_nouvelle_personne(un_nom, un_prenom)
+        self.assertEquals(nouvelle_personne.nom, un_nom)
+        self.assertEquals(nouvelle_personne.prenom, un_prenom)
+        self.assertIsNone(nouvelle_personne.prenom2)
+
+
 
 def create_gestionnaire_par_defaut():
     return PersonneFactory(nom=mdl_personne.NOM_GESTIONNAIRE,

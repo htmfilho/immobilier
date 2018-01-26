@@ -8,7 +8,11 @@
     <ul class="nav nav-tabs">
         <li class="active"><a data-toggle="tab" href="#info_proprietaire">Info Propriétaire</a></li>
         {% if action != 'add' %}
-            <li><a data-toggle="tab" href="#info_contact">Info contact</a></li>
+            <li><a data-toggle="tab" id="lnk_personne_form" href="#info_contact"
+                   class="{% if message %}not-active{% endif %}">
+                Info contact
+                </a>
+            </li>
         {% endif %}
     </ul>
 
@@ -17,21 +21,20 @@
         <div id="info_proprietaire" class="tab-pane fade in active">
             <div id="ff">
                 <form method="post" action="{% url 'proprietaire-update-save' %}" id="proprietaire_form">
-                    <input type="hidden" id="previous" name="previous" value="{{ request.META.HTTP_REFERER }}"/>
+                    <input type="text" id="previous" name="previous" value="{{ request.META.HTTP_REFERER }}"/>
                     <input type="hidden" id="action" name="action" value="{{ action }}"/>
                     <input type="hidden" id="id" name="id" value="{{ proprietaire.id }}"/>
-                    <input type="hidden" id="prev" name="prev" value="{{ prev }}"/>
+                    <input type="text" id="prev" name="prev" value="{{ prev }}"/>
                     {% csrf_token %}
                     <div class="row">
                         <div class="col-md-5">
                             <label for="proprietaire">Propriétaire</label>
-                            {% if action == 'update' %}
+                            {% if proprietaire.id %}
                                 <input class="form-control" type="text" value="{{ proprietaire.proprietaire }}"
                                        readonly="readonly"/>
                                 <input class="form-control" type="hidden" value="{{ proprietaire.proprietaire.id }}"
                                        readonly="readonly" id="proprietaire" name="proprietaire"/>
-                            {% endif %}
-                            {% if action == 'add' %}
+                            {% else %}
                                 <select id="proprietaire" name="proprietaire" class="form-control" >
                                     <option value="-">-</option>
                                     {% for p in personnes %}
@@ -102,7 +105,7 @@
                         </div>
                         <div class="col-md-3">
                             <label>Date fin</label>
-                            <input class="form-control" type="date"
+                            <input class="form-control" type="text"
                                    value="{% if proprietaire.date_fin %}{{ proprietaire.date_fin|date:"j/m/Y" }}{% endif %}"
                                    id="proprietaire_date_fin" name="date_fin"/>
                         </div>
@@ -118,14 +121,16 @@
                 </form>
             </div>
         </div>
-        <div id="info_contact" class="tab-pane fade ">
+        <div id="info_contact" class="tab-pane fade " >
             {% include 'personne/personne_sub_form.html' %}
         </div>
     </div>
 
     {% if message %}
         <br>
-        <div class="alert alert-danger" role="alert" id="message">{{ message }}</div>
+        <div class="alert alert-danger" role="alert" id="message" style="margin-top:20px;">
+            {{ message }}
+        </div>
 
     {% endif %}
     <!-- Ajout personne modal1 -->

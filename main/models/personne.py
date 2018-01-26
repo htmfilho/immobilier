@@ -190,3 +190,12 @@ def search(nom, prenom):
         query = query.filter(prenom__icontains=prenom)
 
     return query.order_by('nom', 'prenom')
+
+
+def creation_nouvelle_personne(un_nom, un_prenom):
+    if un_nom and un_prenom:
+        personne = Personne(nom=un_nom, prenom=un_prenom)
+        personne.save()
+        return personne
+    return None
+

@@ -13,5 +13,6 @@ exclude_patterns:
 - "**/migrations/"
 - "**/fixtures/"
 - "**/static/"
+- "**/pdf/"
 - "settings.py"
 - "__init__.py"
