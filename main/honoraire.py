@@ -30,19 +30,24 @@ from datetime import datetime
 from main.forms import HonoraireForm
 from main import models as mdl
 from main.models.enums import etat_honoraire
+from main import views_utils
+
+
+DEFAULT_ETAT_LIST = etat_honoraire.A_VERIFIER
+DATE_LIMITE_INFERIEURE_FILTRE_DEFAUT = timezone.now() - relativedelta(days=15)
+DATE_LIMITE_SUPERIEURE_FILTRE_DEFAUT = timezone.now() + relativedelta(days=15)
 
 
 def list(request):
-    date_limite = timezone.now() - relativedelta(days=15)
-    date_limite_sup = timezone.now() + relativedelta(days=15)
+
     return render(request, "honoraire/honoraire_list.html",
                   {'honoraires':  mdl.honoraire.find_by_batiment_etat_date(None,
-                                                                           etat_honoraire.A_VERIFIER,
-                                                                           date_limite,
-                                                                           date_limite_sup),
+                                                                           DEFAULT_ETAT_LIST,
+                                                                           DATE_LIMITE_INFERIEURE_FILTRE_DEFAUT,
+                                                                           DATE_LIMITE_SUPERIEURE_FILTRE_DEFAUT),
                    'batiments':   mdl.honoraire.find_all_batiments(),
-                   'date_limite': date_limite,
-                   'date_limite_sup': date_limite_sup,
+                   'DATE_LIMITE_INFERIEURE_FILTRE_DEFAUT': DATE_LIMITE_INFERIEURE_FILTRE_DEFAUT,
+                   'DATE_LIMITE_SUPERIEURE_FILTRE_DEFAUT': DATE_LIMITE_SUPERIEURE_FILTRE_DEFAUT,
                    'etat': 'A_VERIFIER',
                    'batiment': None})
 
@@ -88,30 +93,29 @@ def get_date(request, nom_parametre):
 def update(request):
     next_page = request.POST.get('next', None)
     form = HonoraireForm(data=request.POST)
-    if 'bt_cancel' not in request.POST:
-        if request.POST['honoraire_id'] and not request.POST['honoraire_id'] == 'None':
-            honoraire = get_object_or_404(mdl.honoraire.Honoraire, pk=request.POST['honoraire_id'])
-        else:
-            honoraire = mdl.honoraire.Honoraire()
 
-        honoraire.etat = request.POST['etat']
-        if request.POST['date_paiement']:
-            try:
-                honoraire.date_paiement = datetime.strptime(request.POST['date_paiement'], '%d/%m/%Y')
-            except ValueError:
-                honoraire.date_paiement = request.POST['date_paiement']
+    honoraire_maj = get_honoraire(request)
+    honoraire_maj.etat = request.POST['etat']
+
+    honoraire_maj.date_paiement = views_utils.get_date(request.POST.get('date_paiement', None))
+
+    if form.is_valid():
+        honoraire_maj.save()
+        if next_page:
+            return redirect(next_page)
         else:
-            honoraire.date_paiement = None
-        if form.is_valid():
-            honoraire.save()
-            if next_page:
-                return redirect(next_page)
-            else:
-                return render(request, "honoraire/honoraire_list.html", {'honoraires': mdl.honoraire.find_all()})
-        else:
-            return render(request, "honoraire/honoraire_form.html", {'honoraire': honoraire, 'form': form})
+            return render(request, "honoraire_maj/honoraire_list.html", {'honoraires': mdl.honoraire.find_all()})
     else:
-        return HttpResponseRedirect(reverse('home'))
+        return render(request, "honoraire_maj/honoraire_form.html", {'honoraire_maj': honoraire_maj, 'form': form})
+
+
+
+def get_honoraire(request):
+    if request.POST['honoraire_id'] and not request.POST['honoraire_id'] == 'None':
+        honoraire = get_object_or_404(mdl.honoraire.Honoraire, pk=request.POST['honoraire_id'])
+    else:
+        honoraire = mdl.honoraire.Honoraire()
+    return honoraire
 
 
 def honoraire_form(request, honoraire_id):

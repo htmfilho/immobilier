@@ -39,7 +39,7 @@ def proprietaire(request, proprietaire_id):
     return render(request, "proprietaire_form.html",
                   {'proprietaire': a_proprietaire,
                    'action': UPDATE,
-                   'personnes': get_personnes_possible(a_proprietaire.batiment),
+                   'personnes': get_personnes_possibles(a_proprietaire.batiment),
                    'prev': request.GET.get('prev'),
                    'societes': mdl.societe.find_all_with_name(),
                    'fonctions': mdl.fonction.find_all(),
@@ -62,7 +62,7 @@ def add_proprietaire(request, batiment_id):
     return render(request, "proprietaire_form.html",
                   {'proprietaire': proprietaire,
                    'action':       'add',
-                   'personnes':    get_personnes_possible(batiment),
+                   'personnes':    get_personnes_possibles(batiment),
                    "prev": prev})
 
 
@@ -138,7 +138,7 @@ def proprietaire_update_save(request):
     if not valide:
         return render(request, "proprietaire_form.html",
                       {'proprietaire': proprietaire,
-                       'personnes': get_personnes_possible(proprietaire.batiment),
+                       'personnes': get_personnes_possibles(proprietaire.batiment),
                        'previous': previous,
                        'prev': prev,
                        'message': message,
@@ -214,11 +214,7 @@ def proprietaire_create_for_batiment(request, batiment_id):
 
 def personne_create(request):
     proprietaire = get_object_or_404(mdl.proprietaire.Proprietaire, pk=request.POST['proprietaire_id_pers'])
-    personne = mdl.personne.Personne()
-    personne.nom = request.POST['nom']
-    personne.prenom = request.POST['prenom']
-    personne.save()
-    proprietaire.personne = personne
+    proprietaire.personne = mdl.personne.creation_nouvelle_personne(request.POST['nom'], request.POST['prenom'])
     personnes = mdl.personne.find_all()
 
     return render(request, "proprietaire_form.html",
@@ -227,10 +223,9 @@ def personne_create(request):
                    'pays': mdl.pays.find_all()})
 
 
-def get_personnes_possible(batiment):
+def get_personnes_possibles(batiment):
     personnes_non_encore_proprietaire = []
-    personnes = mdl.personne.find_all()
-    for p in personnes:
+    for p in mdl.personne.find_all():
         proprietaires = mdl.proprietaire.search(p, batiment)
         if not proprietaires.exists():
             personnes_non_encore_proprietaire.append(p)

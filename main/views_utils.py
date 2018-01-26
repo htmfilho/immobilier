@@ -42,5 +42,8 @@ def get_previous(request):
 
 def get_date(value):
     if value:
-        return datetime.strptime(value, '%d/%m/%Y')
+        try:
+            return datetime.strptime(value, '%d/%m/%Y')
+        except ValueError:
+            return None
     return None

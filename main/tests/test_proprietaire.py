@@ -21,25 +21,35 @@
 #    see http://www.gnu.org/licenses/.
 #
 ##############################################################################
-from django.test import TestCase, RequestFactory
+from django.test import TestCase
 from django.core.urlresolvers import reverse
 from main.tests.factories.batiment import BatimentFactory
 from main.tests.factories.proprietaire import ProprietaireFactory
 from main.tests.factories.personne import PersonneFactory
-import factory
-
+from main import proprietaire as proprietaire_view
+from main.models.enums import etat_honoraire
 
 class ProprietaireViewTest(TestCase):
 
     def test_liste_proprietaires(self):
-        factory.SubFactory(PersonneFactory)
         un_batiment = BatimentFactory()
-        gestionnaire = factory.SubFactory(PersonneFactory)
+        gestionnaire = PersonneFactory()
         ProprietaireFactory(proprietaire=gestionnaire,
                             batiment=un_batiment)
         url = reverse('listeProprietaires')
         response = self.client.get(url)
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, 'listeProprietaires.html')
+        self.assertEqual(response.context['proprietaires'].count(), 1)
 
+    def test_get_personnes_possibles(self):
+        un_batiment = BatimentFactory()
 
+        personne_proprietaire = PersonneFactory()
+        ProprietaireFactory(proprietaire=personne_proprietaire,
+                            batiment=un_batiment)
+
+        PersonneFactory()
+        PersonneFactory()
+
+        self.assertEqual(len(proprietaire_view.get_personnes_possibles(un_batiment)), 2)
