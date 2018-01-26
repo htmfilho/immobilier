@@ -33,6 +33,7 @@ from django.utils import timezone
 from main.views_utils import get_key, get_date
 from django.http import HttpResponseRedirect
 
+
 CONTRAT_LOCATION_LIST_HTML = "location/contratlocation_list.html"
 
 
@@ -117,7 +118,6 @@ def contrat_location_for_batiment(request, batiment_id):
 
 def list(request):
     date_fin = timezone.now().date()
-    print(date_fin)
     locations = mdl.contrat_location.search(date_fin)
     return render(request, CONTRAT_LOCATION_LIST_HTML,
                   {'locations': locations,
@@ -137,37 +137,15 @@ def test(request):
     ok - 1
     """
     form = ContratLocationForm(data=request.POST)
-    batiment_id = get_key(request.POST.get('batiment_id', None))
-    batiment = None
-    if batiment_id:
-        batiment = get_object_or_404(mdl.batiment.Batiment, pk=batiment_id)
+    batiment = get_batiment(request)
 
     location = mdl.contrat_location.ContratLocation()
     location.batiment = batiment
-
-    # if request.POST.get('date_fin'):
-    #     location.date_fin = datetime.strptime(request.POST['date_fin'], '%d/%m/%Y')
-    # else:
-    #     location.date_fin = None
-
-    # if request.POST.get('renonciation'):
-    #     location.renonciation = request.POST['renonciation']
-    # else:
-    #     location.renonciation = None
     location.remarque = request.POST.get('remarque', None)
-    if request.POST.get('nom_assurance_other'):
-        assurance = mdl.assurance.Assurance()
-        assurance.nom = request.POST.get('nom_assurance_other')
-        assurance.save()
-        location.assurance = assurance
-    else:
-        if request.POST['assurance'] and not request.POST['assurance'] == 'None':
-            location.assurance = get_object_or_404(mdl.assurance.Assurance, pk=request.POST['assurance'])
-        else:
-            location.assurance = None
-
+    location.assurance = get_assurance(request)
     location.loyer_base = request.POST['loyer_base']
     location.charges_base = request.POST['charges_base']
+
     if request.POST['date_debut']:
         location.date_debut = get_date(request.POST.get('date_debut', None))
         locations_en_cours = mdl.contrat_location.find_by_batiment_location(batiment, location.date_debut)
@@ -200,6 +178,23 @@ def test(request):
                                 'batiments': mdl.batiment.find_all(),
                                 'nav':       'list_batiment',
                                 'form': form})
+
+
+def get_assurance(request):
+    if request.POST.get('nom_assurance_other'):
+        return mdl.assurance.creation_assurance(request.POST.get('nom_assurance_other'))
+    else:
+        if request.POST['assurance'] and not request.POST['assurance'] == 'None':
+            return get_object_or_404(mdl.assurance.Assurance, pk=request.POST['assurance'])
+    return None
+
+
+def get_batiment(request):
+    batiment_id = get_key(request.POST.get('batiment_id', None))
+    batiment = None
+    if batiment_id:
+        batiment = get_object_or_404(mdl.batiment.Batiment, pk=batiment_id)
+    return batiment
 
 
 def prolongation(request):

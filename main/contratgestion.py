@@ -114,12 +114,7 @@ def update(request):
 
     gestion.date_debut = get_date(request.POST.get('date_debut', None))
     gestion.date_fin = get_date(request.POST.get('date_fin', None))
-    # if gestion.date_debut and gestion.date_fin:
-    #     if gestion.date_debut > gestion.date_fin:
-    #         print(gestion.batiment)
-    #         return render(request, "contratgestion_update.html",
-    #                       {'contrat': gestion,
-    #                        'message': 'La date de début doit être < à la date de fin'})
+
     if personne is None:
         message = "Il faut sélectionner un gestionnaire"
         return render(request, "contratgestion_update.html",
@@ -136,25 +131,15 @@ def update(request):
                 gestion.montant_mensuel = None
         gestion.save()
         return redirect(previous)
-
-        # messages.add_message(request, messages.INFO, 'Hello world.')
-        # return HttpResponse(status=204)
     else:
-        personnes = [mdl.personne.find_gestionnaire_default()]
         return render(request, "contratgestion_update.html",
                       {'contrat':   gestion,
                        'action':    UPDATE,
                        'message':   'Invalide',
                        'form':      form,
-                       'personnes': personnes,
+                       'personnes': [mdl.personne.find_gestionnaire_default()],
                        'batiments': mdl.batiment.find_all()})
-        # return render_to_response("contratgestion_update.html",
-        #                           {'contrat': gestion,
-        #                            'action': 'update',
-        #                            'message': 'Invalide',
-        #                            'form': form,
-        #                            'personnes': personnes,
-        #                            'batiments': mdl.batiment.objects.all()}, context_instance=RequestContext(request))
+
 
 
 def list(request):

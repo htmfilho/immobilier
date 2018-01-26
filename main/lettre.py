@@ -4,7 +4,7 @@
 #    designed to manage the core business of property management, buildings,
 #    rental agreement and so on.
 #
-#    Copyright (C) 2016-2017 Verpoorten Leïla
+#    Copyright (C) 2016-2018 Verpoorten Leïla
 #
 #    This program is free software: you can redistribute it and/or modify
 #    it under the terms of the GNU General Public License as published by
@@ -49,30 +49,7 @@ def lettre_create(request):
         data = form.cleaned_data
         location = data['location']
 
-        # lignes = []
-        # ligne1 = LigneTest()
-        # ligne1.col1 = "col1"
-        # ligne1.col2 = "col2"
-        #
-        # ligne2 = LigneTest()
-        # ligne2.col1 = "col12"
-        # ligne2.col2 = "col22"
-        #
-        # lignes.append(ligne1)
-        # lignes.append(ligne2)
-        #
-        # data.update({'lignes': lignes})
-        # data.update({'l1': 'l1'})
-        # data.update({'l2': 'l2'})
-        # data.update({'html': '<table><tr><td>sss</td><td>ksdf</td></tr></table>'})
-        #
-        # ArticleFormSet = formset_factory(LigneForm, extra=2)
-        # formset = ArticleFormSet(initial=[{'test': 'Django is now open source', },
-        #                                   {'test': 'Django is now open source2', }])
-        # data.update({'formset': formset})
-
         data.update({'dateJour': timezone.now()})
-        # personne = mdl.personne.find_personne(1)
         locataires = location.locataires
         personne = None
         if locataires:
@@ -88,14 +65,13 @@ def lettre_create(request):
         personne_gestionnaire = mdl.personne.find_gestionnaire_default()
         data.update({'gestionnaire_nom': personne_gestionnaire.nom})
         data.update({'gestionnaire_prenom': personne_gestionnaire.prenom})
-        data.update({'tableau': [['ligne1','ligne2'],['ligne1','ligne2']]})
+        data.update({'tableau': [['ligne1', 'ligne2'], ['ligne1', 'ligne2']]})
 
         filename = fill_template(
             'documents/lettre.docx', data,
             output_format=doctype)
-        visible_filename = 'lettre.{}'.format(doctype)
 
-        return FileResponse(filename, visible_filename)
+        return FileResponse(filename, 'lettre.{}'.format(doctype))
     else:
         return render(request, 'documents/lettre.html', {'form': form})
 

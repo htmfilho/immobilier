@@ -117,9 +117,7 @@ def populate_locataire(locataire_id, location_id, personne_id, request):
     locataire = _get_locataire(locataire_id)
     location = _get_location(location_id)
     locataire.contrat_location = location
-    if personne_id:
-        personne = get_object_or_404(mdl.personne.Personne, pk=personne_id)
-        locataire.personne = personne
+    locataire.personne = set_personne(personne_id)
     locataire.principal = False
     if request.POST.get('principal', None) and request.POST['principal'] == 'on':
         locataire.principal = True
@@ -128,15 +126,11 @@ def populate_locataire(locataire_id, location_id, personne_id, request):
         locataire.actif = True
     locataire.civilite = request.POST['civilite']
     locataire.infos_complement = request.POST['infos_complement']
-    societe = None
-    if request.POST['societe']:
-        societe = get_object_or_404(mdl.societe.Societe, pk=request.POST['societe'])
-    locataire.societe = societe
+    locataire.societe = get_societe(request)
     locataire.tva = request.POST['tva']
     fonction_locataire = None
     if request.POST['profession']:
         try:
-
             id_fonction = int(request.POST['profession'])
             fonction_locataire = mdl.fonction.find_by_id(id_fonction)
         except:
@@ -145,6 +139,18 @@ def populate_locataire(locataire_id, location_id, personne_id, request):
     locataire.profession = fonction_locataire
     locataire.contrat_location = location
     return locataire
+
+
+def get_societe(request):
+    if request.POST['societe']:
+        return get_object_or_404(mdl.societe.Societe, pk=request.POST['societe'])
+    return None
+
+
+def set_personne(personne_id):
+    if personne_id:
+        return get_object_or_404(mdl.personne.Personne, pk=personne_id)
+    return None
 
 
 @login_required

@@ -4,7 +4,7 @@
 #    designed to manage the core business of property management, buildings,
 #    rental agreement and so on.
 #
-#    Copyright (C) 2016-2017 Verpoorten Leïla
+#    Copyright (C) 2016-2018 Verpoorten Leïla
 #
 #    This program is free software: you can redistribute it and/or modify
 #    it under the terms of the GNU General Public License as published by
@@ -23,13 +23,14 @@
 ##############################################################################
 from django.http import HttpResponse
 
+
 def export_csv(modeladmin, request, queryset):
     import csv
     from django.utils.encoding import smart_str
     response = HttpResponse(mimetype='text/csv')
     response['Content-Disposition'] = 'attachment; filename=mymodel.csv'
     writer = csv.writer(response, csv.excel)
-    response.write(u'\ufeff'.encode('utf8')) # BOM (optional...Excel needs it to open UTF-8 file properly)
+    response.write(u'\ufeff'.encode('utf8'))
     writer.writerow([
         smart_str(u"ID"),
         smart_str(u"Title"),
@@ -48,11 +49,8 @@ def export_csv(modeladmin, request, queryset):
 def export_xls_batiment(modeladmin, request, queryset):
     
     import xlwt
-    
-    
-    response = HttpResponse()
-    response['Content-Disposition'] = 'attachment; filename=listeBatiment.xls'
-    response['Content-type'] = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+
+    response = set_response()
      
     wb = xlwt.Workbook(encoding='utf-8')
     ws = wb.add_sheet("Batiment(s)")
@@ -88,5 +86,10 @@ def export_xls_batiment(modeladmin, request, queryset):
             
     wb.save(response)
     return response
-    
-# export_xls.short_description = u"Export XLS"
+
+
+def set_response():
+    response = HttpResponse()
+    response['Content-Disposition'] = 'attachment; filename=listeBatiment.xls'
+    response['Content-type'] = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+    return response

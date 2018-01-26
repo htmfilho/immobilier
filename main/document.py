@@ -106,19 +106,8 @@ def lettre_indexation(request, contrat_location_id):
     doctype = request.POST.get('format_fichier', 'pdf')
 
     data = {}
-    lignes = []
-    ligne1 = LigneTest()
-    ligne1.col1 = "col1"
-    ligne1.col2 = "col2"
 
-    ligne2 = LigneTest()
-    ligne2.col1 = "col12"
-    ligne2.col2 = "col22"
-
-    lignes.append(ligne1)
-    lignes.append(ligne2)
-    #  lignes = [["ii","oo"],["ii2","oo2"]]
-    data.update({'lignes': lignes})
+    data.update({'lignes': [LigneTest(col1='col1', col2='col2'), LigneTest(col1='col12', col2='col22')]})
     data.update({'l1': 'l1'})
     data.update({'l2': 'l2'})
     data.update({'html': '<table><tr><td>sss</td><td>ksdf</td></tr></table>'})
@@ -175,30 +164,30 @@ class LigneTest:
 def lettre_indexation_new(request, contrat_location_id):
     document_modele = mdl.document_modele.find_by_reference('LETTRE_INDEXATION')
     if document_modele:
-        variables = {}
-        input = document_modele.contenu
-        ll = re.findall(r"\[([^\]]*)\]*", input)
-        un_contrat_location = mdl.contrat_location.find_by_id(contrat_location_id)
-        if un_contrat_location:
-            if un_contrat_location.batiment:
-                batiment = un_contrat_location.batiment
-                variables.update({'batiment_description': batiment.description,
-                                  'batiment_rue': batiment.rue,
-                                  'batiment_numero': batiment.numero,
-                                  'batiment_boite': batiment.boite,
-                                  'batiment_lieu_dit': batiment.lieu_dit,
-                                  'batiment_localite': batiment.localite,
-                                  'batiment_superficie': batiment.superficie,
-                                  'batiment_performance_energetique': batiment.performance_energetique})
+        return create_document(contrat_location_id, document_modele, request)
 
 
-        for key in ll:
-            value = ''
-            if key not in variables:
-                variables.update({'{}'.format(key): value})
-            else:
-                input = input.replace(key, 'kkk')
-
-        return render(request, 'documents/document.html', {'document': document_modele,
-                                                           'contenu': input,
-                                                           'variables': variables})
+def create_document(contrat_location_id, document_modele, request):
+    variables = {}
+    input = document_modele.contenu
+    ll = re.findall(r"\[([^\]]*)\]*", input)
+    un_contrat_location = mdl.contrat_location.find_by_id(contrat_location_id)
+    if un_contrat_location and un_contrat_location.batiment:
+        batiment = un_contrat_location.batiment
+        variables.update({'batiment_description': batiment.description,
+                          'batiment_rue': batiment.rue,
+                          'batiment_numero': batiment.numero,
+                          'batiment_boite': batiment.boite,
+                          'batiment_lieu_dit': batiment.lieu_dit,
+                          'batiment_localite': batiment.localite,
+                          'batiment_superficie': batiment.superficie,
+                          'batiment_performance_energetique': batiment.performance_energetique})
+    for key in ll:
+        value = ''
+        if key not in variables:
+            variables.update({'{}'.format(key): value})
+        else:
+            input = input.replace(key, 'kkk')
+    return render(request, 'documents/document.html', {'document': document_modele,
+                                                       'contenu': input,
+                                                       'variables': variables})

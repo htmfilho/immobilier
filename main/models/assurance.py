@@ -37,3 +37,8 @@ class Assurance(models.Model):
 
 def find_all():
     return Assurance.objects.all().order_by('nom')
+
+
+def creation_assurance(un_nom):
+    assurance = Assurance(nom=un_nom)
+    return assurance.save()

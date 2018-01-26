@@ -35,7 +35,7 @@ from reportlab.lib.units import mm
 ratio = math.sqrt(math.sqrt(2.0))
 PAGE_SIZE = A4
 MARGIN_SIZE = 15 * mm
-COLS_WIDTH = [20*mm,55*mm,45*mm,15*mm,40*mm]
+COLS_WIDTH = [20*mm, 55*mm, 45*mm, 15*mm, 40*mm]
 STUDENTS_PER_PAGE = 24
 BOTTOM_MARGIN = 18
 TOP_MARGIN = 85
@@ -43,13 +43,13 @@ TOP_MARGIN = 85
 class PDFSizes:
 
     def __init__(self):
-        self.PDFpagesizes = {'Letter' : LETTER,
-                    'A0' : A3,
-                    'A1' : A3,
-                    'A2' : A3,
-                    'A3' : A3,
-                    'A4' : A4,
-                    'A5' : A5
+        self.PDFpagesizes = {'Letter': LETTER,
+                    'A0': A3,
+                    'A1': A3,
+                    'A2': A3,
+                    'A3': A3,
+                    'A4': A4,
+                    'A5': A5
                    }
 
         self.PDFfontsizes = [_("xxx-small"), _("xx-small"), _("x-small"), _("smaller"), _("small"), _("normal"), _("large"), _("larger")]
@@ -113,7 +113,7 @@ class SimpleParagraph(platypus.Flowable):
 
     def draw(self):
         #centre the text
-        self.canv.setFont('Times-Roman',self.fontSize)
+        self.canv.setFont('Times-Roman', self.fontSize)
         self.canv.drawString(self.indent, self.spaceAfter, self.text)
 
 class TableOfContentsEntry(Paragraph):
@@ -150,6 +150,7 @@ class TableOfContentsEntry(Paragraph):
         self.canv.drawText(tx)
         self._drawDots()
 
+
 class Spacer(platypus.Spacer):
     def __init__(self, width, height, part=""):
         platypus.Spacer.__init__(self, width, height)
@@ -160,6 +161,7 @@ class Spacer(platypus.Spacer):
 
     def getPart(self):
         return self._part
+
 
 class Image(platypus.Image):
     def __init__(self, filename, part="", width=None, height=None, kind='direct', mask="auto", lazy=1):
