@@ -63,6 +63,9 @@ def find_all():
 
 
 def find_by_batiment_etat_date(batiment_id, etat, date_limite_inf, date_limite_sup):
+    if batiment_id is None and etat is None and date_limite_inf is None and date_limite_sup is None:
+        return Honoraire.objects.all()
+
     queryset = Honoraire.objects
 
     if batiment_id:
