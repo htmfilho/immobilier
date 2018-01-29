@@ -56,3 +56,13 @@ class HonoraireTest(TestCase):
         honoraire_2 = HonoraireFactory(date_paiement=timezone.now())
 
         self.assertCountEqual(mdl_honoraire.find_all(), [honoraire_1, honoraire_2])
+
+    def test_find_by_batiment_etat_date_no_args(self):
+        HonoraireFactory(date_paiement=timezone.now())
+        HonoraireFactory(date_paiement=timezone.now())
+        self.assertEquals(len(mdl_honoraire.find_by_batiment_etat_date(None, None, None, None)), 2)
+
+    def test_find_by_batiment_etat_date(self):
+        HonoraireFactory(date_paiement=timezone.now(), etat=etat_honoraire.A_VERIFIER)
+        HonoraireFactory(date_paiement=timezone.now(), etat=etat_honoraire.EN_RETARD)
+        self.assertEquals(len(mdl_honoraire.find_by_batiment_etat_date(None, etat_honoraire.A_VERIFIER, None, None)), 1)
