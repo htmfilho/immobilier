@@ -49,6 +49,9 @@ def find_by_id(an_id):
 
 
 def search(un_code_postal, une_localite):
+    if un_code_postal is None and une_localite:
+        return Localite.objects.all()
+
     out = None
     queryset = Localite.objects
     if un_code_postal:
@@ -60,6 +63,7 @@ def search(un_code_postal, une_localite):
     if un_code_postal or une_localite:
         out = queryset
     return out
+
 
 def create_localite(nom, cp):
     localite = mdl.localite.Localite()
