@@ -12,6 +12,9 @@ omit =
     */main/static/*
     */main/static/js/customComboBox.js*
     */main/platypus_pdf_template.py *
+    */apps.py
+    */wsgi.py
+    */manage.py
 
 
 [report]
