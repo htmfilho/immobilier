@@ -42,3 +42,10 @@ def find_all():
 def creation_assurance(un_nom):
     assurance = Assurance(nom=un_nom)
     return assurance.save()
+
+
+def find_by_id(id):
+    try:
+        return Assurance.objects.get(pk=id)
+    except Assurance.DoesNotExist:
+        return None

@@ -34,12 +34,20 @@ fake = Faker()
 
 def _get_tzinfo():
     if settings.USE_TZ:
-        return timezone.get_current_timezone()
+        return timezone.get_current_timezone().date()
     else:
         return None
 
+
+def generate_date_debut(contrat):
+    return datetime.date(timezone.now().year, 1, 1)
+
+
 def generate_date_fin(contrat):
-    return datetime.datetime(contrat.date_debut.year,12,31)
+    if contrat.date_debut:
+        return datetime.date(timezone.now().year, 12, 31)
+    else:
+        return datetime.date(timezone.now().year+1, 9, 30)
 
 
 class ContratLocationFactory(factory.DjangoModelFactory):
@@ -48,8 +56,10 @@ class ContratLocationFactory(factory.DjangoModelFactory):
 
     batiment = factory.SubFactory(BatimentFactory)
 
-    date_debut = factory.Faker('date_time_this_decade', before_now=True, after_now=False)
-    date_fin = factory.Faker('date_time_this_decade', before_now=False, after_now=True)
+    # date_debut = factory.Faker('date_time_this_decade', before_now=True, after_now=False)
+    date_debut = factory.LazyAttribute(generate_date_debut)
+    date_fin = factory.LazyAttribute(generate_date_fin)
+    # date_fin = factory.Faker('date_time_this_decade', before_now=False, after_now=True)
     # renonciation = models.DateField(auto_now=False, auto_now_add=False, blank=True, null=True)
     # remarque = models.TextField(blank=True, null=True)
     # assurance = models.ForeignKey('Assurance', blank=True, null=True)

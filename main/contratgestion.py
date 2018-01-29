@@ -4,7 +4,7 @@
 #    designed to manage the core business of property management, buildings,
 #    rental agreement and so on.
 #
-#    Copyright (C) 2016-2017 Verpoorten Leïla
+#    Copyright (C) 2016-2018 Verpoorten Leïla
 #
 #    This program is free software: you can redistribute it and/or modify
 #    it under the terms of the GNU General Public License as published by
@@ -102,10 +102,7 @@ def update(request):
             gestion = get_object_or_404(mdl.contrat_gestion.ContratGestion, pk=request.POST.get('id', None))
             batiment = get_object_or_404(mdl.batiment.Batiment, pk=batiment_id)
             gestion.batiment = batiment
-    if gestion is None:
-        gestion = mdl.contrat_gestion.ContratGestion()
-        batiment = get_object_or_404(mdl.batiment.Batiment, pk=batiment_id)
-        gestion.batiment = batiment
+    gestion = get_contrat_gestion(batiment_id, gestion)
     if request.POST.get('gestionnaire', None):
         personne = get_object_or_404(mdl.personne.Personne, pk=request.POST.get('gestionnaire', None))
         gestion.gestionnaire = personne
@@ -123,12 +120,7 @@ def update(request):
                        'message': message,
                        'form':    form})
     if form.is_valid() and data_valid(form, gestion):
-        montant_mensuel = request.POST.get('montant_mensuel', None)
-        if montant_mensuel:
-            try:
-                gestion.montant_mensuel = float(montant_mensuel.replace(',', '.'))
-            except:
-                gestion.montant_mensuel = None
+        gestion.montant_mensuel = get_montant(request.POST.get('montant_mensuel', None))
         gestion.save()
         return redirect(previous)
     else:
@@ -140,6 +132,22 @@ def update(request):
                        'personnes': [mdl.personne.find_gestionnaire_default()],
                        'batiments': mdl.batiment.find_all()})
 
+
+def get_contrat_gestion(batiment_id, gestion):
+    if gestion is None:
+        gestion = mdl.contrat_gestion.ContratGestion()
+        batiment = get_object_or_404(mdl.batiment.Batiment, pk=batiment_id)
+        gestion.batiment = batiment
+    return gestion
+
+
+def get_montant(montant_mensuel):
+    if montant_mensuel:
+        try:
+            return float(montant_mensuel.replace(',', '.'))
+        except:
+            return None
+    return None
 
 
 def list(request):

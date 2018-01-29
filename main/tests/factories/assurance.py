@@ -4,7 +4,7 @@
 #    designed to manage the core business of property management, buildings,
 #    rental agreement and so on.
 #
-#    Copyright (C) 2016-2018 Verpoorten Leïla
+#    Copyright (C) 2016-2017 Verpoorten Leïla
 #
 #    This program is free software: you can redistribute it and/or modify
 #    it under the terms of the GNU General Public License as published by
@@ -21,30 +21,15 @@
 #    see http://www.gnu.org/licenses/.
 #
 ##############################################################################
-from datetime import datetime
+import factory
+import factory.fuzzy
 
 
-DATE_SHORT_FORMAT = "%d/%m/%Y"
-UNDEFINED = '-'
+class AssuranceFactory(factory.DjangoModelFactory):
+
+    class Meta:
+        model = 'main.Assurance'
+    nom = factory.Sequence(lambda n: 'Nom - %d' % n)
+    description = factory.Sequence(lambda n: 'Description - %d' % n)
 
 
-def get_key(id):
-    if id is None or id == "" or id == "-" or id == "None":
-        return None
-    return int(id)
-
-
-def get_previous(request):
-    previous = request.POST.get('previous', None)
-    if previous is None:
-        return request.META.get('HTTP_REFERER', '/')
-    return previous
-
-
-def get_date(value):
-    if value:
-        try:
-            return datetime.strptime(value, '%d/%m/%Y')
-        except ValueError:
-            return None
-    return None

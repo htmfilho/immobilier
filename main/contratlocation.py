@@ -30,11 +30,13 @@ from main.forms import ContratLocationForm
 from dateutil.relativedelta import relativedelta
 from main import models as mdl
 from django.utils import timezone
-from main.views_utils import get_key, get_date
+from main.views_utils import get_key, get_date, UNDEFINED
 from django.http import HttpResponseRedirect
 
 
 CONTRAT_LOCATION_LIST_HTML = "location/contratlocation_list.html"
+ONE_YEAR_DURATION = '1'
+SEVEN_YEARS_DURATION = '7'
 
 
 def prepare_update(request, location_id):
@@ -49,36 +51,19 @@ def update(request):
     id = request.POST.get('id', None)
     form = ContratLocationForm(data=request.POST)
     location = get_object_or_404(mdl.contrat_location.ContratLocation, pk=id)
-    prolongation_action = False
-    if 'bt_prolongation' in request.POST:
-        prolongation_action = True
+    prolongation_action = prolongation_button_clicked(request)
 
     location.renonciation = get_date(request.POST.get('renonciation', None))
     location.remarque = request.POST.get('remarque', None)
-
-    if request.POST['assurance'] and not request.POST['assurance'] == '-':
-        location.assurance = get_object_or_404(mdl.assurance.Assurance, pk=request.POST['assurance'])
-    else:
-        location.assurance = None
+    location.assurance = get_assurance_location(request.POST['assurance'])
 
     if form.is_valid():
         data = form.cleaned_data
-
-        if prolongation_action and (request.POST.get('type_prolongation') == '1' \
-                                    or request.POST.get('type_prolongation') == '7'):
+        if is_prolongation(request.POST.get('type_prolongation', None), prolongation_action):
             # Les financements seront adaptés via le save
             location.save_prolongation(int(request.POST.get('type_prolongation')))
         else:
             date_debut_formulaire = data['date_debut']
-
-            if date_debut_formulaire != location.date_debut:
-                print('attention différence dans les dates')
-            else:
-                print('pas de différence de date')
-            if data['loyer_base'] != location.loyer_base or data['charges_base'] != location.charges_base:
-                print('attention différence dans les  loyers/charges')
-            else:
-                print('pas de difféence de loyer/char')
             location.save()
         if not prolongation_action:
             return redirect(previous)
@@ -89,6 +74,24 @@ def update(request):
                             'nav':         'list_batiment',
                             'form':        form,
                             'previous':    previous})
+
+
+def prolongation_button_clicked(request):
+    if 'bt_prolongation' in request.POST:
+        return True
+    return False
+
+
+def is_prolongation(type_prolongation, prolongation_action):
+    if prolongation_action and (type_prolongation == ONE_YEAR_DURATION or type_prolongation == SEVEN_YEARS_DURATION):
+        return True
+    return False
+
+
+def get_assurance_location(assurance_post_value):
+    if assurance_post_value and not assurance_post_value == UNDEFINED:
+        return mdl.assurance.find_by_id(get_key(assurance_post_value))
+    return None
 
 
 def contrat_location_for_batiment(request, batiment_id):
@@ -137,7 +140,7 @@ def test(request):
     ok - 1
     """
     form = ContratLocationForm(data=request.POST)
-    batiment = get_batiment(request)
+    batiment = get_batiment(get_key(request.POST.get('batiment_id', None)))
 
     location = mdl.contrat_location.ContratLocation()
     location.batiment = batiment
@@ -189,12 +192,10 @@ def get_assurance(request):
     return None
 
 
-def get_batiment(request):
-    batiment_id = get_key(request.POST.get('batiment_id', None))
-    batiment = None
+def get_batiment(batiment_id):
     if batiment_id:
-        batiment = get_object_or_404(mdl.batiment.Batiment, pk=batiment_id)
-    return batiment
+        return mdl.batiment.find_batiment(batiment_id)
+    return None
 
 
 def prolongation(request):

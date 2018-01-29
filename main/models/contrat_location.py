@@ -4,7 +4,7 @@
 #    designed to manage the core business of property management, buildings,
 #    rental agreement and so on.
 #
-#    Copyright (C) 2016-2017 Verpoorten Leïla
+#    Copyright (C) 2016-2018 Verpoorten Leïla
 #
 #    This program is free software: you can redistribute it and/or modify
 #    it under the terms of the GNU General Public License as published by
@@ -32,10 +32,17 @@ from main.models import indice_sante as IndiceSante
 from main.models import alerte as Alerte
 from dateutil.relativedelta import relativedelta
 from django.contrib import admin
+from main.models.enums import etat_suivi
+
+
+INDICE_SANTE_REF_1994 = datetime.date(1994, 2, 1)
+INDICE_SANTE_REF_1983 = datetime.date(1983, 1, 1)
+INDICE_SANTE_REF_1981 = datetime.date(1981, 1, 1)
 
 
 class ContratLocationAdmin(admin.ModelAdmin):
     raw_id_fields = ('batiment', 'assurance', 'indice_sante_base')
+
 
 class ContratLocation(models.Model):
     batiment = models.ForeignKey('Batiment')
@@ -91,14 +98,14 @@ class ContratLocation(models.Model):
         self.date_fin = df
         self.renonciation = (self.date_debut + relativedelta(years=1))-relativedelta(days=10)
         un_indice_sante = None
-        if self.date_debut < datetime.datetime(1981, 1, 1):
+        if self.date_debut < INDICE_SANTE_REF_1981:
             pass
         else:
-            if self.date_debut < datetime.datetime(1983, 1, 1):
+            if self.date_debut < INDICE_SANTE_REF_1983:
                 pass
             else:
                 one_mon_timedelta = datetime.timedelta(days=1 * 365/12)
-                if self.date_debut < datetime.datetime(1994, 2, 1):
+                if self.date_debut < INDICE_SANTE_REF_1994:
                     date_ref = self.date_debut - one_mon_timedelta
                     un_indice_sante = IndiceSante.find_by_date(date_ref)
                 else:
@@ -162,13 +169,18 @@ class ContratLocation(models.Model):
     def tot_suivis_paye(self):
         financements = self.financements()
         tot = 0
-        for f in financements:
-            sui = SuiviLoyer. \
-                SuiviLoyer.objects.filter(financement_location=f, etat_suivi__in=('PAYE', 'SURPAYE'))
-            if sui.exists():
-                for s in sui:
-                    tot += s.loyer_percu
+        for financement in financements:
+            tot += self.get_total_by_financement(financement)
+        return tot
 
+    def get_total_by_financement(self, financement):
+        tot = 0
+        suivi_list = SuiviLoyer. \
+            SuiviLoyer.objects.filter(financement_location=financement,
+                                      etat_suivi__in=(etat_suivi.PAYE, etat_suivi.SURPAYE))
+        if suivi_list.exists():
+            for s in suivi_list:
+                tot += s.loyer_percu
         return tot
 
     class Meta:
@@ -184,9 +196,7 @@ def find_all():
 
 
 def search(date_fin):
-    print(date_fin)
     if date_fin:
-        print('isssssssssssss')
         return ContratLocation.objects.filter(date_fin__gte=date_fin)
 
     return ContratLocation.objects.all()

@@ -30,7 +30,7 @@ from django.http import HttpResponseRedirect
 from django.core.urlresolvers import reverse
 from main.models.enums import etat_suivi
 from decimal import Decimal
-from main.views_utils import get_date
+from main.views_utils import get_date, UNDEFINED
 
 
 TOUS = 'TOUS'
@@ -167,7 +167,7 @@ def get_montant(request, nom_champ):
 def get_etat_suivi(request):
     etat_suivi = request.POST.get('etat_suivi', None)
     if etat_suivi:
-        if etat_suivi == '-' or etat_suivi == TOUS:
+        if etat_suivi == UNDEFINED or etat_suivi == TOUS:
             return None
         else:
             return etat_suivi
