@@ -130,15 +130,18 @@ class Batiment(models.Model):
 
     def locataires_actuels2(self):
         liste = []
-
         contrats = ContratLocation.find_by_batiment_dates(self)
-        if not(contrats is None):
+        if contrats:
             for contrat in contrats:
-                locataire = Locataire.find_by_contrat_location(contrat)
-                for l in locataire:
-                    if l not in liste:
-                        liste.append(l)
+                liste = self.get_locataire_liste(contrat, liste)
+        return liste
 
+    def get_locataire_liste(self, contrat, liste_param):
+        liste = liste_param
+        locataires = Locataire.find_by_contrat_location(contrat)
+        for l in locataires:
+            if l not in liste:
+                liste.append(l)
         return liste
 
     def dernier_locataires(self):
@@ -211,7 +214,6 @@ class Batiment(models.Model):
         return False
 
 
-
 def autocomplete_search_fields():
     return 'localite'
 
@@ -226,9 +228,9 @@ def find_batiment(id):
 
 def find_batiments_gestionnaire():
     personne = Personne.find_gestionnaire_default()
-    batiments_gestionnaire=[]
+    batiments_gestionnaire = []
     if personne:
-        batiments_gestionnaire =  Proprietaire.find_batiment_by_personne(personne)
+        batiments_gestionnaire = Proprietaire.find_batiment_by_personne(personne)
         batiments_en_gestion = find_batiment_by_gestionnaire()
         # return batiments_gestionnaire
         # return chain(batiments_gestionnaire,batiments_en_gestion)
@@ -237,7 +239,7 @@ def find_batiments_gestionnaire():
         #     bats.append(b)
         # for b in batiments_gestionnaire:
         #     bats.append(b)
-        return  chain(batiments_gestionnaire, batiments_en_gestion)
+        return chain(batiments_gestionnaire, batiments_en_gestion)
     return None
 
 
