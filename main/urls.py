@@ -22,7 +22,7 @@
 #
 ##############################################################################
 from . import views, batiment, proprietaire, suivis, contratlocation, financement, locataire, contratgestion, \
-    frais, honoraire, personne, essai_pdf, essai3, assurance, pays, fonction, societe, document,\
+    frais, honoraire, personne, essai_pdf, assurance, pays, fonction, societe, document,\
     lettre
 from main import alertes
 from main.pdf import image
@@ -175,7 +175,7 @@ urlpatterns = [
     url(r'^test/merge/$', views.test_merge, name='test_merge'),
     url(r'^test/upload/$', image.upload, name='upload'),
     url(r'^test/upload2/$', essai_pdf.test_create_pdf, name='test_pdf'),
-    url(r'^test3/$', essai3.test, name='test3'),
+    # url(r'^test3/$', essai3.test, name='test3'),
 
     url(r'^assurance_create/$', assurance.create, name='assurance_create'),
     url(r'^prolongation/$', contratlocation.prolongation, name='prolongation'),
