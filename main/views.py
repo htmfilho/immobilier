@@ -4,7 +4,7 @@
 #    designed to manage the core business of property management, buildings,
 #    rental agreement and so on.
 #
-#    Copyright (C) 2016-2017 Verpoorten Leïla
+#    Copyright (C) 2016-2018 Verpoorten Leïla
 #
 #    This program is free software: you can redistribute it and/or modify
 #    it under the terms of the GNU General Public License as published by
@@ -42,10 +42,12 @@ from main.pages_utils import PAGE_LISTE_BATIMENTS
 from main.models.enums import etat_honoraire
 from main.pdf import merge_pdf
 from django.http import FileResponse, Http404
-import re, os
+import re
 import os
 from django.http import HttpResponse
 from django.views.decorators.csrf import csrf_exempt
+
+ZERO = 0
 
 
 class ContratGestionList(ListView):
@@ -94,27 +96,31 @@ def home(request):
                    'locataires':      mdl.locataire.find_my_locataires(),
                    'mois_en_cours':   mois_en_cours,
                    'mes_frais':       mes_frais,
-                   'tot_depenses':    get_total_depenses(mes_frais),
-                   'tot_recettes':    get_total_recettes(suivis_recus)})
+                   'tot_depenses':    _get_total_depenses(mes_frais),
+                   'tot_recettes':    _get_total_recettes(suivis_recus)})
 
 
-def get_total_depenses(mes_frais):
-    tot_depenses = 0
-    for f in mes_frais:
-        if f.montant:
-            tot_depenses += f.montant
+def _get_total_depenses(mes_frais):
+    tot_depenses = ZERO
+    if mes_frais:
+        for f in mes_frais:
+            tot_depenses += _get_montant_to_add(f.montant)
     return tot_depenses
 
 
-def get_total_recettes(suivis_recus):
-    tot_recettes = 0
+def _get_total_recettes(suivis_recus):
+    tot_recettes = ZERO
     if suivis_recus:
         for s in suivis_recus:
-            if s.loyer_percu:
-                tot_recettes = tot_recettes + s.loyer_percu
-            if s.charges_percu:
-                tot_recettes = tot_recettes + s.charges_percu
+            tot_recettes += _get_montant_to_add(s.loyer_percu)
+            tot_recettes += _get_montant_to_add(s.charges_percu)
     return tot_recettes
+
+
+def _get_montant_to_add(sum):
+    if sum:
+        return sum
+    return ZERO
 
 
 @login_required
@@ -133,22 +139,22 @@ def listeComplete(request):
 
 @login_required
 def personne(request, personne_id):
-    personne = mdl.personne.find_personne(personne_id)
+    une_personne = mdl.personne.find_personne(personne_id)
     return render(request, "personne/personne_form.html",
-                  {'personne': personne,
+                  {'personne': une_personne,
                    'societes': mdl.societe.find_all()})
 
 
 def update_personne(request):
-    personne = mdl.personne.Personne()
+    une_personne = mdl.personne.Personne()
     if 'add' == request.POST.get('action', None) or 'modify' == request.POST.get('action', None):
-        personne = get_object_or_404(mdl.personne.Personne, pk=request.POST['id'])
-        personne.nom = request.POST['nom']
-        personne.prenom = request.POST['prenom']
+        une_personne = get_object_or_404(mdl.personne.Personne, pk=request.POST['id'])
+        une_personne.nom = request.POST['nom']
+        une_personne.prenom = request.POST['prenom']
 
-        personne.save()
+        une_personne.save()
     return render(request, "personne/personne_form.html",
-                  {'personne': personne,
+                  {'personne': une_personne,
                    'societes': mdl.societe.find_all()})
 
 

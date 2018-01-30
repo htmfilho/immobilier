@@ -14,5 +14,6 @@ exclude_patterns:
 - "**/fixtures/"
 - "**/static/"
 - "**/pdf/"
+- "**/main/essai3.py"
 - "settings.py"
 - "__init__.py"

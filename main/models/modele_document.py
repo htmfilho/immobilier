@@ -4,7 +4,7 @@
 #    designed to manage the core business of property management, buildings,
 #    rental agreement and so on.
 #
-#    Copyright (C) 2016-2017 Verpoorten Leïla
+#    Copyright (C) 2016-2018 Verpoorten Leïla
 #
 #    This program is free software: you can redistribute it and/or modify
 #    it under the terms of the GNU General Public License as published by

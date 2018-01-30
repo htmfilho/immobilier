@@ -54,7 +54,7 @@ class SuiviLoyerFactory(factory.DjangoModelFactory):
     date_paiement = factory.Faker('date_time_this_decade', before_now=True, after_now=False, tzinfo=_get_tzinfo())
     etat_suivi = factory.Iterator(etat_suivi, getter=operator.itemgetter(0))
     # remarque = models.TextField(blank=True, null=True)
-    # loyer_percu = models.DecimalField(max_digits=5, decimal_places=2, blank=True, null=True)
-    # charges_percu = models.DecimalField(max_digits=5, decimal_places=2, blank=True, null=True)
+    loyer_percu = 0
+    charges_percu = 0
     # date_paiement_reel = models.DateField(blank=True, null=True)
 
