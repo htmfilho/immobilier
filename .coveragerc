@@ -15,6 +15,9 @@ omit =
     */apps.py
     */wsgi.py
     */manage.py
+    */main/essai3.py *
+    */main/test_pdfgen.py *
+    */main/pdfUtils.py *
 
 
 [report]
