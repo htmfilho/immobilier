@@ -25,8 +25,7 @@ from main import models as mdl
 from django.shortcuts import render
 from django.utils import timezone
 from django.views.generic import *
-from main.forms import LettreForm, \
-    LigneForm
+from main.forms import LettreForm, LigneForm
 
 from templated_docs import fill_template
 from templated_docs.http import FileResponse
@@ -45,35 +44,52 @@ def lettre_create(request):
         form = LettreForm()
 
     if form.is_valid():
-        doctype = 'docx'
+        doctype =
         data = form.cleaned_data
         location = data['location']
 
-        data.update({'dateJour': timezone.now()})
         locataires = location.locataires
-        personne = None
-        if locataires:
-            personne = location.locataires.first().personne
-        if personne:
-            data.update({'titre': personne.titre})
-            data.update({'nom': personne.nom})
-            data.update({'prenom': personne.prenom})
-        bat = mdl.batiment.find_batiment(1)
-        bat = location.batiment
-        data.update({'adresse': bat.adresse_rue})
-        data.update({'localite': bat.adresse_localite})
-        personne_gestionnaire = mdl.personne.find_gestionnaire_default()
-        data.update({'gestionnaire_nom': personne_gestionnaire.nom})
-        data.update({'gestionnaire_prenom': personne_gestionnaire.prenom})
+        data.update({'dateJour': timezone.now()})
+        data = get_personne_detail(data, locataires, location)
+        data = get_batiment_detail(location.batiment, data)
+        data = get_gestionnaire_detail(data)
         data.update({'tableau': [['ligne1', 'ligne2'], ['ligne1', 'ligne2']]})
 
         filename = fill_template(
             'documents/lettre.docx', data,
             output_format=doctype)
 
-        return FileResponse(filename, 'lettre.{}'.format(doctype))
+        return FileResponse(filename, 'lettre.{}'.format('docx'))
     else:
         return render(request, 'documents/lettre.html', {'form': form})
+
+
+def get_personne_detail(data_param, locataires, location):
+    data = data_param
+    personne = None
+    if locataires:
+        personne = location.locataires.first().personne
+        if personne:
+            data.update({'titre': personne.titre})
+            data.update({'nom': personne.nom})
+            data.update({'prenom': personne.prenom})
+    return data
+
+
+def get_gestionnaire_detail(data_param):
+    data = data_param
+    personne_gestionnaire = mdl.personne.find_gestionnaire_default()
+    data.update({'gestionnaire_nom': personne_gestionnaire.nom})
+    data.update({'gestionnaire_prenom': personne_gestionnaire.prenom})
+    return data
+
+
+def get_batiment_detail(un_batiment, data_param):
+    data = data_param
+    if un_batiment:
+        data.update({'adresse': un_batiment.adresse_rue})
+        data.update({'localite': un_batiment.adresse_localite})
+    return data
 
 
 class LigneTest:

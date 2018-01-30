@@ -51,29 +51,21 @@ def export_xls_batiment(modeladmin, request, queryset):
     import xlwt
 
     response = set_response()
-     
+
     wb = xlwt.Workbook(encoding='utf-8')
     ws = wb.add_sheet("Batiment(s)")
-    
+    ws = _write_columns(ws)
+    ws = _write_rows(queryset, ws)
+
+    wb.save(response)
+    return response
+
+
+def _write_rows(queryset, ws_param):
     row_num = 0
-    
-    columns = [
-        (u"ID", 2000),
-        (u"Nom", 6000),
-        (u"Rue", 8000),
-    ]
-
-    font_style = xlwt.XFStyle()
-    font_style.font.bold = True
-
-    for col_num in range(len(columns)):
-        ws.write(row_num, col_num, columns[col_num][0], font_style)
-        # set column width
-        ws.col(col_num).width = columns[col_num][1]
-
+    ws  = ws_param
     font_style = xlwt.XFStyle()
     font_style.alignment.wrap = 1
-    
     for obj in queryset:
         row_num += 1
         row = [
@@ -83,9 +75,23 @@ def export_xls_batiment(modeladmin, request, queryset):
         ]
         for col_num in range(len(row)):
             ws.write(row_num, col_num, row[col_num], font_style)
-            
-    wb.save(response)
-    return response
+    return ws
+
+def _write_columns(row_num, ws_param):
+    row_num = 0
+    columns = [
+        (u"ID", 2000),
+        (u"Nom", 6000),
+        (u"Rue", 8000),
+    ]
+    ws  = ws_param
+    font_style = xlwt.XFStyle()
+    font_style.font.bold = True
+    for col_num in range(len(columns)):
+        ws.write(row_num, col_num, columns[col_num][0], font_style)
+        # set column width
+        ws.col(col_num).width = columns[col_num][1]
+    return ws
 
 
 def set_response():
