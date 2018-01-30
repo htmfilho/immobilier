@@ -37,7 +37,6 @@ class Proprietaire(models.Model):
 
         return Batiment.find_by_proprietaire(self)
 
-
     def __str__(self):
         ch = ""
         ch = ch + self.proprietaire.nom
@@ -57,8 +56,8 @@ def find_proprietaire(id):
     return Proprietaire.objects.get(pk=id)
 
 
-def find_batiment_by_personne(personne):
-    list_p = Proprietaire.objects.filter(proprietaire=personne)
+def find_batiment_by_personne(une_personne):
+    list_p = Proprietaire.objects.filter(proprietaire=une_personne)
     batiments = []
     for p in list_p:
         if p.batiment:
@@ -90,6 +89,9 @@ def find_by_personne(personne):
 
 
 def search(une_personne=None, un_batiment=None):
+    if not une_personne and not un_batiment:
+        return Proprietaire.objects.all()
+
     queryset = Proprietaire.objects
 
     if une_personne:
