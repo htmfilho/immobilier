@@ -562,13 +562,8 @@ def test(request):
                         topMargin=85,
                         bottomMargin=18)
     doct = DocTemplateWithTOC(doc, 'pdf1.pdf')
-    # d = open("output.pdf", "wb")
-    # output= PdfFileWriter()
-    # output.write(d)
-    # d.close()
     content=[]
-    legend_text = 'justification_legend'
-    legend_text += "<br/><font color=red>%s</font>" % 'fffff'
+    legend_text = "justification_legend <br/><font color=red>%s</font>" % 'fffff'
     p = ParagraphStyle('normal')
     content.append(Paragraph('''
                             <para>
