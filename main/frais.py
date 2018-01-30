@@ -32,6 +32,7 @@ from django.http import HttpResponseRedirect
 from django.core.urlresolvers import reverse
 from main import societe
 
+ON = 'on'
 
 FRAIS_LIST_HTML = "frais/fraismaintenance_list.html"
 
@@ -84,25 +85,16 @@ def prepare_update(request, frais_id, previous=None, location_id=None):
 
 
 def update(request):
-    print('update')
-    location_id = request.POST.get('location_id', None)
     batiment_id = get_key(request.POST.get('batiment_id', None))
     action = request.POST.get('action', None)
 
-    frais = set_batiment(action, batiment_id, request.POST.get('id', None))
-    frais.contrat_location = None
-    contrat_location_id = get_contrat_location_id(frais, location_id, request)
-    frais.entrepreneur = get_professionnel(request)
-    frais.description = request.POST.get('description', None)
-    frais.montant = get_montant(request)
-    frais.date_realisation = get_date(request.POST.get('date_realisation', None))
+    frais = _populate_frais(action, batiment_id, request)
+    contrat_location_id = get_contrat_location_id(frais, request.POST.get('location_id', None), request.POST.get('contrat_location'))
 
     form = FraisMaintenanceForm(data=request.POST)
     previous = request.POST.get('previous', None)
     if form.is_valid():
-        print('previous {}'.format(previous))
         frais.save()
-
         if previous == 'batiment':
             return HttpResponseRedirect(reverse('batiment', args=(batiment_id, )))
         if previous == 'location' and contrat_location_id:
@@ -111,10 +103,7 @@ def update(request):
             return redirect('home')
         if previous == 'liste':
             return HttpResponseRedirect(reverse('fraismaintenance_list'))
-
     else:
-
-        previous = request.POST.get('previous', None)
         return render(request, PAGE_FRAIS_FORM, {
             'frais': frais,
             'form': form,
@@ -123,6 +112,16 @@ def update(request):
             'entrepreneurs': mdl.professionnel.find_all(),
             'societes': mdl.societe.find_all_with_name(),
             'fonctions': mdl.fonction.find_all()})
+
+
+def _populate_frais(action, batiment_id, request):
+    frais = set_batiment(action, batiment_id, request.POST.get('id', None))
+    frais.contrat_location = None
+    frais.entrepreneur = get_professionnel(request)
+    frais.description = request.POST.get('description', None)
+    frais.montant = get_montant(request)
+    frais.date_realisation = get_date(request.POST.get('date_realisation', None))
+    return frais
 
 
 def get_montant(request):
@@ -138,7 +137,7 @@ def get_montant(request):
 
 def get_professionnel(request):
     professionnel = None
-    if request.POST.get('new_entrepreneur') == 'on':
+    if request.POST.get('new_entrepreneur') == ON:
         professionnel = nouveau_professionnel(request)
     else:
         entrepreneur = get_key(request.POST.get('entrepreneur', None))
@@ -147,13 +146,13 @@ def get_professionnel(request):
     return professionnel
 
 
-def get_contrat_location_id(frais, location_id, request):
+def get_contrat_location_id(frais, location_id, contrat_location_check_box):
     contrat_location_id = location_id
-    if request.POST.get('contrat_location') == 'on':
-        cl = frais.batiment.location_actuelle
-        if cl:
-            frais.contrat_location = cl
-            contrat_location_id = cl.id
+    if contrat_location_check_box == ON:
+        contrat_de_location_actuel = frais.batiment.location_actuelle
+        if contrat_de_location_actuel:
+            frais.contrat_location = contrat_de_location_actuel
+            contrat_location_id = contrat_de_location_actuel.id
     return contrat_location_id
 
 
