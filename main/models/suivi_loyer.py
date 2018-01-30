@@ -38,6 +38,7 @@ class SuiviLoyerAdmin(admin.ModelAdmin):
     search_fields = ['etat_suivi', 'financement_location__contrat_location']
     raw_id_fields = ('financement_location', )
 
+
 class SuiviLoyer(models.Model):
     financement_location = models.ForeignKey('FinancementLocation')
     date_paiement = models.DateField(auto_now=False, auto_now_add=False)
@@ -67,6 +68,8 @@ def find_suivis(date_d_param, date_f_param, etat_param):
     etat = get_param(etat_param)
     date_d = get_param(date_d_param)
     date_f = get_param(date_f_param)
+    if not etat and not date_d and not date_f:
+        return SuiviLoyer.objects.all
 
     queryset = SuiviLoyer.objects
     if etat:
@@ -75,10 +78,8 @@ def find_suivis(date_d_param, date_f_param, etat_param):
         queryset = queryset.filter(date_paiement__gte=date_d)
     if date_f:
         queryset = queryset.filter(date_paiement__lte=date_f)
-    if etat or date_d or date_f:
-        return queryset
-    else:
-        return SuiviLoyer.objects.all
+
+    return queryset
 
 
 def get_param(etat_param):
@@ -99,29 +100,29 @@ def find_suivis_a_verifier_proche():
                                        etat_suivi=etat_suivi.A_VERIFIER))
 
 
-def find_suivis_by_etat_suivi(date_ref, etat_suivi):
+def find_suivis_by_etat_suivi(date_ref, un_etat_suivi):
     start_date = datetime.datetime(date_ref.year, date_ref.month, 1)
     end_date = datetime.datetime(date_ref.year, date_ref.month, calendar.mdays[date_ref.month])
     return SuiviLoyer.objects.filter(date_paiement__lte=end_date, date_paiement__gte=start_date,
-                                     etat_suivi=etat_suivi)
+                                     etat_suivi=un_etat_suivi)
 
 
-def find_mes_suivis_by_etat_suivi(date_ref, etat_suivi):
+def find_mes_suivis_by_etat_suivi(date_ref, un_etat_suivi):
     mes_batiment = Batiment.find_batiments_gestionnaire()
     start_date = datetime.datetime(date_ref.year, date_ref.month, 1)
     end_date = datetime.datetime(date_ref.year, date_ref.month, calendar.mdays[date_ref.month])
     if mes_batiment:
         return SuiviLoyer.objects.filter(date_paiement__lte=end_date, date_paiement__gte=start_date,
-                                         etat_suivi=etat_suivi,
+                                         etat_suivi=un_etat_suivi,
                                          financement_location__contrat_location__batiment__in=mes_batiment)
     return None
 
 
-def find_suivis_by_pas_etat_suivi(date_ref, etat_suivi):
+def find_suivis_by_pas_etat_suivi(date_ref, un_etat_suivi):
     start_date = datetime.datetime(date_ref.year, date_ref.month, 1)
     end_date = datetime.datetime(date_ref.year, date_ref.month, calendar.mdays[date_ref.month])
     return SuiviLoyer.objects.filter(date_paiement__lte=end_date, date_paiement__gte=start_date)\
-        .exclude(etat_suivi=etat_suivi)
+        .exclude(etat_suivi=un_etat_suivi)
 
 
 def find_all():
