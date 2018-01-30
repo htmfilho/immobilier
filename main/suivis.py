@@ -39,7 +39,6 @@ SUIVI_SUIVIS_HTML = "suivi/suivis.html"
 
 def suivis_search(request):
     etat = request.GET['etat']
-
     date_debut = get_date(request.GET.get('date_debut', None))
     date_fin = get_date(request.GET.get('date_fin', None))
     if etat == TOUS:

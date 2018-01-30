@@ -44,7 +44,6 @@ def lettre_create(request):
         form = LettreForm()
 
     if form.is_valid():
-        doctype =
         data = form.cleaned_data
         location = data['location']
 

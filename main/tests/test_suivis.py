@@ -31,6 +31,7 @@ from main import suivis as suivis_view
 
 
 class SuivisViewTest(TestCase):
+
     def setUp(self):
         self.financement = FinancementLocationFactory(date_debut=timezone.now(),
                                                       date_fin=timezone.now(),
