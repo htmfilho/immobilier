@@ -28,6 +28,8 @@ from main import pages_utils
 from main.pages_utils import UPDATE
 from main.views_utils import get_date, get_key
 
+MESSAGE_CREE_UNE_NOUVELLE_PERSONNE = 'Il faut sélectionner un propriétaire ou créer une nouvelle personne'
+
 
 def liste_proprietaires(request):
     proprietaires = mdl.proprietaire.find_all()
@@ -99,28 +101,55 @@ def delete_proprietaire(request, proprietaire_id):
                   {'proprietaire': proprietaire,
                    'pays': mdl.pays.find_all()})
 
+def _get_validation_data(request):
+    return {'proprietaire': request.POST.get('proprietaire', None),
+            'nouveau_nom': request.POST.get('nouveau_nom', None),
+            'nouveau_prenom': request.POST.get('nouveau_prenom', None),
+            'nouveau_prenom2': request.POST.get('nouveau_prenom2', None),
+            }
 
-def validation(request, proprietaire):
-    if request.POST.get('proprietaire', None) is None or request.POST.get('proprietaire', None) == '-':
-        if request.POST.get('nouveau_nom', None) and request.POST.get('nouveau_prenom', None):
+def _validation(data_to_validated, proprietaire):
+    if _no_existing_prorietaire_selected(data_to_validated['proprietaire']):
+        nouveau_nom = data_to_validated['nouveau_nom']
+        nouveau_prenom = data_to_validated['nouveau_prenom']
+        if _new_parameters_ok(nouveau_nom, nouveau_prenom):
             personne_deja_existante = mdl.personne \
-                .find_personne_by_nom_prenom(request.POST.get('nouveau_nom', None),
-                                             request.POST.get('nouveau_prenom', None),
-                                             request.POST.get('nouveau_prenom2', None))
+                .find_personne_by_nom_prenom(nouveau_nom,
+                                             nouveau_prenom,
+                                             data_to_validated['nouveau_prenom2'])
             if personne_deja_existante:
                 return 'Une personne existe déjà avec ces noms/prénoms : {} {}' \
-                    .format(request.POST['nouveau_nom'], request.POST['nouveau_prenom'])
-
+                    .format(nouveau_nom, nouveau_prenom)
         else:
-            return 'Il faut sélectionner un propriétaire ou créer une nouvelle personne'
+            return MESSAGE_CREE_UNE_NOUVELLE_PERSONNE
 
-    if proprietaire.date_debut and proprietaire.date_fin and proprietaire.date_debut > proprietaire.date_fin:
+    if not _date_is_valide(proprietaire):
         return 'La date de début doit être < à la date de fin.  Merci de corriger avant de sauvegarder.'
 
     return None
 
 
+def _new_parameters_ok(nouveau_nom, nouveau_prenom):
+    if nouveau_nom and nouveau_prenom:
+        if len(nouveau_nom.lstrip()) > 0 and len(nouveau_prenom.lstrip()) > 0:
+            return True
+    return False
+
+
+def _no_existing_prorietaire_selected(proprietaire_field):
+    if proprietaire_field is None or proprietaire_field == '-':
+        return True
+    return False
+
+
+def _date_is_valide(proprietaire):
+    if proprietaire.date_debut and proprietaire.date_fin and proprietaire.date_debut > proprietaire.date_fin:
+        return False
+    return True
+
+
 def proprietaire_update_save(request):
+    print('proprietaire_update_save')
     previous = request.POST.get('previous', None)
     prev = request.POST.get('prev', None)
     proprietaire = get_proprietaire(request)
@@ -129,7 +158,7 @@ def proprietaire_update_save(request):
     proprietaire.date_fin = get_date(request.POST.get('date_fin', None))
 
     valide = True
-    message = validation(request, proprietaire)
+    message = _validation(_get_validation_data(request), proprietaire)
     if message:
         valide = False
     personne = get_personne_proprietaire(request)

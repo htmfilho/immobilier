@@ -38,7 +38,7 @@ class ProprietaireFactory(factory.DjangoModelFactory):
 
     proprietaire = factory.SubFactory(PersonneFactory)
     batiment = factory.SubFactory(BatimentFactory)
-    # date_debut = models.DateField(auto_now=False, blank=True, null=True, auto_now_add=False, verbose_name=u"Date début")
-    # date_fin = models.DateField(auto_now=False, blank=True, null=True, auto_now_add=False)
+    date_debut = None
+    date_fin = None
     # actif = models.BooleanField(default=True)
 
