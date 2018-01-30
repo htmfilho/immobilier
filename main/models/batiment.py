@@ -119,13 +119,18 @@ class Batiment(models.Model):
     def locataires_actuels(self):
         liste = []
         contrats = ContratLocation.find_by_batiment_dates(self)
-        if not(contrats is None):
+        if contrats:
             for contrat in contrats:
-                locataire = Locataire.find_by_contrat_location(contrat)
-                for l in locataire:
-                    p = Personne.find_personne(l.personne.id)
-                    liste.append(p)
+                liste = self.get_locataire_personne_liste(contrat, liste)
 
+        return liste
+
+    def get_locataire_personne_liste(self, contrat, liste_param):
+        liste = liste_param
+        locataires = Locataire.find_by_contrat_location(contrat)
+        for l in locataires:
+            p = Personne.find_personne(l.personne.id)
+            liste.append(p)
         return liste
 
     def locataires_actuels2(self):
