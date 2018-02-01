@@ -136,13 +136,11 @@ def delete(request, location_id):
 
 
 def test(request):
-    """
-    ok - 1
-    """
     form = ContratLocationForm(data=request.POST)
     batiment = get_batiment(get_key(request.POST.get('batiment_id', None)))
 
     location = mdl.contrat_location.ContratLocation()
+    location.date_debut = None
     location.batiment = batiment
     location.remarque = request.POST.get('remarque', None)
     location.assurance = get_assurance(request)
@@ -153,34 +151,36 @@ def test(request):
         location.date_debut = get_date(request.POST.get('date_debut', None))
         locations_en_cours = mdl.contrat_location.find_by_batiment_location(batiment, location.date_debut)
         if locations_en_cours:
-            location.date_fin = None
-            location.renonciation = None
-            location_courante = locations_en_cours.first()
-            return render(request, "location/contratlocation_form.html",
-                          {'location': location,
-                           'assurances': mdl.assurance.find_all(),
-                           'nav': 'list_batiment',
-                           'batiments': mdl.batiment.find_all(),
-                           'message_contrat_location': 'Une location est déjà en cours à cette période {} au {}'
-                          .format(location_courante.date_debut.strftime('%d/%m/%Y'),
-                                  location_courante.date_fin.strftime('%d/%m/%Y')),
-                           'form': form})
+            return already_existing_location(form, location, locations_en_cours, request)
         else:
             location.date_fin = location.date_debut + relativedelta(years=1)
             location.renonciation = location.date_debut + relativedelta(days=355)
-    else:
-        location.date_debut = None
 
     if form.is_valid():
         location.save()
         return HttpResponseRedirect(reverse('batiment', args=(location.batiment.id, )))
     else:
         return render(request, "location/contratlocation_form.html",
-                               {'location':    location,
+                               {'location': location,
                                 'assurances': mdl.assurance.find_all(),
                                 'batiments': mdl.batiment.find_all(),
-                                'nav':       'list_batiment',
+                                'nav': 'list_batiment',
                                 'form': form})
+
+
+def already_existing_location(form, location, locations_en_cours, request):
+    location.date_fin = None
+    location.renonciation = None
+    location_courante = locations_en_cours.first()
+    return render(request, "location/contratlocation_form.html",
+                  {'location': location,
+                   'assurances': mdl.assurance.find_all(),
+                   'nav': 'list_batiment',
+                   'batiments': mdl.batiment.find_all(),
+                   'message_contrat_location': 'Une location est déjà en cours à cette période {} au {}'
+                  .format(location_courante.date_debut.strftime('%d/%m/%Y'),
+                          location_courante.date_fin.strftime('%d/%m/%Y')),
+                   'form': form})
 
 
 def get_assurance(request):

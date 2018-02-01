@@ -25,12 +25,18 @@ def create_pdf():
 
         canvas.showPage()
 
+    create_pages(canvas, pages, x)
+
+    canvas.save()
+
+
+def create_pages(canvas, pages, x):
     for page_num, page in enumerate(pages, start=1):
         canvas.setPageSize((page.BBox[2], page.BBox[3]))
         canvas.doForm(makerl(canvas, page))
         ancre = '<a name="%s"></a>' % page_num
 
-        canvas.drawString(page.BBox[0]-x, 65, ancre)
+        canvas.drawString(page.BBox[0] - x, 65, ancre)
 
         footer_text = "Page %s of %s" % (page_num, len(pages))
         x = 128
@@ -39,12 +45,10 @@ def create_pdf():
         canvas.setLineWidth(0.5)
         canvas.line(66, 78, page.BBox[2] - 66, 78)
         canvas.setFont('Times-Roman', 10)
-        canvas.drawString(page.BBox[2]-x, 65, footer_text)
+        canvas.drawString(page.BBox[2] - x, 65, footer_text)
         canvas.restoreState()
 
         canvas.showPage()
-
-    canvas.save()
 
 
 if __name__ == '__main__':

@@ -29,10 +29,9 @@ from main.models import fonction as Fonction
 from main.models import professionnel as Professionnel
 from main.models import contrat_gestion as ContratGestion
 from django.contrib.auth.models import User
-
+from main.models.enums import civilite
 
 PRENOM_GESTIONNAIRE = 'Stéphan'
-
 NOM_GESTIONNAIRE = 'Marchal'
 
 
@@ -42,14 +41,6 @@ class PersonneAdmin(admin.ModelAdmin):
 
 
 class Personne(models.Model):
-
-    CIVILITE = (
-        ('NON_PRECISE', 'Madame, Monsieur,'),
-        ('MONSIEUR', 'Monsieur'),
-        ('MADAME', 'Madame'),
-        ('MADEMOISELLE', 'Mademoiselle'),
-        ('MAITRE', 'Maître')
-    )
     nom = models.CharField(max_length=100)
     prenom = models.CharField(max_length=100)
     prenom2 = models.CharField(max_length=100, blank=True, null=True)
@@ -64,7 +55,7 @@ class Personne(models.Model):
     societe = models.ForeignKey('Societe', blank=True, null=True)
     num_compte_banque = models.CharField(max_length=30, blank=True, null=True)
     fonction = models.ForeignKey('Fonction', blank=True, null=True)
-    titre = models.CharField(max_length=20, choices=CIVILITE, default='NON_PRECISE', blank=True, null=True)
+    titre = models.CharField(max_length=20, choices=civilite.CIVILITES, default='NON_PRECISE', blank=True, null=True)
     user = models.OneToOneField(User, on_delete=models.CASCADE, blank=True, null=True)
 
 

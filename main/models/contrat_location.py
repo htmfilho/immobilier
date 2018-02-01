@@ -57,16 +57,18 @@ class ContratLocation(models.Model):
     indice_sante_base = models.ForeignKey('IndiceSante', default=None, blank=True, null=True)
 
     def __str__(self):
-        desc = ""
-        if not(self.batiment.description is None):
-            desc += self.batiment.description
-        if not(self.batiment.localite is None):
-            desc += str(self.batiment.localite)
-        if not(self.date_debut is None):
-            desc += self.date_debut.strftime('%d-%m-%Y')
-        if not(self.date_fin is None):
-            desc += " au " + self.date_fin.strftime('%d-%m-%Y')
-        return desc
+        desc = []
+        if self.batiment.description:
+            desc.append(self.batiment.description)
+        if self.batiment.localite:
+            desc.append(str(self.batiment.localite))
+        period = ""
+        if self.date_debut:
+            period = self.date_debut.strftime('%d-%m-%Y')
+        if self.date_fin:
+            period += " au " + self.date_fin.strftime('%d-%m-%Y')
+        desc.append(period)
+        return ",".join(map(str, desc))
 
     @property
     def locataires(self):

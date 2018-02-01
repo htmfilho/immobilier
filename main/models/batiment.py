@@ -55,26 +55,16 @@ class Batiment(models.Model):
         ordering = ['localite', 'rue']
 
     def __str__(self):
-        desc = ""
-        cptr = 0
-        if not(self.rue is None):
-            desc += " " + self.rue
-            cptr = cptr + 1
-        if not(self.numero is None):
-            if cptr > 0:
-                desc += ", "
-            desc += str(self.numero)
-            cptr = cptr + 1
-        if not(self.boite is None):
-            if cptr > 0:
-                desc += ", "
-            desc += self.boite
-            cptr = cptr + 1
-        if self.localite is not None:
-            if cptr > 0:
-                desc += ", "
-            desc += str(self.localite.localite)
-        return desc
+        elements = []
+        if self.rue:
+            elements.append(self.rue)
+        if self.numero:
+            elements.append(self.numero)
+        if self.boite:
+            elements.append(self.boite)
+        if self.localite:
+            elements.append(self.localite)
+        return ",".join(map(str, elements))
 
     def adresse_rue(self):
         adresse_complete = ""
@@ -116,14 +106,14 @@ class Batiment(models.Model):
             return list_c[0]
         return None
 
-    def locataires_actuels(self):
-        liste = []
+    def personnes_locataires_actuellement(self):
+        liste_personne = []
         contrats = ContratLocation.find_by_batiment_dates(self)
         if contrats:
             for contrat in contrats:
-                liste = self.get_locataire_personne_liste(contrat, liste)
+                liste_personne = self.get_locataire_personne_liste(contrat, liste_personne)
 
-        return liste
+        return liste_personne
 
     def get_locataire_personne_liste(self, contrat, liste_param):
         liste = liste_param
@@ -134,31 +124,36 @@ class Batiment(models.Model):
         return liste
 
     def locataires_actuels2(self):
-        liste = []
+        liste_locataires = []
         contrats = ContratLocation.find_by_batiment_dates(self)
         if contrats:
             for contrat in contrats:
-                liste = self.get_locataire_liste(contrat, liste)
-        return liste
+                liste_locataires = self.get_locataire_liste(contrat, liste_locataires)
+        return liste_locataires
 
     def get_locataire_liste(self, contrat, liste_param):
         liste = liste_param
         locataires = Locataire.find_by_contrat_location(contrat)
-        for l in locataires:
-            if l not in liste:
-                liste.append(l)
+        for locataire in locataires:
+            if locataire not in liste:
+                liste.append(locataire)
         return liste
 
     def dernier_locataires(self):
         liste = []
         contrats = ContratLocation.find_by_batiment(self)
         if contrats.exists():
-            locataire = Locataire.find_by_contrat_location(contrats.last())
-            for l in locataire:
-                if l not in liste:
-                    liste.append(l)
+            liste = self.get_locataires_list_by_contrat(contrats)
 
         return liste
+
+    def get_locataires_list_by_contrat(self, contrats):
+        locataire_list = []
+        locataires_liste = Locataire.find_by_contrat_location(contrats.last())
+        for locataire in locataires_liste:
+            if locataire not in locataire_list:
+                locataire_list.append(locataire)
+        return locataire_list
 
     @property
     def location_actuelle(self):
@@ -233,7 +228,7 @@ def find_batiment(id):
 
 def find_batiments_gestionnaire():
     personne = Personne.find_gestionnaire_default()
-    batiments_gestionnaire = []
+
     if personne:
         batiments_gestionnaire = Proprietaire.find_batiment_by_personne(personne)
         batiments_en_gestion = find_batiment_by_gestionnaire()

@@ -95,14 +95,7 @@ def update(request):
     previous = request.POST.get('previous', None)
     if form.is_valid():
         frais.save()
-        if previous == 'batiment':
-            return HttpResponseRedirect(reverse('batiment', args=(batiment_id, )))
-        if previous == 'location' and contrat_location_id:
-            return HttpResponseRedirect(reverse('location-prepare-update-all', args=(contrat_location_id, )))
-        if previous == 'dashboard':
-            return redirect('home')
-        if previous == 'liste':
-            return HttpResponseRedirect(reverse('fraismaintenance_list'))
+        return redirection_to_previous(batiment_id, contrat_location_id, previous)
     else:
         return render(request, PAGE_FRAIS_FORM, {
             'frais': frais,
@@ -112,6 +105,19 @@ def update(request):
             'entrepreneurs': mdl.professionnel.find_all(),
             'societes': mdl.societe.find_all_with_name(),
             'fonctions': mdl.fonction.find_all()})
+
+
+def redirection_to_previous(batiment_id, contrat_location_id, previous):
+    if previous == 'batiment':
+        return HttpResponseRedirect(reverse('batiment', args=(batiment_id,)))
+    elif previous == 'location' and contrat_location_id:
+        return HttpResponseRedirect(reverse('location-prepare-update-all', args=(contrat_location_id,)))
+    elif previous == 'dashboard':
+        return redirect('home')
+    elif previous == 'liste':
+        return HttpResponseRedirect(reverse('fraismaintenance_list'))
+    else:
+        return ''
 
 
 def _populate_frais(action, batiment_id, request):
