@@ -132,7 +132,7 @@ urlpatterns = [
     url(r'^societe/create/$', views.SocieteCreate.as_view(), name='societe-create'),
     url(r'^societe/update/(?P<pk>[0-9]+)/$', views.SocieteUpdate.as_view(), name='societe-update'),
     url(r'^societe/delete/(?P<pk>[0-9]+)/$', views.SocieteDelete.as_view(), name='societe-delete'),
-    url(r'^societes/$', views.SocieteList.as_view(), name='societe_list'),
+    url(r'^societes/$', societe.list, name='societe-list'),
     url(r'^societe/(?P<pk>[0-9]+)/$', views.SocieteDetail.as_view(), name='societe'),
     url(r'^societe/create/personne/$', societe.create, name='personne-create-societe'),
     # url(r'^batiment5/(?P<pk>\d+)/$', BatimentDetailView.as_view(), batiment_info)
@@ -184,6 +184,7 @@ urlpatterns = [
     url(r'^batiment/search/$', batiment.search_par_proprietaire, name='batiment_search'),
     url(r'^societe/update/$', societe.update, name='societe_update'),
     url(r'^societe/edit/([0-9]+)/$', societe.edit, name='societe_edit'),
+
     url(r'^location/form/$', contratlocation.contrat_location_form, name="contrat_location_form"),
     url(r'^location/search/$', contratlocation.search, name='location_search'),
     url(r'^fraismaintenance/contrat/new/([0-9]+)/$', frais.contrat_new, name='fraismaintenance-new-contrat'),
@@ -200,5 +201,7 @@ urlpatterns = [
     url(r'^document/lettre_indexation_new/([0-9]+)/$', document.lettre_indexation_new, name='lettre_indexation_new'),
     url(r'^document/lettre_indexation/([0-9]+)/$', document.lettre_indexation, name='lettre_indexation'),
     url(r'^manuel/$', views.manuel, name='manuel'),
+    url(r'^check_societe/$', societe.check_societe, name='check_societe'),
+
 
 ]

@@ -28,6 +28,7 @@ from main import models as mdl
 from django.http import HttpResponse
 from rest_framework import serializers
 from rest_framework.renderers import JSONRenderer
+from main.models.enums.type_societe import TYPE_SOCIETE
 
 
 class JSONResponse(HttpResponse):
@@ -49,6 +50,7 @@ def societe_liste(request):
 
 
 def update(request):
+
     societe_id = None
     if request.POST['societe_id']:
         societe_id = int(request.POST['societe_id'])
@@ -83,7 +85,8 @@ def edit(request, societe_id):
     societe = get_societe(societe_id)
     return render(request, "societe_form.html",
                   {'societe': societe,
-                   'localites': mdl.localite.find_all()})
+                   'localites': mdl.localite.find_all(),
+                   'type': 'from_person'})
 
 
 def create(request):
@@ -96,6 +99,7 @@ def create(request):
 
 
 def create_new(request):
+    print('create_new')
     nouvelle_societe = populate_societe(request)
     nouvelle_societe.save()
 
@@ -104,20 +108,36 @@ def create_new(request):
 
 
 def populate_societe(request):
-    nouvelle_societe = mdl.societe.Societe()
-    nouvelle_societe.nom = request.GET.get('nom', None)
-    nouvelle_societe.description = request.GET.get('description', None)
-    nouvelle_societe.rue = request.GET.get('rue', None)
-    try:
-        nouvelle_societe.numero = int(request.GET.get('numero', None))
-    except:
-        nouvelle_societe.numero = None
-    nouvelle_societe.boite = request.GET.get('boite', None)
-    localite_nom = request.GET.get('localite', None)
-    localite_cp = request.GET.get('localite_cp', None)
-    nouvelle_societe.localite = None
-    if localite_nom and localite_cp:
-        nouvelle_societe.localite = mdl.localite.search(localite_cp, localite_nom)
+    print(request.GET)
+    nom_societe = request.GET.get('nom', None)
+    nouvelle_societe = None
+    if nom_societe:
+        nouvelle_societe = mdl.societe.Societe()
+        nouvelle_societe.nom = request.GET.get('nom', None)
+        nouvelle_societe.description = request.GET.get('description', None)
+        nouvelle_societe.rue = request.GET.get('rue', None)
+        try:
+            nouvelle_societe.numero = int(request.GET.get('numero', None))
+        except:
+            nouvelle_societe.numero = None
+        nouvelle_societe.boite = request.GET.get('boite', None)
+        localite_nom = request.GET.get('localite', None)
+        localite_cp = request.GET.get('localite_cp', None)
+        nouvelle_societe.localite = None
+        print(localite_cp)
+        if localite_nom or localite_cp:
+            localite = mdl.localite.search(localite_cp, localite_nom).first()
+            if localite:
+                nouvelle_societe.localite = localite
+            else:
+                nouvelle_societe.localite = mdl.localite.create_localite(localite_nom, localite_cp)
+
+        type_societe = request.GET.get('type', None)
+
+        nouvelle_societe.type = None
+        if type_societe:
+            nouvelle_societe.type =  mdl.type_societe.find_by_id(type_societe)
+            print(nouvelle_societe.type)
     return nouvelle_societe
 
 
@@ -126,3 +146,17 @@ def creation_nouvelle_societe(new_value, a_description=None):
                                   description=a_description)
     societe.save()
     return societe
+
+
+def list(request):
+    return render(request, "societe/societe_list.html",
+                  {'societes': mdl.societe.find_all()})
+
+
+def check_societe(request):
+    nom = request.GET.get('nom', None)
+    if nom:
+        results = mdl.societe.find_name(nom)
+        serializer = SocieteSerializer(results, many=True)
+        return JSONResponse(serializer.data)
+    return None

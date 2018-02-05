@@ -116,14 +116,7 @@ def update_suivi(request):
     suivi = update_suivi_loyer(request)
 
     if previous:
-        if previous == 'liste':
-            return redirect("suivis")
-        if previous == 'home':
-            return redirect("home")
-        if previous == 'location':
-            return HttpResponseRedirect(reverse('location-prepare-update-all',
-                                                args=(suivi.financement_location.contrat_location.id, )))
-        return redirect(request.POST.get('previous', None))
+        return redirection_suivi(previous, request, suivi)
     else:
         return list_suivis(request,
                            get_date(request.POST.get('date_debut', None)),
@@ -136,6 +129,17 @@ def update_suivi(request):
     #                   {'suivi':      suivi,
     #                    'form': form,
     #                    'previous': previous})
+
+
+def redirection_suivi(previous, request, suivi):
+    if previous == 'liste':
+        return redirect("suivis")
+    if previous == 'home':
+        return redirect("home")
+    if previous == 'location':
+        return HttpResponseRedirect(reverse('location-prepare-update-all',
+                                            args=(suivi.financement_location.contrat_location.id,)))
+    return redirect(request.POST.get('previous', None))
 
 
 def update_suivi_loyer(request):

@@ -305,10 +305,6 @@ class ProprietaireDelete(DeleteView):
     success_url = "../../../proprietaires"
 
 
-class SocieteList(ListView):
-    model = mdl.societe
-
-
 class SocieteDetail(DetailView):
     model = mdl.societe
 

@@ -18,6 +18,7 @@
                     <input type="text"
                            id="txt_nom_societe"
                            name="nom" maxlength="100">
+                <div id="msg_nom" style="color:orange;"  class="invisible"></div>
                     <br><br>
                     <label>Description</label>
                     <br>
@@ -28,7 +29,7 @@
                             <label>Rue</label>
                             <input type="text"
                                    class="form-control"
-                                   id="txt_rue"
+                                   id="txt_rue_societe"
                                    name="rue" maxlength="200">
                         </div>
                         <div class="col-md-2">
@@ -63,7 +64,7 @@
                             <label class="control-label">Localité</label>
                             <input list="localites_nom_soc" type="text" id="txt_localite_societe"
                                    class="form-control" name="localite_societe_other"
-                                   vmaxlength="150">
+                                   maxlength="150">
                             <datalist id="localites_nom_soc">
                                 {% for l in localites %}
                                     <option value="{{ l.localite }}" data-id="{{ l.id }}">{{ l.localite }}</option>
@@ -83,9 +84,9 @@
                     <br>
                     <select id="slt_type">
                         <option value="NON_PRECISE">-</option>
-                        <option value="ASSURANCE">Assurance</option>
-                        <option value="BANQUE">Banque</option>
-                        <option value="NOTAIRE">Notaire</option>
+                        {% for type_societe in type_societes %}
+                            <option value="{{ type_societe.id }}">{{ type_societe.type }}</option>
+                        {% endfor %}
                     </select>
                     <br><br>
                     <div class="modal-footer">
@@ -94,6 +95,7 @@
                         </button>
 
                         <input type="submit" class="btn btn-primary" value="Ok"
+                               disabled
                                data-dismiss="modal"
                                id="bt_save_new_societe_new"/>
                     </div>

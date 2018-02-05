@@ -32,6 +32,10 @@ from django.http import HttpResponse
 import json
 from main import societe
 
+PERSONNE_LIST_HTML = "personne/personne_list.html"
+
+PERSONNE_FORM_HTML = "personne/personne_form.html"
+
 
 def get_personne(personne_id):
     if personne_id and not personne_id == 'None':
@@ -40,30 +44,38 @@ def get_personne(personne_id):
         return mdl.personne.Personne()
 
 
+def get_common_data(personne_id):
+    data = {'fonctions': mdl.fonction.find_all(),
+            'societes': mdl.societe.find_all(),
+            'pays': mdl.pays.find_all(),
+            'localites': mdl.localite.find_all(),
+            'type_societes': mdl.type_societe.find_all()}
+    if personne_id:
+        data.update({'personne': get_personne(personne_id)})
+    else:
+        data.update({'personne': mdl.personne.Personne()})
+    return data
+
+
 def edit(request, personne_id):
-    return render(request, "personne/personne_form.html",
-                  {'personne': get_personne(personne_id),
-                   'fonctions': mdl.fonction.find_all(),
-                   'societes': mdl.societe.find_all(),
-                   'pays': mdl.pays.find_all()})
+    return render(request, PERSONNE_FORM_HTML,
+                  get_common_data(personne_id))
 
 
 def create(request):
-    return render(request, "personne/personne_form.html",
-                  {'personne': mdl.personne.Personne(),
-                   'societes': mdl.societe.find_all(),
-                   'pays': mdl.pays.find_all()})
+    return render(request, PERSONNE_FORM_HTML,
+                  get_common_data(None))
 
 
 def list(request):
-    return render(request, "personne/personne_list.html",
+    return render(request, PERSONNE_LIST_HTML,
                   {'personnes': mdl.personne.find_all()})
 
 
 def search(request):
     nom = request.GET.get('nom', None)
     prenom = request.GET.get('prenom', None)
-    return render(request, "personne/personne_list.html",
+    return render(request, PERSONNE_LIST_HTML,
                   {'nom': nom,
                    'prenom': prenom,
                    'personnes':  mdl.personne.search(nom, prenom)})
@@ -80,14 +92,15 @@ def update(request):
         if batiment_id:
             return HttpResponseRedirect(reverse('batiment', args=(batiment_id, )))
         else:
-            return render(request, "personne/personne_list.html",
+            return render(request, PERSONNE_LIST_HTML,
                           {'personnes': mdl.personne.find_all()})
     else:
-        return render(request, "personne/personne_form.html",
+        return render(request, PERSONNE_FORM_HTML,
                       {'personne': personne,
                        'form': form,
                        'pays': mdl.pays.find_all(),
-                       'societes': mdl.societe.find_all()})
+                       'societes': mdl.societe.find_all(),
+                       'fonctions': mdl.fonction.find_all()})
 
 
 def get_batiment_id(previous):
@@ -153,7 +166,7 @@ def populate_pays_naissance(request):
 def get_societe(request):
     if request.POST['societe'] == '-':
         return societe.creation_nouvelle_societe(request.POST.get('nom_nouvelle_societe', None),
-                                      request.POST.get('description_nouvelle_societe', None))
+                                                 request.POST.get('description_nouvelle_societe', None))
     else:
         return mdl.societe.find_by_id(int(request.POST['societe']))
 
@@ -174,16 +187,17 @@ def get_fonction(request):
 
 
 def validate_personne(request):
-    nom = request.POST.get('nom', None)
-    prenom = request.POST.get('prenom', None)
-    prenom2 = request.POST.get('prenom2', None)
+    if request.method == 'POST':
+        data = request.POST
+    else:
+        data = request.GET
+
+    nom = data.get('nom', None)
+    prenom = data.get('prenom', None)
+    prenom2 = data.get('prenom2', None)
     personnes = mdl.personne.find_personne_by_nom_prenom(nom, prenom, prenom2)
-    nom = request.GET.get('nom', None)
-    prenom = request.GET.get('prenom', None)
-    prenom2 = request.GET.get('prenom2', None)
-    personnes = mdl.personne.find_personne_by_nom_prenom(nom, prenom, prenom2)
+
     if personnes:
         return HttpResponse(json.dumps({'valide': False}), content_type='application/json')
 
     return HttpResponse(json.dumps({'valide': True}), content_type='application/json')
-

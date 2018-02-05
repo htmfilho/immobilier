@@ -72,7 +72,7 @@
           <select name="profession" class="form-control" id="slt_fonction">
               <option value="-">-</option>
               {% for f in fonctions %}
-                  <option value="{{f.id}}" {%if f.id == personne.fonction.id%}selected{%endif%}>{{f}}</option>
+                  <option value="{{f.id}}" {% if f.id == personne.fonction.id %}selected{% endif %}>{{f}}</option>
               {%endfor %}
           </select>
 

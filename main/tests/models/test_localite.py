@@ -28,13 +28,29 @@ from main.tests.factories.localite import LocaliteFactory
 
 class LocaliteTest(TestCase):
 
+    def test_search_no_param(self):
+        LocaliteFactory(code_postal="5001", localite="Lisogne")
+        LocaliteFactory(code_postal="5000", localite="Namur")
+        LocaliteFactory(code_postal="5170", localite="Bois-de-Villers")
+
+        self.assertCountEqual(mdl_localite.search(None, None), 3)
+
     def test_search(self):
-        a_cp_param = "5001"
-        a_localite_param = "Lisogne"
+        un_cp = "5020"
+        a_localite_param = "Malonne"
 
-        a_localite = LocaliteFactory(code_postal=a_cp_param, localite=a_localite_param)
+        a_localite = LocaliteFactory(code_postal=un_cp, localite=a_localite_param)
 
-        self.assertCountEqual(mdl_localite.search(a_cp_param, a_localite_param), [a_localite])
+        self.assertCountEqual(mdl_localite.search(un_cp, a_localite_param), [a_localite])
+
+    def test_search_same_cp(self):
+        cp_commun = "5020"
+
+        LocaliteFactory(code_postal=cp_commun, localite="Malonne")
+        LocaliteFactory(code_postal=cp_commun, localite="Champion")
+        LocaliteFactory(code_postal="5001", localite="Lisogne")
+
+        self.assertEqual(len(mdl_localite.search(cp_commun, None)), 2)
 
     def test_find_by_id(self):
         a_localite = LocaliteFactory()

@@ -1,6 +1,6 @@
 {% extends "layout.html" %}
 {% block breadcrumb %}
-
+    <li class="active">Société</li>
 {% endblock %}
 {% block content %}
 
@@ -60,7 +60,14 @@
         {% if societe.personnel %}
             <br>
             <label>Personnel</label>
-            <table class="table table-condensed">
+            <table class="table table-condensed" id="tbl_personnel">
+                <thead>
+                    <tr>
+                        <th>Nom</th>
+                        <th>Fonction</th>
+                        <th>Actif</th>
+                    </tr>
+                </thead>
                 <tbody>
                 {% for p in societe.personnel %}
                     <tr>

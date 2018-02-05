@@ -24,6 +24,7 @@
 from django.db import models
 from django.contrib import admin
 from main.models import professionnel
+from main.models.enums.type_societe import TYPE_SOCIETE
 
 
 class SocieteAdmin(admin.ModelAdmin):
@@ -32,13 +33,7 @@ class SocieteAdmin(admin.ModelAdmin):
 
 
 class Societe(models.Model):
-    TYPE_SOCIETE = (
-        ('NON_PRECISE', '-'),
-        ('ASSURANCE', 'Assurance'),
-        ('BANQUE', 'Banque'),
-        ('COURTIER', 'Courtier'),
-        ('NOTAIRE', 'Notaire'),
-    )
+
     nom = models.CharField(max_length=100, blank=False, null=False)
     description = models.TextField(blank=True, null=True)
     rue = models.CharField(max_length=200, blank=True, null=True)
@@ -74,3 +69,6 @@ def find_by_id(id):
 
 def find_all_with_name():
     return Societe.objects.filter(nom__isnull=False).order_by('nom')
+
+def find_name(a_name):
+    return Societe.objects.filter(nom__icontains=a_name).order_by('nom')

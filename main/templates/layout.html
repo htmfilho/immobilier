@@ -37,6 +37,18 @@
               <li><a href="{% url 'suivis' %}">Finances</a><a href="#"></a></li>
               <li><a href="{% url 'honoraire-list' %}">Honoraires</a></li>
               <li><a href="{% url 'alerte-list' %}">Agenda</a></li>
+
+                <li class="dropdown"><a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button"
+                       aria-haspopup="true"
+                       aria-expanded="false"
+                       id="lnk_home_dropdown_catalog">Divers<span
+                        class="caret"></span></a>
+                    <ul class="dropdown-menu">
+                        <li><a href="{% url 'societe-list' %}">Sociétés</a></li>
+                        <li>Professionnels</li>
+                    </ul>
+
+                </li>
               <li>
                   <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button"
                      aria-haspopup="true"
@@ -123,7 +135,12 @@
                     "url": "/static/i18n/French.json"
                 }
             });
-
+            $('#tbl_societes').dataTable({
+                "lengthChange": false,
+                "language": {
+                    "url": "/static/i18n/French.json"
+                }
+            });
             $('#tbl_data_batiments').DataTable({
                 "lengthChange": false,
                 "columnDefs": [{

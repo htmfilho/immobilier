@@ -1,3 +1,45 @@
+$("#txt_nom_societe").change(function() {
+    if ($("#txt_nom_societe").val()) {
+        $("#bt_save_new_societe_new").removeAttr('disabled');
+    }else{
+        $("#bt_save_new_societe_new").attr('disabled','disabled');
+    }
+});
+
+$("#txt_nom_societe").blur(function() {
+    if ($("#txt_nom_societe").val() != '') {
+        nom = $("#txt_nom_societe").val();
+        $("#msg_nom").hide();
+        $("#msg_nom").removeClass("invisible");
+        $('#msg_nom').html('');
+
+        if (nom.length > 3) {
+
+            $.ajax({
+                url: '/check_societe?nom=' + nom,
+
+            }).then(function (data) {
+                if (data.length > 0) {
+                    var existing_society = ""
+                    var cpt = 1;
+                    $.each(data, function (key, value) {
+                        if (cpt > 1) {
+                            existing_society = existing_society + ", " + value.nom;
+                        } else {
+                            existing_society = existing_society + value.nom;
+                        }
+                        cpt = cpt + 1;
+                    });
+                    alert(existing_society);
+                    $('#msg_nom').html('<p>Attention il existe déjà des sociétés avec le nom ci-dessus :</p><p> ' + existing_society + '</p>');
+                    $("#msg_nom").show();
+                }
+
+            });
+        }
+    }
+});
+
 $("#bt_save_new_societe_new").click(function(event) {
     var target = $(event.target);
     var id = target.attr("id");
@@ -13,7 +55,7 @@ $("#bt_save_new_societe_new").click(function(event) {
     var type = $("#slt_type").val();
 
     $.ajax({
-        url: '/societe_create?nom='+nom + '&description='+description + '&rue='+rue+'&numero='+numero+'&boite='+boite+'&localite='+localite+'&cp='+localite_cp+'&type='+type,
+        url: '/societe_create?nom='+nom + '&description='+description + '&rue='+rue+'&numero='+numero+'&boite='+boite+'&localite='+localite+'&localite_cp='+localite_cp+'&type='+type,
 
     }).then(function (data) {
         if (data.length > 0) {

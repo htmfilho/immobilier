@@ -181,12 +181,9 @@ def set_batiment(action, batiment_id, frais_id):
 
 def nouveau_professionnel(request):
     # nouvel entrepreneur
-    personne = get_personne(request)
-    societe = get_societe(request)
-    fonction = get_fonction(request)
-    professionnel = mdl.professionnel.Professionnel(personne=personne,
-                                                    societe=societe,
-                                                    fonction=fonction)
+    professionnel = mdl.professionnel.Professionnel(personne=get_personne(request),
+                                                    societe=get_societe(request),
+                                                    fonction=get_fonction(request))
     professionnel.save()
     return professionnel
 
@@ -220,19 +217,24 @@ def get_societe(request):
 
 def get_personne(request):
     if is_new_value(request.POST.get('new_personne', None)):
-        personne_new_value = request.POST.get('new_personne', None)
-
-        if personne_new_value:
-            nom_prenom = personne_new_value.split(' ')
-            if len(nom_prenom) >= 2:
-                personne = mdl.personne.Personne()
-                personne.nom = nom_prenom[0]
-                personne.prenom = nom_prenom[1]
-                personne.save()
-                return personne
+        return create_new_personne(request.POST.get('new_personne', None))
     else:
         personne_id = get_key(request.POST.get('new_personne', None))
         return get_object_or_404(mdl.personne.Personne, pk=personne_id)
+    return None
+
+
+def create_new_personne(concatenation_nom_prenom):
+    if concatenation_nom_prenom:
+        nom_prenom = get_tableau_nom_prenom(concatenation_nom_prenom)
+        return mdl.personne.creation_nouvelle_personne(nom_prenom[0], nom_prenom[1])
+    return None
+
+
+def get_tableau_nom_prenom(personne_new_value):
+    nom_prenom = personne_new_value.split(' ')
+    if len(nom_prenom) >= 2:
+        return nom_prenom
     return None
 
 

@@ -58,16 +58,12 @@ class Personne(models.Model):
     titre = models.CharField(max_length=20, choices=civilite.CIVILITES, default='NON_PRECISE', blank=True, null=True)
     user = models.OneToOneField(User, on_delete=models.CASCADE, blank=True, null=True)
 
-
     def __init__(self,  *args, **kwargs):
         super(Personne, self).__init__(*args, **kwargs)
         # self._meta.get_field_by_name('pays_naissance')[0]._choices = get_pays_choix()
 
     def __str__(self):
         return self.nom.upper() + ", " + self.prenom
-
-    def choix(self):
-        return []
 
     @property
     def batiments(self):
@@ -81,25 +77,21 @@ class Personne(models.Model):
 
     @property
     def type(self):
-        type_personne = ""
-        cpt = 0
+        type_personne = []
+
         proprietaire_list = Proprietaire.find_by_personne(self)
         if proprietaire_list.exists():
-            type_personne = "propriétaire"
-            cpt = cpt + 1
+            type_personne.append("propriétaire")
+
         locataire_list = Locataire.find_by_personne(self)
         if locataire_list.exists():
-            if cpt > 0:
-                type_personne = type_personne + ", "
-            type_personne = type_personne + "locataire"
-            cpt = cpt + 1
+            type_personne.append("locataire")
+
         liste = Professionnel.find_by_personne(self)
         if liste.exists():
-            if cpt > 0:
-                type_personne = type_personne + ", "
-            type_personne = type_personne + "professionnel"
+            type_personne.append("professionnel")
 
-        return type_personne
+        return ', '.join(map(str, type_personne))
 
     def contrat_gestions(self):
         proprietaire_list = Proprietaire.find_by_personne(self)

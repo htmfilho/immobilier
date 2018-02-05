@@ -29,3 +29,16 @@ class TypeSociete(models.Model):
 
     def __str__(self):
         return self.type
+
+
+def find_all():
+    rr =  TypeSociete.objects.all().order_by('type')
+    print(rr)
+    return rr
+
+
+def find_by_id(an_id):
+    try:
+        return TypeSociete.objects.get(pk=an_id)
+    except:
+        return None

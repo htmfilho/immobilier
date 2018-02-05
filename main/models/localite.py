@@ -49,10 +49,9 @@ def find_by_id(an_id):
 
 
 def search(un_code_postal, une_localite):
-    if un_code_postal is None and une_localite:
+    if not un_code_postal and not une_localite:
         return Localite.objects.all()
 
-    out = None
     queryset = Localite.objects
     if un_code_postal:
         queryset = queryset.filter(code_postal=un_code_postal)
@@ -60,9 +59,9 @@ def search(un_code_postal, une_localite):
     if une_localite:
         queryset = queryset.filter(localite__iexact=une_localite)
 
-    if un_code_postal or une_localite:
-        out = queryset
-    return out
+    results = queryset
+    print(results)
+    return results
 
 
 def create_localite(nom, cp):
