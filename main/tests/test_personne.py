@@ -32,6 +32,8 @@ from main.tests.factories.type_societe import TypeSocieteFactory
 from main import personne as personne_view
 from django.test.client import Client
 from django.contrib.auth.models import User
+from main.tests.factories.fonction import FonctionFactory
+from main.tests.factories.pays import PaysFactory
 
 
 class PersonneViewTest(TestCase):
@@ -174,3 +176,25 @@ class PersonneViewTest(TestCase):
         response = self.client.get(url, data={"nom": un_nom, "prenom": "Juliette", "prenom2": un_prenom2})
         self.assertEqual(response.status_code, 200)
         self.assertTrue(response.json()['valide'])
+
+    def test_populate_profession(self):
+        une_fonction = FonctionFactory(nom_fonction="Plombier")
+        self.assertEqual(personne_view.populate_profession(une_fonction), "Plombier")
+
+    def test_populate_profession_non_presente(self):
+        self.assertIsNone(personne_view.populate_profession(None))
+
+    def test_populate_date_non_presente(self):
+        self.assertIsNone(personne_view.populate_date(None))
+
+    def test_populate_date_non_formater(self):
+        date_erronnee ="12//0282018"
+        self.assertEqual(personne_view.populate_date(date_erronnee), date_erronnee)
+
+    def test_populate_pays_non_precise(self):
+        self.assertIsNone(personne_view.populate_pays_naissance(None))
+        self.assertIsNone(personne_view.populate_pays_naissance(9))
+
+    def test_populate_pays_precise(self):
+        un_pays = PaysFactory()
+        self.assertEqual(personne_view.populate_pays_naissance(un_pays.id), un_pays)

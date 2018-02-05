@@ -32,8 +32,10 @@ class Pays(models.Model):
 
 
 def find_by_id(un_id):
-
-    return Pays.objects.get(pk=un_id)
+    try:
+        return Pays.objects.get(pk=un_id)
+    except:
+        return None
 
 
 def find_by_pays(un_pays):

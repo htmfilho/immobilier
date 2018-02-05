@@ -141,7 +141,7 @@ def populate_personne(request):
 
     personne.societe = get_societe(request)
     personne.lieu_naissance = request.POST['lieu_naissance']
-    personne.pays_naissance = populate_pays_naissance(request)
+    personne.pays_naissance = populate_pays_naissance(request.POST.get('pays_naissance', None))
 
     personne.num_identite = request.POST['num_identite']
     personne.num_compte_banque = request.POST['num_compte_banque']
@@ -167,10 +167,7 @@ def populate_date(request_value):
     return None
 
 
-@login_required
-@require_http_methods(["POST"])
-def populate_pays_naissance(request):
-    pays_naissance_id = get_key(request.POST.get('pays_naissance', None))
+def populate_pays_naissance(pays_naissance_id):
     if pays_naissance_id:
         return mdl.pays.find_by_id(int(pays_naissance_id))
     return None
