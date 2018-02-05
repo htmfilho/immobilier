@@ -51,3 +51,8 @@ def find_by_id(id):
         return Fonction.objects.get(pk=id)
     except:
         return None
+
+
+def create_fonction(une_fonction):
+    fonction = Fonction(nom_fonction=une_fonction)
+    return fonction.save()

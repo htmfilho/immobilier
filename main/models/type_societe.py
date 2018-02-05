@@ -32,9 +32,7 @@ class TypeSociete(models.Model):
 
 
 def find_all():
-    rr =  TypeSociete.objects.all().order_by('type')
-    print(rr)
-    return rr
+    return TypeSociete.objects.all().order_by('type')
 
 
 def find_by_id(an_id):

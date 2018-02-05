@@ -31,9 +31,11 @@ from django.core.urlresolvers import reverse
 from django.http import HttpResponse
 import json
 from main import societe
+from django.views.decorators.http import require_http_methods
+from django.contrib.auth.decorators import login_required
+
 
 PERSONNE_LIST_HTML = "personne/personne_list.html"
-
 PERSONNE_FORM_HTML = "personne/personne_form.html"
 
 
@@ -57,21 +59,26 @@ def get_common_data(personne_id):
     return data
 
 
+@login_required
 def edit(request, personne_id):
     return render(request, PERSONNE_FORM_HTML,
                   get_common_data(personne_id))
 
 
+@login_required
 def create(request):
     return render(request, PERSONNE_FORM_HTML,
                   get_common_data(None))
 
 
+@login_required
 def list(request):
     return render(request, PERSONNE_LIST_HTML,
                   {'personnes': mdl.personne.find_all()})
 
 
+@login_required
+@require_http_methods(["GET"])
 def search(request):
     nom = request.GET.get('nom', None)
     prenom = request.GET.get('prenom', None)
@@ -81,6 +88,8 @@ def search(request):
                    'personnes':  mdl.personne.search(nom, prenom)})
 
 
+@login_required
+@require_http_methods(["POST"])
 def update(request):
     form = PersonneForm(data=request.POST)
     personne = populate_personne(request)
@@ -117,6 +126,8 @@ def get_batiment_id(previous):
     return None
 
 
+@login_required
+@require_http_methods(["POST"])
 def populate_personne(request):
     personne = get_personne(request.POST.get('personne_id', None))
     personne.nom = request.POST['nom']
@@ -156,6 +167,8 @@ def populate_date(request_value):
     return None
 
 
+@login_required
+@require_http_methods(["POST"])
 def populate_pays_naissance(request):
     pays_naissance_id = get_key(request.POST.get('pays_naissance', None))
     if pays_naissance_id:
@@ -163,6 +176,8 @@ def populate_pays_naissance(request):
     return None
 
 
+@login_required
+@require_http_methods(["POST"])
 def get_societe(request):
     if request.POST['societe'] == '-':
         return societe.creation_nouvelle_societe(request.POST.get('nom_nouvelle_societe', None),
@@ -171,6 +186,8 @@ def get_societe(request):
         return mdl.societe.find_by_id(int(request.POST['societe']))
 
 
+@login_required
+@require_http_methods(["POST"])
 def get_fonction(request):
     fonction_id = get_key(request.POST['profession'])
 
@@ -181,11 +198,12 @@ def get_fonction(request):
         if nouvelle_fonction and len(nouvelle_fonction) > 2:
             fonction_existante = mdl.fonction.find_by_nom(nouvelle_fonction)
             if fonction_existante is None:
-                fonction = mdl.fonction.Fonction(nom_fonction=nouvelle_fonction)
-                return fonction.save()
+                return mdl.fonction.create_fonction(nouvelle_fonction)
     return None
 
 
+@login_required
+@require_http_methods(["GET", "POST"])
 def validate_personne(request):
     if request.method == 'POST':
         data = request.POST

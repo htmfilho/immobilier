@@ -30,9 +30,17 @@ from main.tests.factories.societe import SocieteFactory
 from main.tests.factories.localite import LocaliteFactory
 from main.tests.factories.type_societe import TypeSocieteFactory
 from main import personne as personne_view
+from django.test.client import Client
+from django.contrib.auth.models import User
 
 
 class PersonneViewTest(TestCase):
+
+    def setUp(self):
+        self.client = Client()
+        self.user = User.objects.create_user('john', 'lennon@thebeatles.com', 'johnpassword')
+        self.client.login(username='john', password='johnpassword')
+
 
     def test_list(self):
 
@@ -87,3 +95,82 @@ class PersonneViewTest(TestCase):
         self.assertEqual(data.get('localites').count(), 5)
         self.assertEqual(data.get('type_societes').count(), 5)
 
+    def test_get_personne(self):
+        personne_1 = PersonneFactory()
+        self.assertEqual(personne_view.get_personne(personne_1.id), personne_1)
+
+    def test_get_personne(self):
+        personne_1 = PersonneFactory()
+        result = personne_view.get_personne(None)
+        self.assertIsNone(result.id)
+
+    def test_edit(self):
+
+        personne_1 = PersonneFactory(nom="Allard")
+        url = reverse('personne-edit',args=[personne_1.id])
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, personne_view.PERSONNE_FORM_HTML)
+        self.assertEqual(response.context['personne'], personne_1)
+
+    def test_create(self):
+        url = reverse('personne-create')
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, personne_view.PERSONNE_FORM_HTML)
+        self.assertIsNone(response.context['personne'].id)
+
+
+    def test_search(self):
+        un_nom = "Allard"
+        un_prenom = "Marie"
+        un_prenom_compose = "Marie-Claire"
+        personne_1 = PersonneFactory(nom=un_nom, prenom=un_prenom)
+        personne_2 = PersonneFactory(nom=un_nom, prenom=un_prenom_compose)
+        url = reverse('personne_search')
+
+        response = self.client.get(url, data={"nom": un_nom, "prenom": un_prenom})
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, personne_view.PERSONNE_LIST_HTML)
+        self.assertCountEqual(response.context['personnes'], [personne_1, personne_2])
+        self.assertEqual(response.context['nom'], un_nom)
+        self.assertEqual(response.context['prenom'], un_prenom)
+
+        response = self.client.get(url, data={"nom": un_nom, "prenom": un_prenom_compose})
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, personne_view.PERSONNE_LIST_HTML)
+        self.assertCountEqual(response.context['personnes'], [personne_2])
+        self.assertEqual(response.context['nom'], un_nom)
+        self.assertEqual(response.context['prenom'], un_prenom_compose)
+
+
+        response = self.client.get(url, data={"nom": un_nom})
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, personne_view.PERSONNE_LIST_HTML)
+        self.assertCountEqual(response.context['personnes'], [personne_1, personne_2])
+
+        self.assertEqual(response.context['nom'], un_nom)
+        self.assertIsNone(response.context['prenom'])
+
+    def test_validate_personne_invalide(self):
+        un_nom = "Louette"
+        un_prenom = "Jules"
+        un_prenom2 = "Ghislain"
+        personne_1 = PersonneFactory(nom=un_nom, prenom=un_prenom, prenom2=un_prenom2)
+
+        url = reverse('validate_personne')
+        response = self.client.get(url, data={"nom": un_nom, "prenom": un_prenom, "prenom2": un_prenom2})
+
+        self.assertEqual(response.status_code, 200)
+        self.assertFalse(response.json()['valide'])
+
+    def test_validate_personne_valide(self):
+        un_nom = "Louette"
+        un_prenom = "Jules"
+        un_prenom2 = "Ghislain"
+        personne_1 = PersonneFactory(nom=un_nom, prenom=un_prenom, prenom2=un_prenom2)
+
+        url = reverse('validate_personne')
+        response = self.client.get(url, data={"nom": un_nom, "prenom": "Juliette", "prenom2": un_prenom2})
+        self.assertEqual(response.status_code, 200)
+        self.assertTrue(response.json()['valide'])

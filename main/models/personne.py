@@ -164,7 +164,6 @@ def find_personne_by_nom_prenom(un_nom, un_prenom, un_prenom2):
 
 
 def search(nom, prenom):
-
     query = find_all()
 
     if nom:
