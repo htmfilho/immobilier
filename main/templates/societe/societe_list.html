@@ -1,0 +1,84 @@
+{% extends "layout.html" %}
+{% block breadcrumb %}
+  <li class="active">Liste des contacts</li>
+{% endblock %}
+{% block content %}
+<div class="panel panel-default">
+  <div class="panel-body">
+
+      <a href="{% url 'personne-create' %}"
+         title="Pour ajouter une nouvelle personne"
+         class="btn btn-default pull-right">
+          <span class="glyphicon glyphicon-plus" aria-hidden="true"> Ajout contact</span>
+      </a>
+
+      <br> <br>
+      <table class="table table-hover"
+             id="tbl_data">
+          <thead>
+              <tr>
+                  <th>Nom</th>
+                  <th>Prénom</th>
+                  <th>Prénom2</th>
+                  <th>Type(s)</th>
+                  <th>Email</th>
+                  <th>Gsm</th>
+                  <th>Téléphone</th>
+                  <th>Fonction</th>
+                  <th>Société</th>
+                  <th></th>
+              </tr>
+          </thead>
+          <tbody>
+      {% for personne in personnes %}
+          <tr>
+              <td>
+                  <a href="{% url 'personne-edit' personne.id %}" title="Pour modifier une personne">{{ personne.nom }}</a>
+              </td>
+              <td>
+                  <a href="{% url 'personne-edit' personne.id %}" title="Pour modifier une personne">{{ personne.prenom }}</a>
+              </td>
+              <td>
+                  {{ personne.prenom2| default_if_none:'' }}
+              </td>
+              <td>{{personne.type}}</td>
+              <td>
+                {% if personne.email %}
+                  {{ personne.email }}
+                  {% endif %}
+              </td>
+              <td>
+                {% if personne.gsm %}
+                  {{ personne.gsm }}
+                  {% endif %}
+              </td>
+              <td>{% if personne.telephone %}
+                  {{ personne.telephone }}
+                  {% endif %}
+              </td>
+              <td>{% if personne.fonction %}
+                  {{ personne.fonction.nom_fonction }}
+                  {% endif %}
+              </td>
+              <td>
+                  {% if personne.societe %}
+                    <a href="{% url 'societe_edit' personne.societe.id %}">{{ personne.societe.nom }}</a>
+                  {% endif %}
+              </td>
+              <td>
+                <a href="{% url 'personne-delete-2' personne.id %}"
+                   title="Pour supprimer une personne"
+                   onclick="return confirm('Sûr de vouloir supprimer?')">
+                    <span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
+                </a>
+              </td>
+
+          </tr>
+      {% endfor%}
+          </tbody>
+      </table>
+
+    </div>
+</div>
+
+{% endblock %}

@@ -4,7 +4,7 @@
 #    designed to manage the core business of property management, buildings,
 #    rental agreement and so on.
 #
-#    Copyright (C) 2016-2017 Verpoorten Leïla
+#    Copyright (C) 2016-2018 Verpoorten Leïla
 #
 #    This program is free software: you can redistribute it and/or modify
 #    it under the terms of the GNU General Public License as published by
@@ -23,16 +23,10 @@
 ##############################################################################
 import factory
 import factory.fuzzy
-from faker import Faker
-fake = Faker()
 
 
-class LocaliteFactory(factory.DjangoModelFactory):
+class TypeSocieteFactory(factory.DjangoModelFactory):
     class Meta:
-        model = 'main.Localite'
+        model = 'main.TypeSociete'
 
-    code_postal = factory.Faker('zipcode')
-    localite = factory.Faker('city')
-    pays = None
-
-
+    type = factory.Sequence(lambda n: 'Type societe %d' % n)
