@@ -154,7 +154,7 @@ class PersonneViewTest(TestCase):
         self.assertEqual(response.context['nom'], un_nom)
         self.assertIsNone(response.context['prenom'])
 
-    def test_validate_personne_invalide(self):
+    def test_validate_personne_invalide_get(self):
         un_nom = "Louette"
         un_prenom = "Jules"
         un_prenom2 = "Ghislain"
@@ -166,7 +166,7 @@ class PersonneViewTest(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertFalse(response.json()['valide'])
 
-    def test_validate_personne_valide(self):
+    def test_validate_personne_valide_get(self):
         un_nom = "Louette"
         un_prenom = "Jules"
         un_prenom2 = "Ghislain"
@@ -174,6 +174,29 @@ class PersonneViewTest(TestCase):
 
         url = reverse('validate_personne')
         response = self.client.get(url, data={"nom": un_nom, "prenom": "Juliette", "prenom2": un_prenom2})
+        self.assertEqual(response.status_code, 200)
+        self.assertTrue(response.json()['valide'])
+
+    def test_validate_personne_invalide_post(self):
+        un_nom = "Louette"
+        un_prenom = "Jules"
+        un_prenom2 = "Ghislain"
+        personne_1 = PersonneFactory(nom=un_nom, prenom=un_prenom, prenom2=un_prenom2)
+
+        url = reverse('validate_personne')
+        response = self.client.post(url, data={"nom": un_nom, "prenom": un_prenom, "prenom2": un_prenom2})
+
+        self.assertEqual(response.status_code, 200)
+        self.assertFalse(response.json()['valide'])
+
+    def test_validate_personne_valide_post(self):
+        un_nom = "Louette"
+        un_prenom = "Jules"
+        un_prenom2 = "Ghislain"
+        personne_1 = PersonneFactory(nom=un_nom, prenom=un_prenom, prenom2=un_prenom2)
+
+        url = reverse('validate_personne')
+        response = self.client.post(url, data={"nom": un_nom, "prenom": "Juliette", "prenom2": un_prenom2})
         self.assertEqual(response.status_code, 200)
         self.assertTrue(response.json()['valide'])
 
