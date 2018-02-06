@@ -144,21 +144,28 @@ def populate_societe(request):
         localite_nom = request.GET.get('localite', None)
         localite_cp = request.GET.get('localite_cp', None)
         nouvelle_societe.localite = None
-        print(localite_cp)
-        if localite_nom or localite_cp:
-            localite = mdl.localite.search(localite_cp, localite_nom).first()
-            if localite:
-                nouvelle_societe.localite = localite
-            else:
-                nouvelle_societe.localite = mdl.localite.create_localite(localite_nom, localite_cp)
 
-        type_societe = request.GET.get('type', None)
+        nouvelle_societe.localite = _get_localite(localite_cp, localite_nom, nouvelle_societe)
 
-        nouvelle_societe.type = None
-        if type_societe:
-            nouvelle_societe.type =  mdl.type_societe.find_by_id(type_societe)
-            print(nouvelle_societe.type)
+        nouvelle_societe.type = _get_type_societe(nouvelle_societe, request.GET.get('type', None))
+
     return nouvelle_societe
+
+
+def _get_localite(localite_cp, localite_nom, nouvelle_societe):
+    if localite_nom or localite_cp:
+        localite = mdl.localite.search(localite_cp, localite_nom).first()
+        if localite:
+            return localite
+        else:
+            return mdl.localite.create_localite(localite_nom, localite_cp)
+    return None
+
+
+def _get_type_societe(nouvelle_societe, type_societe):
+    if type_societe:
+        return mdl.type_societe.find_by_id(type_societe)
+    return None
 
 
 def creation_nouvelle_societe(new_value, a_description=None):
