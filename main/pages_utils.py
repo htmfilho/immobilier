@@ -28,4 +28,6 @@ PAGE_FRAIS_FORM = "frais/fraismaintenance_form.html"
 
 UPDATE = 'update'
 NEW = 'new'
+ADD = 'add'
+MODIFY = 'modify'
 LOCATAIRE_FORM_HTML = "locataire/locataire_form.html"

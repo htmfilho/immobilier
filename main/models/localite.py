@@ -60,13 +60,14 @@ def search(un_code_postal, une_localite):
         queryset = queryset.filter(localite__iexact=une_localite)
 
     results = queryset
-    print(results)
     return results
 
 
 def create_localite(nom, cp):
-    localite = mdl.localite.Localite()
-    localite.localite = nom
-    localite.code_postal = cp
-    localite.save()
-    return localite
+    if nom and cp:
+        localite = Localite()
+        localite.localite = nom
+        localite.code_postal = cp
+        localite.save()
+        return localite
+    return None

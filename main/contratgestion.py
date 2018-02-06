@@ -130,7 +130,8 @@ def update(request):
                        'message':   'Invalide',
                        'form':      form,
                        'personnes': [mdl.personne.find_gestionnaire_default()],
-                       'batiments': mdl.batiment.find_all()})
+                       'batiments': mdl.batiment.find_all(),
+                       'previous': previous})
 
 
 def get_contrat_gestion(batiment_id, gestion):

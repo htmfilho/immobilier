@@ -76,6 +76,8 @@ def update_proprietaire(request, proprietaire_id):
 
 
 def delete_proprietaire_batiment(request, proprietaire_id):
+    print('delete_proprietaire_batiment')
+    print(proprietaire_id)
     proprietaire = mdl.proprietaire.find_proprietaire(proprietaire_id)
     batiment = proprietaire.batiment
     proprietaire.delete()

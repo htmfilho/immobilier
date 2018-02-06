@@ -668,6 +668,27 @@
       }
     },
     {
+      "model": "main.fonction",
+      "pk": 4,
+      "fields": {
+        "nom_fonction": "Banquier"
+      }
+    },
+    {
+      "model": "main.fonction",
+      "pk": 5,
+      "fields": {
+        "nom_fonction": "Architecte"
+      }
+    },
+    {
+      "model": "main.fonction",
+      "pk": 6,
+      "fields": {
+        "nom_fonction": "Comptable"
+      }
+    },
+    {
       "model": "main.societe",
       "pk": 1,
       "fields": {

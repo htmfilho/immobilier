@@ -31,6 +31,8 @@ from main.views_utils import get_previous
 from django.http import HttpResponseRedirect
 from django.core.urlresolvers import reverse
 from main import societe
+from django.contrib.auth.decorators import login_required
+
 
 ON = 'on'
 
@@ -42,6 +44,7 @@ LOCATION = 'location'
 BATIMENT = 'batiment'
 
 
+@login_required
 def new(request):
     frais = mdl.frais_maintenance.FraisMaintenance()
     return render(request, PAGE_FRAIS_FORM,
@@ -56,6 +59,7 @@ def new(request):
                    'previous':  get_previous(request)})
 
 
+@login_required
 def create(request, batiment_id):
     batiment = get_object_or_404(mdl.batiment.Batiment, pk=batiment_id)
     frais = mdl.frais_maintenance.FraisMaintenance()
@@ -73,6 +77,7 @@ def create(request, batiment_id):
                    })
 
 
+@login_required
 def prepare_update(request, frais_id, previous=None, location_id=None):
     frais = mdl.frais_maintenance.find_by_id(frais_id)
 
@@ -84,6 +89,7 @@ def prepare_update(request, frais_id, previous=None, location_id=None):
                    'previous': previous})
 
 
+@login_required
 def update(request):
     batiment_id = get_key(request.POST.get('batiment_id', None))
     action = request.POST.get('action', None)
@@ -123,7 +129,7 @@ def redirection_to_previous(batiment_id, contrat_location_id, previous):
 def _populate_frais(action, batiment_id, request):
     frais = set_batiment(action, batiment_id, request.POST.get('id', None))
     frais.contrat_location = None
-    frais.entrepreneur = get_professionnel(request)
+    frais.entrepreneur = _get_professionnel(request.POST)
     frais.description = request.POST.get('description', None)
     frais.montant = get_montant(request)
     frais.date_realisation = get_date(request.POST.get('date_realisation', None))
@@ -141,12 +147,12 @@ def get_montant(request):
     return montant
 
 
-def get_professionnel(request):
+def _get_professionnel(request_data):
     professionnel = None
-    if request.POST.get('new_entrepreneur') == ON:
+    if request_data.get('new_entrepreneur') == ON:
         professionnel = nouveau_professionnel(request)
     else:
-        entrepreneur = get_key(request.POST.get('entrepreneur', None))
+        entrepreneur = get_key(request_data.get('entrepreneur', None))
         if entrepreneur:
             professionnel = get_object_or_404(mdl.professionnel.Professionnel, pk=entrepreneur)
     return professionnel
@@ -179,22 +185,22 @@ def set_batiment(action, batiment_id, frais_id):
     return frais
 
 
-def nouveau_professionnel(request):
+def nouveau_professionnel(request_data):
     # nouvel entrepreneur
-    professionnel = mdl.professionnel.Professionnel(personne=get_personne(request),
-                                                    societe=get_societe(request),
-                                                    fonction=get_fonction(request))
+    professionnel = mdl.professionnel.Professionnel(personne=get_personne(request_data),
+                                                    societe=get_societe(request_data),
+                                                    fonction=get_fonction(request_data))
     professionnel.save()
     return professionnel
 
 
-def get_fonction(request):
-    if is_new_value(request.POST.get('new_fonction', None)):
-        new_value = request.POST.get('new_fonction', None)
+def get_fonction(request_data):
+    if is_new_value(request_data.get('new_fonction', None)):
+        new_value = request_data.get('new_fonction', None)
         if new_value:
             return creation_nouvelle_fonction(new_value)
     else:
-        return get_object_or_404(mdl.fonction.Fonction, pk=get_key(request.POST.get('new_fonction', None)))
+        return get_object_or_404(mdl.fonction.Fonction, pk=get_key(request_data.get('new_fonction', None)))
     return None
 
 
@@ -204,24 +210,23 @@ def creation_nouvelle_fonction(new_value):
     return fonction
 
 
-def get_societe(request):
-    if is_new_value(request.POST.get('new_societe', None)):
-        new_value = request.POST.get('new_societe', None)
+def get_societe(request_data):
+    if is_new_value(request_data.get('new_societe', None)):
+        new_value = request_data.get('new_societe', None)
         if new_value:
             return societe.creation_nouvelle_societe(new_value)
     else:
-        societe_id = get_key(request.POST.get('new_societe', None))
+        societe_id = get_key(request_data.get('new_societe', None))
         return get_object_or_404(mdl.societe.Societe, pk=societe_id)
     return None
 
 
-def get_personne(request):
-    if is_new_value(request.POST.get('new_personne', None)):
-        return create_new_personne(request.POST.get('new_personne', None))
+def get_personne(request_data):
+    if is_new_value(request_data.get('new_personne', None)):
+        return create_new_personne(request_data.get('new_personne', None))
     else:
-        personne_id = get_key(request.POST.get('new_personne', None))
+        personne_id = get_key(request_data.get('new_personne', None))
         return get_object_or_404(mdl.personne.Personne, pk=personne_id)
-    return None
 
 
 def create_new_personne(concatenation_nom_prenom):

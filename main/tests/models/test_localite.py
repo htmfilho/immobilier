@@ -56,3 +56,15 @@ class LocaliteTest(TestCase):
         a_localite = LocaliteFactory()
         self.assertEqual(mdl_localite.find_by_id(a_localite.id), a_localite)
 
+    def test_create_localite(self):
+        self.assertIsNone(mdl_localite.create_localite(None, None))
+        nouvelle_localite = mdl_localite.create_localite('Nom localité', '1563')
+
+
+def create_localite(nom, cp):
+    localite = Localite()
+    localite.localite = nom
+    localite.code_postal = cp
+    localite.save()
+    return localite
+
