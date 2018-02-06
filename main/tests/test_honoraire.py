@@ -53,4 +53,3 @@ class HonoraireViewTest(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, "honoraire/honoraire_list.html")
         self.assertEqual(list(response.context['honoraires']), expected_objects)
-
