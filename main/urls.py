@@ -183,7 +183,8 @@ urlpatterns = [
     url(r'^societes_liste/$', societe.societe_liste, name='societe_liste'),
     url(r'^batiment/search/$', batiment.search_par_proprietaire, name='batiment_search'),
     url(r'^societe/update/$', societe.update, name='societe_update'),
-    url(r'^societe/edit/([0-9]+)/$', societe.edit, name='societe_edit'),
+    url(r'^societe/edit/pl/([0-9]+)/$', societe.societe_edit_from_person_list, name='societe_edit_from_person_list'),
+    url(r'^societe/edit/sl/([0-9]+)/$', societe.societe_edit_from_list, name='societe_edit_from_list'),
 
     url(r'^location/form/$', contratlocation.contrat_location_form, name="contrat_location_form"),
     url(r'^location/search/$', contratlocation.search, name='location_search'),

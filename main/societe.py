@@ -31,6 +31,9 @@ from rest_framework.renderers import JSONRenderer
 from main.models.enums.type_societe import TYPE_SOCIETE
 
 
+NEXT_NAV_SOCIETE_LIST  = 'societe_list'
+NEXT_NAV_PERSONNE_LIST  = 'person_list'
+
 class JSONResponse(HttpResponse):
     def __init__(self, data, **kwargs):
         content = JSONRenderer().render(data)
@@ -71,7 +74,17 @@ def update(request):
             societe.localite = mdl.localite.find_by_id(int(request.POST['localite']))
 
     societe.save()
-    return HttpResponseRedirect(reverse('home'))
+    return redirection_next_nav(request.POST.get('next_nav', None))
+
+
+def redirection_next_nav(next_nav):
+    if next_nav == NEXT_NAV_SOCIETE_LIST:
+        return HttpResponseRedirect(reverse('societe-list'))
+
+    elif next_nav == NEXT_NAV_PERSONNE_LIST:
+        return HttpResponseRedirect(reverse('personne_list'))
+    else:
+        return HttpResponseRedirect(reverse('home'))
 
 
 def get_societe(societe_id):
@@ -81,12 +94,21 @@ def get_societe(societe_id):
         return mdl.societe.Societe()
 
 
-def edit(request, societe_id):
+def societe_edit_from_list(request, societe_id):
+    return societe_edit(request, societe_id, NEXT_NAV_SOCIETE_LIST)
+
+
+def societe_edit_from_person_list(request, societe_id):
+    return societe_edit(request, societe_id, NEXT_NAV_PERSONNE_LIST)
+
+
+def societe_edit(request, societe_id,next_nav):
     societe = get_societe(societe_id)
     return render(request, "societe_form.html",
                   {'societe': societe,
                    'localites': mdl.localite.find_all(),
-                   'type': 'from_person'})
+                   'type': 'from_person',
+                   'next_nav': next_nav})
 
 
 def create(request):
@@ -99,7 +121,6 @@ def create(request):
 
 
 def create_new(request):
-    print('create_new')
     nouvelle_societe = populate_societe(request)
     nouvelle_societe.save()
 
@@ -108,7 +129,6 @@ def create_new(request):
 
 
 def populate_societe(request):
-    print(request.GET)
     nom_societe = request.GET.get('nom', None)
     nouvelle_societe = None
     if nom_societe:

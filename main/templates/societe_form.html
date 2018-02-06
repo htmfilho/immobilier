@@ -7,6 +7,7 @@
     <form method="post" action="{% url 'societe_update' %}">
         {% csrf_token %}
         <input type="hidden" value="{{ societe.id }}" name="societe_id"/>
+        <input type="hidden" name="next_nav" value="{{ next_nav }}"/>
 
         <div class="row">
             <div class="col-md-6">

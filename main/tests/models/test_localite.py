@@ -33,7 +33,7 @@ class LocaliteTest(TestCase):
         LocaliteFactory(code_postal="5000", localite="Namur")
         LocaliteFactory(code_postal="5170", localite="Bois-de-Villers")
 
-        self.assertCountEqual(mdl_localite.search(None, None), 3)
+        self.assertEqual(len(mdl_localite.search(None, None)), 3)
 
     def test_search(self):
         un_cp = "5020"

@@ -62,7 +62,7 @@
               </td>
               <td>
                   {% if personne.societe %}
-                    <a href="{% url 'societe_edit' personne.societe.id %}">{{ personne.societe.nom }}</a>
+                    <a href="{% url 'societe_edit_from_person_list' personne.societe.id %}">{{ personne.societe.nom }}</a>
                   {% endif %}
               </td>
               <td>

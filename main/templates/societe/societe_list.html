@@ -24,7 +24,7 @@
       {% for societe in societes %}
           <tr>
               <td>
-                  <a href="{% url 'societe_edit' societe.id %}">{{ societe.nom }}</a>
+                  <a href="{% url 'societe_edit_from_list' societe.id %}">{{ societe.nom }}</a>
               </td>
               <td>
                   {{ societe.description| default_if_none:'' }}

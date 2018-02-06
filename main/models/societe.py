@@ -46,7 +46,7 @@ class Societe(models.Model):
 
     @property
     def professionnels(self):
-        return professionnel.objects.filter(societe=self)
+        return professionnel.find_by_societe(self)
 
     @property
     def personnel(self):
