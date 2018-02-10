@@ -31,7 +31,7 @@ from django.core.urlresolvers import reverse
 from main.models.enums import etat_suivi
 from decimal import Decimal
 from main.views_utils import get_date, UNDEFINED
-
+from main.forms import SuiviForm
 
 TOUS = 'TOUS'
 SUIVI_SUIVIS_HTML = "suivi/suivis.html"
@@ -113,7 +113,11 @@ def update_suivi(request):
     etat = get_post_etat(request)
     previous = request.POST.get('previous', None)
 
+    # suivi = get_object_or_404(mdl.suivi_loyer.SuiviLoyer, pk=request.POST.get('id', None))
+    # form = SuiviForm(data=request.POST, instance=suivi)
+
     suivi = update_suivi_loyer(request)
+
 
     if previous:
         return redirection_suivi(previous, request, suivi)
@@ -122,13 +126,6 @@ def update_suivi(request):
                            get_date(request.POST.get('date_debut', None)),
                            get_date(request.POST.get('date_fin', None)),
                            etat)
-    # else:
-    #     Je pense que ça ne passera jamais ici je supprime le test sur forms.is_valid 23/01/2018
-    #     print('invalid')
-    #     return render(request, "suivi/suivi_form.html",
-    #                   {'suivi':      suivi,
-    #                    'form': form,
-    #                    'previous': previous})
 
 
 def redirection_suivi(previous, request, suivi):
@@ -146,8 +143,8 @@ def update_suivi_loyer(request):
     suivi = get_object_or_404(mdl.suivi_loyer.SuiviLoyer, pk=request.POST.get('id', None))
     suivi.date_paiement_reel = get_date(request.POST.get('date_paiement_reel', None))
     suivi.etat_suivi = get_etat_suivi(request)
-    suivi.loyer_percu = get_montant(request, 'loyer_percu')
-    suivi.charges_percu = get_montant(request, 'charges_percu')
+    suivi.loyer_percu = get_montant(request.POST.get('loyer_percu', 0))
+    suivi.charges_percu = get_montant(request.POST.get('charges_percu', 0))
     suivi.remarque = request.POST.get('remarque', None)
 
     if suivi.loyer_percu > 0 and Decimal(suivi.loyer_percu) > suivi.financement_location.loyer:
@@ -163,8 +160,11 @@ def get_post_etat(request):
     return etat
 
 
-def get_montant(request, nom_champ):
-    return request.POST.get(nom_champ, 0)
+def get_montant(valeur):
+    try:
+        return Decimal(valeur)
+    except:
+        return 0
 
 
 def get_etat_suivi(request):
