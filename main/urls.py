@@ -74,7 +74,6 @@ urlpatterns = [
     #         'document_root': settings.MEDIA_ROOT,
     #     }),
 
-
     url(r'^fraismaintenances/$', frais.list, name='fraismaintenance_list'),
     url(r'^fraismaintenance/new/$', frais.new, name='fraismaintenance-new'),
     url(r'^fraismaintenance/create/([0-9]+)/$', frais.create, name='fraismaintenance-create'),

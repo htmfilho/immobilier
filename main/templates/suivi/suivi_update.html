@@ -1,7 +1,10 @@
 {% extends "layout.html" %}
+
+
 {% block breadcrumb %}
   <li class="active">Sélection de suivi de loyer</li>
 {% endblock %}
+
 {% block content %}
 <form method="get" action="{% url 'suivis_search'%}" >
   <div class="row">
@@ -26,12 +29,12 @@
   </div>
   <div class="col-md-3">
     <label class="invisible">&nbsp;</label>
-  <input type="submit" class="btn" value="Ok" >
+  <input type="submit" class="btn" value="Ok"/>
 </div>
   </div>
 </form>
 
-{% if suivis|length > 0%}
+{% if suivis|length > 0 %}
 <form class="form-inline" method="POST" action="{% url 'suivis-update' %}">
   <table class="table table-condensed">
     <thead>

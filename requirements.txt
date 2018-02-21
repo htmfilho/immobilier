@@ -50,3 +50,4 @@ templated-docs==0.3.1
 coverage==4.4
 django-ckeditor==5.0.3
 django-crispy-forms==1.6.1
+django-bootstrap3==9.1.0

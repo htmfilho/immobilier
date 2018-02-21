@@ -14,6 +14,7 @@
         <link rel="stylesheet" href="{% static "css/custom.css" %}">
         <link rel="stylesheet" href="{% static "css/font-awesome.min.css" %}">
         <link rel="stylesheet" href="https://cdn.datatables.net/1.10.12/css/jquery.dataTables.min.css">
+        <link rel="stylesheet" href="{% static 'css/bootstrap-datepicker3.min.css' %}" type='text/css'>
         {% block style %}
         {% endblock %}
         <style>
@@ -115,6 +116,8 @@
       <script src="{% static 'js/bootstrap-datepicker.min.js' %}"></script>
       <script src="{% static 'js/locales/bootstrap-datepicker.fr.js' %}"></script>
       <script src="{% static "js/customComboBox.js" %}"></script>
+      <script src="{% static 'js/bootstrap-datepicker.min.js' %}"></script>
+      <script src="{% static 'js/locales/bootstrap-datepicker.fr.js' %}"></script>
       {% block script %}
       <script>
         $(document).ready(function() {
@@ -287,6 +290,7 @@
             language: "fr",
             showOtherMonths: false
         });
+
         $("#date_paiement_reel").datepicker({
             autoclose: true,
             orientation: "bottom auto",

@@ -151,9 +151,14 @@ $("#date_debut").blur(function() {
     });
     $("#etat_suivi").click(function(event) {
         var etat = $("#etat_suivi option:selected" ).val();
-
+        console.log(etat);
+        console.log($("#txt_loyer_percu").val());
+        console.log($.trim($("#spn_loyer_percu").html()));
         if(etat=='PAYE'){
             $("#txt_loyer_percu").val(parseFloat($("#spn_loyer_percu").html()));
+        }
+        if(etat=='IMPAYE'){
+            $("#txt_loyer_percu").val('');
         }
     });
 

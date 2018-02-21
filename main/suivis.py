@@ -32,11 +32,16 @@ from main.models.enums import etat_suivi
 from decimal import Decimal
 from main.views_utils import get_date, UNDEFINED
 from main.forms import SuiviForm
+from django.views.decorators.http import require_POST, require_GET
+from django.contrib.auth.decorators import login_required
+
 
 TOUS = 'TOUS'
 SUIVI_SUIVIS_HTML = "suivi/suivis.html"
 
 
+@login_required
+@require_GET
 def suivis_search(request):
     etat = request.GET['etat']
     date_debut = get_date(request.GET.get('date_debut', None))
@@ -54,15 +59,18 @@ def list_suivis(request, date_debut, date_fin, etat):
                    'suivis':      mdl.suivi_loyer.find_suivis(date_debut, date_fin, etat)})
 
 
+@login_required
 def suivis(request):
     date_fin = timezone.now() - relativedelta(days=1)
     return render(request, "suivi/suivis.html",
                   {'date_debut':       None,
+                   'etat': etat_suivi.A_VERIFIER,
                    'date_fin':         date_fin,
                    'suivis':           mdl.suivi_loyer.find_suivis(None, date_fin, None)
                    })
 
 
+@login_required
 def refresh_suivis(request):
     date_debut = request.POST['date_debut']
     date_fin = request.POST['date_fin']
@@ -74,6 +82,7 @@ def refresh_suivis(request):
                    })
 
 
+@login_required
 def suivis_update(request):
     if request.method == 'GET':
         pass
@@ -94,9 +103,12 @@ def suivis_update(request):
                    })
 
 
+@login_required
+@require_GET
 def suivis_updatel(request, suivi_id, previous):
     suivi = get_object_or_404(mdl.suivi_loyer.SuiviLoyer, pk=suivi_id)
-    etat = request.GET['etat']
+    etat = request.GET.get('etat', None)
+    form = SuiviForm(instance=suivi)
 
     date_debut = get_date(request.GET.get('dated', None))
     date_fin = get_date(request.GET.get('datef', None))
@@ -106,21 +118,32 @@ def suivis_updatel(request, suivi_id, previous):
                    'date_debut': date_debut,
                    'date_fin':   date_fin,
                    'etat':       etat,
-                   'previous': previous})
+                   'previous': previous,
+                   'form': form})
 
 
+@login_required
+@require_POST
 def update_suivi(request):
+    suivi = get_object_or_404(mdl.suivi_loyer.SuiviLoyer, pk=request.POST.get('id', None))
     etat = get_post_etat(request)
+    date_debut = get_date(request.POST.get('date_debut', None))
+    date_fin = get_date(request.POST.get('date_fin', None))
     previous = request.POST.get('previous', None)
-
-    # suivi = get_object_or_404(mdl.suivi_loyer.SuiviLoyer, pk=request.POST.get('id', None))
-    # form = SuiviForm(data=request.POST, instance=suivi)
-
-    suivi = update_suivi_loyer(request)
-
+    form = SuiviForm(request.POST, instance=suivi)
+    if request.method == 'POST':
+        if form.is_valid():
+            suivi = form.save()
+        else:
+            suivi = mdl.suivi_loyer.find_by_id(request.POST)
+            return render(request, "suivi/suivi_form.html",
+                          {'suivi':      suivi,
+                           'previous': previous,
+                           'etat': etat,
+                           'form': form})
 
     if previous:
-        return redirection_suivi(previous, request, suivi)
+        return redirection_suivi(previous, request, suivi, etat, date_debut, date_fin)
     else:
         return list_suivis(request,
                            get_date(request.POST.get('date_debut', None)),
@@ -128,29 +151,21 @@ def update_suivi(request):
                            etat)
 
 
-def redirection_suivi(previous, request, suivi):
+def redirection_suivi(previous, request, suivi, etat, date_debut, date_fin):
     if previous == 'liste':
-        return redirect("suivis")
+        # date_fin = timezone.now() - relativedelta(days=1)
+        return render(request, "suivi/suivis.html",
+                      {'date_debut': date_debut,
+                       'etat': etat,
+                       'date_fin': date_fin,
+                       'suivis': mdl.suivi_loyer.find_suivis(date_debut, date_fin, etat)
+                       })
     if previous == 'home':
         return redirect("home")
     if previous == 'location':
         return HttpResponseRedirect(reverse('location-prepare-update-all',
                                             args=(suivi.financement_location.contrat_location.id,)))
     return redirect(request.POST.get('previous', None))
-
-
-def update_suivi_loyer(request):
-    suivi = get_object_or_404(mdl.suivi_loyer.SuiviLoyer, pk=request.POST.get('id', None))
-    suivi.date_paiement_reel = get_date(request.POST.get('date_paiement_reel', None))
-    suivi.etat_suivi = get_etat_suivi(request)
-    suivi.loyer_percu = get_montant(request.POST.get('loyer_percu', 0))
-    suivi.charges_percu = get_montant(request.POST.get('charges_percu', 0))
-    suivi.remarque = request.POST.get('remarque', None)
-
-    if suivi.loyer_percu > 0 and Decimal(suivi.loyer_percu) > suivi.financement_location.loyer:
-        suivi.etat_suivi = etat_suivi.SURPAYE
-    suivi.save()
-    return suivi
 
 
 def get_post_etat(request):

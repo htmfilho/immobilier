@@ -46,9 +46,8 @@ INSTALLED_APPS = (
     'main',
     'rest_framework',
     'statici18n',
-    'wkhtmltopdf'
-
-
+    'wkhtmltopdf',
+    'bootstrap3'
 )
 
 MIDDLEWARE_CLASSES = (
@@ -157,3 +156,9 @@ CKEDITOR_CONFIGS = {
 
 # TEMPLATED_DOCS_LIBREOFFICE_PATH = '/usr/share/libreoffice/program'
 TEMPLATED_DOCS_LIBREOFFICE_PATH = '/usr/lib/libreoffice/program'
+
+# BOOTSTRAP3 Configuration
+BOOTSTRAP3 = {
+    'set_placeholder': False,
+    'success_css_class': ''
+}

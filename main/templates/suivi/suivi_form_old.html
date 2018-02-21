@@ -13,8 +13,6 @@
 
 {% block content %}
 
-
-
     <form  method="post" action="{% url 'update_suivi' %}">
       {% csrf_token %}
       <input type="hidden" id="previous" name="previous" value="{{ previous }}"/>
@@ -91,8 +89,8 @@
           <input type="text" class="form-control"
                  id="txt_loyer_percu"
                  value="{{suivi.loyer_percu}}" name="loyer_percu"> (
-            <span id="spn_loyer_percu">Loyer attendu :
-                {{suivi.financement_location.loyer}}
+            <span >Loyer attendu :
+                <span id="spn_loyer_percu">{{suivi.financement_location.loyer}}</span>
             </span>)
             <br>
             <span style="font-size: smaller;color:grey;">(Double clic => loyer percu = montant attendu et etat = 'payé'"</span>

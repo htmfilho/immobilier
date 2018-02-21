@@ -30,6 +30,7 @@ import datetime
 import calendar
 from main.models import batiment as Batiment
 from main.models.enums import etat_suivi
+from django.core.validators import MinValueValidator
 
 
 class SuiviLoyerAdmin(admin.ModelAdmin):
@@ -44,8 +45,8 @@ class SuiviLoyer(models.Model):
     date_paiement = models.DateField(auto_now=False, auto_now_add=False)
     etat_suivi = models.CharField(max_length=10, choices=etat_suivi.ETATS, default=etat_suivi.A_VERIFIER)
     remarque = models.TextField(blank=True, null=True)
-    loyer_percu = models.DecimalField(max_digits=5, decimal_places=2, blank=True, null=True)
-    charges_percu = models.DecimalField(max_digits=5, decimal_places=2, blank=True, null=True)
+    loyer_percu = models.DecimalField(max_digits=5, decimal_places=2, blank=True, null=True, validators = [MinValueValidator(0)])
+    charges_percu = models.DecimalField(max_digits=5, decimal_places=2, blank=True, null=True, validators = [MinValueValidator(0)])
     date_paiement_reel = models.DateField(blank=True, null=True)
 
     class Meta:
@@ -146,3 +147,10 @@ def find_dernier_paye(un_contrat_location):
                                       etat_suivi='PAYE').order_by('-date_paiement_reel')
 
     return resul.first()
+
+
+def find_by_id(an_id):
+    try:
+        return SuiviLoyer.objects.get(pk=an_id)
+    except:
+        return None
