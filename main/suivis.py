@@ -31,7 +31,7 @@ from django.core.urlresolvers import reverse
 from main.models.enums import etat_suivi
 from decimal import Decimal
 from main.views_utils import get_date, UNDEFINED
-from main.forms import SuiviForm
+from main.forms.suivi import SuiviForm
 from django.views.decorators.http import require_POST, require_GET
 from django.contrib.auth.decorators import login_required
 

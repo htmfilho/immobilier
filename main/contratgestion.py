@@ -22,7 +22,7 @@
 #
 ##############################################################################
 from django.shortcuts import render, get_object_or_404, redirect
-from main.forms import ContratGestionForm
+from main.forms.forms import ContratGestionForm
 from main import models as mdl
 from main import pages_utils
 from main.pages_utils import NEW, UPDATE

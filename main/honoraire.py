@@ -27,7 +27,7 @@ from django.shortcuts import render, get_object_or_404, redirect
 from django.utils import timezone
 from dateutil.relativedelta import relativedelta
 from datetime import datetime
-from main.forms import HonoraireForm
+from main.forms.forms import HonoraireForm
 from main import models as mdl
 from main.models.enums import etat_honoraire
 from main import views_utils

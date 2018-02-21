@@ -22,7 +22,7 @@
 #
 ##############################################################################
 from django.shortcuts import render, get_object_or_404
-from main.forms import BatimentForm
+from main.forms.forms import BatimentForm
 from main import models as mdl
 from main import pages_utils
 from django.contrib.auth.decorators import login_required

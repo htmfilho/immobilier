@@ -26,7 +26,7 @@ from django.core.urlresolvers import reverse
 from django.shortcuts import render, get_object_or_404, redirect
 from datetime import date
 from datetime import datetime
-from main.forms import ContratLocationForm
+from main.forms.forms import ContratLocationForm
 from dateutil.relativedelta import relativedelta
 from main import models as mdl
 from django.utils import timezone

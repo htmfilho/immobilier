@@ -24,7 +24,7 @@
 from django.core.urlresolvers import reverse
 from django.http import HttpResponseRedirect
 from django.views.generic import *
-from main.forms import FileForm
+from main.forms.forms import FileForm
 
 from io import BytesIO
 from django.http import HttpResponse

@@ -23,7 +23,7 @@
 ##############################################################################
 from django.shortcuts import render, get_object_or_404
 from datetime import datetime
-from main.forms import PersonneForm
+from main.forms.forms import PersonneForm
 from main import models as mdl
 from main.views_utils import get_key
 from django.http import HttpResponseRedirect

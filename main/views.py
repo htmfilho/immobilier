@@ -29,7 +29,7 @@ from django.shortcuts import render, get_object_or_404
 from django.utils import timezone
 from django.views.generic import *
 from django.core.urlresolvers import reverse_lazy
-from main.forms import BatimentForm, ProprietaireForm, FraisMaintenanceForm, SocieteForm, LettreForm, LigneForm
+from main.forms.forms import BatimentForm, ProprietaireForm, FraisMaintenanceForm, SocieteForm, LettreForm, LigneForm
 
 from reportlab.lib.units import mm
 

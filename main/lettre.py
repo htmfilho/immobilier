@@ -25,7 +25,7 @@ from main import models as mdl
 from django.shortcuts import render
 from django.utils import timezone
 from django.views.generic import *
-from main.forms import LettreForm, LigneForm
+from main.forms.forms import  LettreForm, LigneForm
 
 from templated_docs import fill_template
 from templated_docs.http import FileResponse
