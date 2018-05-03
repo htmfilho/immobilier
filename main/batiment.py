@@ -38,7 +38,7 @@ def create(request):
 @login_required
 def batiment_form(request, batiment_id):
     return render(request, pages_utils.PAGE_BATIMENT_FORM,
-                  {'batiment':     mdl.batiment.find_batiment(batiment_id),
+                  {'batiment':     mdl.batiment.find_batiment_by_id(batiment_id),
                    'assurances':   mdl.assurance.find_all(),
                    'localites':    mdl.localite.find_all()})
 

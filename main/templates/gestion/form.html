@@ -1,0 +1,11 @@
+{% csrf_token %}
+<input type="hidden" id="previous" name="previous" value="{{ previous }}" >
+<input type="hidden" value="{{ action|default_if_none:'' }}" name="action" >
+<input type="hidden" value="{{ contrat.id | default_if_none:'' }}" name="id" >
+{% bootstrap_form form %}
+{% bootstrap_form_errors form %}
+
+<button type="submit" class="btn btn-primary pull-right" id="bt_contrat_gestion_updater"
+        title="Sauvegarder"><span class="glyphicon glyphicon-floppy-disk" aria-hidden="true"> Enregistrer</span>
+</button>
+<br>

@@ -29,11 +29,8 @@ from django.shortcuts import render, get_object_or_404
 from django.utils import timezone
 from django.views.generic import *
 from django.core.urlresolvers import reverse_lazy
-from main.forms.forms import BatimentForm, ProprietaireForm, FraisMaintenanceForm, SocieteForm, LettreForm, LigneForm
+from main.forms.forms import BatimentForm, ProprietaireForm, FraisMaintenanceForm, LettreForm, LigneForm
 
-from reportlab.lib.units import mm
-
-from reportlab.lib.pagesizes import A4 as A4
 import datetime
 
 from django.forms import formset_factory
@@ -41,10 +38,7 @@ from main.pages_utils import PAGE_LISTE_BATIMENTS
 from main.models.enums import etat_honoraire
 from main.pdf import merge_pdf
 from django.http import FileResponse, Http404
-import re
-import os
-from django.http import HttpResponse
-from django.views.decorators.csrf import csrf_exempt
+
 
 ZERO = 0
 
@@ -308,15 +302,15 @@ class ProprietaireDelete(DeleteView):
 class SocieteDetail(DetailView):
     model = mdl.societe
 
-
-class SocieteCreate(CreateView):
-    model = mdl.societe
-    form_class = SocieteForm
-
-
-class SocieteUpdate(UpdateView):
-    model = mdl.societe
-    form_class = SocieteForm
+#
+# class SocieteCreate(CreateView):
+#     model = mdl.societe
+#     form_class = SocieteForm
+#
+#
+# class SocieteUpdate(UpdateView):
+#     model = mdl.societe
+#     form_class = SocieteForm
 
 
 class SocieteDelete(DeleteView):

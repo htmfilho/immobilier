@@ -1,3 +1,4 @@
+dj-database-url==0.4.2
 Django==1.10.6
 django-jet==1.0.5
 django-selenium==0.9.8
@@ -51,3 +52,6 @@ coverage==4.4
 django-ckeditor==5.0.3
 django-crispy-forms==1.6.1
 django-bootstrap3==9.1.0
+django-dotenv==1.4.1
+gunicorn==19.7.1
+whitenoise==3.3.1

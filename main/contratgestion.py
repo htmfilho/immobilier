@@ -22,13 +22,16 @@
 #
 ##############################################################################
 from django.shortcuts import render, get_object_or_404, redirect
-from main.forms.forms import ContratGestionForm
+from main.forms.contrat_gestion import ContratGestionForm
 from main import models as mdl
 from main import pages_utils
 from main.pages_utils import NEW, UPDATE
 from main.views_utils import get_previous
 from main.views_utils import get_date
-
+from django.contrib.auth.decorators import login_required
+from django.views.decorators.http import require_POST, require_GET
+from django.http import HttpResponseRedirect
+from django.urls import reverse
 
 CONTRATGESTION_LIST_HTML = "contratgestion_list.html"
 
@@ -47,91 +50,76 @@ def new(request):
                    'previous': get_previous(request),
                    'batiments': batiments})
 
-
+@login_required
+@require_GET
 def create(request, batiment_id):
-    """
-    ok - 1
-    """
-    batiment = mdl.batiment.find_batiment(batiment_id)
+    print('create')
+    batiment = mdl.batiment.find_batiment_by_id(batiment_id)
     contrat = mdl.contrat_gestion.ContratGestion()
     contrat.batiment = batiment
     # Par défaut Sté comme gestionnaire
-
     personne_gestionnaire = mdl.personne.find_gestionnaire_default()
     if personne_gestionnaire:
         contrat.gestionnaire = personne_gestionnaire
+    print('create {}'.format(contrat))
+    # form = ContratGestionForm(None, instance=contrat, batiment=batiment)
+    form = ContratGestionForm(initial={'batiment': batiment.pk, 'gestionnaire': personne_gestionnaire.id})
 
-    return render(request, "contratgestion_update.html",
+    return render(request, "gestion/create.html",
                   {'contrat':   contrat,
                    'personnes': mdl.personne.find_all(),
                    'action':   NEW,
                    'batiments': mdl.batiment.find_all(),
                    'previous': get_previous(request),
-                   'prev':      'fb'})
+                   'prev':      'fb',
+                   'form': form,
+                   'batiment': batiment})
 
-
-def prepare_update(request, id):
+@login_required
+def prepare_update(request, id_contrat):
+    print('prepare_update')
     contrat = mdl.contrat_gestion.find_by_id(id)
+    form = ContratGestionForm(instance=contrat)
     personne_gestionnaire = mdl.personne.find_gestionnaire_default()
     personnes = [personne_gestionnaire]
-    return render(request, "contratgestion_update.html",
+    return render(request, "gestion/update.html",
                   {'contrat':   contrat,
                    'action':   UPDATE,
+                   'form': form,
                    'previous': get_previous(request),
                    'batiments': mdl.batiment.find_all(),
                    'personnes': personnes})
 
-
+@login_required
+@require_POST
 def update(request):
+    print('update')
     previous = request.POST.get('previous', None)
-    form = ContratGestionForm(data=request.POST)
+    an_id =  request.POST.get('id', None)
+    print(an_id)
+    if an_id:
+        form = ContratGestionForm(data = request.POST or None, instance=mdl.contrat_gestion.find_by_id(an_id))
+    else:
+        form = ContratGestionForm(data = request.POST or None)
     gestion = None
     personne = None
+    batiment_id = None
 
-    batiment_id = mdl.batiment.Batiment(form['batiment_id'].value()).id
-    if batiment_id == '-':
-        batiment_id = None
-
-    # batiment_id = get_key(request.POST.get('batiment_id', None))
-    if request.POST.get('action', None) == NEW:
-        gestion = mdl.contrat_gestion.ContratGestion()
-        batiment = get_object_or_404(mdl.batiment.Batiment, pk=batiment_id)
-        gestion.batiment = batiment
+    if form.is_valid():
+        print('is_valid')
+        if request.POST.get('action', None) == NEW or request.POST.get('action', None) == UPDATE:
+            gestion = form.save(commit=True)
+        return render(request, pages_utils.PAGE_BATIMENT_FORM, {'batiment': gestion.batiment})
     else:
-        if request.POST.get('id', None) != '':
-            gestion = get_object_or_404(mdl.contrat_gestion.ContratGestion, pk=request.POST.get('id', None))
-            batiment = get_object_or_404(mdl.batiment.Batiment, pk=batiment_id)
-            gestion.batiment = batiment
-    gestion = get_contrat_gestion(batiment_id, gestion)
-    if request.POST.get('gestionnaire', None):
-        personne = get_object_or_404(mdl.personne.Personne, pk=request.POST.get('gestionnaire', None))
-        gestion.gestionnaire = personne
-    if request.POST.get('montant_mensuel', None):
-        gestion.montant_mensuel = request.POST.get('montant_mensuel')
-
-    gestion.date_debut = get_date(request.POST.get('date_debut', None))
-    gestion.date_fin = get_date(request.POST.get('date_fin', None))
-
-    if personne is None:
-        message = "Il faut sélectionner un gestionnaire"
+        print('is_invalid')
+        # return HttpResponseRedirect(reverse('gestion-prepare-update-all', args=(an_id,)))
         return render(request, "contratgestion_update.html",
-                      {'contrat': gestion,
-                       'action':  UPDATE,
-                       'message': message,
-                       'form':    form})
-    if form.is_valid() and data_valid(form, gestion):
-        gestion.montant_mensuel = get_montant(request.POST.get('montant_mensuel', None))
-        gestion.save()
-        return redirect(previous)
-    else:
-        return render(request, "contratgestion_update.html",
-                      {'contrat':   gestion,
+                      {'id': an_id,
                        'action':    UPDATE,
-                       'message':   'Invalide',
                        'form':      form,
-                       'personnes': [mdl.personne.find_gestionnaire_default()],
-                       'batiments': mdl.batiment.find_all(),
+
                        'previous': previous})
+    return render(request, 'catalog/book_renew_librarian.html', {'form': form, 'bookinst':book_inst})
 
 
 def get_contrat_gestion(batiment_id, gestion):

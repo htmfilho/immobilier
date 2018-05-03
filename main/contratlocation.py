@@ -194,7 +194,7 @@ def get_assurance(request):
 
 def get_batiment(batiment_id):
     if batiment_id:
-        return mdl.batiment.find_batiment(batiment_id)
+        return mdl.batiment.find_batiment_by_id(batiment_id)
     return None
 
 

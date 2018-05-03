@@ -123,13 +123,10 @@ urlpatterns = [
     url(r'^gestion/update/all/$', contratgestion.update, name='update-gestion-all'),
 
 
-
     url(r'^contratgestions/$', contratgestion.list, name='contratgestion_list'),
 
     # url(r'^contratgestion/(?P<pk>[0-9]+)/$', views.ContratGestionDetail.as_view(), name='contratgestion'),
 
-    url(r'^societe/create/$', views.SocieteCreate.as_view(), name='societe-create'),
-    url(r'^societe/update/(?P<pk>[0-9]+)/$', views.SocieteUpdate.as_view(), name='societe-update'),
     url(r'^societe/delete/(?P<pk>[0-9]+)/$', views.SocieteDelete.as_view(), name='societe-delete'),
     url(r'^societes/$', societe.list, name='societe-list'),
     url(r'^societe/(?P<pk>[0-9]+)/$', views.SocieteDetail.as_view(), name='societe'),

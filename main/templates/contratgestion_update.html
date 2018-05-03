@@ -1,85 +1,45 @@
 {% extends "layout.html" %}
+{% load bootstrap3 %}
 {% load staticfiles %}
+
 {% block breadcrumb %}
     {% if contrat.batiment %}
         <li><a href="{% url 'batiment' contrat.batiment.id  %}">Batiment</a></a></li>
     {% endif %}
   <li class="active">Contrat gestion</li>
 {% endblock %}
+
 {% block content %}
-    <form action="{% url 'update-gestion-all' %}" method="post" id="form_contrat_gestion_update">
+    <form action="{% url 'update-gestion-all' %}"
+            method="post" id="form_contrat_gestion_update">
      {% csrf_token %}
       <input type="hidden" id="previous" name="previous" value="{{ previous }}" >
       <input type="hidden" value="{{ action|default_if_none:'' }}" name="action" >
       <input type="hidden" value="{{ contrat.id | default_if_none:'' }}" name="id" >
-
-      <div class="form-group">
-          <label for="slt_batiment_id">Batiment</label>
-          <select class="form-control"
-                  id="slt_batiment_id"
-                  name="batiment_id" {% if contrat.batiment.id  %}readonly{% endif %}>
-            <option value="-">-</option>
-                {% for b in batiments %}
-                  {% if contrat.batiment.id == b.id %}
-                    <option value="{{ b.id }}" selected>{{ b }}</option>
-                  {%else%}
-                    <option value="{{ b.id }}">{{ b }}</option>
-                  {% endif %}
-                {% endfor %}
-        </select>
-        {% if form.batiment_id.errors%}
-            <span class="erreur_formulaire">{{form.batiment_id.errors}}</span>
-        {%endif%}
-      </div>
-      <div class="row">
-        <div class="col-md-6">
-          <label for="gestionnaire">Gestionnaire</label>
-          <select name="gestionnaire"  id="gestionnaire" class="form-control" readonly>
-            {%for p in personnes%}
-                {%if contrat.gestionnaire and p == contrat.gestionnaire %}
-                    <option value="{{p.id}}" selected="">{{p}}</option>
-                {%else%}
-                    <option value="{{p.id}}" >{{p}}</option>
-                {%endif%}
-            {%endfor%}
-          </select>
-        </div>
-      </div>
-      <br>
-      <div class="row">
-        <div class="col-md-3">
-          <label for="txt_montant_mensuel">Montant mensuel</label>
-          <input class="form-control required"
-                 value="{{ contrat.montant_mensuel| default_if_none:'' }}"
-                 name="montant_mensuel"
-                 id="txt_montant_mensuel">
-          {% if form.montant_mensuel.errors%}<span class="erreur_formulaire">{{form.montant_mensuel.errors}}</span>{%endif%}
-        </div>
-        <div class="col-md-2">
-        <label for="date_debut">Date début</label>
-        <input class="form-control required" id="date_debut_gestion" value="{%if contrat.date_debut%}{{contrat.date_debut|date:"j/m/Y" }}{%endif%}"
-               name="date_debut">
-          {% if form.date_debut.errors%}<span class="erreur_formulaire">{{form.date_debut.errors}}</span>{%endif%}
-      </div>
-
-      <div class="col-md-2">
-        <label for="date_fin">Date fin</label>
-        <input class="form-control" id="date_fin_gestion" value="{%if contrat.date_fin%}{{contrat.date_fin|date:"j/m/Y"}}{%endif%}"
-               name="date_fin">
-          {% if form.date_fin.errors%}<span class="erreur_formulaire">{{form.date_fin.errors}}</span>{%endif%}
-      </div>
-      </div>
-        {%if message%}
-            <br>
-            <div class="alert alert-danger" role="alert">{{message}}</div>
-        {%endif%}
+        {% bootstrap_form form %}
+        {% bootstrap_form_errors form %}
 
         <button type="submit" class="btn btn-primary pull-right" id="bt_contrat_gestion_updater"
                 title="Sauvegarder"><span class="glyphicon glyphicon-floppy-disk" aria-hidden="true"> Enregistrer</span>
         </button>
         <br>
-
     </form>
+{% endblock %}
 
+{% block script %}
+    <script>
+        $("#id_date_debut").datepicker({
+            autoclose: true,
+            orientation: "bottom auto",
+            language: "fr",
+            showOtherMonths: false
+        });
+        $("#id_date_fin").datepicker({
+            autoclose: true,
+            orientation: "bottom auto",
+            language: "fr",
+            showOtherMonths: false
+        });
 
+    </script>
 {% endblock %}

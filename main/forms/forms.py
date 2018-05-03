@@ -29,12 +29,8 @@ from crispy_forms.layout import Submit
 from main import views_utils
 from main import models as mdl
 
+
 READONLY_ATTR = "disabled"
-
-
-class LoginForm(forms.Form):
-    username = forms.CharField()
-    password = forms.CharField(widget=forms.PasswordInput)
 
 
 def get_pays_choix():
@@ -102,6 +98,7 @@ class BatimentForm(ModelForm):
         #     except ValueError:
         #         self.errors['numero'] = 'Le numéro doit être numérique'
 
+
 class ProprietaireForm(forms.ModelForm):
     class Meta:
         model = proprietaire.Proprietaire
@@ -135,21 +132,6 @@ class FraisMaintenanceForm(forms.Form):
         if cleaned_data.get('montant') and cleaned_data.get('montant') < 0:
             self.errors['montant'] = 'Le montant doit être > 0'
         return cleaned_data
-
-
-class SocieteForm(ModelForm):
-
-    class Meta:
-        model = societe.Societe
-        fields = ['nom', 'description', 'rue', 'numero', 'boite', 'lieu_dit', 'code_postal', 'localite']
-
-    def __init__(self, *args, **kwargs):
-        super(SocieteForm, self).__init__(*args, ** kwargs)
-        self.helper = FormHelper()
-        self.helper.form_class = 'form-horizontal'
-        self.helper.label_class = 'col-md-offset-1 col-md-2'
-        self.helper.field_class = 'col-md-8'
-        self.helper.add_input(Submit('submit', 'Ok'))
 
 
 class ContratLocationForm(forms.Form):
@@ -219,35 +201,8 @@ class FileForm(forms.Form):
     file = forms.FileField()
 
 
-class ContratGestionForm(ModelForm):
-    #batiment_id = forms.ChoiceField(widget=forms.Select(attrs={'class': 'selector'}))
-    # batiments=[]
-    # for x in Batiment.objects.all():
-    #     batiments.append(x.id)
 
-    # batiments =  [(x.id) for x in Batiment.objects.all()]
-    # print(batiments)
-    batiment_id = forms.ModelChoiceField(queryset=mdl.batiment.find_all())
-    #batiment_id = forms.ChoiceField(choices=NPCGuild.CATEGORIES)
-    date_debut = forms.DateField(required=True, input_formats=[views_utils.DATE_SHORT_FORMAT],
-                                 widget=forms.DateInput(format=views_utils.DATE_SHORT_FORMAT))
-    date_fin = forms.DateField(required=False, input_formats=[views_utils.DATE_SHORT_FORMAT],
-                               widget=forms.DateInput(format=views_utils.DATE_SHORT_FORMAT))
-    montant_mensuel = forms.DecimalField(max_digits=6, decimal_places=2, localize=True)
 
-    class Meta:
-        model = contrat_gestion.ContratGestion
-        fields = ['montant_mensuel']
-
-    def __init__(self, *args, **kwargs):
-        super(ContratGestionForm, self).__init__(*args, ** kwargs)
-
-    def clean(self):
-        cleaned_data = super(ContratGestionForm, self).clean()
-        if cleaned_data.get('date_debut') and cleaned_data.get('date_fin'):
-            if cleaned_data.get('date_debut') > cleaned_data.get('date_fin'):
-                self.errors['date_debut'] = 'Dates erronées'
-        return cleaned_data
 
 class LigneForm(forms.Form):
 
@@ -272,7 +227,6 @@ class LettreForm(forms.Form):
     #     super(LettreForm, self).__init__(*args, ** kwargs)
     #
 
-
     #
     # def __init__(self, modele_document=None, *args, **kwargs):
     #     print('init')
@@ -284,14 +238,8 @@ class LettreForm(forms.Form):
     #         # self.fields['fichier_modele'].initial = modele_document.fichier_modele
     #         pass
 
-
     def clean(self):
         cleaned_data = super(LettreForm, self).clean()
 
         return cleaned_data
-
-
-class BatimentLocaliteForm(forms.Form):
-    localite_cp= forms.CharField(required=True)
-    localite_nom = forms.CharField(required=True)
 

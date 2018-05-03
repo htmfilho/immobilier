@@ -222,7 +222,7 @@ def find_all():
     return Batiment.objects.all()
 
 
-def find_batiment(id):
+def find_batiment_by_id(id):
     return Batiment.objects.get(pk=id)
 
 

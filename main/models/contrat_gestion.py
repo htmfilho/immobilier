@@ -25,6 +25,7 @@ from django.db import models
 from main.models import personne as Personne
 from dateutil.relativedelta import relativedelta
 from main import models as mdl
+from django.core.validators import MinValueValidator
 
 
 class ContratGestion(models.Model):
@@ -32,7 +33,8 @@ class ContratGestion(models.Model):
     gestionnaire = models.ForeignKey('Personne')
     date_debut = models.DateField(auto_now=False,  auto_now_add=False, blank=True, null=True)
     date_fin = models.DateField(auto_now=False, auto_now_add=False, blank=True, null=True)
-    montant_mensuel = models.DecimalField(max_digits=6, decimal_places=2, blank=True, null=True)
+    montant_mensuel = models.DecimalField(max_digits=6, decimal_places=2, blank=True, null=True,
+                                          validators = [MinValueValidator(0)])
 
 
     def __str__(self):

@@ -31,8 +31,8 @@ READONLY_ATTR = "disabled"
 
 
 class SuiviForm(forms.ModelForm):
-    date_paiement = forms.HiddenInput()
-    financement_location = forms.HiddenInput()
+    # date_paiement = forms.HiddenInput()
+    # financement_location = forms.HiddenInput()
     date_paiement_reel = forms.DateField(widget=DatePickerInput(format=DATE_FORMAT),
                                          input_formats=[DATE_FORMAT, ],
                                          required=False)
