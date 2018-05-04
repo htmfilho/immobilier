@@ -12,3 +12,4 @@ photos/LogoRBC.png
 immovenv/
 main/templatetags/__pycache__/
 htmlcov/
+.env
