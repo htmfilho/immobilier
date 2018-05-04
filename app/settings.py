@@ -174,6 +174,8 @@ STATICFILES_DIRS = [
     os.path.join(PROJECT_ROOT, 'static'),
 ]
 
-# STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+
 if not DEBUG:
-    STATICFILES_STORAGE = os.environ['STATICFILES_STORAGE']
+    STATICFILES_STORAGE = os.environ.get('STATICFILES_STORAGE', '')
+else:
+    STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
