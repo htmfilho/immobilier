@@ -19,12 +19,6 @@ import dj_database_url
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 PROJECT_ROOT = os.path.dirname(os.path.abspath(__file__))
-print(BASE_DIR)
-print(PROJECT_ROOT)
-
-
-# Quick-start development settings - unsuitable for production
-# See https://docs.djangoproject.com/en/1.8/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = os.environ['SECRET_KEY']

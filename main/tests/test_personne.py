@@ -216,6 +216,7 @@ class PersonneViewTest(TestCase):
 
     def test_populate_pays_non_precise(self):
         self.assertIsNone(personne_view.populate_pays_naissance(None))
+        self.assertIsNone(personne_view.populate_pays_naissance('-'))
         self.assertIsNone(personne_view.populate_pays_naissance(9))
 
     def test_populate_pays_precise(self):

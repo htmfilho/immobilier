@@ -169,7 +169,10 @@ def populate_date(request_value):
 
 def populate_pays_naissance(pays_naissance_id):
     if pays_naissance_id:
-        return mdl.pays.find_by_id(int(pays_naissance_id))
+        try:
+            return mdl.pays.find_by_id(int(pays_naissance_id))
+        except:
+            return None
     return None
 
 
