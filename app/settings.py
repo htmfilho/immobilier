@@ -102,7 +102,8 @@ WSGI_APPLICATION = 'app.wsgi.application'
 
 
 DATABASES = {'default': dj_database_url.config(conn_max_age=600,
-                                               default='postgres://conseilimmo_usr:dev@localhost:5432/conseilimmo')}
+                                               default='postgres://immo_usr:dev@localhost:5432/immo_dev')}
+
 
 
 # Internationalization
