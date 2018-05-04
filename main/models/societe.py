@@ -72,3 +72,4 @@ def find_all_with_name():
 
 def find_name(a_name):
     return Societe.objects.filter(nom__icontains=a_name).order_by('nom')
+

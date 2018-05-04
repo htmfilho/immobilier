@@ -139,7 +139,7 @@ def populate_personne(request):
     personne.fonction = fonction
     personne.profession = populate_profession(fonction)
 
-    personne.societe = get_societe(request)
+    personne.societe = get_societe(request.POST)
     personne.lieu_naissance = request.POST['lieu_naissance']
     personne.pays_naissance = populate_pays_naissance(request.POST.get('pays_naissance', None))
 
@@ -176,14 +176,14 @@ def populate_pays_naissance(pays_naissance_id):
     return None
 
 
-@login_required
-@require_http_methods(["POST"])
-def get_societe(request):
-    if request.POST['societe'] == '-':
-        return societe.creation_nouvelle_societe(request.POST.get('nom_nouvelle_societe', None),
-                                                 request.POST.get('description_nouvelle_societe', None))
+def get_societe(data):
+    if data['societe'] == '-':
+        if data.get('nom_nouvelle_societe', None):
+            return societe.creation_nouvelle_societe(data.get('nom_nouvelle_societe', None),
+                                                     data.get('description_nouvelle_societe', None))
+        return None
     else:
-        return mdl.societe.find_by_id(int(request.POST['societe']))
+        return mdl.societe.find_by_id(int(data['societe']))
 
 
 @login_required
