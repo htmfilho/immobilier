@@ -5,7 +5,7 @@
     "fields": {
       "prenom": "Leila",
       "nom": "Verpoorten",
-      "civilite": "MADAME"
+      "titre": "MADAME"
     }
   },
   {
@@ -14,7 +14,7 @@
     "fields": {
       "prenom": "Michel",
       "nom": "Marchal",
-      "civilite": "MONSIEUR"
+      "titre": "MONSIEUR"
     }
   },
   {
@@ -23,7 +23,7 @@
     "fields": {
       "prenom": "Stéphan",
       "nom": "Marchal",
-      "civilite": "MONSIEUR"
+      "titre": "MONSIEUR"
     }
   },
   {
@@ -32,7 +32,7 @@
     "fields": {
       "prenom": "Jeanne",
       "nom": "Lebrun",
-      "civilite": "MADAME"
+      "titre": "MADAME"
     }
   },
   {
@@ -41,7 +41,7 @@
     "fields": {
       "prenom": "Hervé",
       "nom": "Marcelle",
-      "civilite": "MONSIEUR"
+      "titre": "MONSIEUR"
     }
   },
   {
@@ -50,7 +50,7 @@
     "fields": {
       "prenom": "Géraldine",
       "nom": "Garlant",
-      "civilite": "MADAME"
+      "titre": "MADAME"
     }
   },
   {
@@ -59,7 +59,7 @@
     "fields": {
       "prenom": "Roger",
       "nom": "Verpoorten",
-      "civilite": "MONSIEUR"
+      "titre": "MONSIEUR"
     }
   },
   {
@@ -68,7 +68,7 @@
     "fields": {
       "prenom": "Germaine",
       "nom": "Lesquoy",
-      "civilite": "MADAME"
+      "titre": "MADAME"
     }
   },
   {
@@ -77,7 +77,7 @@
     "fields": {
       "prenom": "-",
       "nom": "James",
-      "civilite": "MONSIEUR"
+      "titre": "MONSIEUR"
     }
   },
 
@@ -87,7 +87,7 @@
     "fields": {
       "prenom": "André",
       "nom": "Mignon",
-      "civilite": "MONSIEUR"
+      "titre": "MONSIEUR"
     }
   },
   {
@@ -96,7 +96,7 @@
     "fields": {
       "prenom": "Arnaud",
       "nom": "Verpoorten",
-      "civilite": "MONSIEUR"
+      "titre": "MONSIEUR"
     }
   },
   {
