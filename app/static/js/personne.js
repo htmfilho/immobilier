@@ -37,6 +37,7 @@ $("#bt_save_new_pays").click(function(event) {
 });
 
 $("#bt_save_new_fonction_2").click(function(event) {
+    alert('ici');
     var target = $(event.target);
     var id = target.attr("id");
 
@@ -59,12 +60,12 @@ $("#bt_save_new_fonction_2").click(function(event) {
                 }
             });
             if(max_id > 0){
-                $("#slt_fonction").append(new Option(nom, max_id));
+                $("#id_profession").append(new Option(nom, max_id));
                 $("#slt_fonction_locataire").append(new Option(nom, max_id));
 
             }
 
-            $('#slt_fonction').find('option').each(function() {
+            $('#id_profession').find('option').each(function() {
                 if($(this).val()==max_id){
                     $(this).prop('selected',true);
                 }

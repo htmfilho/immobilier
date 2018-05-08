@@ -47,7 +47,10 @@ class ViewsTest(TestCase):
         self.batiment_1 = BatimentFactory()
         self.batiment_2 = BatimentFactory()
         self.batiment_3 = BatimentFactory()
-        self.contrat_location = ContratLocationFactory(batiment=batiment_contrat)
+        self.contrat_location = ContratLocationFactory(batiment=batiment_contrat,
+                                                       date_debut=timezone.now(),
+                                                       date_fin=timezone.now(),
+                                                       )
         self.financement = FinancementLocationFactory(date_debut=timezone.now(),
                                                       date_fin=timezone.now(),
                                                       loyer=500,
@@ -78,8 +81,8 @@ class ViewsTest(TestCase):
         self.assertEqual(views._get_montant_to_add(100), 100)
 
     def test_get_total_depenses(self):
-        frais_1 = FraisMaintenanceFactory(montant=150)
-        frais_2 = FraisMaintenanceFactory(montant=300)
+        frais_1 = FraisMaintenanceFactory(montant=150, contrat_location=self.contrat_location)
+        frais_2 = FraisMaintenanceFactory(montant=300, contrat_location=self.contrat_location)
 
         self.assertEqual(views._get_total_depenses([frais_1, frais_2]), 450)
 

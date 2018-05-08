@@ -1,4 +1,5 @@
 {% extends "layout.html" %}
+{% load staticfiles bootstrap3 %}
 {% block breadcrumb %}
 {% if locataire.contrat_location %}
     {% if locataire.contrat_location.batiment %}
@@ -21,78 +22,41 @@
     <div id="info_locataire" class="tab-pane fade in active">
 <div class="panel panel-default">
   <div class="panel-body">
-      <form method="post" action="{% url 'locataire-add' %}">
+      <form method="post"
+            {% if locataire.id  %}
+                action="{% url 'locataire-update'  locataire.id %}"
+            {% else %}
+                action="{% url 'locataire-add' %}"
+            {% endif %}
+              >
           {% csrf_token %}
+          {% bootstrap_form_errors form %}
           <input type="hidden" id="previous" name="previous" value="{{ request.META.HTTP_REFERER }}"/>
           <input type="hidden" value="{{ action }}" name="action"/>
-          <input type="hidden" value="{{ locataire.id }}" name="locataire_id"/>
+          <input type="hidden" value="{{ locataire.id | default_if_none:'' }}" name="locataire_id"/>
           <input type="hidden" value="{{ locataire.contrat_location.id }}" name="location_id"/>
-
+          {% if form.contrat_location %}
+            {% bootstrap_field form.contrat_location %}
+          {% endif %}
           <div class="row">
               <div class="col-md-4">
-                  <label>Personne</label>
-                  <select class="form-control" name="personne_id">
-                      <option value="">-</option>
-                      {% for p in personnes %}
-                          {% if locataire.personne.id == p.id %}
-                              <option value="{{ p.id }}" selected>{{ p }}</option>
-                          {% else %}
-                              <option value="{{ p.id }}">{{ p }}</option>
-                          {% endif %}
-                      {% endfor %}
-                  </select>
-
+                  {% bootstrap_field form.personne %}
               </div>
               <div class="col-md-4">
-                  <label>Civilité</label>
-                  <select class="form-control" name="civilite">
-                      ('NON_PRECISE','-'),
-                      ('MADAME','Madame'),
-                      ('MONSIEUR','Monsieur'),
-                      ('MAITRE','Maitre'),
-                      ('','Docteur'),
-                      {% if locataire.civilite == 'NON_PRECISE' %}
-                          <option value="NON_PRECISE" selected>-</option>
-                      {% else %}
-                          <option value="NON_PRECISE">-</option>
-                      {% endif %}
-                      {% if locataire.civilite == 'MADAME' %}
-                          <option value="MADAME" selected>Madame</option>
-                      {% else %}
-                          <option value="MADAME">Madame</option>
-                      {% endif %}
-                      {% if locataire.civilite == 'MONSIEUR' %}
-                          <option value="MONSIEUR" selected>Monsieur</option>
-                      {% else %}
-                          <option value="MONSIEUR">Monsieur</option>
-                      {% endif %}
-                      {% if locataire.civilite == 'MAITRE' %}
-                          <option value="MAITRE" selected>Maitre</option>
-                      {% else %}
-                          <option value="MAITRE">Maitre</option>
-                      {% endif %}
-                      {% if locataire.civilite == 'DOCTEUR' %}
-                          <option value="DOCTEUR" selected>Docteur</option>
-                      {% else %}
-                          <option value="DOCTEUR">Docteur</option>
-                      {% endif %}
-                  </select>
+                  {% bootstrap_field form.civilite %}
               </div>
               <div class="col-md-2">
-                  <label>Principal</label><br>
-                  <input type="checkbox" name="principal"
-                         {% if  locataire.principal  == True %}checked{% else %}''{% endif %}>
+                  {% bootstrap_field form.principal %}
               </div>
               <div class="col-md-1">
-                  <label>Actif</label><br>
-                  <input type="checkbox" name="actif" {% if  locataire.actif  == True %}checked{% else %}''{% endif %}>
+                  {% bootstrap_field form.actif %}
               </div>
               <div class="col-md-1">
                   {% if not locataire.id %}
                       <label class="invisible">&nbsp;</label>
                       <button type="button"
                               id="btn_locataire_ajout_personne"
-                              class="btn btn-warning"
+                              class="btn btn-warning invisible"
                               data-toggle="modal"
                               data-target="#ajoutPersonneModal"><span class="glyphicon glyphicon-plus"
                                                                       aria-hidden="true"></span></button>
@@ -103,50 +67,7 @@
 
           <div class="row">
               <div class="col-md-8">
-                  <label>Location</label>
-                  {% if action == 'update' %}
-                      <br>
-                      {{ locataire.contrat_location.batiment| default_if_none:'' }}
-                      <br>
-                      du {{ locataire.contrat_location.date_debut|date:"j/m/Y" }} au
-                      {{ locataire.contrat_location.date_fin|date:"j/m/Y" }}
-                      <br>
-                      <br>
-                  {% else %}
-                      {% if locations %}
-                          <div class="row">
-                              <div class="col-md-6">
-                                  <select name="location_id" required>
-                                      <option>-</option>
-                                      {% for location in locations %}
-                                          <option value="{{ location.id }}">{{ location }}</option>
-                                      {% endfor %}
-                                  </select>
-                              </div>
-                              <div class="col-md-6">
-                              </div>
-                          </div>
-                      {% else %}
-                          <input class="form-control"
-                                 value="{{ locataire.contrat_location.batiment| default_if_none:'' }}">
-                          <input class="form-control"
-                                 value="{{ locataire.contrat_location.date_debut|date:"j/m/Y" }} au
-                                         {{ locataire.contrat_location.date_fin|date:"j/m/Y" }}"
-                                 name="contrat_location">
-                      {% endif %}
-
-                  {% endif %}
-              </div>
-              <div class="col-md-3">
-              </div>
-          </div>
-          <br>
-
-          <div class="row">
-              <div class="col-md-8">
-                  <label>Infos complementaires</label>
-                  <input class="form-control" value="{{ locataire.infos_complement| default_if_none:'' }}"
-                         name="infos_complement">
+                  {% bootstrap_field form.infos_complement %}
               </div>
               <div class="col-md-3">
               </div>
@@ -155,14 +76,7 @@
 
           <div class="row">
               <div class="col-md-3">
-                  <label>Societé occupant les lieux</label>
-                  <select name="societe" class="form-control" id="slt_societes_locataire">
-                      <option value="">-</option>
-                      {% for societe in societes %}
-                          <option value="{{ societe.id }}"
-                                  {% if societe.id == locataire.societe.id %}selected{% endif %}>{{ societe }}</option>
-                      {% endfor %}
-                  </select>
+                  {% bootstrap_field form.societe %}
               </div>
               <div class="col-md-1">
                   <br>
@@ -175,18 +89,10 @@
                   </button>
               </div>
               <div class="col-md-4">
-                  <label>TVA</label>
-                  <input class="form-control" value="{{ locataire.tva| default_if_none:'' }}" name="tva">
+                  {% bootstrap_field form.tva %}
               </div>
               <div class="col-md-3">
-                  <label>Fonction exercée dans les lieux</label>
-                  <select name="profession" class="form-control" id="slt_fonction_locataire">
-                      <option value="-">-</option>
-                      {% for f in fonctions %}
-                          <option value="{{ f.id }}"
-                                  {% if f.id == locataire.profession.id %}selected{% endif %}>{{ f }}</option>
-                      {% endfor %}
-                  </select>
+                  {% bootstrap_field form.profession %}
               </div>
 
               <div class="col-md-1">
@@ -203,8 +109,9 @@
           </div>
 
           <button type="submit" class="btn btn-primary pull-right" title="Sauvegarder">
-              <span class="glyphicon glyphicon-floppy-disk" aria-hidden="true"> Enregistrer</span>
+              <span class="glyphicon glyphicon-floppy-disk" aria-hidden="true"> {% if locataire.id %}Enregistrer{% else %}Ajouter{% endif %}</span>
           </button>
+          {% include "fonction/fonction_create_locataire.html" %}
       </form>
 
 </div>
@@ -217,5 +124,4 @@
 
 {% include "personne/personne_create.html" %}
 {% include "societe/societe_create_locataire.html" %}
-{% include "fonction/fonction_create_locataire.html" %}
 {% endblock %}

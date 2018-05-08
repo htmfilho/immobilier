@@ -21,37 +21,22 @@
 #    see http://www.gnu.org/licenses/.
 #
 ##############################################################################
-from django.http import HttpResponse
-from main import models as mdl
-from django.http import HttpResponse
-from rest_framework import serializers
-from rest_framework.renderers import JSONRenderer
+from django import forms
+from main.models.locataire import Locataire
 
 
-class JSONResponse(HttpResponse):
-    def __init__(self, data, **kwargs):
-        content = JSONRenderer().render(data)
-        kwargs['content_type'] = 'application/json'
-        super(JSONResponse, self).__init__(content, **kwargs)
-
-
-def create_old(request):
-    data = request.POST
-    new_fonction = mdl.fonction.Fonction()
-    new_fonction.nom_fonction = data['nom']
-    new_fonction.save()
-    return HttpResponse(new_fonction, mimetype="application/json")
-
-
-def create(request):
-    new_fonction = mdl.fonction.Fonction()
-    new_fonction.nom_fonction = request.GET.get('nom', None)
-    new_fonction.save()
-    serializer = FonctionSerializer(mdl.fonction.find_all(), many=True)
-    return JSONResponse(serializer.data)
-
-class FonctionSerializer(serializers.ModelSerializer):
+class LocataireForm(forms.ModelForm):
 
     class Meta:
-        model = mdl.fonction.Fonction
-        fields = '__all__'
+        model = Locataire
+        fields = ['personne', 'civilite', 'infos_complement', 'societe', 'profession', 'tva', 'principal', 'actif',
+                  'contrat_location']
+
+
+    def __init__(self, data=None, initial=None, *args, **kwargs):
+        super().__init__(data, initial=initial, **kwargs)
+        self.fields['societe'].label = 'Societé occupant les lieux'
+        self.fields['profession'].label = 'Fonction exercée dans les lieux'
+        self.fields['profession'].label = 'Fonction exercée dans les lieux'
+        self.fields['contrat_location'].widget=forms.HiddenInput()
+

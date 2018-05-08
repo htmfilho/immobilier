@@ -22,17 +22,19 @@
 #
 ##############################################################################
 from django.shortcuts import render, get_object_or_404
-from main.views_utils import get_key
 from main import models as mdl
 from django.http import HttpResponseRedirect
 from django.core.urlresolvers import reverse
 from django.contrib.auth.decorators import login_required
 from main.pages_utils import NEW, UPDATE, LOCATAIRE_FORM_HTML
+from main.forms.locataire import LocataireForm
 
 
 @login_required
 def locataire_form(request, id):
     locataire = get_object_or_404(mdl.locataire.Locataire, pk=id)
+    form = LocataireForm(instance=locataire)
+
     next = request.META.get('HTTP_REFERER', '/')
     return render(request, LOCATAIRE_FORM_HTML,
                   {'locataire': locataire,
@@ -42,18 +44,25 @@ def locataire_form(request, id):
                    'societes':  mdl.societe.find_all(),
                    'fonctions': mdl.fonction.find_all(),
                    'next': next,
-                   'localites': mdl.localite.find_all()})
+                   'localites': mdl.localite.find_all(),
+                   'form': form})
 
 
 @login_required
 def update(request, id):
     locataire = get_object_or_404(mdl.locataire.Locataire, pk=id)
-    return render(request, LOCATAIRE_FORM_HTML,
-                  {'action':    UPDATE,
-                   'locataire': locataire,
-                   'personnes': mdl.personne.find_all(),
-                   'personne':  locataire.personne,
-                   'localites': mdl.localite.find_all()})
+    form = LocataireForm(data=request.POST, instance=locataire )
+    if form.is_valid():
+        form.save()
+        return HttpResponseRedirect(reverse('location-prepare-update-all', args=(locataire.contrat_location.id,)))
+    else:
+        return render(request, LOCATAIRE_FORM_HTML,
+                      {'action':    UPDATE,
+                       'locataire': locataire,
+                       'personnes': mdl.personne.find_all(),
+                       'personne':  locataire.personne,
+                       'localites': mdl.localite.find_all(),
+                       'form': form})
 
 
 @login_required
@@ -61,6 +70,7 @@ def new(request, location_id):
     location = get_object_or_404(mdl.contrat_location.ContratLocation, pk=location_id)
     locataire = mdl.locataire.Locataire()
     locataire.contrat_location = location
+    form = LocataireForm(initial={'contrat_location': location})
 
     return render(request, LOCATAIRE_FORM_HTML,
                   {'locataire': locataire,
@@ -69,7 +79,8 @@ def new(request, location_id):
                    'societes':  mdl.societe.find_all(),
                    'action':    UPDATE,
                    'fonctions': mdl.fonction.find_all(),
-                   'localites': mdl.localite.find_all()})
+                   'localites': mdl.localite.find_all(),
+                   'form': form})
 
 
 def get_personnes_non_locataires(location):
@@ -98,47 +109,31 @@ def new_without_known_location(request):
 
 @login_required
 def add(request):
-    print('add locataire')
-    locataire_id = get_key(request.POST.get('locataire_id', None))
-    location_id = request.POST.get('location_id', None)
-    personne_id = get_key(request.POST.get('personne_id', None))
+    form = LocataireForm(data=request.POST)
 
-    locataire = populate_locataire(locataire_id, location_id, personne_id, request)
-    locataire.save()
+    if form.is_valid():
+        locataire = form.save()
 
-    action = request.POST.get('action', None)
-    if action == UPDATE:
-        return render(request, "contratlocation_update.html", {'location': locataire.contrat_location})
+        action = request.POST.get('action', None)
+        if action == UPDATE:
+            return render(request, "contratlocation_update.html", {'location': locataire.contrat_location})
+
+        else:
+            return HttpResponseRedirect(reverse('home'))
     else:
-        return HttpResponseRedirect(reverse('home'))
-
-
-def populate_locataire(locataire_id, location_id, personne_id, request):
-    locataire = _get_locataire(locataire_id)
-    location = _get_location(location_id)
-    locataire.contrat_location = location
-    locataire.personne = set_personne(personne_id)
-    locataire.principal = False
-    if request.POST.get('principal', None) and request.POST['principal'] == 'on':
-        locataire.principal = True
-    locataire.actif = False
-    if request.POST.get('actif', None) and request.POST['actif'] == 'on':
-        locataire.actif = True
-    locataire.civilite = request.POST['civilite']
-    locataire.infos_complement = request.POST['infos_complement']
-    locataire.societe = get_societe(request)
-    locataire.tva = request.POST['tva']
-    fonction_locataire = None
-    if request.POST['profession']:
-        try:
-            id_fonction = int(request.POST['profession'])
-            fonction_locataire = mdl.fonction.find_by_id(id_fonction)
-        except:
-            pass
-
-    locataire.profession = fonction_locataire
-    locataire.contrat_location = location
-    return locataire
+        location_id = request.POST.get('location_id', None)
+        location = get_object_or_404(mdl.contrat_location.ContratLocation, pk=location_id)
+        locataire = mdl.locataire.Locataire()
+        locataire.contrat_location = location
+        return render(request, LOCATAIRE_FORM_HTML,
+                      {'locataire': locataire,
+                       'location':  location,
+                       'personnes': get_personnes_non_locataires(location),
+                       'societes':  mdl.societe.find_all(),
+                       'action':    UPDATE,
+                       'fonctions': mdl.fonction.find_all(),
+                       'localites': mdl.localite.find_all(),
+                       'form': form})
 
 
 def get_societe(request):
@@ -167,6 +162,8 @@ def personne_create(request):
     action = request.POST.get('action_current', None)
     locataire = mdl.locataire.Locataire()
     location = None
+    form = LocataireForm(data=request.POST,
+                         initial={'contrat_location': location})
     if location_id:
         location = get_object_or_404(mdl.contrat_location.ContratLocation, pk=location_id)
         locataire.contrat_location = location
@@ -181,7 +178,8 @@ def personne_create(request):
                    'societes': mdl.societe.find_all(),
                    'locations': mdl.contrat_location.find_all(),
                    'fonctions': mdl.fonction.find_all(),
-                   'action': action})
+                   'action': action,
+                   'form': form})
 
 
 def _save_personne(request):
