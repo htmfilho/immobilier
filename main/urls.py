@@ -121,6 +121,8 @@ urlpatterns = [
     url(r'^contratgestion/delete/([0-9]+)/$', contratgestion.delete, name='contratgestion-delete'),
     url(r'^gestion/prepare/update/all/([0-9]+)/$', contratgestion.prepare_update, name='gestion-prepare-update-all'),
     url(r'^gestion/update/all/$', contratgestion.update, name='update-gestion-all'),
+    url(r'^contratgestion/form/(?P<id_contrat>[0-9]+)/$', contratgestion.saveupdate, name='gestion-create-update'),
+
 
 
     url(r'^contratgestions/$', contratgestion.list, name='contratgestion_list'),

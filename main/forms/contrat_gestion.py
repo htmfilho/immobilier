@@ -27,6 +27,7 @@ from main.forms.utils.datefield import DatePickerInput, DATE_FORMAT
 from main.models.enums import etat_suivi as etat_suivi_enum
 READONLY_ATTR = "disabled"
 
+
 class ContratGestionForm(forms.ModelForm):
     date_debut = forms.DateField(widget=DatePickerInput(format=DATE_FORMAT),
                                  input_formats=[DATE_FORMAT, ],
@@ -77,6 +78,7 @@ class ContratGestionForm(forms.ModelForm):
         self.fields["date_debut"].required = True
         self.fields["date_fin"].required = True
         self.fields["montant_mensuel"].required = True
+        # self.fields["gestionnaire"].queryset = mdl.personne.find_gestionnaires_default(),
         # self.fields['batiment'].widget.attrs['disabled'] = 'disabled'
         # self.fields['gestionnaire'].widget.attrs['disabled'] = 'disabled'
 

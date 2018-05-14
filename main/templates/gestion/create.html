@@ -4,15 +4,23 @@
 
 {% block breadcrumb %}
     {% if contrat.batiment %}
-        <li><a href="{% url 'batiment' contrat.batiment.id  %}">Batiment</a></a></li>
+        <li><a href="{% url 'batiment' contrat.batiment.id  %}">Batiment</a></li>
     {% endif %}
   <li class="active">Contrat gestion</li>
 {% endblock %}
 
 {% block content %}
-    <form action="{% url 'gestion-create-save' batiment.id %}"
-            method="post" id="form_contrat_gestion_create">
+    <form method="post"
+          {% if batiment %}
+            action="{% url 'contratgestion-create' batiment.id %}"
+          {% else %}
+            action="{% url 'update-gestion-all' %}"
+          {% endif %}
+          id="form_contrat_gestion_create">
         {% include 'gestion/form.html' %}
     </form>
 {% endblock %}
-{% include 'gestion/script.html' %}
+
+{% block script %}
+    {% include 'gestion/script.html' %}
+{% endblock %}

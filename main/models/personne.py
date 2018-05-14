@@ -142,6 +142,11 @@ def find_all():
     return Personne.objects.all()
 
 
+def find_gestionnaires_default():
+    return Personne.objects.filter(nom=NOM_GESTIONNAIRE,
+                                   prenom=PRENOM_GESTIONNAIRE)
+
+
 def find_gestionnaire_default():
     list_personne = Personne.objects.filter(nom=NOM_GESTIONNAIRE,
                                             prenom=PRENOM_GESTIONNAIRE)

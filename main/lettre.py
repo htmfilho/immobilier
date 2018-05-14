@@ -54,11 +54,13 @@ def lettre_create(request):
         data = get_gestionnaire_detail(data)
         data.update({'tableau': [['ligne1', 'ligne2'], ['ligne1', 'ligne2']]})
 
-        filename = fill_template(
-            'documents/lettre.docx', data,
-            output_format=doctype)
 
-        return FileResponse(filename, 'lettre.{}'.format('docx'))
+
+        filename = fill_template(
+            'documents/lettre.odt', data,
+            output_format='pdf')
+
+        return FileResponse(filename, 'lettre.{}'.format('pdf'))
     else:
         return render(request, 'documents/lettre.html', {'form': form})
 
