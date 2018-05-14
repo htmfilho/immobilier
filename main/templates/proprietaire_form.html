@@ -21,10 +21,10 @@
         <div id="info_proprietaire" class="tab-pane fade in active">
             <div id="ff">
                 <form method="post" action="{% url 'proprietaire-update-save' %}" id="proprietaire_form">
-                    <input type="text" id="previous" name="previous" value="{{ request.META.HTTP_REFERER }}"/>
+                    <input type="hidden" id="previous" name="previous" value="{{ request.META.HTTP_REFERER }}"/>
                     <input type="hidden" id="action" name="action" value="{{ action }}"/>
                     <input type="hidden" id="id" name="id" value="{{ proprietaire.id }}"/>
-                    <input type="text" id="prev" name="prev" value="{{ prev }}"/>
+                    <input type="hidden" id="prev" name="prev" value="{{ prev }}"/>
                     {% csrf_token %}
                     <div class="row">
                         <div class="col-md-5">
