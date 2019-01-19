@@ -33,7 +33,6 @@ from main.pages_utils import PAGE_LISTE_BATIMENTS
 def create(request):
     return render(request, pages_utils.PAGE_BATIMENT_FORM,
                   {'batiment':  mdl.batiment.Batiment(),
-                   'localites': mdl.localite.find_all(),
                    'form': BatimentForm(data=None)})
 
 @login_required
