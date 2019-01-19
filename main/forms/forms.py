@@ -77,21 +77,13 @@ class PersonneForm(forms.Form):
 
 
 class BatimentForm(ModelForm):
-    # superficie = forms.DecimalField(required=False, max_digits=8, decimal_places=3, localize=True)
-    # numero = forms.IntegerField()
-    # localite = forms.ModelChoiceField(
-    #     queryset=localite.Localite.objects.all().order_by('localite'),
-    #     widget=forms.Select(),
-    #     empty_label=None,
-    # )
-
     class Meta:
         model = batiment.Batiment
-        fields = ['description', 'rue','numero', 'boite', 'lieu_dit', 'localite', 'superficie',
+        fields = ['description', 'rue', 'numero', 'boite', 'lieu_dit', 'localite', 'superficie',
                   'performance_energetique']
 
     def __init__(self, *args, **kwargs):
-        super(BatimentForm, self).__init__(*args, ** kwargs)
+        super(BatimentForm, self).__init__(*args, **kwargs)
 
     def clean(self):
         cleaned_data = super(BatimentForm, self).clean()
