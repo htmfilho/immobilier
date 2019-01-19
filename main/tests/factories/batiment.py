@@ -46,7 +46,6 @@ class BatimentFactory(factory.DjangoModelFactory):
     numero = factory.fuzzy.FuzzyInteger(1, 100)
     boite = factory.Sequence(lambda n: '%d' % n)
     lieu_dit = factory.Sequence(lambda n: 'Lieu dit - %d' % n)
-    #localite = models.ForeignKey('Localite')
     localite = factory.SubFactory(LocaliteFactory)
 
     # superficie = models.DecimalField(max_digits=8, decimal_places=3, blank=True, null=True)

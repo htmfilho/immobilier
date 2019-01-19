@@ -33,6 +33,7 @@ from django.views.decorators.http import require_POST, require_GET
 from django.http import HttpResponseRedirect
 from django.urls import reverse
 from django.views.decorators.http import require_http_methods
+from main.forms.forms import BatimentForm
 
 
 CONTRATGESTION_LIST_HTML = "contratgestion_list.html"
@@ -65,7 +66,8 @@ def create(request, batiment_id):
         form = ContratGestionForm(request.POST)
         if form.is_valid():
             form.save()
-            return render(request, pages_utils.PAGE_BATIMENT_FORM, {'batiment': batiment})
+            return render(request, pages_utils.PAGE_BATIMENT_FORM, {'batiment': batiment,
+                                                                    'form': BatimentForm(instance=batiment)})
     else:
 
         # Par défaut Sté comme gestionnaire
@@ -118,14 +120,18 @@ def update(request):
 def update_contrat_gestion(an_id, request):
     print(an_id)
     if an_id:
-        form = ContratGestionForm(data=request.POST or None, instance=mdl.contrat_gestion.find_by_id(an_id))
+        contrat_de_gestion = mdl.contrat_gestion.find_by_id(an_id)
+        form = ContratGestionForm(data=request.POST or None, instance=contrat_de_gestion)
     else:
         form = ContratGestionForm(data=request.POST or None)
     if form.is_valid():
         print('is_valid')
         if request.POST.get('action', None) == NEW or request.POST.get('action', None) == UPDATE:
             gestion = form.save(commit=True)
-        return render(request, pages_utils.PAGE_BATIMENT_FORM, {'batiment': gestion.batiment})
+        return render(request,
+                      pages_utils.PAGE_BATIMENT_FORM,
+                      {'batiment': gestion.batiment, 'form': BatimentForm(instance=contrat_de_gestion.batiment)}
+                      )
     else:
         return render(request, "gestion/update.html",
                       {'id': an_id,
@@ -162,7 +168,8 @@ def delete(request, contrat_gestion_id):
     if contrat_gestion:
         batiment = contrat_gestion.batiment
         contrat_gestion.delete()
-    return render(request, pages_utils.PAGE_BATIMENT_FORM, {'batiment': batiment})
+    return render(request, pages_utils.PAGE_BATIMENT_FORM, {'batiment': batiment,
+                                                            'form': BatimentForm(instance=batiment)})
 
 
 @login_required

@@ -32,7 +32,7 @@ from django.http import HttpResponseRedirect
 from django.core.urlresolvers import reverse
 from main import societe
 from django.contrib.auth.decorators import login_required
-
+from main.forms.forms import BatimentForm
 
 ON = 'on'
 
@@ -305,7 +305,8 @@ def get_redirection(batiment, contrat_location, previous, request):
         return HttpResponseRedirect(reverse('location-prepare-update-all', args=(contrat_location.id,)))
     if previous == 'liste':
         return HttpResponseRedirect(reverse('fraismaintenance_list'))
-    return render(request, pages_utils.PAGE_BATIMENT_FORM, {'batiment': batiment})
+    return render(request, pages_utils.PAGE_BATIMENT_FORM, {'batiment': batiment,
+                                                            'form': BatimentForm(instance=batiment)})
 
 
 def prepare_update_from_batiment(request, id):
