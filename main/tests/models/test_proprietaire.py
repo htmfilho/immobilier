@@ -52,8 +52,9 @@ class ProprietaireTest(TestCase):
         self.assertEqual(len(mdl.proprietaire.find_distinct_proprietaires()), 2)
 
     def test_find_distinct_proprietaires_order(self):
-        self.assertEqual(list(mdl.proprietaire.find_distinct_proprietaires()),
-                         [self.proprietaire_2, self.proprietaire_1])
+        proprietaires = list(mdl.proprietaire.find_distinct_proprietaires())
+        self.assertEqual(proprietaires[0].proprietaire, self.personne_2)
+        self.assertEqual(proprietaires[1].proprietaire, self.personne_1)
 
     def test_find_batiment_by_personne(self):
         self.assertEqual(len(mdl.proprietaire.find_batiment_by_personne(self.personne_2)), 2)

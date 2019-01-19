@@ -152,7 +152,6 @@ def _date_is_valide(proprietaire):
 
 
 def proprietaire_update_save(request):
-    print('proprietaire_update_save')
     previous = request.POST.get('previous', None)
     prev = request.POST.get('prev', None)
     proprietaire = get_proprietaire(request)

@@ -70,13 +70,13 @@ def find_all():
 
 
 def find_distinct_proprietaires():
-    results = Proprietaire.objects.all().order_by('proprietaire')
+    proprietaires = Proprietaire.objects.all().order_by('proprietaire')
     liste = []
     liste_personne = []
-    for result in results:
-        if result.proprietaire not in liste_personne:
-            liste.append(result)
-            liste_personne.append(result.proprietaire)
+    for un_proprietaire in proprietaires:
+        if un_proprietaire.proprietaire not in liste_personne:
+            liste.append(un_proprietaire)
+            liste_personne.append(un_proprietaire.proprietaire)
     return liste
 
 
