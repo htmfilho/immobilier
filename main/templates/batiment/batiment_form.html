@@ -1,5 +1,6 @@
 {% extends "layout.html" %}
 {% load l10n %}
+{% load bootstrap3 %}
 {% block breadcrumb %}
   <li class="active">Local</li>
 {% endblock %}
@@ -8,88 +9,38 @@
   <div class="panel-body">
     <form  id="batiment_form"
            method="post"
-           action="{% url 'update_batiment' %}">
+           action="
+                   {% if form.instance.id  %}
+                   {% url 'update_batiment' batiment_id=form.instance.id  %}
+                   {% else %}
+                   {% url 'update_batiment' %}
+           {% endif %}"
+            >
       {% csrf_token %}
       <input type="hidden" id="previous" name="previous" value="{{request.META.HTTP_REFERER }}"/>
       <input type="hidden" value="" id="prev" name="prev"/>
       <input type="hidden" value="modify" name="action"/>
       <input type="hidden" value="{{ batiment.id }}" name="id"/>
+
       <div class="row">
-        <div class="col-md-10">
-        <label for="rue">Rue</label>
-        <input class="form-control" id="rue" value="{{ batiment.rue| default_if_none:'' }}" name="rue" required
-               maxlength="200">
-        </div>
-        <div class="col-md-1">
-          <label for="numero" class="control-label">Numéro</label>
-          <input class="form-control" id="numero" value="{{ batiment.numero| default_if_none:'' }}" name="numero">
-          <font class="erreur_formulaire">{{ form.numero.errors|striptags }}</font>
-        </div>
-        <div class="col-md-1">
-          <label for="boite"  class="control-label">Boite</label>
-          <input class="form-control" id="boite" value="{{ batiment.boite| default_if_none:'' }}" name="boite" maxlength="10">
-        </div>
+          {% bootstrap_field form.rue form_group_class="col-md-10" %}
+          {% bootstrap_field form.numero form_group_class="col-md-1" %}
+          {% bootstrap_field form.boite form_group_class="col-md-1" %}
       </div>
         <br>
       <div class="row">
-        <div class="col-md-2">
-          <label class="control-label">Code postal</label>
-          <input list="localites" type="text" id="localite"
-                 class="form-control" name="localite_cp"
-                 value="{{batiment.localite.code_postal| default_if_none:''}}" maxlength="10" required>
-          <datalist id="localites">
-            {% for l in localites %}
-                  <option value="{{ l.code_postal }}" data-id="{{l.id}}">{{ l.code_postal }}</option>
-            {% endfor %}
-          </datalist>
-        </div>
-         <div class="col-md-4">
-          <label class="control-label">Localité</label>
-          <input list="localites_nom" type="text" id="localite_nom"
-                 class="form-control" name="localite_nom"
-                 value="{{batiment.localite.localite| default_if_none:''}}"
-                 maxlength="150" required>
-          <datalist id="localites_nom">
-            {% for l in localites %}
-                  <option value="{{ l.localite }}" data-id="{{l.id}}">{{ l.localite }}</option>
-            {% endfor %}
-          </datalist>
-        </div>
-        <div class="col-md-6">
-        </div>
+          {% bootstrap_field form.localite form_group_class="col-md-2" %}
       </div>
          <br>
       <div class="row">
-        <div class="col-md-3">
-          <label class="control-label">Superficie</label>
-          <input class="form-control"
-                 value="{{ batiment.superficie | default_if_none:'' }}"
-                 name="superficie">
-            <font class="erreur_formulaire">{{ form.superficie.errors }}</font>
-        </div>
-        <div class="col-md-4">
-          <label class="control-label">Performance énergetique (A -> F)</label>
-          <input class="form-control" type="text"
-                 value="{{ batiment.performance_energetique | default_if_none:'' }}"
-                 name="performance_energetique" list="performance_choix"
-                 title="Performance énergétique (30 caractères maximum), des valeurs par défaut sont proposées"
-                 maxlength="30" >
-          <datalist id="performance_choix">
-            <option value="A <= 50 kwh/m².an" >A <= 50 kwh/m².an</option>
-            <option value="B 51>= <90 kwh/m².an">B 51>= <90 kwh/m².an</option>
-            <option value="C 91>= <150 kwh/m².an">C 91>= <150 kwh/m².an</option>
-            <option value="D 151>= <230 kwh/m².an">D 151>= <230 kwh/m².an</option>
-            <option value="E 231>= <330 kwh/m².an">E 231>= <330 kwh/m².an</option>
-            <option value="F 331>= <450 kwh/m².an">F 331>= <450 kwh/m².an</option>
-            <option value="G >450 kwh/m².an">G >450 kwh/m².an</option>
-          </datalist>
-        </div>
-        <div class="col-md-5">
-        </div>
+          {% bootstrap_field form.superficie form_group_class="col-md-3" %}
+          {% bootstrap_field form.performance_energetique form_group_class="col-md-4" %}
       </div>
      <br>
-     <label class="control-label">Description</label>
-     <textarea class="form-control" name="description" cols="4" rows="4" >{{ batiment.description | default_if_none:'' }}</textarea>
+    <div class="row">
+        {% bootstrap_field form.description form_group_class="col-md-12" %}
+    </div>
+
      <br>
 
     <button type="submit" class="btn btn-primary pull-right" title="Sauvegarder">

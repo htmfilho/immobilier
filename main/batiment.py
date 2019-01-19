@@ -33,14 +33,16 @@ from main.pages_utils import PAGE_LISTE_BATIMENTS
 def create(request):
     return render(request, pages_utils.PAGE_BATIMENT_FORM,
                   {'batiment':  mdl.batiment.Batiment(),
-                   'localites': mdl.localite.find_all()})
+                   'form': BatimentForm(data=None)})
 
 @login_required
 def batiment_form(request, batiment_id):
+    batiment = mdl.batiment.find_batiment_by_id(batiment_id)
     return render(request, pages_utils.PAGE_BATIMENT_FORM,
-                  {'batiment':     mdl.batiment.find_batiment_by_id(batiment_id),
+                  {'batiment': batiment,
                    'assurances':   mdl.assurance.find_all(),
-                   'localites':    mdl.localite.find_all()})
+                   'localites':    mdl.localite.find_all(),
+                   'form': BatimentForm(instance=batiment)})
 
 
 def _is_updating_action(action):
@@ -56,27 +58,22 @@ def _get_field(field_name, data):
 
 
 @login_required
-def update(request):
-    batiment = mdl.batiment.Batiment()
-    message_info = None
-    form = None
-    if _is_updating_action(request.POST.get('action')):
+def update(request, batiment_id=None):
+    if batiment_id:
+        local = get_object_or_404(mdl.batiment.Batiment, pk=batiment_id)
+        form = BatimentForm(data=request.POST, instance=local)
+    else:
+        local = mdl.batiment.Batiment()
         form = BatimentForm(data=request.POST)
-        batiment = _get_batiment(request.POST)
-        batiment.rue = request.POST['rue']
-        batiment.numero = _get_field('numero', request.POST)
-        batiment.boite = _get_field('boite', request.POST)
-        batiment.localite = _get_localite(request.POST)
-        batiment.superficie = request.POST.get('superficie', None)
-        batiment.performance_energetique = _get_field('performance_energetique', request.POST)
-        batiment.description = request.POST.get('description', None)
-        if form.is_valid():
-            batiment.save()
-            message_info = "Données sauvegardées"
+
+    message_info = None
+
+    if request.POST and form.is_valid():
+        local = form.save()
+        message_info = "Données sauvegardées1"
 
     return render(request, pages_utils.PAGE_BATIMENT_FORM,
-                  {'batiment':     batiment,
-                   'localites':    mdl.localite.find_all(),
+                  {'batiment': local,
                    'message_info': message_info,
                    'form': form})
 
@@ -84,11 +81,11 @@ def update(request):
 def _get_localite(request_data):
     if _get_field('localite_cp', request_data) \
             and _get_field('localite_nom', request_data):
-        localites = mdl.localite.search(request_data['localite_cp'], request_data['localite_nom'])
-        if not localites.exists():
+        localites_liste = mdl.localite.search(request_data['localite_cp'], request_data['localite_nom'])
+        if not localites_liste.exists():
             return mdl.localite.create_localite(request_data['localite_nom'], request_data['localite_cp'])
         else:
-            return localites[0]
+            return localites_liste[0]
     return None
 
 

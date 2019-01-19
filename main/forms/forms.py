@@ -77,26 +77,18 @@ class PersonneForm(forms.Form):
 
 
 class BatimentForm(ModelForm):
-    # superficie = forms.DecimalField(required=False, max_digits=8, decimal_places=3, localize=True)
-    # numero = forms.IntegerField()
     class Meta:
         model = batiment.Batiment
-        fields = ['superficie', 'numero']
+        fields = ['description', 'rue', 'numero', 'boite', 'lieu_dit', 'localite', 'superficie',
+                  'performance_energetique']
 
     def __init__(self, *args, **kwargs):
-        super(BatimentForm, self).__init__(*args, ** kwargs)
+        super(BatimentForm, self).__init__(*args, **kwargs)
 
     def clean(self):
         cleaned_data = super(BatimentForm, self).clean()
         if cleaned_data.get('superficie') and cleaned_data.get('superficie') < 0:
             self.errors['superficie'] = 'Si une superficie est encodée elle doit être > à 0'
-        # print(cleaned_data.get('numero'))
-        # if cleaned_data.get('numero'):
-        #     print('kkkqdesfq')
-        #     try:
-        #         int(cleaned_data.get('numero'))
-        #     except ValueError:
-        #         self.errors['numero'] = 'Le numéro doit être numérique'
 
 
 class ProprietaireForm(forms.ModelForm):

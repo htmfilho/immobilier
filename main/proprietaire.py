@@ -27,6 +27,7 @@ from main import models as mdl
 from main import pages_utils
 from main.pages_utils import UPDATE
 from main.views_utils import get_date, get_key
+from main.forms.forms import BatimentForm
 
 MESSAGE_CREE_UNE_NOUVELLE_PERSONNE = 'Il faut sélectionner un propriétaire ou créer une nouvelle personne'
 
@@ -76,13 +77,13 @@ def update_proprietaire(request, proprietaire_id):
 
 
 def delete_proprietaire_batiment(request, proprietaire_id):
-    print('delete_proprietaire_batiment')
-    print(proprietaire_id)
     proprietaire = mdl.proprietaire.find_proprietaire(proprietaire_id)
     batiment = proprietaire.batiment
     proprietaire.delete()
 
-    return render(request, pages_utils.PAGE_BATIMENT_FORM, {'batiment': batiment})
+    return render(request,
+                  pages_utils.PAGE_BATIMENT_FORM,
+                  {'batiment': batiment, 'form': BatimentForm(instance=batiment)})
 
 
 def delete_proprietaire(request, proprietaire_id):
@@ -151,7 +152,6 @@ def _date_is_valide(proprietaire):
 
 
 def proprietaire_update_save(request):
-    print('proprietaire_update_save')
     previous = request.POST.get('previous', None)
     prev = request.POST.get('prev', None)
     proprietaire = get_proprietaire(request)
@@ -226,7 +226,7 @@ def redirections(request, batiment):
         return liste_proprietaires(request)
     if previous == 'fb':
         return render(request, pages_utils.PAGE_BATIMENT_FORM,
-                      {'batiment': batiment})
+                      {'batiment': batiment, 'form': BatimentForm(instance=batiment)})
 
 
 def proprietaire_create_for_batiment(request, batiment_id):
