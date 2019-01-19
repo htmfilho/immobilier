@@ -68,7 +68,8 @@ urlpatterns = [
 
 
     # url(r'^update_personne/$', views.update_personne, name='update_personne'),
-    url(r'^update_batiment/$', batiment.update, name='update_batiment'),
+    url(r'^update_batiment(?:/(?P<batiment_id>[0-9]+))?/$', batiment.update, name='update_batiment'),
+
 
     # url(r'^photos/(?P<path>.*)$', 'django.views.static.serve', {
     #         'document_root': settings.MEDIA_ROOT,
@@ -200,6 +201,4 @@ urlpatterns = [
     url(r'^document/lettre_indexation/([0-9]+)/$', document.lettre_indexation, name='lettre_indexation'),
     url(r'^manuel/$', views.manuel, name='manuel'),
     url(r'^check_societe/$', societe.check_societe, name='check_societe'),
-
-
 ]

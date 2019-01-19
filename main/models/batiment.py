@@ -34,6 +34,7 @@ from main.models import frais_maintenance as FraisMaintenance
 from main.models import suivi_loyer as SuiviLoyer
 from main.models import contrat_gestion as ContratGestion
 from itertools import chain
+from main.models.enums.performance_energetique import PERFORMANCE_ENERGETIQUES
 
 
 class BatimentAdmin(admin.ModelAdmin):
@@ -49,7 +50,8 @@ class Batiment(models.Model):
     lieu_dit = models.CharField(max_length=200, blank=True, null=True)
     localite = models.ForeignKey('Localite')
     superficie = models.DecimalField(max_digits=8, decimal_places=3, blank=True, null=True)
-    performance_energetique = models.CharField(max_length=30, blank=True, null=True)
+    performance_energetique = models.CharField(max_length=30, blank=True, null=True,
+                                               choices=PERFORMANCE_ENERGETIQUES, default=None )
 
     class Meta:
         ordering = ['localite', 'rue']
