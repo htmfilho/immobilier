@@ -104,7 +104,8 @@ def new_without_known_location(request):
                    'societes':  mdl.societe.find_all(),
                    'fonctions': mdl.fonction.find_all(),
                    'localites': mdl.localite.find_all(),
-                   'action':    NEW})
+                   'action':    NEW,
+                   'form': LocataireForm()})
 
 
 @login_required
@@ -112,6 +113,7 @@ def add(request):
     form = LocataireForm(data=request.POST)
 
     if form.is_valid():
+        print('form valid')
         locataire = form.save()
 
         action = request.POST.get('action', None)
@@ -121,8 +123,13 @@ def add(request):
         else:
             return HttpResponseRedirect(reverse('home'))
     else:
+        print('form invalid')
+        print(form.errors)
         location_id = request.POST.get('location_id', None)
-        location = get_object_or_404(mdl.contrat_location.ContratLocation, pk=location_id)
+        if location_id:
+            location = get_object_or_404(mdl.contrat_location.ContratLocation, pk=location_id)
+        else:
+            location = mdl.contrat_location.ContratLocation()
         locataire = mdl.locataire.Locataire()
         locataire.contrat_location = location
         return render(request, LOCATAIRE_FORM_HTML,
