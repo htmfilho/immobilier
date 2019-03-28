@@ -21,22 +21,18 @@
 #    see http://www.gnu.org/licenses/.
 #
 ##############################################################################
-from django.db import models
+import factory
+import factory.fuzzy
+from main.tests.factories.contrat_location import ContratLocationFactory
+from main.tests.factories.personne import PersonneFactory
+from faker import Faker
+
+fake = Faker()
 
 
-class TypeSociete(models.Model):
-    type = models.CharField(max_length=50, blank=False, null=False)
+class LocataireFactory(factory.DjangoModelFactory):
+    class Meta:
+        model = 'main.Locataire'
 
-    def __str__(self):
-        return self.type
-
-
-def find_all():
-    return TypeSociete.objects.all().order_by('type')
-
-
-def find_by_id(an_id):
-    try:
-        return TypeSociete.objects.get(pk=an_id)
-    except TypeSociete.DoesNotExist:
-        return None
+    personne = factory.SubFactory(PersonneFactory)
+    contrat_location = factory.SubFactory(ContratLocationFactory)
