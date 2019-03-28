@@ -801,8 +801,8 @@
   {"model":"main.indicesante","fields":{ "date_calcul": "2017-01-01", "annee_base": 2013 ,"indice":104.65}},
   {"model":"main.indicesante","fields":{ "date_calcul": "2017-02-01", "annee_base": 2013 ,"indice":105.06}},
   {"model":"main.indicesante","fields":{ "date_calcul": "2017-03-01", "annee_base": 2013 ,"indice":105.32}},
-  {"model":"main.indicesante","fields":{ "date_calcul": "2017-04-01", "annee_base": 2013 ,"indice":105.46}}
-
-
-
+  {"model":"main.indicesante","fields":{ "date_calcul": "2017-04-01", "annee_base": 2013 ,"indice":105.46}},
+  {"model":"main.typesociete","fields":{ "type": "Banque"}},
+  {"model":"main.typesociete","fields":{ "type": "Assurance"}},
+  {"model":"main.typesociete","fields":{ "type": "Entrepreneur"}}
 ]
