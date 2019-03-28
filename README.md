@@ -77,16 +77,16 @@ In case you didn't put the application in production yet and you face a major pr
     (immovenv) $ python manage.py createsuperuser
   
 
-=== Creating the Database
+### Creating the Database
 
 Before moving forward, make sure you installed PostgreSQL, as explained in the section <<installing-postgresql>>. Then, follow the steps below to create the backend database:
 
-    $ createdb osis_local
-    $ createuser osis -P    // Inform the password 'osis' when asked for.
-    $ psql -d osis_local
-      =# grant connect on database osis_local to osis;
-      =# revoke connect on database osis_local from public;
-      =# alter user osis createdb;
+    $ createdb immo_dev
+    $ createuser immo_usr -P    // Inform the password 'osis' when asked for.
+    $ psql -d immo_dev
+      =# grant connect on database immo_dev to immo_usr;
+      =# revoke connect on database immo_dev from public;
+      =# alter user immo_usr createdb;
       =# \q
 
 
