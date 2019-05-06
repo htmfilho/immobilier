@@ -236,8 +236,6 @@ class ProprietaireCreateForBatiment(CreateView):
     #     # return form
     #     return super(ProprietaireCreateForBatiment, self).form_valid(form)
     # def form_valid(self, form):
-    #     print('kkk')
-    #     print(self.kwargs['pk'])
     #     form.instance.batiment = get_object_or_404(Event,
     #                                             pk=self.kwargs['pk'])
     #     return super(ProprietaireCreateForBatiment, self).form_valid(form)
@@ -245,16 +243,12 @@ class ProprietaireCreateForBatiment(CreateView):
     #     return ProprietaireForm
     #
     # def get_form_kwargs(self, **kwargs):
-    #     print('get_form_kwargs')
     #     kwargs = super(ProprietaireCreateForBatiment, self).get_form_kwargs(**kwargs)
-    #     print (kwargs)
     #     if 'pk' in kwargs:
-    #         print(self.kwargs['pk'])
     #         batiment = mdl.batiment.objects.get(pk=self.kwargs['pk'])
     #         instance = Proprietaire(batiment=batiment)
     #         kwargs.update({'instance': instance})
-    #     else:
-    #         print('les')
+
     #     return
     #
 
@@ -264,7 +258,6 @@ class ProprietaireCreateForBatiment(CreateView):
         return super(ProprietaireCreateForBatiment, self).form_valid(form)
     #
     # def dispatch(self, request, *args, **kwargs):
-    #     print('displath')
     #     self.batiment = mdl.batiment.objects.get(pk=self.kwargs['pk'])
     #     print (self.batiment)
     #
@@ -272,7 +265,6 @@ class ProprietaireCreateForBatiment(CreateView):
 
     #
     # def form_valid(self, form):
-    #     print('form_valid')
     #     form.instance.batiment= self.batiment
     #     return super(ProprietaireCreateForBatiment, self).form_valid(form)
 
@@ -283,7 +275,6 @@ class ProprietaireCreateForBatiment(CreateView):
     # # fields = ['batiment']
     #
     # def form_valid(self, form):
-    #     print('form_valid')
     #     form.instance.batiment = mdl.batiment.objects.get(pk=self.kwargs['class'])
     #     # event = Event.objects.get(pk=self.kwargs['class'])
     #     return super(ProprietaireCreateForBatiment, self).form_valid(form)

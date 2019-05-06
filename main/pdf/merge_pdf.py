@@ -116,7 +116,6 @@ def merge(request):
         #     merger.append(input,bookmark=lien, import_bookmarks=False)
         #     doc_length = input.getNumPages()
         #     outline = input.getOutlines()
-        #     print(outline)
         #     parent = merger.findBookmark(outline[-1].title)
         # else:
         #     merger.append(input,bookmark=lien, import_bookmarks=False)
@@ -207,7 +206,6 @@ def merge_pdf3(request):
         #     merger.append(input,bookmark=lien, import_bookmarks=False)
         #     doc_length = input.getNumPages()
         #     outline = input.getOutlines()
-        #     print(outline)
         #     parent = merger.findBookmark(outline[-1].title)
         # else:
         #     merger.append(input,bookmark=lien, import_bookmarks=False)

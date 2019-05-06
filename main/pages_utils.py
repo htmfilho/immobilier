@@ -31,3 +31,4 @@ NEW = 'new'
 ADD = 'add'
 MODIFY = 'modify'
 LOCATAIRE_FORM_HTML = "locataire/locataire_form.html"
+PAGE_PROPRIETAIRE_FORM = "proprietaire_form.html"

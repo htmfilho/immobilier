@@ -25,9 +25,10 @@ from django.shortcuts import render, get_object_or_404
 from django.shortcuts import redirect
 from main import models as mdl
 from main import pages_utils
-from main.pages_utils import UPDATE
+from main.pages_utils import UPDATE, PAGE_PROPRIETAIRE_FORM
 from main.views_utils import get_date, get_key
 from main.forms.forms import BatimentForm
+from django.contrib.auth.decorators import login_required
 
 MESSAGE_CREE_UNE_NOUVELLE_PERSONNE = 'Il faut sélectionner un propriétaire ou créer une nouvelle personne'
 
@@ -37,16 +38,18 @@ def liste_proprietaires(request):
     return render(request, 'listeProprietaires.html', {'proprietaires': proprietaires})
 
 
+@login_required
 def proprietaire(request, proprietaire_id):
-    a_proprietaire = mdl.proprietaire.find_proprietaire(proprietaire_id)
-    return render(request, "proprietaire_form.html",
-                  {'proprietaire': a_proprietaire,
+    un_proprietaire = mdl.proprietaire.find_proprietaire(proprietaire_id)
+    return render(request, PAGE_PROPRIETAIRE_FORM,
+                  {'proprietaire': un_proprietaire,
                    'action': UPDATE,
-                   'personnes': get_personnes_possibles(a_proprietaire.batiment),
+                   'personnes': get_personnes_possibles(un_proprietaire.batiment),
                    'prev': request.GET.get('prev'),
                    'societes': mdl.societe.find_all_with_name(),
+                   'type_societes': mdl.type_societe.find_all(),
                    'fonctions': mdl.fonction.find_all(),
-                   'personne': a_proprietaire.proprietaire,
+                   'personne': un_proprietaire.proprietaire,
                    'pays': mdl.pays.find_all()})
 
 
@@ -62,7 +65,7 @@ def add_proprietaire(request, batiment_id):
     batiment = get_object_or_404(mdl.batiment.Batiment, pk=batiment_id)
     proprietaire = mdl.proprietaire.Proprietaire()
     proprietaire.batiment = batiment
-    return render(request, "proprietaire_form.html",
+    return render(request, PAGE_PROPRIETAIRE_FORM,
                   {'proprietaire': proprietaire,
                    'action':       'add',
                    'personnes':    get_personnes_possibles(batiment),
@@ -71,7 +74,7 @@ def add_proprietaire(request, batiment_id):
 
 def update_proprietaire(request, proprietaire_id):
     proprietaire = mdl.proprietaire.find_proprietaire(proprietaire_id)
-    return render(request, "proprietaire_form.html",
+    return render(request, PAGE_PROPRIETAIRE_FORM,
                   {'proprietaire': proprietaire,
                    'action':       UPDATE})
 
@@ -91,8 +94,7 @@ def delete_proprietaire(request, proprietaire_id):
     batiment = proprietaire.batiment
     proprietaire.delete()
     # if '/p/' in request.get_full_path():
-    #     print('if')
-    #     return render(request, "proprietaire_form.html",
+    #     return render(request, PAGE_PROPRIETAIRE_FORM,
     #                   {'proprietaire':         proprietaire})
     # if '/pl/' in request.get_full_path():
     #     return  listeProprietaires
@@ -100,9 +102,10 @@ def delete_proprietaire(request, proprietaire_id):
     if not request.POST.get('prev', None) is None:
         return redirections(request, batiment)
 
-    return render(request, "proprietaire_form.html",
+    return render(request, PAGE_PROPRIETAIRE_FORM,
                   {'proprietaire': proprietaire,
                    'pays': mdl.pays.find_all()})
+
 
 def _get_validation_data(request):
     return {'proprietaire': request.POST.get('proprietaire', None),
@@ -110,6 +113,7 @@ def _get_validation_data(request):
             'nouveau_prenom': request.POST.get('nouveau_prenom', None),
             'nouveau_prenom2': request.POST.get('nouveau_prenom2', None),
             }
+
 
 def _validation(data_to_validated, proprietaire):
     if _no_existing_prorietaire_selected(data_to_validated['proprietaire']):
@@ -167,7 +171,7 @@ def proprietaire_update_save(request):
     proprietaire.proprietaire = personne
 
     if not valide:
-        return render(request, "proprietaire_form.html",
+        return render(request, PAGE_PROPRIETAIRE_FORM,
                       {'proprietaire': proprietaire,
                        'personnes': get_personnes_possibles(proprietaire.batiment),
                        'previous': previous,
@@ -236,7 +240,7 @@ def proprietaire_create_for_batiment(request, batiment_id):
         proprietaire.batiment = batiment
     personnes = mdl.personne.find_all()
 
-    return render(request, "proprietaire_form.html",
+    return render(request, PAGE_PROPRIETAIRE_FORM,
                   {'proprietaire':         proprietaire,
                    'personnes':            personnes,
                    'action':               'add',
@@ -248,7 +252,7 @@ def personne_create(request):
     proprietaire.personne = mdl.personne.creation_nouvelle_personne(request.POST['nom'], request.POST['prenom'])
     personnes = mdl.personne.find_all()
 
-    return render(request, "proprietaire_form.html",
+    return render(request, PAGE_PROPRIETAIRE_FORM,
                   {'proprietaire': proprietaire,
                    'personnes': personnes,
                    'pays': mdl.pays.find_all()})
