@@ -21,22 +21,26 @@
 #    see http://www.gnu.org/licenses/.
 #
 ##############################################################################
-from django.db import models
+from django.test import TestCase
+from rest_framework.reverse import reverse
+from main.tests.factories.proprietaire import ProprietaireFactory
+from main.tests.factories.type_societe import TypeSocieteFactory
+from django.contrib.auth.models import User
+from main.pages_utils import PAGE_PROPRIETAIRE_FORM
 
 
-class TypeSociete(models.Model):
-    type = models.CharField(max_length=50, blank=False, null=False)
+class ProprietaireTest(TestCase):
 
-    def __str__(self):
-        return self.type
+    def setUp(self):
+        self.user = User.objects.create_user('tmp', 'tmp@gmail.com', 'tmp')
+        self.client.force_login(self.user)
+        self.proprietaire = ProprietaireFactory()
+        self.type_societe_1 = TypeSocieteFactory()
+        self.type_societe_2 = TypeSocieteFactory()
 
-
-def find_all():
-    return TypeSociete.objects.all().order_by('type')
-
-
-def find_by_id(an_id):
-    try:
-        return TypeSociete.objects.get(pk=an_id)
-    except TypeSociete.DoesNotExist:
-        return None
+    def test_proprietaire(self):
+        url = reverse('proprietaire', kwargs={'proprietaire_id': self.proprietaire.pk})
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, PAGE_PROPRIETAIRE_FORM)
+        self.assertCountEqual(response.context['type_societes'], [self.type_societe_1, self.type_societe_2])

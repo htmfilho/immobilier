@@ -4,7 +4,7 @@
 #    designed to manage the core business of property management, buildings,
 #    rental agreement and so on.
 #
-#    Copyright (C) 2016-2018 Verpoorten Leïla
+#    Copyright (C) 2016-2017 Verpoorten Leïla
 #
 #    This program is free software: you can redistribute it and/or modify
 #    it under the terms of the GNU General Public License as published by
@@ -21,14 +21,18 @@
 #    see http://www.gnu.org/licenses/.
 #
 ##############################################################################
-PAGE_BATIMENT_FORM = "batiment/batiment_form.html"
-PAGE_ALERTE_LIST = "alerte/alerte_list.html"
-PAGE_LISTE_BATIMENTS = 'batiment/listeBatiments.html'
-PAGE_FRAIS_FORM = "frais/fraismaintenance_form.html"
+import factory
+import factory.fuzzy
+from main.tests.factories.contrat_location import ContratLocationFactory
+from main.tests.factories.personne import PersonneFactory
+from faker import Faker
 
-UPDATE = 'update'
-NEW = 'new'
-ADD = 'add'
-MODIFY = 'modify'
-LOCATAIRE_FORM_HTML = "locataire/locataire_form.html"
-PAGE_PROPRIETAIRE_FORM = "proprietaire_form.html"
+fake = Faker()
+
+
+class LocataireFactory(factory.DjangoModelFactory):
+    class Meta:
+        model = 'main.Locataire'
+
+    personne = factory.SubFactory(PersonneFactory)
+    contrat_location = factory.SubFactory(ContratLocationFactory)

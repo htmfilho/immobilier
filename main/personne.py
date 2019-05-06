@@ -47,11 +47,13 @@ def get_personne(personne_id):
 
 
 def get_common_data(personne_id):
-    data = {'fonctions': mdl.fonction.find_all(),
-            'societes': mdl.societe.find_all(),
-            'pays': mdl.pays.find_all(),
-            'localites': mdl.localite.find_all(),
-            'type_societes': mdl.type_societe.find_all()}
+    data = {
+        'fonctions': mdl.fonction.find_all(),
+        'societes': mdl.societe.find_all(),
+        'pays': mdl.pays.find_all(),
+        'localites': mdl.localite.find_all(),
+        'type_societes': mdl.type_societe.find_all(),
+    }
     if personne_id:
         data.update({'personne': get_personne(personne_id)})
     else:
