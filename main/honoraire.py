@@ -39,7 +39,6 @@ DATE_LIMITE_SUPERIEURE_FILTRE_DEFAUT = timezone.now() + relativedelta(days=15)
 
 
 def list(request):
-    print('liste')
     return render(request, "honoraire/honoraire_list.html",
                   {'honoraires':  mdl.honoraire.find_by_batiment_etat_date(None,
                                                                            DEFAULT_ETAT_LIST,
@@ -107,7 +106,6 @@ def update(request):
             return render(request, "honoraire_maj/honoraire_list.html", {'honoraires': mdl.honoraire.find_all()})
     else:
         return render(request, "honoraire_maj/honoraire_form.html", {'honoraire_maj': honoraire_maj, 'form': form})
-
 
 
 def get_honoraire(request):

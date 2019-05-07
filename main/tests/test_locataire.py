@@ -24,22 +24,17 @@
 from django.test import TestCase
 from django.core.urlresolvers import reverse
 from main.tests.factories.personne import PersonneFactory
-from main.tests.factories.fonction import FonctionFactory
-from main.tests.factories.pays import PaysFactory
 from main.tests.factories.societe import SocieteFactory
 from main.tests.factories.localite import LocaliteFactory
 from main.tests.factories.contrat_location import ContratLocationFactory
 from main.tests.factories.locataire import LocataireFactory
 from main.tests.factories.type_societe import TypeSocieteFactory
-from main import personne as personne_view
 from django.test.client import Client
 from django.contrib.auth.models import User
 from main.tests.factories.fonction import FonctionFactory
-from main.tests.factories.pays import PaysFactory
 from main.locataire import get_personnes_non_locataires, get_common_data
 from main.pages_utils import NEW, UPDATE, LOCATAIRE_FORM_HTML
 from main.forms.locataire import LocataireForm
-from main import models as mdl
 
 
 class LocataireViewTest(TestCase):
@@ -52,7 +47,7 @@ class LocataireViewTest(TestCase):
         self.personne_location1 = PersonneFactory()
         self.location_1 = ContratLocationFactory()
         self.locataire_1 = LocataireFactory(personne=self.personne_location1,
-                         contrat_location=self.location_1)
+                                            contrat_location=self.location_1)
 
     def test_form(self):
         url = reverse("locataire", args=[self.locataire_1.id])
@@ -61,7 +56,6 @@ class LocataireViewTest(TestCase):
 
         self.assertTemplateUsed(response, LOCATAIRE_FORM_HTML)
         self.assertIsInstance(response.context['form'], LocataireForm)
-
 
     def test_new(self):
         url = reverse("locataire-new", args=[self.location_1.id])
@@ -87,7 +81,6 @@ class LocataireTest(TestCase):
 
         location_2 = ContratLocationFactory()
         LocataireFactory(contrat_location=location_2)
-
 
         self.assertCountEqual(get_personnes_non_locataires(location_2),
                               [personne_1_location, personne_2_location, personne_location1])

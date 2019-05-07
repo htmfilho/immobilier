@@ -29,11 +29,13 @@ from django.conf import settings
 from django.utils import timezone
 from faker import Faker
 from main.tests.factories.fonction import FonctionFactory
+from main.models.personne import NOM_GESTIONNAIRE, PRENOM_GESTIONNAIRE
 
 
 def generate_personne_email(person):
     domain = factory.Faker('domain_name').generate({})
     return '{0.prenom}.{0.nom}@{1}'.format(person, domain).lower()
+
 
 class PersonneFactory(factory.DjangoModelFactory):
     class Meta:
@@ -55,3 +57,8 @@ class PersonneFactory(factory.DjangoModelFactory):
     # personne_type = models.CharField(max_length=20, choices=TYPE_PERSONNE, default='NON_PRECISE', blank=True, null=True)  # a enlever
     # fonction = models.ForeignKey('Fonction', blank=True, null=True)
     fonction = factory.SubFactory(FonctionFactory)
+
+
+class GestionnairePersonneFactory(PersonneFactory):
+    nom = NOM_GESTIONNAIRE
+    prenom = PRENOM_GESTIONNAIRE
