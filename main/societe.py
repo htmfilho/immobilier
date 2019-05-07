@@ -21,18 +21,19 @@
 #    see http://www.gnu.org/licenses/.
 #
 ##############################################################################
-from django.shortcuts import render, get_object_or_404
+from django.shortcuts import render, get_object_or_404, redirect
 from django.core.urlresolvers import reverse
 from django.http import HttpResponseRedirect
 from main import models as mdl
 from django.http import HttpResponse
 from rest_framework import serializers
 from rest_framework.renderers import JSONRenderer
-from main.models.enums.type_societe import TYPE_SOCIETE
+from main.forms.societe_form import SocieteForm
+from django.contrib.auth.decorators import login_required
 
+NEXT_NAV_SOCIETE_LIST = 'societe_list'
+NEXT_NAV_PERSONNE_LIST = 'person_list'
 
-NEXT_NAV_SOCIETE_LIST  = 'societe_list'
-NEXT_NAV_PERSONNE_LIST  = 'person_list'
 
 class JSONResponse(HttpResponse):
     def __init__(self, data, **kwargs):
@@ -46,7 +47,6 @@ class SocieteSerializer(serializers.ModelSerializer):
     class Meta:
         model = mdl.societe.Societe
         fields = '__all__'
-
 
 def societe_liste(request):
     return render(request, 'liste_societes.html', {'societes': mdl.societe.find_all()})
@@ -88,10 +88,7 @@ def redirection_next_nav(next_nav):
 
 
 def get_societe(societe_id):
-    if societe_id:
-        return get_object_or_404(mdl.societe.Societe, pk=societe_id)
-    else:
-        return mdl.societe.Societe()
+    return get_object_or_404(mdl.societe.Societe, pk=societe_id) if societe_id else mdl.societe.Societe()
 
 
 def societe_edit_from_list(request, societe_id):
@@ -163,6 +160,8 @@ def _get_localite(localite_cp, localite_nom, nouvelle_societe):
 
 
 def _get_type_societe(nouvelle_societe, type_societe):
+    # TODO : Vérifier pq la présence de nouvelle_societe
+    # TODO : Bizarre type_societe semble être un id
     if type_societe:
         return mdl.type_societe.find_by_id(type_societe)
     return None
@@ -187,3 +186,14 @@ def check_societe(request):
         serializer = SocieteSerializer(results, many=True)
         return JSONResponse(serializer.data)
     return None
+
+
+def new(request):
+    form = SocieteForm(request.POST or None)
+    if request.POST:
+        if form.is_valid():
+            form.save()
+            return redirect('societe-list')
+    else:
+        return render(request, "societe/societe_form.html",
+                      {'form': form})

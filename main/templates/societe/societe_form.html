@@ -1,0 +1,22 @@
+{% extends "layout.html" %}
+{% load bootstrap3 %}
+
+{% block breadcrumb %}
+    <li class="active">Nouvelle société</li>
+{% endblock %}
+{% block content %}
+
+    <div class="tab-content">
+        <form method="post">
+            <div class="modal-body">
+                {% csrf_token %}
+                {% bootstrap_form form %}
+            </div>
+
+            <div class="modal-footer">
+                <a class="btn btn-default" href="{% url 'societe-list' %}">Annuler</a>
+                <button type="submit" class="btn btn-primary">Ok</button>
+            </div>
+        </form>
+    </div>
+{% endblock %}

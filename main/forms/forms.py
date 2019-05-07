@@ -40,16 +40,11 @@ def get_pays_choix():
     # list_pays = Personne.objects.values('pays_naissance').distinct()
     # list_pays = Personne.objects.all().distinct('pays_naissance')
     # list_pays = Personne.objects.order_by('pays_naissance').values_list('pays_naissance', flat=True).distinct())
-    # print (list(set(Personne.objects.values_list('pays_naissance', flat=True))))
-    # print (list_pays)
     for p in list_pays:
-        # print ('for')
-        # print(p.pays)
         choices_tuple.append((p.pays, p.pays))
     if not choices_tuple:
         choices_tuple.append(('Belgique', 'Belgique'))
 
-    # print(choices_tuple)
     return choices_tuple
 
 
@@ -101,7 +96,6 @@ class ProprietaireForm(forms.ModelForm):
         # # batiment = kwargs.pop('batiment')
         # batiment= kwargs.get('sheet_id', None)
         #
-        # print(batiment)
         super(ProprietaireForm, self).__init__(*args, ** kwargs)
         self.helper = FormHelper()
         self.helper.form_class = 'form-horizontal'
@@ -221,9 +215,8 @@ class LettreForm(forms.Form):
 
     #
     # def __init__(self, modele_document=None, *args, **kwargs):
-    #     print('init')
     #     super(LettreForm, self).__init__(*args, ** kwargs)
-    #     print('if')
+
     #     if modele_document:
     #         # self.fields['sujet'].initial = modele_document.sujet
     #         # self.fields['format'].initial = "docx"
@@ -235,3 +228,8 @@ class LettreForm(forms.Form):
 
         return cleaned_data
 
+
+class SocieteForm(ModelForm):
+    class Meta:
+        model = societe.Societe
+        fields = ['nom', 'description', 'rue', 'numero', 'boite', 'lieu_dit', 'code_postal', 'localite', 'type']

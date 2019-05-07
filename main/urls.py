@@ -203,6 +203,7 @@ urlpatterns = [
     url(r'^pays_create/$', pays.create, name='pays_create'),
 
     url(r'^societe_create/$', societe.create_new, name='societe_create'),
+    url(r'^societe_new/$', societe.new, name='societe_new'),
     url(r'^document/liste/$', document.document_bd_list, name='document_list'),
     url(r'^document/form/([0-9]+)/$', document.document_form, name='document_form'),
     url(r'^document/lettre_indexation_form/([0-9]+)/$', document.lettre_indexation_form, name='lettre_indexation_form'),
