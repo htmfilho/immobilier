@@ -40,30 +40,21 @@ class ContratGestionForm(forms.ModelForm):
     #     widget=forms.MultipleHiddenInput())
     #
     # gestionnaire = forms.ModelChoiceField(
-    #     queryset=mdl.personne.find_gestionnaire_default(),
-    #     widget=forms.MultipleHiddenInput())
+    #     queryset=mdl.personne.find_gestionnaire_default())
 
     class Meta:
         model = mdl.contrat_gestion.ContratGestion
         fields = ['id', 'batiment', 'gestionnaire', 'date_debut', 'date_fin', 'montant_mensuel']
 
-
     def __init__(self, *args, **kwargs):
 
         # self.batiment = kwargs.pop('batiment', None)
         super(ContratGestionForm, self).__init__(*args, ** kwargs)
-        # if self.batiment:
-        #     print('if {}'.format(self.batiment.id))
-        # else:
-        #     print('elses')
 
         # instance = getattr(self, 'instance', None)
         # self.fields['gestionnaire'].widget.attrs[READONLY_ATTR] = READONLY_ATTR
         # if instance.batiment and instance.batiment.pk:
-        #     print('init if')
             # self.fields['batiment'].widget.attrs[READONLY_ATTR] = READONLY_ATTR
-        # else:
-        #     print('init else')
         # if self.instance:
             # self.fields['batiment_name'] = forms.CharField(max_length=200, required=False, disabled=True,
             #                                                label='Batiment concerné')
@@ -78,7 +69,7 @@ class ContratGestionForm(forms.ModelForm):
         self.fields["date_debut"].required = True
         self.fields["date_fin"].required = True
         self.fields["montant_mensuel"].required = True
-        # self.fields["gestionnaire"].queryset = mdl.personne.find_gestionnaires_default(),
+        self.fields["gestionnaire"].queryset = mdl.personne.find_gestionnaires_default()
         # self.fields['batiment'].widget.attrs['disabled'] = 'disabled'
         # self.fields['gestionnaire'].widget.attrs['disabled'] = 'disabled'
 
@@ -100,21 +91,11 @@ class ContratGestionForm(forms.ModelForm):
 
         return cleaned_data
 
-
-    def save(self, commit=True):
-        print('save')
-
-        instance=super(ContratGestionForm, self).save(commit=False)
-        if commit:
-            instance.save()
-            return instance
-        print(instance.id)
-
-    def save(self, commit=True):
-        instance = super(ContratGestionForm, self).save(commit=False)
-        if commit:
-            instance.save()
-        return instance
+    # def save(self, commit=True):
+    #     instance = super(ContratGestionForm, self).save(commit=False)
+    #     if commit:
+    #         instance.save()
+    #     return instance
 
     # avant ce qu'il y a ci-dessous
     #

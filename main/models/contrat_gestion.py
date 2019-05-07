@@ -34,8 +34,7 @@ class ContratGestion(models.Model):
     date_debut = models.DateField(auto_now=False,  auto_now_add=False, blank=True, null=True)
     date_fin = models.DateField(auto_now=False, auto_now_add=False, blank=True, null=True)
     montant_mensuel = models.DecimalField(max_digits=6, decimal_places=2, blank=True, null=True,
-                                          validators = [MinValueValidator(0)])
-
+                                          validators=[MinValueValidator(0)])
 
     def __str__(self):
         return self.gestionnaire.nom + ", " + self.gestionnaire.prenom + str(self.batiment)
@@ -46,7 +45,8 @@ class ContratGestion(models.Model):
 
         if self.date_fin:
             alert = mdl.alerte.Alerte(description='Attention fin contrat location dans 4 mois',
-                           date_alerte=self.date_fin - relativedelta(months=4), etat='A_VERIFIER', contrat_gestion=self)
+                                      date_alerte=self.date_fin - relativedelta(months=4),
+                                      etat='A_VERIFIER', contrat_gestion=self)
             alert.save()
         if self.date_debut and self.date_fin:
             date_d = self.date_debut

@@ -27,63 +27,45 @@ from main import models as mdl
 from main import pages_utils
 from main.pages_utils import NEW, UPDATE
 from main.views_utils import get_previous
-from main.views_utils import get_date
 from django.contrib.auth.decorators import login_required
-from django.views.decorators.http import require_POST, require_GET
-from django.http import HttpResponseRedirect
-from django.urls import reverse
 from django.views.decorators.http import require_http_methods
 from main.forms.forms import BatimentForm
 
-
 CONTRATGESTION_LIST_HTML = "contratgestion_list.html"
 
+
 @login_required
-@require_http_methods(["GET","POST"])
+@require_http_methods(["GET", "POST"])
 def new(request):
-    print('new')
-    if request.GET:
-        print('get')
-
-    else:
-        print('post')
-
-
-    form = ContratGestionForm()
     return render(request, "gestion/create.html",
-                  {'action':   NEW,
-                   'prev':      'fb',
+                  {'action': NEW,
+                   'prev': 'fb',
                    'previous': get_previous(request),
-                   'form': form})
+                   'form': ContratGestionForm()}
+                  )
+
+
 @login_required
-@require_http_methods(["GET","POST"])
+@require_http_methods(["GET", "POST"])
 def create(request, batiment_id):
-    print('create')
     contrat = None
     batiment = mdl.batiment.find_batiment_by_id(batiment_id)
     if request.POST:
-        print('post')
         form = ContratGestionForm(request.POST)
         if form.is_valid():
             form.save()
             return render(request, pages_utils.PAGE_BATIMENT_FORM, {'batiment': batiment,
                                                                     'form': BatimentForm(instance=batiment)})
     else:
-
-        # Par défaut Sté comme gestionnaire
-        personne_gestionnaire = mdl.personne.find_gestionnaire_default()
-        form = ContratGestionForm(initial={'batiment': batiment.pk,
-                                           'gestionnaire': personne_gestionnaire.id})
-
         contrat = mdl.contrat_gestion.ContratGestion()
         contrat.batiment = batiment
 
-        if personne_gestionnaire:
-            contrat.gestionnaire = personne_gestionnaire
+        # Par défaut Sté comme gestionnaire
+        personne_gestionnaire = mdl.personne.find_gestionnaire_default()
+        contrat.gestionnaire = personne_gestionnaire if personne_gestionnaire else None
 
-    # form = ContratGestionForm(None, instance=contrat, batiment=batiment)
-
-
+        form = ContratGestionForm(initial={'batiment': batiment.pk,
+                                           'gestionnaire': personne_gestionnaire.id if personne_gestionnaire else None})
     return render(request, "gestion/create.html",
                   {'contrat':   contrat,
                    'action':   NEW,
@@ -98,62 +80,48 @@ def prepare_update(request, id_contrat):
     print('prepare_update')
     contrat = mdl.contrat_gestion.find_by_id(id_contrat)
     form = ContratGestionForm(instance=contrat)
-    personne_gestionnaire = mdl.personne.find_gestionnaire_default()
-    personnes = [personne_gestionnaire]
     return render(request, "gestion/update.html",
                   {'contrat':   contrat,
                    'action':   UPDATE,
                    'form': form,
                    'previous': get_previous(request),
                    'batiments': mdl.batiment.find_all(),
-                   'personnes': personnes})
+                   'personnes': [mdl.personne.find_gestionnaire_default()]})
+
 
 @login_required
 @require_http_methods(["GET", "POST"])
 def update(request):
-    print('update')
     an_id = request.POST.get('id', None)
-    print(an_id)
     return update_contrat_gestion(an_id, request)
 
 
 def update_contrat_gestion(an_id, request):
-    print(an_id)
+
     if an_id:
         contrat_de_gestion = mdl.contrat_gestion.find_by_id(an_id)
         form = ContratGestionForm(data=request.POST or None, instance=contrat_de_gestion)
+
     else:
         form = ContratGestionForm(data=request.POST or None)
+        contrat_de_gestion = mdl.contrat_gestion.ContratGestion()
+        contrat_de_gestion.batiment = get_object_or_404(mdl.batiment.Batiment,
+                                                        pk=request.POST.get('batiment', None))
+
     if form.is_valid():
-        print('is_valid')
         if request.POST.get('action', None) == NEW or request.POST.get('action', None) == UPDATE:
-            gestion = form.save(commit=True)
+            contrat_de_gestion = form.save()
+
         return render(request,
                       pages_utils.PAGE_BATIMENT_FORM,
-                      {'batiment': gestion.batiment, 'form': BatimentForm(instance=contrat_de_gestion.batiment)}
+                      {'batiment': contrat_de_gestion.batiment,
+                       'contrat_de_gestion': contrat_de_gestion,
+                       'form': BatimentForm(instance=contrat_de_gestion.batiment)}
                       )
     else:
-        return render(request, "gestion/update.html",
-                      {'id': an_id,
-                       'action': UPDATE,
-                       'form': form})
-
-
-def get_contrat_gestion(batiment_id, gestion):
-    if gestion is None:
-        gestion = mdl.contrat_gestion.ContratGestion()
-        batiment = get_object_or_404(mdl.batiment.Batiment, pk=batiment_id)
-        gestion.batiment = batiment
-    return gestion
-
-
-def get_montant(montant_mensuel):
-    if montant_mensuel:
-        try:
-            return float(montant_mensuel.replace(',', '.'))
-        except:
-            return None
-    return None
+        contrat = contrat_de_gestion
+        id_contrat = contrat_de_gestion.id
+        return render(request, "gestion/update.html", locals())
 
 
 def list(request):
@@ -173,19 +141,17 @@ def delete(request, contrat_gestion_id):
 
 
 @login_required
-def saveupdate(request, id_contrat=None):
-    print('saveupdate')
+def saveupdate(request, id_contrat):
     if id_contrat:
         return update_contrat_gestion(id_contrat, request)
-    else:
-        contrat = mdl.contrat_gestion.find_by_id(id_contrat)
-        form = ContratGestionForm(instance=contrat)
-        personne_gestionnaire = mdl.personne.find_gestionnaire_default()
-        personnes = [personne_gestionnaire]
-        return render(request, "gestion/update.html",
-                      {'contrat':   contrat,
-                       'action':   UPDATE,
-                       'form': form,
-                       'previous': get_previous(request),
-                       'batiments': mdl.batiment.find_all(),
-                       'personnes': personnes})
+    # else:
+    #     contrat = mdl.contrat_gestion.find_by_id(id_contrat)
+    #     form = ContratGestionForm(instance=contrat)
+    #
+    #     return render(request, "gestion/update.html",
+    #                   {'contrat':   contrat,
+    #                    'action':   UPDATE,
+    #                    'form': form,
+    #                    'previous': get_previous(request),
+    #                    'batiments': mdl.batiment.find_all(),
+    #                    'personnes': [mdl.personne.find_gestionnaire_default()]})

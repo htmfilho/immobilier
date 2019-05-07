@@ -148,11 +148,8 @@ def find_gestionnaires_default():
 
 
 def find_gestionnaire_default():
-    list_personne = Personne.objects.filter(nom=NOM_GESTIONNAIRE,
-                                            prenom=PRENOM_GESTIONNAIRE)
-    if list_personne.exists():
-        return list_personne.first()
-    return None
+    return Personne.objects.filter(nom=NOM_GESTIONNAIRE,
+                                   prenom=PRENOM_GESTIONNAIRE).first()
 
 
 def delete_personne(id):
