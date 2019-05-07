@@ -25,7 +25,7 @@ from django.contrib.auth.decorators import login_required
 from main import models as mdl
 from django.core.urlresolvers import reverse
 from django.http import HttpResponseRedirect
-from django.shortcuts import render, get_object_or_404
+from django.shortcuts import render, get_object_or_404, redirect
 from django.utils import timezone
 from django.views.generic import *
 from django.core.urlresolvers import reverse_lazy
@@ -38,7 +38,6 @@ from main.pages_utils import PAGE_LISTE_BATIMENTS
 from main.models.enums import etat_honoraire
 from main.pdf import merge_pdf
 from django.http import FileResponse, Http404
-
 
 ZERO = 0
 

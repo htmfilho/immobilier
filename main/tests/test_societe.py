@@ -1,4 +1,4 @@
-##############################################################################
+#############################################################################
 #
 #    Immobilier it's an application
 #    designed to manage the core business of property management, buildings,
@@ -23,20 +23,65 @@
 ##############################################################################
 from django.test import TestCase
 from django.core.urlresolvers import reverse
-from main.tests.factories.suivi_loyer import SuiviLoyerFactory
-from main.tests.factories.financement_location import FinancementLocationFactory
-from django.utils import timezone
-from main.models import suivi_loyer as mdl_suivi_loyer
-from main import suivis as suivis_view
 from main import societe as societe_view
+from main.tests.factories.societe import SocieteFactory
+from main.tests.factories.type_societe import TypeSocieteFactory
+from main.forms.societe_form import SocieteForm
+from main.models.societe import Societe
 
 
 class SocieteViewTest(TestCase):
 
+    def setUp(self):
+        self.societe_1 = SocieteFactory(nom="Brantano")
+        self.societe_2 = SocieteFactory(nom="Allard")
+
+        self.type_societe = TypeSocieteFactory(type="Macon")
+
     def test_redirection_next_nav_personne_liste(self):
-        response  = societe_view.redirection_next_nav(societe_view.NEXT_NAV_PERSONNE_LIST)
+        response = societe_view.redirection_next_nav(societe_view.NEXT_NAV_PERSONNE_LIST)
         self.assertEqual(response.url, '/personnes/')
 
     def test_redirection_next_nav_societe_liste(self):
-        response  = societe_view.redirection_next_nav(societe_view.NEXT_NAV_SOCIETE_LIST)
+        response = societe_view.redirection_next_nav(societe_view.NEXT_NAV_SOCIETE_LIST)
         self.assertEqual(response.url, '/societes/')
+
+    def test_liste(self):
+        response = self.client.get(
+            reverse("societe-list")
+        )
+        self.assertTemplateUsed(response, 'societe/societe_list.html')
+
+        self.assertCountEqual(response.context['societes'], [self.societe_1, self.societe_2])
+        self.assertEqual(response.context['societes'][0], self.societe_2)
+        self.assertEqual(response.context['societes'][1], self.societe_1)
+
+    def test_new_get_from_list(self):
+        response = self.client.get(
+            reverse("societe_new")
+        )
+
+        self.assertTemplateUsed(response, 'societe/societe_form.html')
+        self.assertIsInstance(response.context['form'], SocieteForm)
+
+    def test_new_post_from_list(self):
+        response = self.client.post(
+            reverse("societe_new"), data={'nom': 'Test'}
+        )
+        self.assertRedirects(response, reverse('societe-list'))
+
+    def test_get_societe(self):
+        self.assertEqual(societe_view.get_societe(self.societe_1.id), self.societe_1)
+        societe = societe_view.get_societe(None)
+        self.assertIsNone(societe.id)
+        self.assertEqual(societe.nom, '')
+
+    def test_get_type_societe(self):
+        self.assertIsNone(societe_view._get_type_societe(None, None))
+        self.assertEqual(societe_view._get_type_societe(None, self.type_societe.id), self.type_societe)
+        self.assertEqual(societe_view._get_type_societe(None, 99999), None)
+
+    def test_creation_nouvelle_societe(self):
+        nouvelle_societe = societe_view.creation_nouvelle_societe("Nouvelle", "Une description")
+        self.assertEqual(nouvelle_societe.nom, "Nouvelle")
+        self.assertEqual(nouvelle_societe.description, "Une description")
