@@ -21,34 +21,13 @@
 #    see http://www.gnu.org/licenses/.
 #
 ##############################################################################
-from django import forms
-from main.models.locataire import Locataire
 from main.models.personne import Personne
-from django.forms import ModelForm, ModelChoiceField
+from django.forms import ModelForm
 
 
-class LocataireForm(forms.ModelForm):
-    personne = ModelChoiceField(
-        queryset=Personne.objects.all().order_by('nom', 'prenom', 'prenom2'),
-        required=False,
-        empty_label="Nouvelle personne")
-
+class PersonneSimplifieForm(ModelForm):
 
     class Meta:
-        model = Locataire
-        fields = ['personne', 'civilite', 'infos_complement', 'societe', 'profession', 'tva', 'principal', 'actif',
-                  'contrat_location']
+        model = Personne
+        fields = ['nom', 'prenom', 'prenom2']
 
-
-    def __init__(self, data=None, initial=None, *args, **kwargs):
-
-        super().__init__(data, initial=initial, **kwargs)
-
-        self.fields['societe'].label = 'Societé occupant les lieux'
-        self.fields['profession'].label = 'Fonction exercée dans les lieux'
-        self.fields['profession'].label = 'Fonction exercée dans les lieux'
-
-        self.fields['contrat_location'].widget=forms.HiddenInput()
-
-        attr_class = self.fields['personne'].widget.attrs.get('class') or ''
-        self.fields['personne'].widget.attrs['class'] = attr_class + ' personnes_liste'

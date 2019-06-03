@@ -159,32 +159,31 @@
                      {%endif%}
                    </div>
                  </div>
-                 {% if batiment.location_actuelle%}
+                 {% if batiment.location_actuelle %}
                      {% if batiment.personnes_locataires_actuellement %}
-                      <br><br>
-                      <label class="control-label">Locataires actuelles</label>
-                      <br>
-                      <table class="table table-bordered">
-                        {% for p in batiment.locataires_actuels2 %}
-                        <tr>
-                            <td><a href="{% url 'locataire' p.id%}?prev=fb" title="Pour modifier un locataire">{{  p.personne.nom }} {{  p.personne.prenom }}</a> </td>
-                            <td>{{p.}}</td>
-                        </tr>
-                        {% endfor%}
-                      </table>
+                          <br><br>
+                          <label class="control-label">Locataires actuels</label>
+                          <br>
+                          <table class="table table-bordered">
+                            {% for p in batiment.locataires_actuels2 %}
+                            <tr>
+                                <td><a href="{% url 'locataire' p.id%}?prev=fb" title="Pour modifier un locataire">{{  p.personne.nom }} {{  p.personne.prenom }}</a> </td>
+                                <td></td>
+                            </tr>
+                            {% endfor%}
+                          </table>
                       {% else %}
-                         Pas de locataire encodé actuellement
-                         <a href="{% url 'locataire-new' batiment.location_actuelle.pk %}"
-                            title="Pour ajouter un nouveau locataire">
-                             <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
-                         </a>
+                             Pas de locataire encodé actuellement
+                             <a href="{% url 'locataire-new' batiment.location_actuelle.pk %}"
+                                title="Pour ajouter un nouveau locataire">
+                                 <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
+                             </a>
                       {% endif %}
                   {% endif %}
                   {% if batiment.location_actuelle %}
-                  <a href="{% url 'locataire-new' batiment.location_actuelle.id %}"
-                     style="visibility:hidden;display:none;"
-                     title="Pour ajouter un nouveau locataire"
-                     class="btn pull-right"><span class="glyphicon glyphicon-plus" aria-hidden="true"></span></a>
+                      <a href="{% url 'locataire-new' batiment.location_actuelle.id %}"
+                         title="Pour ajouter un nouveau locataire"
+                         class="btn pull-right"><span class="glyphicon glyphicon-plus" aria-hidden="true"></span></a>
                   {% endif %}
               </div>
               <div id="gestion" class="tab-pane fade">

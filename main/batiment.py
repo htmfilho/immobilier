@@ -112,10 +112,3 @@ def delete(request, batiment_id):
             batiment.delete()
 
     return search_par_proprietaire(request)
-
-
-def donnees_valides(data):
-    print(data)
-    print(data['localite_nom'])
-    print(data['rue'])
-    return False

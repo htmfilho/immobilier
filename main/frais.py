@@ -258,7 +258,6 @@ def delete(request, id, previous):
 
 
 def contrat_new(request, contrat_location_id):
-    print('contrat_new')
     frais = mdl.frais_maintenance.FraisMaintenance()
     # previous = request.POST.get('previous', None)
     previous = "location"

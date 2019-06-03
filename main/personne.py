@@ -33,6 +33,8 @@ import json
 from main import societe
 from django.views.decorators.http import require_http_methods
 from django.contrib.auth.decorators import login_required
+from rest_framework.renderers import JSONRenderer
+from rest_framework import serializers
 
 
 PERSONNE_LIST_HTML = "personne/personne_list.html"
@@ -221,3 +223,37 @@ def validate_personne(request):
         return HttpResponse(json.dumps({'valide': False}), content_type='application/json')
 
     return HttpResponse(json.dumps({'valide': True}), content_type='application/json')
+
+
+def personne_create_2019(request):
+    print('personne_create_2019')
+    if request.GET:
+        form_person = PersonneSimplifieForm()
+    else:
+        pass
+
+
+class JSONResponse(HttpResponse):
+    def __init__(self, data, **kwargs):
+        content = JSONRenderer().render(data)
+        kwargs['content_type'] = 'application/json'
+        super(JSONResponse, self).__init__(content, **kwargs)
+
+
+
+def create_2019(request):
+    print('create_2019')
+    if request.is_ajax():
+        print(request.POST)
+
+
+
+    serializer = PersonneSerializer(mdl.personne.Personne.find_all(), many=True)
+    return JSONResponse(serializer.data)
+
+
+class PersonneSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = mdl.personne.Personne
+        fields = '__all__'

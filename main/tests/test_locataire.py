@@ -32,9 +32,12 @@ from main.tests.factories.type_societe import TypeSocieteFactory
 from django.test.client import Client
 from django.contrib.auth.models import User
 from main.tests.factories.fonction import FonctionFactory
-from main.locataire import get_personnes_non_locataires, get_common_data
-from main.pages_utils import NEW, UPDATE, LOCATAIRE_FORM_HTML
+from main.locataire import get_common_data
+from main.pages_utils import LOCATAIRE_FORM_HTML
 from main.forms.locataire import LocataireForm
+from main.forms.personne_form import PersonneSimplifieForm
+from main.models.personne import search as search_personne
+from django.contrib.messages import get_messages
 
 
 class LocataireViewTest(TestCase):
@@ -44,10 +47,12 @@ class LocataireViewTest(TestCase):
         self.user = User.objects.create_user('john', 'lennon@thebeatles.com', 'johnpassword')
         self.client.login(username='john', password='johnpassword')
 
-        self.personne_location1 = PersonneFactory()
+        self.personne_location1 = PersonneFactory(nom="Dupuis", prenom="Marcel")
         self.location_1 = ContratLocationFactory()
         self.locataire_1 = LocataireFactory(personne=self.personne_location1,
                                             contrat_location=self.location_1)
+        self.url_add_nouveau_locataire = url = reverse("locataire-add")
+
 
     def test_form(self):
         url = reverse("locataire", args=[self.locataire_1.id])
@@ -64,26 +69,13 @@ class LocataireViewTest(TestCase):
 
         self.assertTemplateUsed(response, LOCATAIRE_FORM_HTML)
         self.assertIsInstance(response.context['form'], LocataireForm)
+        self.assertIsInstance(response.context['form_personne_simplifiee'], PersonneSimplifieForm)
 
+    def test_add_invalid(self):
+        response = self.client.post(self.url_add_nouveau_locataire, data={'location_id': self.location_1.id})
+        self.assertEqual(response.status_code, 200)
 
 class LocataireTest(TestCase):
-
-    def test_get_get_personnes_non_locataires(self):
-        personne_1_location = PersonneFactory()
-        personne_2_location = PersonneFactory()
-        personne_location1 = PersonneFactory()
-
-        location_1 = ContratLocationFactory()
-        LocataireFactory(personne=personne_location1,
-                         contrat_location=location_1)
-        self.assertCountEqual(get_personnes_non_locataires(location_1),
-                              [personne_1_location, personne_2_location])
-
-        location_2 = ContratLocationFactory()
-        LocataireFactory(contrat_location=location_2)
-
-        self.assertCountEqual(get_personnes_non_locataires(location_2),
-                              [personne_1_location, personne_2_location, personne_location1])
 
     def test_get_common_data(self):
         fonction = FonctionFactory()

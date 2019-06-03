@@ -85,6 +85,7 @@ urlpatterns = [
 
     url(r'^personne/create/$', personne.create, name='personne-create'),
     url(r'^personne/create/locataire/$', locataire.personne_create, name='personne-create-locataire'),
+    url(r'^personne/create2019/$', personne.personne_create_2019, name='personne-create-2019'),
     url(r'^personne/create/proprietaire/$', proprietaire.personne_create, name='personne-create-proprietaire'),
 
     url(r'^personne/edit/([0-9]+)/$', personne.edit, name='personne-edit'),

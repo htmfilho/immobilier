@@ -343,6 +343,12 @@
                 console.info('A character was deleted from ', el, ' combo box and the complete text is now "', fulltext, '"');
             }
         });
+
+        $('.personnes_liste').on('change', function() {
+            $('#person_details').toggle($(this).find(":selected").val() === '');
+        });
+
+
     </script>
           <style type="text/css">
               .mytipclass {

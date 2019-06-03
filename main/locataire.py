@@ -28,6 +28,8 @@ from django.core.urlresolvers import reverse
 from django.contrib.auth.decorators import login_required
 from main.pages_utils import NEW, UPDATE, LOCATAIRE_FORM_HTML
 from main.forms.locataire import LocataireForm
+from main.forms.personne_form import PersonneSimplifieForm
+from django.http import HttpResponseRedirect
 
 
 def get_common_data():
@@ -42,16 +44,19 @@ def get_common_data():
 
 @login_required
 def locataire_form(request, id):
+
     locataire = get_object_or_404(mdl.locataire.Locataire, pk=id)
     form = LocataireForm(instance=locataire)
 
     next = request.META.get('HTTP_REFERER', '/')
+
     data = {
         'locataire': locataire,
         'personne': locataire.personne,
         'action': UPDATE,
         'next': next,
         'form': form,
+        'form_personne_simplifiee': PersonneSimplifieForm(request.POST or None)
     }
     data.update(get_common_data())
     return render(request,
@@ -89,22 +94,12 @@ def new(request, location_id):
     data = {'locataire': locataire,
             'location': location,
             'action': UPDATE,
-            'form': form}
+            'form': form,
+            'form_personne_simplifiee': PersonneSimplifieForm(request.POST or None)}
     data.update(get_common_data())
-    data['personnes'] = get_personnes_non_locataires(location)
+
     return render(request, LOCATAIRE_FORM_HTML,
                   data)
-
-
-def get_personnes_non_locataires(location):
-    personnes = mdl.personne.find_all()
-    personnes_non_locataire = []
-    if personnes:
-        for p in personnes:
-            personnes_non_locataire.append(p)
-        for un_locataire in location.locataires:
-            personnes_non_locataire.remove(un_locataire.personne)
-    return personnes_non_locataire
 
 
 @login_required
@@ -122,10 +117,18 @@ def new_without_known_location(request):
 
 @login_required
 def add(request):
-    form = LocataireForm(data=request.POST)
+    form_locataire = LocataireForm(data=request.POST)
+    personne_form = PersonneSimplifieForm(request.POST or None)
 
-    if form.is_valid():
-        locataire = form.save()
+    if form_locataire.is_valid() and personne_form.is_valid():
+        personne = request.POST.get('personne')
+        if personne:
+            locataire = form_locataire.save()
+        else:
+            personne = personne_form.save()
+            locataire = form_locataire.save(commit=False)
+            locataire.personne = personne
+            locataire.save()
 
         action = request.POST.get('action', None)
         if action == UPDATE:
@@ -135,26 +138,18 @@ def add(request):
             return HttpResponseRedirect(reverse('home'))
     else:
         location_id = request.POST.get('location_id', None)
-        if location_id:
-            location = get_object_or_404(mdl.contrat_location.ContratLocation, pk=location_id)
-        else:
-            location = mdl.contrat_location.ContratLocation()
+        location = get_object_or_404(mdl.contrat_location.ContratLocation, pk=location_id)
         locataire = mdl.locataire.Locataire()
         locataire.contrat_location = location
-        data = {
-            'locataire': locataire,
-            'location': location,
-            'action': UPDATE,
-            'form': form
-        }
+        data = {'locataire': locataire,
+                'location': location,
+                'action': UPDATE,
+                'form': form_locataire,
+                'form_personne_simplifiee': personne_form}
         data.update(get_common_data())
-        data['personnes'] = get_personnes_non_locataires(location)
+
         return render(request, LOCATAIRE_FORM_HTML,
                       data)
-
-
-def get_societe(request):
-    return get_object_or_404(mdl.societe.Societe, pk=request.POST['societe']) if request.POST['societe'] else None
 
 
 @login_required

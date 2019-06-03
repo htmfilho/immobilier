@@ -30,6 +30,7 @@ from main.models import professionnel as Professionnel
 from main.models import contrat_gestion as ContratGestion
 from django.contrib.auth.models import User
 from main.models.enums import civilite
+from django.core.exceptions import ValidationError
 
 PRENOM_GESTIONNAIRE = 'Stéphan'
 NOM_GESTIONNAIRE = 'Marchal'
@@ -113,6 +114,7 @@ class Personne(models.Model):
 
         fonction = None
         if self.profession:
+
             fonction = Fonction.find_by_nom(self.profession)
             if fonction is None:
                 fonction = Fonction.create()
@@ -130,6 +132,11 @@ class Personne(models.Model):
 
         return p
 
+    def validate_unique(self, exclude=None):
+        try:
+            super(Personne,self).validate_unique()
+        except ValidationError as e:
+            raise ValidationError("Une personne existe déjà avec ces nom/prénoms !")
 
 def find_personne(id):
     try:
@@ -165,15 +172,16 @@ def find_personne_by_nom_prenom(un_nom, un_prenom, un_prenom2):
     return Personne.objects.filter(nom__iexact=un_nom, prenom__iexact=un_prenom, prenom2__iexact=un_prenom2)
 
 
-def search(nom, prenom):
+def search(nom, prenom, prenom2=None):
     query = find_all()
 
     if nom:
         query = query.filter(nom__icontains=nom)
     if prenom:
         query = query.filter(prenom__icontains=prenom)
-
-    return query.order_by('nom', 'prenom')
+    if prenom2:
+        query = query.filter(prenom2__icontains=prenom2)
+    return query.order_by('nom', 'prenom', 'prenom2')
 
 
 def creation_nouvelle_personne(un_nom, un_prenom):
