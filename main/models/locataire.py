@@ -49,10 +49,12 @@ class Locataire(models.Model):
     actif = models.BooleanField(default=True)
 
     def __str__(self):
-        return self.personne.nom + ", " + self.personne.prenom
+        if self.personne:
+            return self.personne.nom + ", " + self.personne.prenom
+        else:
+            return "?"
 
     # def unique_error_message(self, model_class, unique_check):
-    #     print('uni')
     #     if model_class == type(self) and unique_check == ('personne', 'contrat_location'):
     #         return "kkk"
     #     else:

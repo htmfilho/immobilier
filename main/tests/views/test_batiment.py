@@ -34,7 +34,6 @@ from django.core.urlresolvers import reverse
 #     def test_search_par_proprietaire_non_defini(self, mock_render, mock_decorators):
 #         mock_decorators.login_required = lambda x: x
 #         un_batiment = BatimentFactory()
-#         print('test_search_par_proprietaire_non_defini')
 #         request_factory = RequestFactory()
 #         request = request_factory.get(reverse('batiment', args=[un_batiment.id]))
 #         request.user = mock.Mock()

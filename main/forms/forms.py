@@ -187,9 +187,6 @@ class FileForm(forms.Form):
     file = forms.FileField()
 
 
-
-
-
 class LigneForm(forms.Form):
 
     test = forms.CharField(required=False)

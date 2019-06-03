@@ -77,7 +77,6 @@ def create(request, batiment_id):
 
 @login_required
 def prepare_update(request, id_contrat):
-    print('prepare_update')
     contrat = mdl.contrat_gestion.find_by_id(id_contrat)
     form = ContratGestionForm(instance=contrat)
     return render(request, "gestion/update.html",

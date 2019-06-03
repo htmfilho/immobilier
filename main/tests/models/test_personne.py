@@ -72,7 +72,7 @@ class PersonneTest(TestCase):
     def test_creation_nouveau_professionnal_avec_nouvelle_fonction(self):
         nom_fonction_plombier = 'Plombier'
         une_personne = PersonneFactory(profession=nom_fonction_plombier)
-
+        print(une_personne.id)
         self.assertEquals(mdl_personne.find_personne(une_personne.id), une_personne)
         self.assertEquals(mdl_professionnel.find_by_personne(une_personne).first().personne,
                           une_personne)

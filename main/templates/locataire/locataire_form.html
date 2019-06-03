@@ -38,10 +38,12 @@
           {% if form.contrat_location %}
             {% bootstrap_field form.contrat_location %}
           {% endif %}
+
           <div class="row">
               <div class="col-md-4">
-                  {% bootstrap_field form.personne %}
+                  {% bootstrap_field form.personne %}<br>
               </div>
+
               <div class="col-md-4">
                   {% bootstrap_field form.civilite %}
               </div>
@@ -61,6 +63,19 @@
                               data-target="#ajoutPersonneModal"><span class="glyphicon glyphicon-plus"
                                                                       aria-hidden="true"></span></button>
                   {% endif %}
+              </div>
+          </div>
+          <div class="row" id="person_details" >
+              <div class="col-md-4">
+                  {% bootstrap_field form_personne_simplifiee.nom %}
+                  {% bootstrap_form_errors form_personne_simplifiee %}
+              </div>
+
+              <div class="col-md-4">
+                  {% bootstrap_field form_personne_simplifiee.prenom %}
+              </div>
+              <div class="col-md-4">
+                  {% bootstrap_field form_personne_simplifiee.prenom2 %}
               </div>
           </div>
           <br>
