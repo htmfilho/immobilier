@@ -1,5 +1,5 @@
 dj-database-url==0.4.2
-Django==1.10.6
+Django==1.11.29
 django-jet==1.0.5
 django-selenium==0.9.8
 django-sortable==0.3.1
