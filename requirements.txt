@@ -42,7 +42,7 @@ PyPDF2==1.26.0
 python-dateutil==2.6.0
 python-docx==0.8.6
 PyYAML==3.12
-reportlab==3.4.0
+reportlab==3.5.55
 requirements-detector==0.5.2
 selenium==3.6.0
 setoptconf==0.2.0
